@@ -38,37 +38,48 @@ jobs:
       - name: Build project
         run: npm run build
       
-      - name: Configure Git
+      - name: Prepare deployment files
         run: |
+          # Create a temporary directory for deployment
+          mkdir -p /tmp/gh-pages-deploy
+          
+          # Copy built files
+          cp -r dist /tmp/gh-pages-deploy/
+          cp -r pages /tmp/gh-pages-deploy/
+          cp index.html /tmp/gh-pages-deploy/
+      
+      - name: Deploy to gh-pages
+        run: |
+          # Configure Git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      
-      - name: Create/Update gh-pages branch
-        run: |
+          
           # Fetch all branches
           git fetch origin
           
-          # Check if gh-pages exists
+          # Check if gh-pages exists and checkout
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
             echo "gh-pages branch exists, checking it out..."
             git checkout gh-pages
-            git pull origin gh-pages
           else
             echo "gh-pages branch doesn't exist, creating orphan branch..."
             git checkout --orphan gh-pages
             git rm -rf . || true
           fi
           
-          # Checkout files from main that we want to deploy
-          git checkout main -- pages/
-          git checkout main -- index.html
-          git checkout main -- dist/
+          # Remove old files
+          rm -rf dist pages index.html
+          
+          # Copy new files from temp directory
+          cp -r /tmp/gh-pages-deploy/* .
+          
+          # Stage all changes
+          git add -A
           
           # Check if there are changes to commit
-          if git diff --staged --quiet && git diff --quiet; then
+          if git diff --staged --quiet; then
             echo "No changes to deploy"
           else
-            git add .
             git commit -m "Auto-deploy examples and built files from main branch [skip ci]"
             git push origin gh-pages
             echo "Successfully deployed to gh-pages!"
