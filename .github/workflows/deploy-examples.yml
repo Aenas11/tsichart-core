@@ -1,0 +1,60 @@
+name: Deploy Examples to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pages/**'
+      - 'index.html'
+      - '.github/workflows/deploy-examples.yml'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Create/Update gh-pages branch
+        run: |
+          # Fetch all branches
+          git fetch origin
+          
+          # Check if gh-pages exists
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            echo "gh-pages branch exists, checking it out..."
+            git checkout gh-pages
+            git pull origin gh-pages
+          else
+            echo "gh-pages branch doesn't exist, creating orphan branch..."
+            git checkout --orphan gh-pages
+            git rm -rf . || true
+          fi
+          
+          # Checkout files from main that we want to deploy
+          git checkout main -- pages/
+          git checkout main -- index.html
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet && git diff --quiet; then
+            echo "No changes to deploy"
+          else
+            git add .
+            git commit -m "Auto-deploy examples from main branch [skip ci]"
+            git push origin gh-pages
+            echo "Successfully deployed to gh-pages!"
+          fi
