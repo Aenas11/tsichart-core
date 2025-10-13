@@ -17,7 +17,7 @@ const postcssUrl = require('postcss-url');
 const autoExternal = require('rollup-plugin-auto-external');
 const visualizer = require('rollup-plugin-visualizer').default;
 const dts = require('rollup-plugin-dts').default;
-const del = require('rollup-plugin-delete');
+const del = require('rollup-plugin-delete').default;
 
 const directImports = {
     // TsiClient core    
@@ -28,9 +28,6 @@ const directImports = {
     // TsiClient models
     TsqExpression: 'src/UXClient/Models/TsqExpression.ts',
     AggregateExpression: 'src/UXClient/Models/AggregateExpression.ts',
-
-    // Transformers
-    Transformers: 'src/UXClient/Utils/Transformers.ts',
     
     // Component imports 
     LineChart: 'src/UXClient/Components/LineChart/index.ts',
@@ -79,7 +76,13 @@ const commonPlugins = [
             })
         ],
         minimize: false,
-        sourceMap: false
+        sourceMap: false,
+        use: {
+            sass: {
+                api: 'modern-compiler', // Use modern Sass API
+                silenceDeprecations: ['legacy-js-api'], // Silence deprecation warnings
+            },
+        },
     }),
 ]
 

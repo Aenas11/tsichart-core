@@ -22,7 +22,20 @@ module.exports = {
       },
       {
         test: /\.(scss|css)$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              api: "modern-compiler", // Use modern Sass API
+              sassOptions: {
+                // Silence deprecation warnings if needed
+                silenceDeprecations: ['legacy-js-api'],
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jp(e*)g|svg)$/,
@@ -62,5 +75,11 @@ module.exports = {
   // New Webpack 5 caching for improved performance
   cache: {
     type: "filesystem",
+  },
+  // Performance hints configuration - library bundles are typically larger
+  performance: {
+    hints: false, // Disable warnings, or use 'warning' to keep them as warnings
+    maxEntrypointSize: 5000000, // 5MB - increase if you want warnings at a higher threshold
+    maxAssetSize: 5000000, // 5MB
   },
 };

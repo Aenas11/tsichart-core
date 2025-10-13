@@ -4,7 +4,7 @@ import LineChart from "../LineChart/LineChart";
 import DateTimePicker from "../DateTimePicker/DateTimePicker";
 import Utils from "../../Utils";
 import { ChartComponent } from "../../Interfaces/ChartComponent";
-import UXClient from "../../UXClient";
+import AggregateExpression from "../../Models/AggregateExpression";
 import DateTimeButtonRange from "../DateTimeButtonRange/DateTimeButtonRange";
 
 class AvailabilityChart extends ChartComponent {
@@ -27,7 +27,6 @@ class AvailabilityChart extends ChartComponent {
         right: 10
     }
     private targetElement: any;
-    private uxClient: any;
     private brushMoveAction: any;
     private brushContextMenuActions: any;
     private timePickerLineChart: any;
@@ -44,7 +43,6 @@ class AvailabilityChart extends ChartComponent {
 
     constructor(renderTarget: Element) {
         super(renderTarget);
-        this.uxClient = new UXClient();
     }
 
     //the most zoomed in possible
@@ -183,7 +181,7 @@ class AvailabilityChart extends ChartComponent {
             this.bucketSize = this.bucketSize / 60;
         }
 
-        this.ae = [new this.uxClient.AggregateExpression({ predicateString: "" }, { property: 'Count', type: "Double" }, ['count'],
+        this.ae = [new AggregateExpression({ predicateString: "" }, { property: 'Count', type: "Double" }, ['count'],
             { from: new Date(this.fromMillis), to: new Date(this.toMillis) }, null, 'grey', 'Availability')];
 
         this.targetElement = d3.select(this.renderTarget)
