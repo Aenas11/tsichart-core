@@ -1,0 +1,64 @@
+{
+    "instances": {
+        "hits": [
+            {
+                "timeSeriesId": [
+                    "sensor_temp_01"
+                ],
+                "id": 10,
+                "name": "Temperature Sensor 01",
+                "description": "Primary temperature monitoring sensor"
+            },
+            {
+                "timeSeriesId": [
+                    "sensor_pressure_01"
+                ],
+                "id": 11,
+                "name": "Pressure Sensor 01",
+                "description": "Primary pressure monitoring sensor"
+            },
+            {
+                "timeSeriesId": [
+                    "sensor_temp_02"
+                ],
+                "id": 12
+            },
+            {
+                "timeSeriesId": [
+                    "sensor_pressure_02"
+                ],
+                "id": 13
+            },
+            {
+                "timeSeriesId": [
+                    "flow_rate_main"
+                ],
+                "id": 14
+            }
+        ]
+    },
+    "hierarchyNodes": {
+        "hits": [
+            {
+                "id": "46564",
+                "name": "Building A Equipment",
+                "cumulativeInstanceCount": 150
+            },
+            {
+                "id": "45677",
+                "name": "Building A Sensors",
+                "cumulativeInstanceCount": 36
+            },
+            {
+                "id": "46514",
+                "name": "Building A Reporting",
+                "cumulativeInstanceCount": 34
+            },
+            {
+                "id": "447444",
+                "name": "Building B",
+                "cumulativeInstanceCount": 8
+            }
+        ]
+    }
+}

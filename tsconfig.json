@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": false,
+        "module": "es6",
+        "target": "es5",
+        "jsx": "react",
+        "allowJs": false,
+        "lib" : ["es5", "es2015.promise", "dom", "es6"],
+        "moduleResolution": "Node",
+        "declaration": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [
+        "src"
+    ]
+}

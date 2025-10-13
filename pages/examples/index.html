@@ -1,0 +1,408 @@
+<!DOCTYPE html> 
+<html lang='en'><head>
+    <title>Time Series Insights JavaScript SDK Examples</title>
+    <meta charset='utf-8'>
+    <meta http-equiv='cache-control' content='no-cache' />
+    <link rel='stylesheet' type='text/css' href='sampleStyles.css' />
+    <link rel="shortcut icon" href="/favicon.ico">
+</head>
+<body>
+        <div class='header' onclick="window.open('https://azure.microsoft.com/en-us/services/time-series-insights/', '_blank')">
+            <img class="headerImage" src="images/TSILogo.PNG">
+            <div class="headerTitle">Azure Time Series Insights</div>
+        </div>
+        <div style='height: 100%; position: absolute; top: 0; width: 100%; max-width: 1800px;'>
+            <div class='titleWrapper'>
+                <div class='titleTextWrapper'>
+                    <div class='titleText'>
+                        Time Series Insights
+                    </div>
+                    <div class='bigTitleText'>
+                        Sample Visualizations
+                    </div>
+                    <div class='subTitleText'>
+                        The Azure Time Series Insights JavaScript SDK (aka tsiclient) is a JavaScript library for Microsoft Azure Time Series Insights, featuring components for data visualization and analytics, utilities for making calls directly to the TSI Platform API, and more.
+                    </div>
+                    <a href='https://github.com/Microsoft/tsiclient' target="_blank">
+                        <button class="viewOnGithubButton">
+                            View on Github
+                        </button>                            
+                    </a>
+                </div>
+                <div class='titleImageWrapper'>
+                    <img src='images/titleImage.png'/>
+                </div>
+            </div>
+            <div class='contentWrapper'>
+                <div class='filterContainer'>
+                    <div class='filterTitle'> Filter by:</div>
+                    <button id='filterButtonAll' class='filterButton filterButtonSelected' onclick='switchVisibleExample("All")'>All</button>
+                    <button id='filterButtonStandalone' class='filterButton' onclick='switchVisibleExample("Standalone")'>Standalone</button>
+                    <button id='filterButtonIntegrated' class='filterButton' onclick='switchVisibleExample("Integrated")'>Integrated</button>
+                    <button id='filterButtonSMX' class='filterButton' onclick='switchVisibleExample("SMX")'>SMX</button>
+                    <button id='filterButtonTestCases' class='filterButton' onclick='switchVisibleExample("TestCases")'>Test Cases</button>
+                </div>
+                <div class='samplesWrapper'>
+                    <div class='sampleContainer standalone'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Basic Charts</div>
+                            <div class='sampleHeaderSubtitle'>Render a basic line, bar, and heatmap chart</div>
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/noauth-basiccharts.PNG" class="sampleImage" onclick="openTab('noauth/basiccharts.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('noauth/basiccharts.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/noauth/basiccharts.html')">View code</button>
+                            <img class="footerImage" src="images/logoGray.svg" title="Standalone Visualization">
+                        </div>
+                    </div>
+                    <div class='sampleContainer standalone'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Multiple Series Types</div>
+                            <div class='sampleHeaderSubtitle'>Render a line chart with multiple series types</div>
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/noauth-multipleseriestypes.PNG" class="sampleImage" onclick="openTab('noauth/multipleseriestypes.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('noauth/multipleseriestypes.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/noauth/multipleseriestypes.html')">View code</button>
+                            <img class="footerImage" src="images/logoGray.svg" title="Standalone Visualization">
+                        </div>
+                    </div>
+                    <div class='sampleContainer standalone'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Context Menu</div>
+                            <div class='sampleHeaderSubtitle'>Render a line chart with a custom context menu</div>
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/noauth-contextmenu.PNG" class="sampleImage" onclick="openTab('noauth/contextmenu.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('noauth/contextmenu.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/noauth/contextmenu.html')">View code</button>
+                            <img class="footerImage" src="images/logoGray.svg" title="Standalone Visualization">
+                        </div>
+                    </div>
+                    <div class='sampleContainer standalone'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Availability and Line Charts</div>
+                            <div class='sampleHeaderSubtitle'>Render an availability chart which controls the linechart</div>    
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/noauth-availabilityAndLinechart.PNG" class="sampleImage" onclick="openTab('noauth/availabilityAndLinechart.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('noauth/availabilityAndLinechart.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/noauth/availabilityAndLinechart.html')">View code</button>
+                            <img class="footerImage" src="images/logoGray.svg" title="Standalone Visualization">
+                        </div>
+                    </div>
+                    <div class='sampleContainer standalone'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Chart Options</div>
+                            <div class='sampleHeaderSubtitle'>Test various chart options and how they affect charts</div>    
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/noauth-chartOptions.PNG" class="sampleImage" onclick="openTab('noauth/chartOptions.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('noauth/chartOptions.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/noauth/chartOptions.html')">View code</button>
+                            <img class="footerImage" src="images/logoGray.svg" title="Standalone Visualization">
+                        </div>
+                    </div>
+                    <div class='sampleContainer standalone'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Date Time Range Picker</div>
+                            <div class='sampleHeaderSubtitle'>A standalone date time range picker</div>    
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/noauth-dateTimeRange.PNG" class="sampleImage" onclick="openTab('noauth/dateTimeRangePicker.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('noauth/dateTimeRangePicker.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/noauth/dateTimeRangePicker.html')">View code</button>
+                            <img class="footerImage" src="images/logoGray.svg" title="Standalone Visualization">
+                        </div>
+                    </div>
+                    <div class='sampleContainer standalone'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Swimlane options</div>
+                            <div class='sampleHeaderSubtitle'>Test changing lane positions, labels, and y-axis types</div>    
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/noauth-swimlaneOptions.png" class="sampleImage" onclick="openTab('noauth/swimlaneOptions.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('noauth/swimlaneOptions.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/noauth/swimlaneOptions.html')">View code</button>
+                            <img class="footerImage" src="images/logoGray.svg" title="Standalone Visualization">
+                        </div>
+                    </div>
+
+                    <!-- SMX examples -->
+                    <div class='sampleContainer SMX'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>S SKU: Chart with Explore Events</div>
+                            <div class='sampleHeaderSubtitle'>Render a line chart which connects to an events table </div>
+                        </div>
+                        <div class='sampleImageContainer'>
+                            <img src="images/withplatform-exploreevents.PNG" class="sampleImage" onclick="openTab('smx/exploreevents.html')">
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('smx/exploreevents.html')">View sample</button>
+                        </div>   
+                    </div>
+
+                    <!-- Test cases -->
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Heatmap</div>
+                            <div class='sampleHeaderSubtitle'>Test heatmap visualization with dark and light themes</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/heatmap.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/heatmap.html')">View code</button>
+                        </div>
+                    </div>
+                    
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Categorical Transform</div>
+                            <div class='sampleHeaderSubtitle'>Display categorical data with custom value mappings and colors</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/categoricalTransform.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/categoricalTransform.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Hierarchy Navigation</div>
+                            <div class='sampleHeaderSubtitle'>Navigate hierarchical time series data with path search</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/hierarchyNav.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/hierarchyNav.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Connected Scatter Plot</div>
+                            <div class='sampleHeaderSubtitle'>Test scatter plot with connected points</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/connectedScatterPlot.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/connectedScatterPlot.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Marker Interpolation</div>
+                            <div class='sampleHeaderSubtitle'>Test marker types and interpolation in line charts</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/markerInterpolation.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/markerInterpolation.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Events Improvements</div>
+                            <div class='sampleHeaderSubtitle'>Enhanced event visualization features</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/eventsImprovements.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/eventsImprovements.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Nested Context Menu</div>
+                            <div class='sampleHeaderSubtitle'>Test nested context menu functionality</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/nestedContextMenu.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/nestedContextMenu.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Heatmap to Line Chart</div>
+                            <div class='sampleHeaderSubtitle'>Transform between heatmap and line chart views</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/heatmapToLinechart.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/heatmapToLinechart.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Swim Lanes Tester</div>
+                            <div class='sampleHeaderSubtitle'>Test swim lane functionality and configurations</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/swimLanes/swimLaneTester.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/swimLanes/swimLaneTester.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Horizontal Markers</div>
+                            <div class='sampleHeaderSubtitle'>Display horizontal reference markers in charts</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/swimLanes/horizontalMarkers.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/swimLanes/horizontalMarkers.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Color Picker</div>
+                            <div class='sampleHeaderSubtitle'>Interactive color picker for series customization</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/colorPicker.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/colorPicker.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Date Time Picker Buttons</div>
+                            <div class='sampleHeaderSubtitle'>Date time picker with custom button controls</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/DateTimePickerButtons.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/DateTimePickerButtons.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Sparse Data</div>
+                            <div class='sampleHeaderSubtitle'>Handle sparse time series data visualization</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/sparseData.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/sparseData.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Dense Data</div>
+                            <div class='sampleHeaderSubtitle'>Handle dense time series data visualization</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/denseData.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/denseData.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Tooltip Positioning</div>
+                            <div class='sampleHeaderSubtitle'>Test tooltip positioning and behavior</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/tooltipPositioning.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/tooltipPositioning.html')">View code</button>
+                        </div>
+                    </div>
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Resizeable Legend</div>
+                            <div class='sampleHeaderSubtitle'>Interactive resizable legend component</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/resizeableLegend.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/resizeableLegend.html')">View code</button>
+                        </div>
+                    </div>
+
+
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Accessibility Grid</div>
+                            <div class='sampleHeaderSubtitle'>Accessibility features for grid components</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/Accessibility/Grid.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/Accessibility/Grid.html')">View code</button>
+                        </div>
+                    </div>
+
+
+                    <div class='sampleContainer testcase'>
+                        <div class='sampleHeader'>
+                            <div class='sampleHeaderTitle'>Y-Axis Min/Max</div>
+                            <div class='sampleHeaderSubtitle'>Configure Y-axis minimum and maximum values</div>    
+                        </div>
+                        <div class='sampleFooter'>
+                            <button class='sampleFooterButton' onclick="openTab('testcases/yMinMax.html')">View sample</button>
+                            <button class='sampleFooterButton viewOnGithubButton' onclick="openTab('https://github.com/Microsoft/tsiclient/blob/master/pages/examples/testcases/yMinMax.html')">View code</button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+    <script type="text/javascript">
+        function openTab(pageName){
+            window.open(pageName, '_blank');
+        }
+        function stopPropagation(e){
+            e.stopPropagation();
+        }
+
+        function switchVisibleExample (kindVisible) {
+            var filterButtons = document.getElementsByClassName('filterButton');
+            for (var i = 0; i < filterButtons.length; i++) {
+                filterButtons[i].classList.remove('filterButtonSelected');
+            }
+            document.getElementById('filterButton' + kindVisible)
+                .classList.add('filterButtonSelected');
+
+            var sampleContainers = document.getElementsByClassName('sampleContainer');
+            for (var i = 0; i < sampleContainers.length; i++) {
+                sampleContainers[i].classList.remove('sampleContainerHidden');
+                if (kindVisible === 'Standalone' && sampleContainers[i].classList.contains('integrated')) {
+                    sampleContainers[i].classList.add('sampleContainerHidden');
+                }
+                if (kindVisible === 'Standalone' && sampleContainers[i].classList.contains('testcase')) {
+                    sampleContainers[i].classList.add('sampleContainerHidden');
+                }
+                if (kindVisible === 'Integrated' && sampleContainers[i].classList.contains('standalone')) {
+                    sampleContainers[i].classList.add('sampleContainerHidden');
+                }
+                if (kindVisible === 'Integrated' && sampleContainers[i].classList.contains('testcase')) {
+                    sampleContainers[i].classList.add('sampleContainerHidden');
+                }
+                if (kindVisible === 'SMX' && !sampleContainers[i].classList.contains('SMX')) {
+                    sampleContainers[i].classList.add('sampleContainerHidden');
+                }
+                if (kindVisible === 'TestCases' && !sampleContainers[i].classList.contains('testcase')) {
+                    sampleContainers[i].classList.add('sampleContainerHidden');
+                }
+            }
+        }
+
+        switchVisibleExample('All');
+    </script>
+</body>
+</html>

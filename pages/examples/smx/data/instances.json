@@ -1,0 +1,5620 @@
+{
+    "put": [
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "Motor_A_Frequency",
+        "timeSeriesId": [
+          "motor_a_frequency"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Motor A frequency sensor",
+          "location.level.1": "Facility A",
+          "location.level.2": "Production Floor",
+          "location.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "Compressor_01_Pressure",
+        "timeSeriesId": [
+          "compressor_01_pressure"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Compressor 01 pressure sensor",
+          "location.level.1": "Utilities Building",
+          "location.level.2": "Compressor Room",
+          "location.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "Compressor_02_Pressure",
+        "timeSeriesId": [
+          "compressor_02_pressure"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Compressor 02 Pressure Low",
+          "location.level.1": "Utilities Building",
+          "location.level.2": "Compressor Room",
+          "location.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "Receiver_01_Pressure",
+        "timeSeriesId": [
+          "receiver_01_pressure"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Air Receiver 01 Pressure Input",
+          "location.level.1": "Utilities Building",
+          "location.level.2": "Air Distribution System",
+          "location.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "Hopper_A_Weight_Auto",
+        "timeSeriesId": [
+          "hopper_a_weight_auto"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Feed Hopper A Weigher Auto Mode Output Value",
+          "location.level.1": "Production Building",
+          "location.level.2": "Feed Hopper A",
+          "location.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "Hopper_A_Weight_Input",
+        "timeSeriesId": [
+          "hopper_a_weight_input"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Feed Hopper A Weigher Loop Input",
+          "location.level.1": "Production Building",
+          "location.level.2": "Feed Hopper A",
+          "location.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "Hopper_A_Weight_Setpoint",
+        "timeSeriesId": [
+          "hopper_a_weight_setpoint"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Feed Hopper A Weigher Loop PID Setpoint",
+          "location.level.1": "Production Building",
+          "floc.level.2": "BN401  PLANT FEED HOPPER",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "BN801_L_PVI",
+        "timeSeriesId": [
+          "SO-BN801_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Train Loadout Bin Level Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "BN801  TRAIN LOADOUT BIN",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "BX406B_F_OPY",
+        "timeSeriesId": [
+          "SO-BX406B_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Correct Medium Distribution Box Flow Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "BX400  CC FEED & DIST BOXES",
+          "floc.level.3": "BX406  CORR MEDIUM DISTRIBUTION BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "BX426_F_OPY",
+        "timeSeriesId": [
+          "SO-BX426_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Bleed to SM425",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "BX400  CC FEED & DIST BOXES",
+          "floc.level.3": "BX426  SEC CORR MEDIUM DISTRIBUTION BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "BX427_F_OPY",
+        "timeSeriesId": [
+          "SO-BX427_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Bleed to SM404",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "BX400  CC FEED & DIST BOXES",
+          "floc.level.3": "BX427  LOW CUT PROD SCREEN FEED BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "BX601_F_OPY",
+        "timeSeriesId": [
+          "SO-BX601_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Screenbowl Centrifuge Feedbox Flow Valve Auto Mode Output Value",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "BX600  UF FEED & DIST BOXES",
+          "floc.level.3": "BX601  SCREEN BOWL CFFEED BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "BX601_F_SPY",
+        "timeSeriesId": [
+          "SO-BX601_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Screenbowl Centrifuge Feedbox Flow Valve Auto Mode Setpoint Value",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "BX600  UF FEED & DIST BOXES",
+          "floc.level.3": "BX601  SCREEN BOWL CFFEED BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF403A_IPVI",
+        "timeSeriesId": [
+          "SO-CF403A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Coarse Coal CF403 Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CF400  CC CENTRIFUGES",
+          "floc.level.3": "CF403  COARSE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF404A_IPVI",
+        "timeSeriesId": [
+          "SO-CF404A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Coarse Coal CF404 Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CF400  CC CENTRIFUGES",
+          "floc.level.3": "CF404  COARSE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF423A_IPVI",
+        "timeSeriesId": [
+          "SO-CF423A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Coarse Coal CF423 Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CF400  CC CENTRIFUGES",
+          "floc.level.3": "CF423  SEC. COARSE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF4XX_DIF",
+        "timeSeriesId": [
+          "SO-CF4XX_DIF"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "Z-IGNORE",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF501_F_OPY",
+        "timeSeriesId": [
+          "SO-CF501_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "CF501 Fine Coal Centrifuge Feed Valve Output Value",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CF500  FC CENTRIFUGES",
+          "floc.level.3": "CF501  FINE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF501_F_SPY",
+        "timeSeriesId": [
+          "SO-CF501_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "CF501 Fine Coal Centrifuge Feed Valve Setpoint",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CF500  FC CENTRIFUGES",
+          "floc.level.3": "CF501  FINE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF501A_IPVI",
+        "timeSeriesId": [
+          "SO-CF501A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Fine Coal CF501 Drive Current",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CF500  FC CENTRIFUGES",
+          "floc.level.3": "CF501  FINE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF502_F_OPY",
+        "timeSeriesId": [
+          "SO-CF502_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "CF502 Fine Coal Centrifuge Feed Valve Output Value",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CF500  FC CENTRIFUGES",
+          "floc.level.3": "CF502  FINE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF502_F_SPY",
+        "timeSeriesId": [
+          "SO-CF502_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "CF502 Fine Coal Centrifuge Feed Valve Setpoint",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CF500  FC CENTRIFUGES",
+          "floc.level.3": "CF502  FINE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF502A_IPVI",
+        "timeSeriesId": [
+          "SO-CF502A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Fine Coal CF502 Drive Current",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CF500  FC CENTRIFUGES",
+          "floc.level.3": "CF502  FINE COAL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF601A_IPVI",
+        "timeSeriesId": [
+          "SO-CF601A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Screen Bowl Centrifuge CF-601 Drive Current",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "CF600  UF CENTRIFUGES",
+          "floc.level.3": "CF601  SCREEN BOWL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF601A_XPVI",
+        "timeSeriesId": [
+          "SO-CF601A_XPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Screen Bowl Centrifuge CF-601 Rotation Drive Torque",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "CF600  UF CENTRIFUGES",
+          "floc.level.3": "CF601  SCREEN BOWL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF602A_IPVI",
+        "timeSeriesId": [
+          "SO-CF602A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Screen Bowl Centrifuge CF-602 Drive Current",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "CF600  UF CENTRIFUGES",
+          "floc.level.3": "CF602  SCREEN BOWL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CF602A_XPVI",
+        "timeSeriesId": [
+          "SO-CF602A_XPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Screen Bowl Centrifuge CF-602 Rotation Drive Torque",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "CF600  UF CENTRIFUGES",
+          "floc.level.3": "CF602  SCREEN BOWL CENTRIFUGE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CL501_F_OPY",
+        "timeSeriesId": [
+          "SO-CL501_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Desliming Cyclone Flush Control Valve Auto Mode Output Value",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CL500  FC COLLECTORS DISTRIBUTERS",
+          "floc.level.3": "CL501  DESLIMING CY U/FLOW COLLECTO"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CL501_F_SPY",
+        "timeSeriesId": [
+          "SO-CL501_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Desliming Cyclone Flush Control Valve Auto Mode Setpoint Value",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CL500  FC COLLECTORS DISTRIBUTERS",
+          "floc.level.3": "CL501  DESLIMING CY U/FLOW COLLECTO"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "COMB_PLNT_PROD",
+        "timeSeriesId": [
+          "SO-COMB_PLNT_PROD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "COMB_PLNT_PROD_DTD",
+        "timeSeriesId": [
+          "SO-COMB_PLNT_PROD_DTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "COMB_PLNT_PROD_DTD_KPI",
+        "timeSeriesId": [
+          "SO-COMB_PLNT_PROD_DTD_KPI"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "COMB_PLNT_PROD_MTD",
+        "timeSeriesId": [
+          "SO-COMB_PLNT_PROD_MTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "COMB_PLNT_PROD_YTD",
+        "timeSeriesId": [
+          "SO-COMB_PLNT_PROD_YTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CPP_YLD_PVI",
+        "timeSeriesId": [
+          "SO-CPP_YLD_PVI"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CPP_YLD_TOTI_DTD",
+        "timeSeriesId": [
+          "SO-CPP_YLD_TOTI_DTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CPP_YLD_TOTI_MTD",
+        "timeSeriesId": [
+          "SO-CPP_YLD_TOTI_MTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CPP_YLD_TOTI_YTD",
+        "timeSeriesId": [
+          "SO-CPP_YLD_TOTI_YTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CR101_IPVI",
+        "timeSeriesId": [
+          "SO-CR101_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Sizer Drive Current Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "CR100  RC CRUSHERS",
+          "floc.level.3": "CR101  SECONDARY SIZER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CR102_IPVI",
+        "timeSeriesId": [
+          "SO-CR102_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Tertiary Sizer Drive Current Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "CR100  RC CRUSHERS",
+          "floc.level.3": "CR102  TERTIARY SIZER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV101_IPVI",
+        "timeSeriesId": [
+          "SO-CV101_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Raw Coal Conveyor Drive Current Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "CV100  RC CONVEYORS",
+          "floc.level.3": "CV101  RAW COAL CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV102_IPVI",
+        "timeSeriesId": [
+          "SO-CV102_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Plant feed Conveyor Drive Current Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "CV100  RC CONVEYORS",
+          "floc.level.3": "CV102  PLANT FEED CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV701_IPVI",
+        "timeSeriesId": [
+          "SO-CV701_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Rejects Conveyor Drive Current Input",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "CV700  RH CONVEYORS",
+          "floc.level.3": "CV701  REJECTS CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV801_IPVI",
+        "timeSeriesId": [
+          "SO-CV801_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Primary Product Conveyor Drive Current Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "CV800  PH CONVEYORS",
+          "floc.level.3": "CV801  PRIMARY PRODUCT CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV802_IPVI",
+        "timeSeriesId": [
+          "SO-CV802_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Product Conveyor Drive Current Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "CV800  PH CONVEYORS",
+          "floc.level.3": "CV802  SEC. PRODUCT CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV803_IPVI",
+        "timeSeriesId": [
+          "SO-CV803_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Product Transfer Conveyor Drive Current Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "CV800  PH CONVEYORS",
+          "floc.level.3": "CV803  PRODUCT TRANSFER CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV804A_IPVI",
+        "timeSeriesId": [
+          "SO-CV804A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Extended Reclaim Conveyor CV804A Drive Current Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "CV800  PH CONVEYORS",
+          "floc.level.3": "CV804  EXTENDED RECLAIM CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CV804B_IPVI",
+        "timeSeriesId": [
+          "SO-CV804B_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Extended Reclaim Conveyor CV804B Drive Current Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "CV800  PH CONVEYORS",
+          "floc.level.3": "CV804  EXTENDED RECLAIM CONVEYOR"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY402_DH_OPY",
+        "timeSeriesId": [
+          "SO-CY402_DH_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Diameter Head Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY402  DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY402_DH_PVI",
+        "timeSeriesId": [
+          "SO-CY402_DH_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Diameter Head Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY402  DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY402_DH_SPY",
+        "timeSeriesId": [
+          "SO-CY402_DH_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Diameter Head PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY402  DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY402_P_PVI",
+        "timeSeriesId": [
+          "SO-CY402_P_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Diameter Pressure Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY402  DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY403_P_PVI",
+        "timeSeriesId": [
+          "SO-CY403_P_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Primary Densifying Cyclone Cluster",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "PRIMARY DENSIFYING CYCLONE CLUSTER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY422_DH_OPY",
+        "timeSeriesId": [
+          "SO-CY422_DH_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Low Cut Dense Medium Cyclone Diameter Head Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY422  LOW CUT DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY422_DH_PVI",
+        "timeSeriesId": [
+          "SO-CY422_DH_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Low Cut Dense Medium Cyclone Diameter Head Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY422  LOW CUT DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY422_DH_SPY",
+        "timeSeriesId": [
+          "SO-CY422_DH_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Low Cut Dense Medium Cyclone  Diameter Head PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY422  LOW CUT DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY422_P_PVI",
+        "timeSeriesId": [
+          "SO-CY422_P_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Low Cut Dense Medium Cyclone Pressure Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY422  LOW CUT DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY501_P_PVI",
+        "timeSeriesId": [
+          "SO-CY501_P_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Classifying Cyclone CY501 Pressure Input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CY500  FC CYCLONES",
+          "floc.level.3": "CY501  CLASSIFYING CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY502_P_PVI",
+        "timeSeriesId": [
+          "SO-CY502_P_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spiral Thickening Cyclone CY502 Pressure Input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CY500  FC CYCLONES",
+          "floc.level.3": "CY502  SPIRAL PROD T/NING CY CLUSTER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY503_P_PVI",
+        "timeSeriesId": [
+          "SO-CY503_P_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Classifying Cyclone CY503 Pressure Input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "CY500  FC CYCLONES",
+          "floc.level.3": "CY503  CLASSIFYING CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY804B_IPVI",
+        "timeSeriesId": [
+          "SO-CY804B_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "Z-IGNORE",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_HRS_DTD",
+        "timeSeriesId": [
+          "SO-DELAY_HRS_DTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_HRS_DTD_FEED",
+        "timeSeriesId": [
+          "SO-DELAY_HRS_DTD_FEED"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_HRS_MTD",
+        "timeSeriesId": [
+          "SO-DELAY_HRS_MTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_HRS_MTD_FEED",
+        "timeSeriesId": [
+          "SO-DELAY_HRS_MTD_FEED"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_HRS_YTD",
+        "timeSeriesId": [
+          "SO-DELAY_HRS_YTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_HRS_YTD_FEED",
+        "timeSeriesId": [
+          "SO-DELAY_HRS_YTD_FEED"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_WT102_W_TOTI_COMB_DTD",
+        "timeSeriesId": [
+          "SO-DELAY_WT102_W_TOTI_COMB_DTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_WT102_W_TOTI_COMB_MTD",
+        "timeSeriesId": [
+          "SO-DELAY_WT102_W_TOTI_COMB_MTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DELAY_WT102_W_TOTI_COMB_YTD",
+        "timeSeriesId": [
+          "SO-DELAY_WT102_W_TOTI_COMB_YTD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DelaySeconds",
+        "timeSeriesId": [
+          "SO-DelaySeconds"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DelaySecondsMonthly",
+        "timeSeriesId": [
+          "SO-DelaySecondsMonthly"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DelaySecondsYearly",
+        "timeSeriesId": [
+          "SO-DelaySecondsYearly"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP960_F_PV1I",
+        "timeSeriesId": [
+          "SO-DP960_F_PV1I"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Diesel Dosage (mL/min) ",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP960  COLLECTOR DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP960_F_PV2I",
+        "timeSeriesId": [
+          "SO-DP960_F_PV2I"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Diesel Dosage (g/t) ",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP960  COLLECTOR DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP960_F_SPDI",
+        "timeSeriesId": [
+          "SO-DP960_F_SPDI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Diesel Dosing Pump Calculated Flowrate",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP960  COLLECTOR DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP960_F_SPDY",
+        "timeSeriesId": [
+          "SO-DP960_F_SPDY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Diesel Dosing Pump Flowrate Setpoint",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP960  COLLECTOR DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP960_F_TOTI",
+        "timeSeriesId": [
+          "SO-DP960_F_TOTI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Diesel Dosing Pump Flow Totaliser",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP960  COLLECTOR DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP960_IPVI",
+        "timeSeriesId": [
+          "SO-DP960_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Diesel Dosing Pump Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP960  COLLECTOR DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP962_F_OPY",
+        "timeSeriesId": [
+          "SO-DP962_F_OPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosing Pump DP962  VSD Output",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP962  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP962_F_PV1I",
+        "timeSeriesId": [
+          "SO-DP962_F_PV1I"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosage to FC601 (mL/min) ",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP962  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP962_F_PV2I",
+        "timeSeriesId": [
+          "SO-DP962_F_PV2I"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosage to FC601(ppm) ",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP962  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP962_F_SPDI",
+        "timeSeriesId": [
+          "SO-DP962_F_SPDI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosing Pump DP962 Calculated Flowrate",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP962  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP962_F_SPDY",
+        "timeSeriesId": [
+          "SO-DP962_F_SPDY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosing Pump DP962 Flowrate Setpoint",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP962  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP962_F_TOTI",
+        "timeSeriesId": [
+          "SO-DP962_F_TOTI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosing Pump DP962 Flow Totaliser",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP962  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP962_IPVI",
+        "timeSeriesId": [
+          "SO-DP962_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosing Pump DP962 Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP962  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP963_F_OPY",
+        "timeSeriesId": [
+          "SO-DP963_F_OPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP963  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP963_F_PV1I",
+        "timeSeriesId": [
+          "SO-DP963_F_PV1I"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosage to FC621 (mL/min) ",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP963  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP963_F_PV2I",
+        "timeSeriesId": [
+          "SO-DP963_F_PV2I"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosage to FC621(ppm) ",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP963  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP963_F_SPDI",
+        "timeSeriesId": [
+          "SO-DP963_F_SPDI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP963  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP963_F_SPDY",
+        "timeSeriesId": [
+          "SO-DP963_F_SPDY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP963  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP963_F_TOTI",
+        "timeSeriesId": [
+          "SO-DP963_F_TOTI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP963  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP963_IPVI",
+        "timeSeriesId": [
+          "SO-DP963_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "MIBC Dosing Pump DP963 Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP963  FROTHER DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP970_F_SPDI",
+        "timeSeriesId": [
+          "SO-DP970_F_SPDI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Flocculant Dosing Pump Calculated Flowrate",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP970  FLOCCULANT DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP970_IPVI",
+        "timeSeriesId": [
+          "SO-DP970_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Flocculant Dosing Pump Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP970  FLOCCULANT DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP970_SMVY",
+        "timeSeriesId": [
+          "SO-DP970_SMVY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Flocculant Dosing Pump Speed Reference Output (%)",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP970  FLOCCULANT DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP971_F_OPY",
+        "timeSeriesId": [
+          "SO-DP971_F_OPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Coagulant Pump Speed (%)",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP971  COAG DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP971_F_SPDI",
+        "timeSeriesId": [
+          "SO-DP971_F_SPDI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Coagulant Dosing Pump Calculated Flowrate",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP971  COAG DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP971_F_SPDY",
+        "timeSeriesId": [
+          "SO-DP971_F_SPDY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Coagulant Dosing Pump Flowrate SetPoint",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP971  COAG DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP971_F_TOTI",
+        "timeSeriesId": [
+          "SO-DP971_F_TOTI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Coagulant Dosing Pump Flow Totaliser",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP971  COAG DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP971_IPVI",
+        "timeSeriesId": [
+          "SO-DP971_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Coagulant Dosing Pump Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP971  COAG DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "DP971_SMVY",
+        "timeSeriesId": [
+          "SO-DP971_SMVY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Coagulant Dosing Pump Speed Reference Output (%)",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "DP971  COAG DOSING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FB101A_IPVI",
+        "timeSeriesId": [
+          "SO-FB101A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Raw Coal Feeder Breaker Drive Drive Current Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "FB100  RC FEEDER BREAKERS",
+          "floc.level.3": "FB101  RC FEEDER BREAKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FB101A_SPDI",
+        "timeSeriesId": [
+          "SO-FB101A_SPDI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Raw Coal Feeder Breaker Drive Speed Output Value",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "FB100  RC FEEDER BREAKERS",
+          "floc.level.3": "FB101  RC FEEDER BREAKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FB101B_IPVI",
+        "timeSeriesId": [
+          "SO-FB101B_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Raw Coal Feeder Hydraulic Feeder Drive Drive Current Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "FB100  RC FEEDER BREAKERS",
+          "floc.level.3": "FB101  RC FEEDER BREAKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601_A_PVI",
+        "timeSeriesId": [
+          "SO-FC601_A_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC601 Air Fraction (%)",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC601  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601_L_OPY",
+        "timeSeriesId": [
+          "SO-FC601_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC601 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601_L_PVI",
+        "timeSeriesId": [
+          "SO-FC601_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC601 Level Input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC601  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601_L_SPY",
+        "timeSeriesId": [
+          "SO-FC601_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC601 Level PID Setpoint",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC601  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601A_F_OPY",
+        "timeSeriesId": [
+          "SO-FC601A_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC601 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601A_F_PVI",
+        "timeSeriesId": [
+          "SO-FC601A_F_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC601 Wash Water Flow Loop Input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC601  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601A_F_SPY",
+        "timeSeriesId": [
+          "SO-FC601A_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC601 Wash Water Flow PID Setpoint",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC601  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601B_F_OPY",
+        "timeSeriesId": [
+          "SO-FC601B_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC601 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601B_F_PVI",
+        "timeSeriesId": [
+          "SO-FC601B_F_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC601 Air Flow Input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC601  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601B_F_SPY",
+        "timeSeriesId": [
+          "SO-FC601B_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC601 Air Flow PID Setpoint",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC601  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601C_L_OPY",
+        "timeSeriesId": [
+          "SO-FC601C_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC601 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601C_L_PVI",
+        "timeSeriesId": [
+          "SO-FC601C_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC601 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC601C_L_SPY",
+        "timeSeriesId": [
+          "SO-FC601C_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC601 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621_A_PVI",
+        "timeSeriesId": [
+          "SO-FC621_A_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Air Fraction (%)",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621_L_OPY",
+        "timeSeriesId": [
+          "SO-FC621_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Level Auto Mode Output Value",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621_L_PVI",
+        "timeSeriesId": [
+          "SO-FC621_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Level Input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621_L_SPY",
+        "timeSeriesId": [
+          "SO-FC621_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Level PID Setpoint",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621A_F_OPY",
+        "timeSeriesId": [
+          "SO-FC621A_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC621 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621A_F_PVI",
+        "timeSeriesId": [
+          "SO-FC621A_F_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Wash Water Flow Loop Input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621A_F_SPY",
+        "timeSeriesId": [
+          "SO-FC621A_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Wash Water Flow PID Setpoint",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621B_F_OPY",
+        "timeSeriesId": [
+          "SO-FC621B_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC621 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621B_F_PVI",
+        "timeSeriesId": [
+          "SO-FC621B_F_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Air Flow Input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621B_F_SPY",
+        "timeSeriesId": [
+          "SO-FC621B_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Cell FC621 Air Flow PID Setpoint",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600  UF FLOATATION CELLS",
+          "floc.level.3": "FC621  FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621C_L_OPY",
+        "timeSeriesId": [
+          "SO-FC621C_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC621 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621C_L_PVI",
+        "timeSeriesId": [
+          "SO-FC621C_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC621 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FC621C_L_SPY",
+        "timeSeriesId": [
+          "SO-FC621C_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "UF600 ULTRA FINES PROCESSING",
+          "floc.level.2": "FC600 UF FLOATATION CELLS",
+          "floc.level.3": "FC621 FLOTATION CELL"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FE401_IPVI",
+        "timeSeriesId": [
+          "SO-FE401_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Desliming Screen Feeder Drive Current input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "FE400  CC FEEDERS",
+          "floc.level.3": "FE401  DESLIMING SCREEN FEEDER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FE401_SMVY",
+        "timeSeriesId": [
+          "SO-FE401_SMVY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Desliming Screen Feeder Speed Reference",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "FE400  CC FEEDERS",
+          "floc.level.3": "FE401  DESLIMING SCREEN FEEDER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FE701_IPVI",
+        "timeSeriesId": [
+          "SO-FE701_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Rejects Feeder Drive Current input",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "FE700  RH FEEDERS",
+          "floc.level.3": "FE701  REJECTS FEEDER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FE701_SC_OPY",
+        "timeSeriesId": [
+          "SO-FE701_SC_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Rejects Feeder Motor Output Value Controls",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "FE700  RH FEEDERS",
+          "floc.level.3": "FE701  REJECTS FEEDER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FE802_IPVI",
+        "timeSeriesId": [
+          "SO-FE802_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Product Feeder FE802 Motor Curretn Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FE800 PH FEEDERS",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FE804_IPVI",
+        "timeSeriesId": [
+          "SO-FE804_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Product Feeder FE804 Motor Curretn Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FE800 PH FEEDERS",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FL960F_L_PVI",
+        "timeSeriesId": [
+          "SO-FL960F_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Flocculant Mixing Tank Level",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "FL900  CS FLOCCULANT DOSING SYSTEMS",
+          "floc.level.3": "FL960F  MIXING TANK"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FL960G_L_PVI",
+        "timeSeriesId": [
+          "SO-FL960G_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Flocculant Storage Tank Level",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "FL900  CS FLOCCULANT DOSING SYSTEMS",
+          "floc.level.3": "FL960G  DILUTE FLOC STORAGE TANK"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV801_Z_OPY",
+        "timeSeriesId": [
+          "SO-FV801_Z_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV801  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV801_Z_PVI",
+        "timeSeriesId": [
+          "SO-FV801_Z_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV801  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV801_Z_SPY",
+        "timeSeriesId": [
+          "SO-FV801_Z_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV801  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV801_Z_TOTI",
+        "timeSeriesId": [
+          "SO-FV801_Z_TOTI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV801  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV802_Z_OPY",
+        "timeSeriesId": [
+          "SO-FV802_Z_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV802  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV802_Z_PVI",
+        "timeSeriesId": [
+          "SO-FV802_Z_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV802  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV802_Z_SPY",
+        "timeSeriesId": [
+          "SO-FV802_Z_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV802  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV802_Z_TOTI",
+        "timeSeriesId": [
+          "SO-FV802_Z_TOTI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV802  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV803_Z_OPY",
+        "timeSeriesId": [
+          "SO-FV803_Z_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV803  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV803_Z_PVI",
+        "timeSeriesId": [
+          "SO-FV803_Z_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV803  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV803_Z_SPY",
+        "timeSeriesId": [
+          "SO-FV803_Z_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV803  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV803_Z_TOTI",
+        "timeSeriesId": [
+          "SO-FV803_Z_TOTI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV803  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV804_Z_OPY",
+        "timeSeriesId": [
+          "SO-FV804_Z_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV804  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV804_Z_PVI",
+        "timeSeriesId": [
+          "SO-FV804_Z_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV804  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV804_Z_SPY",
+        "timeSeriesId": [
+          "SO-FV804_Z_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV804  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV804_Z_TOTI",
+        "timeSeriesId": [
+          "SO-FV804_Z_TOTI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "FV800  PH COAL VALVES",
+          "floc.level.3": "FV804  RECLAIM COAL VALVE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "FV804Z_SPY",
+        "timeSeriesId": [
+          "SO-FV804Z_SPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "Z-IGNORE",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "GRP8000_FDSSSPY",
+        "timeSeriesId": [
+          "SO-GRP8000_FDSSSPY"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "Flocculant Concentration (%-kg/L)",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SON_CY402_SURGE",
+        "timeSeriesId": [
+          "SON_CY402_SURGE"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY402  DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SON_CY422_SURGE",
+        "timeSeriesId": [
+          "SON_CY422_SURGE"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "Z-IGNORE",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SON_CY422-DIST_SURGE",
+        "timeSeriesId": [
+          "SON_CY422-DIST_SURGE"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY422  LOW CUT DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SON_CY422-V2_SURGE",
+        "timeSeriesId": [
+          "SON_CY422-V2_SURGE"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "CY400  CC CYCLONES",
+          "floc.level.3": "CY422  LOW CUT DENSE MEDIUM CYCLONE"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP101_IPVI",
+        "timeSeriesId": [
+          "SO-PP101_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "ROM Bin Sump Pump Drive Current input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "PP100  RC PUMPS",
+          "floc.level.3": "PP101  ROM BIN SUMP PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP403_IPVI",
+        "timeSeriesId": [
+          "SO-PP403_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Feed Pump Drive Current Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP403  DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP403_OPY",
+        "timeSeriesId": [
+          "SO-PP403_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Feed Pump Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP403  DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP403_SPDY",
+        "timeSeriesId": [
+          "SO-PP403_SPDY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Feed Pump Speed Setpoint Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP403  DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP403VG_ICY",
+        "timeSeriesId": [
+          "SO-PP403VG_ICY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Feed Pump Close Valve",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP403  DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP403VG_IOY",
+        "timeSeriesId": [
+          "SO-PP403VG_IOY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Feed Pump Open Valve",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP403  DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP403VO_ICY",
+        "timeSeriesId": [
+          "SO-PP403VO_ICY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Feed Pump Close Valve",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP403  DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP403VO_IOY",
+        "timeSeriesId": [
+          "SO-PP403VO_IOY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Feed Pump Open Valve",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP403  DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP404_D_OPY",
+        "timeSeriesId": [
+          "SO-PP404_D_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Correct Medium Density Water Addition Valve Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP404  CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP404_D_PVI",
+        "timeSeriesId": [
+          "SO-PP404_D_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Correct Medium Density Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP404  CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP404_D_SPY",
+        "timeSeriesId": [
+          "SO-PP404_D_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Correct Medium Density Loop PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP404  CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP404_IPVI",
+        "timeSeriesId": [
+          "SO-PP404_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Correct Medium Pump Drive Current Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP404  CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP405_IPVI",
+        "timeSeriesId": [
+          "SO-PP405_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Dilute Medium Pump Drive Current Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP405  DILUTE MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP405VO_ICY",
+        "timeSeriesId": [
+          "SO-PP405VO_ICY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Close Valve",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP405  DILUTE MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP405VO_IOY",
+        "timeSeriesId": [
+          "SO-PP405VO_IOY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Open Valve",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP405  DILUTE MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP406_IPVI",
+        "timeSeriesId": [
+          "SO-PP406_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Old Coarse Coal Centrifuge Effluent Pump Drive Current input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP406  OLD CC CENT EFFLUENT PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP407_IPVI",
+        "timeSeriesId": [
+          "SO-PP407_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Desliming Cyclone Feed Pump Drive Current Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP407  DESLIMING CYCLONE FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP410_IPVI",
+        "timeSeriesId": [
+          "SO-PP410_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "DMC Area Floor Sump Pump Drive Current Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP410  DMC AREA FLOOR SUMP PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP423_IPVI",
+        "timeSeriesId": [
+          "SO-PP423_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary DMC Feed Pump Drive Current Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP423  SEC. DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP423_OPY",
+        "timeSeriesId": [
+          "SO-PP423_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary DMC Feed Pump Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP423  SEC. DMC FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP424_D_OPY",
+        "timeSeriesId": [
+          "SO-PP424_D_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Correct Medium Pump Density Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP424  SEC. CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP424_D_PVI",
+        "timeSeriesId": [
+          "SO-PP424_D_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Correct Medium Pump Density Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP424  SEC. CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP424_D_SPY",
+        "timeSeriesId": [
+          "SO-PP424_D_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Correct Medium Pump Density Loop PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP424  SEC. CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP424_IPVI",
+        "timeSeriesId": [
+          "SO-PP424_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Correct Medium Pump Drive Current input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP424  SEC. CORRECT MEDIUM PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP426_IPVI",
+        "timeSeriesId": [
+          "SO-PP426_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Coarse Coal Centrifuge Effluent Pump Drive Current Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "PP400  CC PUMPS",
+          "floc.level.3": "PP426  CC CENTRIFUGE EFFLUENT PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP501_IPVI",
+        "timeSeriesId": [
+          "SO-PP501_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spirals Feed Pump Drive Current input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "PP500  FC PUMPS",
+          "floc.level.3": "PP501  SPIRALS FEED PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP502_IPVI",
+        "timeSeriesId": [
+          "SO-PP502_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spirals Product Pump Drive Current input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "PP500  FC PUMPS",
+          "floc.level.3": "PP502  SPIRALS PRODUCT PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP510_IPVI",
+        "timeSeriesId": [
+          "SO-PP510_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spirals Middling Pump Drive Current input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "PP500  FC PUMPS",
+          "floc.level.3": "PP510 SPIRALS MIDDLING PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP601_IPVI",
+        "timeSeriesId": [
+          "SO-PP601_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Recycle Pump PP601 Drive Current input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "PP600  UF PUMPS",
+          "floc.level.3": "PP601  FLOTATION RECYCLE PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP602_IPVI",
+        "timeSeriesId": [
+          "SO-PP602_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Screenbowl Centrifuge Effluent Pump Drive Current input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "PP600  UF PUMPS",
+          "floc.level.3": "PP602  SCREENBOWL EFFLUENT PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP603_IPVI",
+        "timeSeriesId": [
+          "SO-PP603_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sieve Bend Underflow Pump Drive Current input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "PP600  UF PUMPS",
+          "floc.level.3": "PP603  SIEVE BEND UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP610_IPVI",
+        "timeSeriesId": [
+          "SO-PP610_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Floor Sump Pump Drive Current input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "PP600  UF PUMPS",
+          "floc.level.3": "PP610  FLOTATION FLOOR SUMP PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP621_IPVI",
+        "timeSeriesId": [
+          "SO-PP621_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Flotation Recycle Pump PP621 Drive Current input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "PP600  UF PUMPS",
+          "floc.level.3": "PP621  FLOTATION RECYCLE PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP701_D_PVI",
+        "timeSeriesId": [
+          "SO-PP701_D_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener Underflow Density Input",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP701  THICKENER UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP701_D_SPY",
+        "timeSeriesId": [
+          "SO-PP701_D_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener Underflow Density Setpoint",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP701  THICKENER UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP701_F_PVI",
+        "timeSeriesId": [
+          "SO-PP701_F_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener Underflow Pump Flowrate (m3/hr)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP701  THICKENER UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP701_F_SPY",
+        "timeSeriesId": [
+          "SO-PP701_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener Underflow Flow Setpoint",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP701  THICKENER UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP701_IPVI",
+        "timeSeriesId": [
+          "SO-PP701_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener Underflow Pump Motor Drive Current",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP701  THICKENER UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP701_Q_PVI",
+        "timeSeriesId": [
+          "SO-PP701_Q_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener Underflow Pump Flowrate (t/h",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP701  THICKENER UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP701_SMVY",
+        "timeSeriesId": [
+          "SO-PP701_SMVY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener UF Pump Speed Reference Output",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP701  THICKENER UNDERFLOW PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP702_F_OPY",
+        "timeSeriesId": [
+          "SO-PP702_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 1 VSD (%)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP702  DAMEI CO-DISP PUMP (VSD)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP702_F_SPY",
+        "timeSeriesId": [
+          "SO-PP702_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 1 Velocity Set Point (m/s)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP702  DAMEI CO-DISP PUMP (VSD)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP702_IPVI",
+        "timeSeriesId": [
+          "SO-PP702_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 1 Drive Current",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP702  DAMEI CO-DISP PUMP (VSD)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP702V_F_PVI",
+        "timeSeriesId": [
+          "SO-PP702V_F_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 1 Flowrate",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP702  DAMEI CO-DISP PUMP (VSD)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP703_IPVI",
+        "timeSeriesId": [
+          "SO-PP703_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Pp703  Co-Disposal Pump (Fixed)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP703  CO-DISPOSAL PUMP (FIXED)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP703_P_PVI",
+        "timeSeriesId": [
+          "SO-PP703_P_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Line Pressure (kPa)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP703  CO-DISPOSAL PUMP (FIXED)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP703V1_ZS2I",
+        "timeSeriesId": [
+          "SO-PP703V1_ZS2I"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 350mm Line Velocity (m/s)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP703  CO-DISPOSAL PUMP (FIXED)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP703V2_ZS2I",
+        "timeSeriesId": [
+          "SO-PP703V2_ZS2I"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 300mm Line Velocity (m/s)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP703  CO-DISPOSAL PUMP (FIXED)"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP704_IPVI",
+        "timeSeriesId": [
+          "SO-PP704_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 3 Drive Current",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP704  CO-DISPOSAL PUMP STAGE 3"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP704_OPY",
+        "timeSeriesId": [
+          "SO-PP704_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Pump 3 VSD (%)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP704  CO-DISPOSAL PUMP STAGE 3"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP710_IPVI",
+        "timeSeriesId": [
+          "SO-PP710_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Thickener Floor Sump Pump Motor Drive Current",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP710  THICKENER FLOOR SUMP PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP711_IPVI",
+        "timeSeriesId": [
+          "SO-PP711_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Area Sump Pump Motor Drive Current",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "PP700  RH PUMPS",
+          "floc.level.3": "PP711  CO-DISPOSAL AREA SUMP PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP801_IPVI",
+        "timeSeriesId": [
+          "SO-PP801_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Train Loadout Sump Pump Motor Drive Current",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "PP800  PH PUMPS",
+          "floc.level.3": "PP801  TRAIN LOADOUT SUMP PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP802_IPVI",
+        "timeSeriesId": [
+          "SO-PP802_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Reclaim Tunnel Sump Pump Motor Drive Current",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "PP800  PH PUMPS",
+          "floc.level.3": "PP802  RECLAIM TUNNEL SUMP PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP901_IPVI",
+        "timeSeriesId": [
+          "SO-PP901_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Pump Motor Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP901  CLARIFIED WATER PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP906_IPVI",
+        "timeSeriesId": [
+          "SO-PP906_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Return Water Submersible Pump Motor Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP906  RETURN WATER SUBMERSIBLE PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP906_L_PVI",
+        "timeSeriesId": [
+          "SO-PP906_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Return Water Submersible Pump Level Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP906  RETURN WATER SUBMERSIBLE PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP907_IPVI",
+        "timeSeriesId": [
+          "SO-PP907_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Return Water Pump Motor Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP907  RETURN WATER PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP910_IPVI",
+        "timeSeriesId": [
+          "SO-PP910_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Raw Water Pump Motor Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP910  RAW WATER PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP910_L_PVI",
+        "timeSeriesId": [
+          "SO-PP910_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Raw Water Pump Level Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP910  RAW WATER PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP912_F_PVI",
+        "timeSeriesId": [
+          "SO-PP912_F_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Fire Water Flow",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP912  FIRE WATER PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP980_IPVI",
+        "timeSeriesId": [
+          "SO-PP980_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Magnetite Addition Pump Motor Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP980  MAGNETITE ADDITION PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP990_IPVI",
+        "timeSeriesId": [
+          "SO-PP990_IPVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Gland Water Pump Motor Drive Current",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP990  GLAND WATER PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "PP990_P_PVI",
+        "timeSeriesId": [
+          "SO-PP990_P_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": " Gland Water Pump Flow Pressure",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "PP900  CS PUMPS",
+          "floc.level.3": "PP990  GLAND WATER PUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SA101_TMHY",
+        "timeSeriesId": [
+          "SO-SA101_TMHY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sampler SA101 Frequency Setting",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SA101  PLANT FEED SAMPLER",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SA101_TNPY",
+        "timeSeriesId": [
+          "SO-SA101_TNPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sampler SA101 Tonnes Control",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SA101  PLANT FEED SAMPLER",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SA801_TMHY",
+        "timeSeriesId": [
+          "SO-SA801_TMHY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SA801  CPP Product Primary Sampler Frequency Setting",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SA800  PH SAMPLING SYSTEMS",
+          "floc.level.3": "SA801  CPP PRODUCT PRIMARY SAMPLER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SA801_TNPY",
+        "timeSeriesId": [
+          "SO-SA801_TNPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SA801  CPP Product Primary Sampler Tonnes Control",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SA800  PH SAMPLING SYSTEMS",
+          "floc.level.3": "SA801  CPP PRODUCT PRIMARY SAMPLER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SA803_TMHY",
+        "timeSeriesId": [
+          "SO-SA803_TMHY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SA803  Sampler Frequency Setting",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SA800  PH SAMPLING SYSTEMS",
+          "floc.level.3": "SA803  SEC PRODUCT PRIMARY SAMPLER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SA803_TNPY",
+        "timeSeriesId": [
+          "SO-SA803_TNPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SA803  Sampler Tonnes Control",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SA800  PH SAMPLING SYSTEMS",
+          "floc.level.3": "SA803  SEC PRODUCT PRIMARY SAMPLER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101A_IPVI",
+        "timeSeriesId": [
+          "SO-SC101A_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101A Motor Drive Current",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101A_OPY",
+        "timeSeriesId": [
+          "SO-SC101A_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101A Speed Reference Output",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101B_IPVI",
+        "timeSeriesId": [
+          "SO-SC101B_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101B Motor Drive Current",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101B_OPY",
+        "timeSeriesId": [
+          "SO-SC101B_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101B Speed Reference Output",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101C_IPVI",
+        "timeSeriesId": [
+          "SO-SC101C_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101C Motor Drive Current",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101C_OPY",
+        "timeSeriesId": [
+          "SO-SC101C_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101C Speed Reference Output",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101D_IPVI",
+        "timeSeriesId": [
+          "SO-SC101D_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101D Motor Drive Current",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC101D_OPY",
+        "timeSeriesId": [
+          "SO-SC101D_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Roller Screen SC101D Speed Reference Output",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "SC100  RC SCREENS",
+          "floc.level.3": "SC101  ROLLER SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC401_F_OPY",
+        "timeSeriesId": [
+          "SO-SC401_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Deslime Screen Spray Water Valve (%) Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC401  DESLIMING SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC405_F_OPY",
+        "timeSeriesId": [
+          "SO-SC405_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Hi-cut Product Screen Spray Water Valve (%) Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC405  HI CUT PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC405_IPVI",
+        "timeSeriesId": [
+          "SO-SC405_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Hi-cutut Product Screen Motor Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC405  HI CUT PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC406_F_OPY",
+        "timeSeriesId": [
+          "SO-SC406_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "HI-cut Reject Screen Spray Water Valve (%) Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC406  HI CUT REJECT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC406_IPVI",
+        "timeSeriesId": [
+          "SO-SC406_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Hi-Cut Reject Screen Motor Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC406  HI CUT REJECT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC425_F_OPY",
+        "timeSeriesId": [
+          "SO-SC425_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Product Screen Spray Water Valve (%) Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC425  HIGH ASH PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC425_F_SPY",
+        "timeSeriesId": [
+          "SO-SC425_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Product Screen Spray Water Valve (%) Auto Mode Setpoint Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC425  HIGH ASH PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC425_IPVI",
+        "timeSeriesId": [
+          "SO-SC425_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Product Screen Motor Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC425  HIGH ASH PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC426_IPVI",
+        "timeSeriesId": [
+          "SO-SC426_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary DMC Reject Screen Motor Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC426  SEC. DMC REJECT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC427_F_OPY",
+        "timeSeriesId": [
+          "SO-SC427_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SC427 Product Screen Spray Water Valve (%) Auto Mode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC427  LOW ASH PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC427_F_SPY",
+        "timeSeriesId": [
+          "SO-SC427_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SC427  Low Ash Product Screen Spray Water Valve (%) Auto Mode Setpoint Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC427  LOW ASH PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SC427_IPVI",
+        "timeSeriesId": [
+          "SO-SC427_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SC427  Low Ash Product Screen Motor Drive Current",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SC400  CC SCREENS",
+          "floc.level.3": "SC427  LOW ASH PRODUCT SCREEN"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SK801_S_PVI",
+        "timeSeriesId": [
+          "SO-SK801_S_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SK800  PH STACKERS",
+          "floc.level.3": "SK801  PRODUCT STACKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SK801D_IPVI",
+        "timeSeriesId": [
+          "SO-SK801D_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SK800  PH STACKERS",
+          "floc.level.3": "SK801  PRODUCT STACKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SK801D_SPDI",
+        "timeSeriesId": [
+          "SO-SK801D_SPDI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SK800  PH STACKERS",
+          "floc.level.3": "SK801  PRODUCT STACKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SK802_S_PVI",
+        "timeSeriesId": [
+          "SO-SK802_S_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SK800  PH STACKERS",
+          "floc.level.3": "SK802  SEC. PRODUCT STACKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SK802D_IPVI",
+        "timeSeriesId": [
+          "SO-SK802D_IPVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SK800  PH STACKERS",
+          "floc.level.3": "SK802  SEC. PRODUCT STACKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SK802D_SPDI",
+        "timeSeriesId": [
+          "SO-SK802D_SPDI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "SK800  PH STACKERS",
+          "floc.level.3": "SK802  SEC. PRODUCT STACKER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM404_L_PVI",
+        "timeSeriesId": [
+          "SO-SM404_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Correct Medium Sump Level (%) Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM404  CORRECT MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM405_L_OPY",
+        "timeSeriesId": [
+          "SO-SM405_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Dilute Medium Sump Level (%) Automode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM405  DILUTE MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM405_L_PVI",
+        "timeSeriesId": [
+          "SO-SM405_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Dilute Medium Sump Level (%) Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM405  DILUTE MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM405_L_SPY",
+        "timeSeriesId": [
+          "SO-SM405_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Dilute Medium Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM405  DILUTE MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM406_L_OPY",
+        "timeSeriesId": [
+          "SO-SM406_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Densifying Cyclone Feed Sump Level (%) Automode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM406  DENSIFYING CYCLONE FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM406_L_PVI",
+        "timeSeriesId": [
+          "SO-SM406_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Densifying Cyclone Feed Sump Level (%) Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM406  DENSIFYING CYCLONE FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM406_L_SPY",
+        "timeSeriesId": [
+          "SO-SM406_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Densifying Cyclone Feed Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM406  DENSIFYING CYCLONE FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM407_L_OPY",
+        "timeSeriesId": [
+          "SO-SM407_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Desliming Cyclone Feed Sump Level (%) Automode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM407  DESLIMING CYCLONE FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM407_L_PVI",
+        "timeSeriesId": [
+          "SO-SM407_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Desliming Cyclone Feed Sump Level (%) Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM407  DESLIMING CYCLONE FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM407_L_SPY",
+        "timeSeriesId": [
+          "SO-SM407_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sm407  Desliming Cyclone Feed Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM407  DESLIMING CYCLONE FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM424_F_OPY",
+        "timeSeriesId": [
+          "SO-SM424_F_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sm424  Sec. Correct Medium Sump Level (%) Automode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM424  SEC. CORRECT MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM424_L_PVI",
+        "timeSeriesId": [
+          "SO-SM424_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Correct Medium Sump Level (%) Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM424  SEC. CORRECT MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM425_L_OPY",
+        "timeSeriesId": [
+          "SO-SM425_L_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Dilute Medium Sump Level (%) Automode Output Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM425  SEC. DILUTE MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM425_L_PVI",
+        "timeSeriesId": [
+          "SO-SM425_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Secondary Dilute Medium Sump Level (%) Loop Input",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM425  SEC. DILUTE MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM425_L_SPY",
+        "timeSeriesId": [
+          "SO-SM425_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Dilute Medium Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SM400  CC SUMPS & TANKS",
+          "floc.level.3": "SM425  SEC. DILUTE MEDIUM SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM501_L_PVI",
+        "timeSeriesId": [
+          "SO-SM501_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spirals Feed Sump Level (%) Loop Input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "SM500  FC SUMPS & TANKS",
+          "floc.level.3": "SM501  SPIRALS FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM501_L_SPY",
+        "timeSeriesId": [
+          "SO-SM501_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spirals Feed Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "SM500  FC SUMPS & TANKS",
+          "floc.level.3": "SM501  SPIRALS FEED SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM502_L_PVI",
+        "timeSeriesId": [
+          "SO-SM502_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spirals Product Sump Level (%) Loop Input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "SM500  FC SUMPS & TANKS",
+          "floc.level.3": "SM502  SPIRALS PRODUCT SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM502_L_SPY",
+        "timeSeriesId": [
+          "SO-SM502_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SM502  Spirals Product Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "SM500  FC SUMPS & TANKS",
+          "floc.level.3": "SM502  SPIRALS PRODUCT SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM510_L_PVI",
+        "timeSeriesId": [
+          "SO-SM510_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Spirals Middling Sump Level (%) Loop Input",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "SM500  FC SUMPS & TANKS",
+          "floc.level.3": "SM510  SPIRALS MIDDLING SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM510_L_SPY",
+        "timeSeriesId": [
+          "SO-SM510_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "SM510  Spirals Middling Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "FC500  FINE COAL PROCESSING",
+          "floc.level.2": "SM500  FC SUMPS & TANKS",
+          "floc.level.3": "SM510  SPIRALS MIDDLING SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM602_L_PVI",
+        "timeSeriesId": [
+          "SO-SM602_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sieve Bend Underflow Sump Level (%) Loop Input",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "SM600  UF SUMPS & TANKS",
+          "floc.level.3": "SM602  SIEVE BEND UNDERFLOW SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM602_L_SPY",
+        "timeSeriesId": [
+          "SO-SM602_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sm602  Sieve Bend Underflow Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "UF600  ULTRA FINES PROCESSING",
+          "floc.level.2": "SM600  UF SUMPS & TANKS",
+          "floc.level.3": "SM602  SIEVE BEND UNDERFLOW SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM701_L_PVI",
+        "timeSeriesId": [
+          "SO-SM701_L_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Co-Disposal Sump Level (%) Loop Input",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "SM700  CPP SUMPS & TANKS",
+          "floc.level.3": "SM701  CO-DISPOSAL SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM701_L_SPY",
+        "timeSeriesId": [
+          "SO-SM701_L_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Sm701  Co-Disposal Sump Level (%) Loop PID Setpoint",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "SM700  CPP SUMPS & TANKS",
+          "floc.level.3": "SM701  CO-DISPOSAL SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901_F_PVI",
+        "timeSeriesId": [
+          "SO-SM901_F_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Loop Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901_F_TOTI",
+        "timeSeriesId": [
+          "SO-SM901_F_TOTI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Totaliser",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901A_L_PVI",
+        "timeSeriesId": [
+          "SO-SM901A_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve A  Loop Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901A_L_SPY",
+        "timeSeriesId": [
+          "SO-SM901A_L_SPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve A Loop PID Setpoint",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901B_L_PVI",
+        "timeSeriesId": [
+          "SO-SM901B_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve B Loop Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901B_L_SPY",
+        "timeSeriesId": [
+          "SO-SM901B_L_SPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve B Loop PID Setpoint",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901C_L_PVI",
+        "timeSeriesId": [
+          "SO-SM901C_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve C Loop Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901C_L_SPY",
+        "timeSeriesId": [
+          "SO-SM901C_L_SPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve C  Loop PID Setpoint",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901D_L_PVI",
+        "timeSeriesId": [
+          "SO-SM901D_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve D Loop Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SM901D_L_SPY",
+        "timeSeriesId": [
+          "SO-SM901D_L_SPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Clarified Water Sump Level Control Valve D Loop PID Setpoint",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SM900  CS SUMPS & TANKS",
+          "floc.level.3": "SM901  CLARIFIED WATER SUMP"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SOWT102_W_TOTI",
+        "timeSeriesId": [
+          "SO-SOWT102_W_TOTI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "WT102 Total Tonnes",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SpiralsPos",
+        "timeSeriesId": [
+          "SO-SpiralsPos"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "Spirals Cutter Position",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE1_YIELD",
+        "timeSeriesId": [
+          "SO-STAGE1_YIELD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE1_YIELD_TOT",
+        "timeSeriesId": [
+          "SO-STAGE1_YIELD_TOT"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE1_YIELD_YEST_TOT",
+        "timeSeriesId": [
+          "SO-STAGE1_YIELD_YEST_TOT"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE2_FEEDRATE",
+        "timeSeriesId": [
+          "SO-STAGE2_FEEDRATE"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE2_FEEDRATE_TOT",
+        "timeSeriesId": [
+          "SO-STAGE2_FEEDRATE_TOT"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE2_FEEDRATE_YEST_TOT",
+        "timeSeriesId": [
+          "SO-STAGE2_FEEDRATE_YEST_TOT"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE2_YIELD",
+        "timeSeriesId": [
+          "SO-STAGE2_YIELD"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE2_YIELD_TOT",
+        "timeSeriesId": [
+          "SO-STAGE2_YIELD_TOT"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "STAGE2_YIELD_YEST_TOT",
+        "timeSeriesId": [
+          "SO-STAGE2_YIELD_YEST_TOT"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SX401_F_SPY",
+        "timeSeriesId": [
+          "SO-SX401_F_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Splitter Box Sx401  Correct Medium Flow Control  Auto Mode Setpoint Value",
+          "floc.level.1": "CC400  COARSE COAL PROCESSING",
+          "floc.level.2": "SX400  CC SPLITTER BOX",
+          "floc.level.3": "DENSIFYING BLEED SPLITTER BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SX980_F_OPI",
+        "timeSeriesId": [
+          "SO-SX980_F_OPI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Magnetite Splitter Box",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SX900  SPLITTER BOX",
+          "floc.level.3": "SX980  MAG ADDITION SPLITTER BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SX980_F_OPY",
+        "timeSeriesId": [
+          "SO-SX980_F_OPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Magnetite Splitter Box Auto Mode Output Value",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SX900  SPLITTER BOX",
+          "floc.level.3": "SX980  MAG ADDITION SPLITTER BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "SX980_F_SPY",
+        "timeSeriesId": [
+          "SO-SX980_F_SPY"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Magnetite Splitter Box Auto Mode Setpoint Value",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "SX900  SPLITTER BOX",
+          "floc.level.3": "SX980  MAG ADDITION SPLITTER BOX"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "TH701_X2_PVI",
+        "timeSeriesId": [
+          "SO-TH701_X2_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Tailings Thickener pH Loop Input",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "TH700  RH THICKENER",
+          "floc.level.3": "TH701  TAILINGS THICKENER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "TK901_L_PVI",
+        "timeSeriesId": [
+          "SO-TK901_L_PVI"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "Fire Water Tank Level  Loop Input",
+          "floc.level.1": "CS900  9 COMMON AND SERVICES",
+          "floc.level.2": "TK901  FIRE WATER TANK 1",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "VirtualDelaySeconds",
+        "timeSeriesId": [
+          "SO-VirtualDelaySeconds"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "VirtualDelaySecondsMonthly",
+        "timeSeriesId": [
+          "SO-VirtualDelaySecondsMonthly"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "VirtualDelaySecondsYearly",
+        "timeSeriesId": [
+          "SO-VirtualDelaySecondsYearly"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "VirtualTonnesLostSecond",
+        "timeSeriesId": [
+          "SO-VirtualTonnesLostSecond"
+        ],
+        "hierarchyIds": [
+          "21c9f213-8a54-4fea-94e5-7abc250c5d58"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT101_W_PVI",
+        "timeSeriesId": [
+          "SO-WT101_W_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Raw Coal Weigher Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT101  RAW COAL WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT101_W_SPY",
+        "timeSeriesId": [
+          "SO-WT101_W_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Raw Coal Weigher PID Setpoint",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT101  RAW COAL WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_PVI",
+        "timeSeriesId": [
+          "SO-WT102_W_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Plant Feed Weigher Input",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_DTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_DTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_MTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_MTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_VR_DTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_VR_DTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_VR_MTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_VR_MTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_VR_STOP_DTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_VR_STOP_DTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_VR_STOP_MTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_VR_STOP_MTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_VR_STOP_YTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_VR_STOP_YTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_VR_YTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_VR_YTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_W_TOTI_YTD",
+        "timeSeriesId": [
+          "SO-WT102_W_TOTI_YTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT102_YEST_TOT",
+        "timeSeriesId": [
+          "SO-WT102_YEST_TOT"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "WT102 Plant Feed Daily Total (Yesterday)",
+          "floc.level.1": "RC100  RAW COAL HANDLING",
+          "floc.level.2": "WT100  RC WEIGHERS",
+          "floc.level.3": "WT102  PLANT FEED WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT701_TOT",
+        "timeSeriesId": [
+          "SO-WT701_TOT"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "WT701 Reject Daily Total",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "WT700  RC WEIGHERS",
+          "floc.level.3": "WT701  REJECTS WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT701_W_PVI",
+        "timeSeriesId": [
+          "SO-WT701_W_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": " Rejects Weigher Input",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "WT700  RC WEIGHERS",
+          "floc.level.3": "WT701  REJECTS WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT701_W_TOTI_DTD",
+        "timeSeriesId": [
+          "SO-WT701_W_TOTI_DTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "WT700  RC WEIGHERS",
+          "floc.level.3": "WT701  REJECTS WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT701_W_TOTI_MTD",
+        "timeSeriesId": [
+          "SO-WT701_W_TOTI_MTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "WT700  RC WEIGHERS",
+          "floc.level.3": "WT701  REJECTS WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT701_W_TOTI_YTD",
+        "timeSeriesId": [
+          "SO-WT701_W_TOTI_YTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "WT700  RC WEIGHERS",
+          "floc.level.3": "WT701  REJECTS WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT701_YEST_TOT",
+        "timeSeriesId": [
+          "SO-WT701_YEST_TOT"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "WT701  Rejects Weigher Daily Total (Yesterday)",
+          "floc.level.1": "RH700  REJECTS HANDLING",
+          "floc.level.2": "WT700  RC WEIGHERS",
+          "floc.level.3": "WT701  REJECTS WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT801_W_PVI",
+        "timeSeriesId": [
+          "SO-WT801_W_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Plant  Product Weigher Input",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT801  PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT801_W_TOTI",
+        "timeSeriesId": [
+          "SO-WT801_W_TOTI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "Plant  Product Weigher Total Tonnes",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT801  PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT801_W_TOTI_DTD",
+        "timeSeriesId": [
+          "SO-WT801_W_TOTI_DTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT801  PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT801_W_TOTI_MTD",
+        "timeSeriesId": [
+          "SO-WT801_W_TOTI_MTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT801  PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT801_W_TOTI_YTD",
+        "timeSeriesId": [
+          "SO-WT801_W_TOTI_YTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT801  PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT801_YEST_TOT",
+        "timeSeriesId": [
+          "SO-WT801_YEST_TOT"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "WT801  Product Weigher Daily Total (Yesterday)",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT801  PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT802_TOT",
+        "timeSeriesId": [
+          "SO-WT802_TOT"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "WT802  Secondary Product Weigher Daily Total",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT802  SEC. PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT802_W_PVI",
+        "timeSeriesId": [
+          "SO-WT802_W_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT802  SEC. PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT802_W_TOTI_DTD",
+        "timeSeriesId": [
+          "SO-WT802_W_TOTI_DTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT802  SEC. PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT802_W_TOTI_MTD",
+        "timeSeriesId": [
+          "SO-WT802_W_TOTI_MTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT802  SEC. PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT802_W_TOTI_YTD",
+        "timeSeriesId": [
+          "SO-WT802_W_TOTI_YTD"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT802  SEC. PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT802_YEST_TOT",
+        "timeSeriesId": [
+          "SO-WT802_YEST_TOT"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "WT802  Secondary Product Weigher Daily Total (Yesterday)",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT802  SEC. PRODUCT WEIGHER"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT803_W_OPY",
+        "timeSeriesId": [
+          "SO-WT803_W_OPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT803  TRAIN LOADOUT WEIGHER 2"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT803_W_PVI",
+        "timeSeriesId": [
+          "SO-WT803_W_PVI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT803  TRAIN LOADOUT WEIGHER 2"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT803_W_SPY",
+        "timeSeriesId": [
+          "SO-WT803_W_SPY"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT803  TRAIN LOADOUT WEIGHER 2"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "WT803_W_TOTI",
+        "timeSeriesId": [
+          "SO-WT803_W_TOTI"
+        ],
+        "hierarchyIds": [
+          "6defc449-fda6-4e2c-96b6-05749611e8dd"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "PH800  PRODUCT HANDLING",
+          "floc.level.2": "WT800  PH WEIGHERS",
+          "floc.level.3": "WT803  TRAIN LOADOUT WEIGHER 2"
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY402_CYC_MAG",
+        "timeSeriesId": [
+          "CY402_CYC_MAG"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "Z-IGNORE",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY422_CYC_MAG",
+        "timeSeriesId": [
+          "CY422_CYC_MAG"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "Z-IGNORE",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      },
+      {
+        "typeId": "1be09af9-f089-4d6b-9f0b-48018b5f7393",
+        "name": "CY422_CYC_MAG_FREQ",
+        "timeSeriesId": [
+          "CY422_CYC_MAG_FREQ"
+        ],
+        "hierarchyIds": [
+          "c1f04f0a-5d55-452d-bbfb-86540515d85b"
+        ],
+        "instanceFields": {
+          "description": "",
+          "floc.level.1": "Z-IGNORE",
+          "floc.level.2": "",
+          "floc.level.3": ""
+        }
+      }
+    ]
+  }

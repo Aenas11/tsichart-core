@@ -1,0 +1,7 @@
+@use "src/UXClient/styles" as *;
+
+$test: list.nth((4, 5, 6), 1);
+
+.test {
+  width: $test;
+}

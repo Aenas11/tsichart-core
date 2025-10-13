@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Categorical PAYG</title>
+
+    <!-- styles are only used for styling header and auth elements, where possible -->
+    <link rel="stylesheet" type="text/css" href="../styles.css" />
+
+    <!-- boilerplate headers are injected with head.js, grab them from the live example header, or include a link to head.js -->
+    <script src="../boilerplate/head.js"></script>
+
+
+</head>
+
+<body style="font-family: 'Segoe UI', sans-serif;">
+
+    <div id="chart1" style="width: 50%; height: 600px; margin-top: 40px; float: left;"></div>
+    <script>
+        window.onload = function () {
+            initAuth('Categorical PAYG');  // initiate auth objects, header, and login modal
+            var tsiClient = new TsiClient();
+
+            var startDate = new Date('2024-08-20T03:00:00Z');
+            var endDate = new Date(startDate.valueOf() + 1000 * 60 * 60 * 24);
+
+            //read data from data folder
+            var data = JSON.parse(getData('data/query1.json'));
+
+            var lineChart = new tsiClient.ux.LineChart(document.getElementById('chart1'));
+            lineChart.render(transformedResult, { theme: 'dark', grid: true, tooltip: true, legend: 'visible' }, linechartTsqExpressions);
+
+        }
+
+        function getData(url) {
+
+        }
+
+    </script>
+</body>
+
+</html>
