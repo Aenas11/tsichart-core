@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', function(){
     var sdkJs = document.createElement('script');
     // sdkJs.src = 'https://unpkg.com/tsiclient@1.3.0/tsiclient.js';
-    sdkJs.src = '../../../dist/tsiclient.js';  // for local testing
+    sdkJs.src = '../../../dist/tsiclient.umd.js';  // UMD build for browser usage
 
     var promiseJs = document.createElement('script');
     promiseJs.src = 'https://cdn.jsdelivr.net/npm/bluebird@3.7.2/js/browser/bluebird.js';
@@ -10,7 +10,7 @@ window.addEventListener('DOMContentLoaded', function(){
     sdkCss.rel = 'stylesheet';
     sdkCss.type = 'text/css';
     // sdkCss.href = 'https://unpkg.com/tsiclient@1.3.0/tsiclient.css';
-    sdkCss.href = '../../../dist/tsiclient.css';  // for local testing
+    sdkCss.href = '../../../dist/tsiclient.css';  // CSS file
 
     var metaCharset = document.createElement('meta');
     metaCharset.charSet = 'utf-8';
