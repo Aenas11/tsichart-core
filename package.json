@@ -1,5 +1,5 @@
 {
-  "name": "@tsichart/core",
+  "name": "tsichart-core",
   "version": "1.0.0",
   "description": "Time Series Interactive Charts - A comprehensive JavaScript library for visualizing time series data with interactive charts including line charts, bar charts, pie charts, heatmaps, scatter plots, and more.",
   "keywords": [
@@ -49,15 +49,15 @@
   },
   "scripts": {
     "start": "webpack-dev-server --config webpack.dev.js",
-    "build": "npm run clean & npm run rollup & npm run webpack & npm run post-build",
-    "clean": "shx rm -rf dist & shx rm -rf build_artifacts",
-    "rollup": "rollup --c & shx rm dist/tsiclient.js",
+    "build": "npm run clean && npm run rollup && npm run webpack && npm run post-build",
+    "clean": "shx rm -rf dist && shx rm -rf build_artifacts",
+    "rollup": "rollup --c",
     "webpack": "webpack --config webpack.prod.js",
     "webpack_dev": "webpack --config webpack.dev.js",
     "copy-package": "shx cp package.json dist/",
     "copy-readme": "shx cp README.MD dist/",
-    "pack": "cd dist & npm pack & shx mv *.tgz ../build_artifacts",
-    "post-build": "npm run copy-package & npm run copy-readme & npm run pack",
+    "pack": "cd dist && npm pack && shx mv *.tgz ../build_artifacts",
+    "post-build": "npm run copy-package && npm run copy-readme && npm run pack",
     "umd-analyze": "webpack-bundle-analyzer ./build_artifacts/umd_stats.json"
   },
   "devDependencies": {
