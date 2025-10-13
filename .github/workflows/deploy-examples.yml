@@ -7,6 +7,8 @@ on:
     paths:
       - 'pages/**'
       - 'index.html'
+      - 'src/**'
+      - 'package.json'
       - '.github/workflows/deploy-examples.yml'
   workflow_dispatch: # Allow manual trigger
 
@@ -23,6 +25,18 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
       
       - name: Configure Git
         run: |
@@ -48,13 +62,14 @@ jobs:
           # Checkout files from main that we want to deploy
           git checkout main -- pages/
           git checkout main -- index.html
+          git checkout main -- dist/
           
           # Check if there are changes to commit
           if git diff --staged --quiet && git diff --quiet; then
             echo "No changes to deploy"
           else
             git add .
-            git commit -m "Auto-deploy examples from main branch [skip ci]"
+            git commit -m "Auto-deploy examples and built files from main branch [skip ci]"
             git push origin gh-pages
             echo "Successfully deployed to gh-pages!"
           fi
