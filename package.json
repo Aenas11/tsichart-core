@@ -35,12 +35,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/tsichart-core"
+    "url": "https://github.com/Aenas11/tsichart-core"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/tsichart-core/issues"
+    "url": "https://github.com/Aenas11/tsichart-core/issues"
   },
-  "homepage": "https://github.com/yourusername/tsichart-core#readme",
+  "homepage": "https://github.com/Aenas11/tsichart-core#readme",
   "author": "Alex Sysoiev <alexander.sysoev@gmail.com>",
   "license": "MIT",
   "engines": {
