@@ -155,7 +155,7 @@ Contributions are welcome! This is a community-maintained project. Please feel f
 MIT License - see [LICENSE](LICENSE) file for details.
 
 Original work Copyright (c) Microsoft Corporation  
-Modified work Copyright (c) 2024 [Your Name]
+Modified work Copyright (c) 2024 [Alexander Sysoiev]
 
 ## Acknowledgments
 
@@ -174,20 +174,7 @@ If you're migrating from the original Microsoft `tsiclient` package:
 - The `tsiClient.server` object and all related methods have been removed  
 - Focus is now exclusively on client-side visualization components
 
-**Version 1.3.0:**
-Starting with version 1.3.0, discrete events and state transitions will be represented just like numeric time series in the LineChart component. This may be a breaking change for users representing non-numeric series in the line chart using the "events" and "states" Chart Options. For usage instructions, consult [this example](https://tsiclientsample.azurewebsites.net/noauth/multipleseriestypes.html) and the associated [documentation](https://github.com/microsoft/tsiclient/blob/master/docs/UX.md#line-chart).
-
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project welcomes contributions and suggestions.
