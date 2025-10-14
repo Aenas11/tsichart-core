@@ -24,13 +24,13 @@ A powerful, flexible JavaScript library for visualizing time series data with **
 ### NPM
 
 ```bash
-npm install @tsichart-core
+npm install tsichart-core
 ```
 
 ### Yarn
 
 ```bash
-yarn add @tsichart-core
+yarn add tsichart-core
 ```
 
 ## Quick Start
@@ -38,8 +38,8 @@ yarn add @tsichart-core
 ### Import All Components
 
 ```js
-import TsiClient from "@tsichart/core";
-import "@tsichart/core/tsiclient.css";
+import TsiClient from "tsichart-core";
+import "tsichart-core/tsiclient.css";
 
 // Create a line chart
 let tsiClient = new TsiClient();
@@ -63,8 +63,8 @@ lineChart.render(data, { theme: 'light', legend: 'compact' });
 ### Import Individual Components (Recommended for Tree-shaking)
 
 ```js
-import LineChart from '@tsichart/core/LineChart';
-import '@tsichart/core/tsiclient.css';
+import LineChart from 'tsichart-core/LineChart';
+import 'tsichart-core/tsiclient.css';
 
 // Create and render chart
 let lineChart = new LineChart(document.getElementById('chart'));
@@ -158,7 +158,7 @@ This library is based on the original Microsoft Time Series Insights (TSI) JavaS
 
 If you're migrating from the original Microsoft `tsiclient` package:
 
-1. **Package name change**: Update your imports from `tsiclient` to `@tsichart-core`
+1. **Package name change**: Update your imports from `tsiclient` to `tsichart-core`
 2. **No breaking changes to component APIs**: The chart components work the same way
 3. **Remove server calls**: You'll need to handle data fetching yourself (Azure TSI service was retired)
 4. **Update documentation references**: Use the new documentation instead of Azure TSI docs
