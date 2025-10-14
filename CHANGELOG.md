@@ -39,8 +39,8 @@ This version was the last release by Microsoft before the Azure Time Series Insi
 
 If you're migrating from Microsoft's original `tsiclient` v2.x:
 
-1. Update package.json: `npm install @tsichart/core`
-2. Update imports: `import TsiClient from '@tsichart/core'`
+1. Update package.json: `npm install @tsichart-core`
+2. Update imports: `import TsiClient from '@tsichart-core'`
 3. The visualization components API remains unchanged
 4. Remove any server-side API calls (you should handle data fetching separately)
 5. Note: TSI now means "Time Series Interactive" not "Time Series Insights"

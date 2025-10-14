@@ -136,7 +136,7 @@ See the [UX Components documentation](docs/UX.md) for detailed format specificat
 
 Contributions are welcome! This is a community-maintained project. Please feel free to:
 
-- Report bugs and request features via [GitHub Issues](https://github.com/yourusername/tsichart-core/issues)
+- Report bugs and request features via [GitHub Issues](https://github.com/Aenas11/tsichart-core/issues)
 - Submit pull requests
 - Improve documentation
 - Share examples of your usage
@@ -158,7 +158,7 @@ This library is based on the original Microsoft Time Series Insights (TSI) JavaS
 
 If you're migrating from the original Microsoft `tsiclient` package:
 
-1. **Package name change**: Update your imports from `tsiclient` to `@tsichart/core`
+1. **Package name change**: Update your imports from `tsiclient` to `@tsichart-core`
 2. **No breaking changes to component APIs**: The chart components work the same way
 3. **Remove server calls**: You'll need to handle data fetching yourself (Azure TSI service was retired)
 4. **Update documentation references**: Use the new documentation instead of Azure TSI docs

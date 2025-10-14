@@ -1,4 +1,4 @@
-# Contributing to Time Series Interactive Charts (@tsichart/core)
+# Contributing to Time Series Interactive Charts (@tsichart-core)
 
 Thank you for your interest in contributing! This is a community-maintained project and we welcome contributions from everyone.
 
