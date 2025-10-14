@@ -38,15 +38,18 @@ jobs:
       - name: Build project
         run: npm run build
       
-      - name: Prepare deployment files
+      - name: Prepare deployment directory
         run: |
-          # Create a temporary directory for deployment
+          # Create a clean deployment directory
           mkdir -p /tmp/gh-pages-deploy
           
-          # Copy built files
+          # Copy only the files we need for GitHub Pages
           cp -r dist /tmp/gh-pages-deploy/
           cp -r pages /tmp/gh-pages-deploy/
           cp index.html /tmp/gh-pages-deploy/
+          
+          # Create a .nojekyll file to prevent GitHub Pages from ignoring files starting with _
+          touch /tmp/gh-pages-deploy/.nojekyll
       
       - name: Deploy to gh-pages
         run: |
@@ -54,33 +57,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Fetch all branches
-          git fetch origin
+          # Create a fresh orphan branch
+          git checkout --orphan gh-pages-new
           
-          # Check if gh-pages exists and checkout
-          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
-            echo "gh-pages branch exists, checking it out..."
-            git checkout gh-pages
-          else
-            echo "gh-pages branch doesn't exist, creating orphan branch..."
-            git checkout --orphan gh-pages
-            git rm -rf . || true
-          fi
+          # Remove all files from git
+          git rm -rf . || true
           
-          # Remove old files
-          rm -rf dist pages index.html
-          
-          # Copy new files from temp directory
+          # Copy deployment files
           cp -r /tmp/gh-pages-deploy/* .
+          cp /tmp/gh-pages-deploy/.nojekyll .
           
-          # Stage all changes
+          # Stage all files
           git add -A
           
-          # Check if there are changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to deploy"
-          else
-            git commit -m "Auto-deploy examples and built files from main branch [skip ci]"
-            git push origin gh-pages
-            echo "Successfully deployed to gh-pages!"
-          fi
+          # Commit
+          git commit -m "Deploy examples and built files [skip ci]"
+          
+          # Force push to gh-pages
+          git push -f origin gh-pages-new:gh-pages
+          
+          echo "Successfully deployed to gh-pages!"
