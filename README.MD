@@ -14,7 +14,10 @@ A powerful, flexible JavaScript library for visualizing time series data with **
 
 **Note:** This library is a community-maintained fork of the original Microsoft Time Series Insights Client, rebranded as **Time Series Interactive Charts** and updated for generic time series visualization use cases.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![npm version](https://badge.fury.io/js/%40tsichart%2Fcore.svg)](https://badge.fury.io/js/@tsichart/core) 
+[![npm version](https://badge.fury.io/js/tsichart-core.svg)](https://www.npmjs.com/package/tsichart-core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/Aenas11/tsichart-core)
+[![Live Examples](https://img.shields.io/badge/Examples-Live%20Demo-green)](https://aenas11.github.io/tsichart-core/) 
 
 ## Installation
 
