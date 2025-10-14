@@ -24,22 +24,13 @@ A powerful, flexible JavaScript library for visualizing time series data with **
 ### NPM
 
 ```bash
-npm install @tsichart/core
+npm install @tsichart-core
 ```
 
 ### Yarn
 
 ```bash
-yarn add @tsichart/core
-```
-
-### CDN
-
-You can also load directly from a CDN:
-
-```html
-<script src="https://unpkg.com/@tsichart/core@latest/tsiclient.js"></script>
-<link rel="stylesheet" type="text/css" href="https://unpkg.com/@tsichart/core@latest/tsiclient.css">
+yarn add @tsichart-core
 ```
 
 ## Quick Start
