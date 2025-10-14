@@ -35,7 +35,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aenas11/tsichart-core.git"
+    "url": "https://github.com/Aenas11/tsichart-core.git"
   },
   "bugs": {
     "url": "https://github.com/Aenas11/tsichart-core/issues"
@@ -43,7 +43,7 @@
   "homepage": "https://aenas11.github.io/tsichart-core/",
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://npm.pkg.github.com"
   },
   "author": "Alex Sysoiev <alexander.sysoev@gmail.com>",
   "license": "MIT",
