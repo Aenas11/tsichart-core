@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+  <title>Explore Events</title>
+
+  <!-- styles are only used for styling header and auth elements, where possible -->
+  <link rel="stylesheet" type="text/css" href="../styles.css" />
+
+  <!-- boilerplate headers are injected with head.js, grab them from the live example header, or include a link to head.js -->
+  <script src="../boilerplate/head.js"></script>
+</head>
+
+<body style="
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    ">
+  <div id="availability" style="width: 100%; height: 140px; margin-top: 10px"></div>
+  <div id="intervalSliderWrapper" style="
+        width: 300px;
+        height: 40px;
+        position: absolute;
+        margin-top: -40px;
+        font-size: 12px;
+        margin-left: 50px;
+      ">
+    Interval Size
+    <div style="position: relative; top: 22px; left: 20px" id="intervalSlider"></div>
+  </div>
+  <div id="hierarchy" style="
+        width: 300px;
+        height: calc(100% - 240px);
+        background: #fff;
+        border-top: 1px solid #ccc;
+      "></div>
+
+  <div id="chart1" style="
+        width: calc(100% - 300px);
+        height: calc(100% - 240px);
+        position: absolute;
+        left: 300px;
+        top: 140px;
+        background: #fff;
+        border: 1px solid #ccc;
+      "></div>
+  <div id="eventsWrapper" style="
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80%;
+        height: calc(100% - 40px);
+        transform: translateX(100%);
+        transition: 0.4s all ease;
+        background: white;
+        border: 1px solid silver;
+        z-index: 10;
+        box-shadow: -4px 0px 4px 0px rgba(0, 0, 0, 0.2);
+      ">
+    <div style="position: absolute; top: 8px; left: 20px">Events</div>
+    <div id="modalClose" onclick="hideEvents()" style="z-index: 11">
+      &times;
+    </div>
+    <div id="events" style="
+          width: 100%;
+          height: calc(100% - 40px);
+          margin-top: 40px;
+          position: absolute;
+          padding: 20px;
+        "></div>
+  </div>
+  <script>
+    var bucketSize = "1h";
+    var lenghtOfUserSelectedInterval = 0;
+    var intervalSlider;
+    var lineChart;
+    var availabilityChart;
+    var tsiClient;
+    var hierarchyCtrl;
+    var types;
+    var hierarcies;
+
+    var minDate = new Date("2024-01-01T00:00:00Z");
+
+    //enddate is today
+    var endDate = new Date();
+    //startdate is 24h ago
+    var startDate = new Date(endDate - 24 * 60 * 60 * 1000);
+    var brushActions;
+
+    window.onload = async function () {
+      (tsiClient = new TsiClient()), lineChart;
+
+      availabilityChart = new tsiClient.ux.AvailabilityChart(
+        document.getElementById("availability")
+      );
+      lineChart = new tsiClient.ux.LineChart(
+        document.getElementById("chart1")
+      );
+      intervalSlider = new tsiClient.ux.Slider(
+        document.getElementById("intervalSlider")
+      );
+
+      lenghtOfUserSelectedInterval = endDate - startDate;
+      brushActions = [
+        {
+          name: "Zoom",
+          action: async (from, to) => {
+            var newBucketSize = getDimensionAndIntegerForRangeAndBuckets(
+              new Date(from).valueOf(),
+              new Date(to).valueOf(),
+              100
+            );
+            await renderChart(new Date(from), new Date(to), newBucketSize);
+            availabilityChart.setBrush(new Date(from), new Date(to));
+          },
+        },
+        {
+          name: "Show Events",
+          action: async (from, to) => {
+            console.log("showing events");
+            var data = await getData(
+              new Date(from),
+              new Date(to),
+              bucketSize
+            );
+            var events = data.measurements
+              .map((measurement) => measurement.events)
+              .flat();
+            var eventsHtml = events
+              .map(
+                (event) => `<div>${event.timestamp} - ${event.value}</div>`
+              )
+              .join("");
+            document.getElementById("events").innerHTML = eventsHtml;
+            document.getElementById("eventsWrapper").style.transform =
+              "translateX(0)";
+          },
+        },
+      ];
+
+      var validBucketSizes = getValidBucketSizes(startDate, endDate);
+
+      bucketSize = getDimensionAndIntegerForRangeAndBuckets(
+        startDate.valueOf(),
+        endDate.valueOf(),
+        100
+      );
+
+      renderIntervalSlider(startDate, endDate, validBucketSizes, bucketSize);
+
+      // get availability, then render it
+      availabilityChart.render(
+        [{ availabilityCount: { "": {} } }],
+        {
+          legend: "hidden",
+          theme: "light",
+          color: "purple",
+          brushMoveEndAction: intervalChanged,
+          offset: "Local",
+          isCompact: false,
+          hideChartControlPanel: true,
+        },
+        {
+          range: {
+            from: minDate.toISOString(),
+            to: endDate.toISOString(),
+          },
+          intervalSize: bucketSize,
+        }
+      );
+
+      var monthAgo = new Date();
+      monthAgo.setMonth(monthAgo.getMonth() - 1);
+
+      availabilityChart.sparkLineChart.setBrushEndTime(endDate);
+      availabilityChart.sparkLineChart.setBrushStartTime(monthAgo);
+      availabilityChart.sparkLineChart.setBrush(monthAgo, endDate);
+
+      await renderChart(startDate, endDate, bucketSize);
+
+      //---------------------Hierarchy Control---------------------
+
+
+      console.log("rendering hierarchy");
+      hierarchyCtrl = new tsiClient.ux.HierarchyNavigation(
+        document.getElementById("hierarchy")
+      );
+      //hierarchyCtrl.render({}, {theme: 'light',},types,hierarcies);
+      hierarchyCtrl.render(searchFunction, {
+        theme: "light",
+        onInstanceClick: (instance) => onInstanceClick(instance),
+      }, [10, 14]);
+      console.log("hierarchy rendered");
+    };
+
+    async function searchFunction(searchString) {
+      console.log("searching for ", searchString);
+      var data = await fetch("./data/search.json");
+      data = await data.json();
+      return data;
+    }
+
+    async function getTokenFakeFunction() {
+      return "fakeToken";
+    }
+
+    function onInstanceClick(instance) {
+      console.log("instance clicked");
+      console.log(instance);
+    }
+
+    function renderIntervalSlider(
+      from,
+      to,
+      newValidBucketSizes,
+      newBucketSize
+    ) {
+      validBucketSizes = newValidBucketSizes;
+      bucketSize = newBucketSize;
+      intervalSlider.render(
+        validBucketSizes.map((n) => ({
+          label: n.toString(),
+          action: () => renderChart(from, to, n),
+        })),
+        { theme: "light", throttleSlider: true },
+        300,
+        bucketSize
+      );
+    }
+
+    // get results from server and render them in a line chart
+    async function renderChart(from, to, bs, offset) {
+      console.log(from, to)
+      var dataToRender = await getData(from, to, bs);
+      //convert data to tsi format
+      var transformedResult = transformDataToTsiFormat(
+        dataToRender,
+        "timestamp",
+        "value"
+      );
+
+      if (!offset) {
+        offset = "Local"
+      }
+
+      lineChart.render(transformedResult, {
+        theme: "light",
+        grid: true,
+        tooltip: true,
+        brushContextMenuActions: brushActions,
+        autoTriggerBrushContextMenu: true,
+        offset: offset,
+        color: "#136BFB",
+        legend: "compact",
+      });
+    }
+
+    async function getData(from, to, bs) {
+      console.log(
+        "getting data from " + from + " to " + to + " with bucket size " + bs
+      );
+
+      //for now we will read data from data folder and return it
+      //later we will call the server to get the data
+      return await readDataFromFile(from, to, bs);
+    }
+
+    async function readDataFromFile(from, to, bs) {
+      var data = [];
+      //read file from using fetch
+      var fileData = await fetch("./data/query1.json");
+
+      var data = await fileData.json();
+
+      //lets read the data from another file
+      var fileData2 = await fetch("./data/query2.json");
+
+      var data2 = await fileData2.json();
+
+      //add the data from file2 to data as different measurement
+      data.measurements = data.measurements.concat(data2.measurements);
+      return data;
+    }
+
+    function hideEvents() {
+      document.getElementById("eventsWrapper").style.transform =
+        "translateX(100%)";
+      setTimeout(function () {
+        document.getElementById("events").innerHTML = "";
+      }, 400);
+    }
+
+    var intervalChanged = (from, to, offset) => {
+
+      console.log("aaa", from, offset)
+
+      var fromInUtc = from.toISOString();
+      console.log("from in utc", fromInUtc);
+
+
+      var differenceBetweenDates = to - from;
+
+      //if the user has changed the lenght of the interval then we need to update the interval slider with new bucket sizes
+      if (differenceBetweenDates !== lenghtOfUserSelectedInterval) {
+        lenghtOfUserSelectedInterval = differenceBetweenDates;
+        var validBucketSizes = getValidBucketSizes(+from, +to);
+        bucketSize = getNewBucketSize(
+          validBucketSizes,
+          validBucketSizes,
+          bucketSize
+        );
+        renderIntervalSlider(from, to, validBucketSizes, bucketSize);
+      }
+
+      renderChart(new Date(from), new Date(to), bucketSize, offset);
+    };
+
+    // Utility functions for determining bucket size when you adjust the timeframe
+    var validTimeIntervals = (() => {
+      let validTimeIntervals = [];
+      for (let i = 1; i < 1000; i++) {
+        if (1000 % i === 0) {
+          validTimeIntervals.push(i + "ms");
+        }
+      }
+      for (let i = 1; i < 60; i++) {
+        if (60 % i === 0) {
+          validTimeIntervals.push(i + "s");
+        }
+      }
+      for (let i = 1; i < 60; i++) {
+        if (60 % i === 0) {
+          validTimeIntervals.push(i + "m");
+        }
+      }
+      for (let i = 1; i < 24; i++) {
+        if (24 % i === 0) {
+          validTimeIntervals.push(i + "h");
+        }
+      }
+      for (let i = 1; i < 8; i++) {
+        validTimeIntervals.push(i + "d");
+      }
+      return validTimeIntervals;
+    })();
+
+    var getDimensionAndIntegerForRangeAndBuckets = (
+      zoomMin,
+      zoomMax,
+      targetBuckets
+    ) => {
+      let timeRangeInMillis = Math.max(zoomMax - zoomMin, 1);
+      let bucketSizeInMillis = Math.ceil(timeRangeInMillis / targetBuckets);
+      let int, dim;
+
+      if (bucketSizeInMillis < 1000) {
+        dim = "ms";
+        int = bucketSizeInMillis;
+      } else if (bucketSizeInMillis < 1000 * 60) {
+        dim = "s";
+        int = Math.ceil(bucketSizeInMillis / 1000);
+      } else if (bucketSizeInMillis < 1000 * 60 * 60) {
+        dim = "m";
+        int = Math.ceil(bucketSizeInMillis / (1000 * 60));
+      } else if (bucketSizeInMillis < 1000 * 60 * 60 * 24) {
+        dim = "h";
+        int = Math.ceil(bucketSizeInMillis / (1000 * 60 * 60));
+      } else {
+        dim = "d";
+        int = Math.ceil(bucketSizeInMillis / (1000 * 60 * 60 * 24));
+      }
+
+      // round to next smallest interval that is a valid interval
+      let idx = -1;
+      while (idx === -1) {
+        idx = validTimeIntervals.indexOf(int + dim);
+        if (idx === -1) {
+          int--;
+        }
+      }
+
+      return validTimeIntervals[idx];
+    };
+
+    var getValidBucketSizes = (fromMillis, toMillis) => {
+      let minIntAndDim = getDimensionAndIntegerForRangeAndBuckets(
+        fromMillis,
+        toMillis,
+        1000
+      );
+      let maxIntAndDim = getDimensionAndIntegerForRangeAndBuckets(
+        fromMillis,
+        toMillis,
+        1
+      );
+      let minIdx = validTimeIntervals.indexOf(minIntAndDim);
+      let maxIdx = validTimeIntervals.indexOf(maxIntAndDim);
+      return validTimeIntervals.slice(minIdx, maxIdx + 1);
+    };
+
+    var getNewBucketSize = (
+      oldValidBucketSizes,
+      newValidBucketSizes,
+      oldBucketSize
+    ) => {
+      //return middle bucket size
+      let oldIdx = oldValidBucketSizes.indexOf(oldBucketSize);
+      let newIdx = Math.floor(newValidBucketSizes.length / 2);
+      return newValidBucketSizes[newIdx];
+    };
+
+    function transformDataToTsiFormat(data, timestampColumn, valueColumn) {
+      var result = [];
+
+      //foreach measurement in measurements
+      result = data.measurements.map((measurement) => {
+        var lines = {};
+
+        lines[""] = measurement.events.reduce((acc, event) => {
+          acc[event.timestamp] = { value: +event.value };
+          return acc;
+        }, {});
+        return { [measurement.measurement]: lines };
+      });
+      return result;
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+import * as d3 from 'd3';
+import { Y as YAxisStates } from './Enums-CjbndcX3.js';
+
+declare class Utils {
+    static guidForNullTSID: string;
+    static formatYAxisNumber(val: number): string;
+    static getStackStates(): typeof YAxisStates;
+    static parseTimeInput(inputString: string): number;
+    static findClosestTime(prevMillis: number, timeMap: any): number;
+    static getValueOfVisible(d: any, visibleMeasure: string): any;
+    static isStartAt(startAtString?: string, searchSpan?: any): boolean;
+    static parseShift(shiftString: string, startAtString?: any, searchSpan?: any): number;
+    static adjustStartMillisToAbsoluteZero(fromMillis: any, bucketSize: any): number;
+    static bucketSizeToTsqInterval(bucketSize: string): string;
+    static createEntityKey(aggName: string, aggIndex: number): string;
+    static getColorForValue(chartDataOptions: any, value: any): any;
+    static rollUpContiguous(data: any): any;
+    static formatOffsetMinutes(offset: any): string;
+    static getOffsetMinutes(offset: any, millis: number): any;
+    static offsetUTC(date: Date): Date;
+    static getMinutesToUTC(offset: any, millisInOffset: number): number;
+    static addOffsetGuess(timezoneName: any): string;
+    static timezoneAbbreviation(timezoneName: any): string;
+    static createTimezoneAbbreviation(offset: any): string;
+    static parseTimezoneName(timezoneRaw: any): any;
+    static convertTimezoneToLabel(timezone: any, locdLocal?: string): string;
+    static rangeTimeFormat(rangeMillis: number): string;
+    static subDateTimeFormat(is24HourTime: any, usesSeconds: any, usesMillis: any): string;
+    static timeFormat(usesSeconds?: boolean, usesMillis?: boolean, offset?: any, is24HourTime?: boolean, shiftMillis?: number, timeFormat?: string, locale?: string): (d: any) => string;
+    static splitTimeLabel(text: any): void;
+    static getUTCHours(d: Date, is24HourTime?: boolean): number;
+    static UTCTwelveHourFormat(d: Date): string;
+    static getAgVisible(displayState: any, aggI: string, splitBy: string): any;
+    static getAgVisibleMeasure(displayState: any, aggI: string, splitBy: string): any;
+    static createSeriesTypeIcon(seriesType: string, selection: any): void;
+    static strip(text: any): string;
+    static stripForConcat(text: any): any;
+    static setSeriesLabelSubtitleText(subtitle: any, isInFocus?: boolean): void;
+    static revertAllSubtitleText(markerValues: any, opacity?: number): void;
+    static generateColors(numColors: number, includeColors?: string[]): any[];
+    static convertFromLocal(date: Date): Date;
+    static adjustDateFromTimezoneOffset(date: Date): Date;
+    static offsetFromUTC(date: Date, offset?: number): Date;
+    static offsetToUTC(date: Date, offset?: number): Date;
+    static parseUserInputDateTime(timeText: any, offset: any): number;
+    static getBrighterColor(color: string): any;
+    static createSplitByColors(displayState: any, aggKey: string, ignoreIsOnlyAgg?: boolean): any[];
+    static colorSplitBy(displayState: any, splitByIndex: number, aggKey: string, ignoreIsOnlyAgg?: boolean): any;
+    static getTheme(theme: any): string;
+    static clearSelection(): void;
+    static mark(filter: any, text: any): any;
+    static hash(str: any): number;
+    static guid(): string;
+    static createValueFilter(aggregateKey: any, splitBy: any): (d: any, j: number) => boolean;
+    static downloadCSV(csvString: string, csvName?: string): void;
+    static sanitizeString(str: any, type: String): any;
+    static focusOnEllipsisButton(renderTarget: any): void;
+    static createDownloadEllipsisOption(csvStringGenerator: any, action?: () => void, downloadLabel?: string): {
+        iconClass: string;
+        label: string;
+        action: () => void;
+        description: string;
+    };
+    static createControlPanel(renderTarget: any, legendWidth: number, topChartMargin: number, chartOptions: any): d3.Selection<HTMLDivElement, unknown, null, undefined>;
+    static escapeQuotesCommasAndNewlines(stringToEscape: string): string;
+    static getNonNumericHeight(rawHeight: number): number;
+    static getControlPanelWidth(renderTarget: any, legendWidth: any, isLegendShown: any): number;
+    static getValueOrDefault(chartOptionsObj: any, propertyName: any, defaultValue?: any): any;
+    static safeNotNullOrUndefined(valueLambda: any): boolean;
+    static equalToEventTarget: (current: any, event: any) => boolean;
+    static getAggKeys(data: any): any;
+    static roundToMillis(rawTo: any, bucketSize: any): number;
+    static mergeSeriesForScatterPlot(chartData: any, scatterMeasures: any): {
+        [x: string]: {
+            "": {};
+        };
+    };
+    static getScatterPlotMeasureNames(chartData: any, scatterMeasures: any): {
+        X_MEASURE: string;
+        Y_MEASURE: string;
+        R_MEASURE: string;
+    };
+    static isKeyDownAndNotEnter: (e: any) => boolean;
+    static getMinWarmTime(warmStoreFrom: any, retentionString: any): Date;
+    static standardizeTSStrings(rawData: any): any[];
+    static cullValuesOutOfRange(availabilityDistribution: any, minDateString: string, maxDateString: string): any[];
+    static mergeAvailabilities(warmAvailability: any, coldAvailability: any, retentionString?: any): any;
+    static languageGuess(): string;
+    static getInstanceKey: (instance: any) => any;
+    static stripNullGuid: (str: any) => any;
+    static getTimeSeriesIdString: (instance: any) => any;
+    static getTimeSeriesIdToDisplay: (instance: any, emptyDisplayString: any) => any;
+    static getHighlightedTimeSeriesIdToDisplay: (instance: any) => any;
+    static instanceHasEmptyTSID: (instance: any) => boolean;
+    static appendFormattedElementsFromString: (targetElem: any, str: any, options?: {
+        additionalClassName?: string;
+        inSvg?: boolean;
+        splitByTag?: string;
+    }) => void;
+    static escapedTsidForExactSearch: (tsid: string) => string;
+    static memorySizeOf(obj: any): number;
+}
+
+export { Utils as U };
