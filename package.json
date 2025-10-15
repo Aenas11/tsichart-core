@@ -1,6 +1,6 @@
 {
   "name": "tsichart-core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Time Series Interactive Charts - A comprehensive JavaScript library for visualizing time series data with interactive charts including line charts, bar charts, pie charts, heatmaps, scatter plots, and more.",
   "keywords": [
     "timeseries",
@@ -20,6 +20,21 @@
   "main": "tsiclient.js",
   "types": "tsiclient.d.ts",
   "module": "tsiclient.js",
+  "exports": {
+    ".": {
+      "types": "./tsiclient.d.ts",
+      "import": "./tsiclient.js",
+      "require": "./tsiclient.js",
+      "default": "./tsiclient.js"
+    },
+    "./tsiclient.css": "./tsiclient.css",
+    "./tsiclient.min.css": "./tsiclient.min.css",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    }
+  },
   "sideEffects": [
     "*.css",
     "*.scss"
