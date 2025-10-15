@@ -1,0 +1,15 @@
+{
+  "name": "tsichart-import-test",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Test project to verify tsichart-core imports work correctly",
+  "scripts": {
+    "test": "node test-imports.mjs",
+    "install-local": "npm install ../build_artifacts/tsichart-core-*.tgz"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "tsichart-core": "file:../build_artifacts/tsichart-core-1.0.4.tgz"
+  }
+}

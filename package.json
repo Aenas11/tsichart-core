@@ -1,6 +1,6 @@
 {
   "name": "tsichart-core",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Time Series Interactive Charts - A comprehensive JavaScript library for visualizing time series data with interactive charts including line charts, bar charts, pie charts, heatmaps, scatter plots, and more.",
   "keywords": [
     "timeseries",
@@ -73,10 +73,9 @@
     "rollup": "rollup --c",
     "webpack": "webpack --config webpack.prod.js",
     "webpack_dev": "webpack --config webpack.dev.js",
-    "copy-package": "shx cp package.json dist/",
-    "copy-readme": "shx cp README.MD dist/",
-    "pack": "cd dist && npm pack && shx mv *.tgz ../build_artifacts",
-    "post-build": "npm run copy-package && npm run copy-readme && npm run pack",
+    "copy-root-files": "shx cp dist/tsiclient.js . && shx cp dist/tsiclient.d.ts . && shx cp dist/tsiclient.css . && shx cp dist/tsiclient.min.css .",
+    "pack": "shx mkdir -p build_artifacts && npm pack && shx mv *.tgz build_artifacts/",
+    "post-build": "npm run copy-root-files && npm run pack",
     "umd-analyze": "webpack-bundle-analyzer ./build_artifacts/umd_stats.json"
   },
   "devDependencies": {
