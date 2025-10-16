@@ -4,6 +4,6 @@
 export const LineChart = {
     name: 'LineChart',
     setup() {
-        throw new Error('@tsichart/vue is under development. Use @tsichart/core directly for now.');
+        throw new Error('tsichart-vue is under development. Use tsichart-core directly for now.');
     }
 };

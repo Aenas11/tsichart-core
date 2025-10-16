@@ -1,4 +1,4 @@
-# @tsichart/core - Time Series Interactive Charts
+# tsichart-core - Time Series Interactive Charts
 
 A powerful, flexible JavaScript library for visualizing time series data with **interactive** charts. Built with TypeScript and D3.js, this library provides a rich set of chart components including line charts, bar charts, pie charts, heatmaps, scatter plots, and more.
 

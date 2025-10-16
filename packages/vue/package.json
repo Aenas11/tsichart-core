@@ -1,5 +1,5 @@
 {
-  "name": "@tsichart/vue",
+  "name": "tsichart-vue",
   "version": "2.0.0",
   "description": "Vue components for TSIChart",
   "keywords": [
@@ -38,7 +38,7 @@
     "clean": "shx rm -rf dist || true"
   },
   "peerDependencies": {
-    "@tsichart/core": "workspace:*",
+    "tsichart-core": "workspace:*",
     "vue": "^3.0.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 {
-  "name": "@tsichart/react",
+  "name": "tsichart-react",
   "version": "2.0.0",
   "description": "React components for TSIChart",
   "keywords": [
@@ -37,7 +37,7 @@
     "clean": "shx rm -rf dist || true"
   },
   "peerDependencies": {
-    "@tsichart/core": "workspace:*",
+    "tsichart-core": "workspace:*",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
   },

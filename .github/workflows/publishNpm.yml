@@ -56,11 +56,11 @@ jobs:
 
       # Future: Publish React and Vue packages when ready
       # - name: Publish React package
-      #   run: pnpm --filter @tsichart/react publish --provenance --access public --no-git-checks
+      #   run: pnpm --filter tsichart-react publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       # - name: Publish Vue package
-      #   run: pnpm --filter @tsichart/vue publish --provenance --access public --no-git-checks
+      #   run: pnpm --filter tsichart-vue publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

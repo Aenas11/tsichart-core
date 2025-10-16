@@ -1,5 +1,5 @@
 /**
- * @tsichart/core - Framework-agnostic time series charting library
+ * tsichart-core - Framework-agnostic time series charting library
  * 
  * This is the main entry point for the core package.
  * All exports are tree-shakeable and don't include side effects (except styles).
@@ -80,4 +80,4 @@ export { Strings } from './models/Strings';
 export { default as Utils } from './utils';
 
 // Note: Styles are imported separately
-// Users should import '@tsichart/core/styles' to get CSS
+// Users should import 'tsichart-core/styles' to get CSS
