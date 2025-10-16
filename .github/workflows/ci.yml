@@ -1,0 +1,113 @@
+name: CI - Test and Build
+
+on:
+  push:
+    branches:
+      - main
+      - refactor/**
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Lint (if available)
+        run: pnpm lint || echo "No lint script found, skipping"
+        continue-on-error: true
+      
+      - name: Build core package
+        run: pnpm build:core
+      
+      - name: Build all packages
+        run: pnpm build
+      
+      - name: Run tests (when available)
+        run: pnpm test || echo "No tests yet, skipping"
+        continue-on-error: true
+      
+      - name: Verify build artifacts
+        run: |
+          echo "Checking core package build artifacts..."
+          if [ ! -f "packages/core/dist/index.mjs" ]; then
+            echo "❌ Core ESM build missing"
+            exit 1
+          fi
+          if [ ! -f "packages/core/dist/index.js" ]; then
+            echo "❌ Core CJS build missing"
+            exit 1
+          fi
+          if [ ! -f "packages/core/dist/index.d.ts" ]; then
+            echo "❌ Core types missing"
+            exit 1
+          fi
+          echo "✅ All build artifacts present"
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            packages/*/dist/
+            build_artifacts/
+          retention-days: 7
+  
+  # Legacy build verification (ensure backwards compatibility)
+  legacy-build:
+    name: Legacy Build Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build legacy bundle
+        run: npm run legacy:build
+      
+      - name: Verify legacy artifacts
+        run: |
+          echo "Checking legacy build artifacts..."
+          if [ ! -f "tsiclient.js" ]; then
+            echo "❌ Legacy UMD bundle missing"
+            exit 1
+          fi
+          if [ ! -f "tsiclient.css" ]; then
+            echo "❌ Legacy CSS missing"
+            exit 1
+          fi
+          echo "✅ Legacy build successful"

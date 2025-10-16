@@ -1,5 +1,5 @@
-import {Component} from "./Component";
-import Utils from '../Utils';
+import { Component } from "./component";
+import Utils from '../utils';
 
 class Plot extends Component {
     protected chartHeight;
@@ -13,21 +13,21 @@ class Plot extends Component {
     protected plotDataType: string;
 
 
-	constructor(renderTarget: Element){
+    constructor(renderTarget: Element) {
         super(renderTarget);
     }
 
-    protected getVisibleSeries (aggKey) { 
+    protected getVisibleSeries(aggKey) {
         return Object.keys(this.chartComponentData.timeArrays[aggKey]).filter((s) => {
             return this.chartComponentData.isSplitByVisible(aggKey, s);
         });
     }
 
-    protected createGradientKey (d, splitByIndex, i) {
+    protected createGradientKey(d, splitByIndex, i) {
         return d.aggregateKey.replace(/^[^a-z]+|[^\w:.-]+/gi, "") + '_' + splitByIndex + '_' + i;
     }
 
-    protected addGradientStops (d, gradient) {
+    protected addGradientStops(d, gradient) {
 
         gradient.selectAll('stop').remove();
 
@@ -63,15 +63,15 @@ class Plot extends Component {
 
             gradient.append('stop')
                 .attr("offset", (newFraction * 100) + "%")
-                .attr("stop-color",  this.getColorForValue(currMeasure))
+                .attr("stop-color", this.getColorForValue(currMeasure))
                 .attr("stop-opacity", 1);
-            return newFraction; 
+            return newFraction;
         }, 0);
     }
 
 
 
-    protected createBackdropRect (isVisible) {
+    protected createBackdropRect(isVisible) {
         this.backdropRect = this.aggregateGroup.selectAll('.tsi-backdropRect')
             .data([isVisible]);
         this.backdropRect.enter().append('rect')
@@ -86,18 +86,18 @@ class Plot extends Component {
     }
 
 
-    protected getColorForValue (value) {
+    protected getColorForValue(value) {
         return Utils.getColorForValue(this.chartDataOptions, value);
     }
 
-    protected getVisibleMeasures (measures) {
+    protected getVisibleMeasures(measures) {
         return Object.keys(measures).filter((measure) => {
             return measures[measure] !== 0;
         });
     }
 
-    protected hasData (d) {
+    protected hasData(d) {
         return d.measures && (Object.keys(d.measures).length !== 0);
     }
 }
-export {Plot}
+export { Plot }

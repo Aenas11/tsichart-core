@@ -1,75 +1,25 @@
 {
-  "name": "tsichart-core",
-  "version": "1.0.5",
-  "description": "Time Series Interactive Charts - A comprehensive JavaScript library for visualizing time series data with interactive charts including line charts, bar charts, pie charts, heatmaps, scatter plots, and more.",
-  "keywords": [
-    "timeseries",
-    "time-series",
-    "charts",
-    "visualization",
-    "interactive",
-    "data-viz",
-    "d3",
-    "typescript",
-    "analytics",
-    "dashboard",
-    "tsichart",
-    "line-chart",
-    "heatmap"
+  "name": "tsichart-workspace",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Monorepo for TSIChart - Time Series Interactive Charts library and framework wrappers",
+  "workspaces": [
+    "packages/*"
   ],
-  "main": "tsiclient.js",
-  "types": "tsiclient.d.ts",
-  "module": "tsiclient.js",
-  "exports": {
-    ".": {
-      "types": "./tsiclient.d.ts",
-      "import": "./tsiclient.js",
-      "require": "./tsiclient.js",
-      "default": "./tsiclient.js"
-    },
-    "./tsiclient.css": "./tsiclient.css",
-    "./tsiclient.min.css": "./tsiclient.min.css",
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "default": "./dist/*.js"
-    }
-  },
-  "sideEffects": [
-    "*.css",
-    "*.scss"
-  ],
-  "files": [
-    "dist",
-    "tsiclient.js",
-    "tsiclient.d.ts",
-    "tsiclient.css",
-    "tsiclient.min.css",
-    "README.md",
-    "LICENSE"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Aenas11/tsichart-core.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Aenas11/tsichart-core/issues"
-  },
-  "homepage": "https://aenas11.github.io/tsichart-core/",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "author": "Alex Sysoiev <alexander.sysoev@gmail.com>",
-  "license": "MIT",
-  "engines": {
-    "node": "^22.5.1",
-    "npm": "^10.8.2"
-  },
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.js",
-    "build": "npm run clean && npm run rollup && npm run webpack && npm run post-build",
-    "clean": "shx rm -rf dist && shx rm -rf build_artifacts",
+    "build": "pnpm -r build",
+    "build:core": "pnpm --filter @tsichart/core build",
+    "build:react": "pnpm --filter @tsichart/react build",
+    "build:vue": "pnpm --filter @tsichart/vue build",
+    "test": "pnpm -r test",
+    "test:core": "pnpm --filter @tsichart/core test",
+    "test:coverage": "pnpm -r test:coverage",
+    "test:watch": "pnpm -r test:watch",
+    "clean": "pnpm -r clean && shx rm -rf build_artifacts",
+    "lint": "pnpm -r lint",
+    "start": "pnpm --filter @tsichart/core start",
+    "legacy:start": "webpack-dev-server --config webpack.dev.js",
+    "legacy:build": "npm run clean && npm run rollup && npm run webpack && npm run post-build",
     "rollup": "rollup --c",
     "webpack": "webpack --config webpack.prod.js",
     "webpack_dev": "webpack --config webpack.dev.js",

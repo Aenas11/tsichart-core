@@ -1,9 +1,9 @@
 import * as d3 from "d3";
 import "./ModelAutocomplete.scss";
 import "awesomplete";
-import { Component } from "../../Interfaces/Component";
-import { ChartOptions } from "../../Models/ChartOptions";
-import Utils from "../../Utils";
+import { Component } from "../../interfaces/Component";
+import { ChartOptions } from "../../models/ChartOptions";
+import Utils from "../../utils";
 
 class ModelAutocomplete extends Component {
   public chartOptions: any = new ChartOptions(); // TODO handle onkeyup and oninput in chart options

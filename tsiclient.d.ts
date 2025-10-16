@@ -5,7 +5,7 @@ import './TemporalXAxisComponent-Rct4QIMm.js';
 import './ChartVisualizationComponent-Bexf_VAB.js';
 import './ChartComponent-C2885THZ.js';
 import './Enums-CfRCouwc.js';
-import './Component-BLyu6yjS.js';
+import './component-BLyu6yjS.js';
 import './Interfaces-Cz517_bs.js';
 import './ChartComponentData-CIAyk1fB.js';
 import './EllipsisMenu.js';

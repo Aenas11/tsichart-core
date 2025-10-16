@@ -5,7 +5,7 @@ import './_tslib-4dYY7GO-.js';
 import 'd3';
 import 'd3-voronoi';
 import './Legend-DGAiZUQa.js';
-import './Component-DsN0rwKO.js';
+import './component-DsN0rwKO.js';
 import './TemporalXAxisComponent-BYacchyp.js';
 import './ChartVisualizationComponent-CiS_vV9J.js';
 import './ChartComponent-Da0XRs8u.js';

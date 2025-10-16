@@ -1,5 +1,5 @@
-import Utils from "../Utils";
-import {ChartComponentData} from "./ChartComponentData";
+import Utils from "../utils";
+import { ChartComponentData } from "./ChartComponentData";
 import * as d3 from 'd3';
 
 class HeatmapData {
@@ -17,7 +17,7 @@ class HeatmapData {
     public allValues: Array<any>;
 
 
-	constructor(chartComponentData: ChartComponentData, aggKey: string){
+    constructor(chartComponentData: ChartComponentData, aggKey: string) {
         this.aggKey = aggKey;
         this.chartComponentData = chartComponentData;
         this.chartComponentData.isFromHeatmap = true;
@@ -26,16 +26,16 @@ class HeatmapData {
         });
         this.numRows = this.visibleSBs.length;
         this.from = new Date(chartComponentData.displayState[aggKey].aggregateExpression.searchSpan.from);
-        this.to =  new Date(chartComponentData.displayState[aggKey].aggregateExpression.searchSpan.to);
+        this.to = new Date(chartComponentData.displayState[aggKey].aggregateExpression.searchSpan.to);
         this.bucketSize = Utils.parseTimeInput(chartComponentData.displayState[aggKey].aggregateExpression.searchSpan.bucketSize);
         this.createTimeValues();
     }
 
-    private adjustStartTime () {
+    private adjustStartTime() {
         return new Date(Utils.adjustStartMillisToAbsoluteZero(new Date(this.from).valueOf(), this.bucketSize));
     }
 
-    private createTimeValues () {
+    private createTimeValues() {
         this.timeValues = {};
         this.allValues = [];
         //turn time array into an object keyed by timestamp 
@@ -58,7 +58,7 @@ class HeatmapData {
             this.chartComponentData.timeArrays[this.aggKey][splitBy].forEach((valueObject, colI) => {
                 var timestamp = new Date(valueObject.dateTime.valueOf()).toISOString();
                 var visibleMeasure = this.chartComponentData.getVisibleMeasure(this.aggKey, splitBy);
-                if (this.timeValues[timestamp]) {                    
+                if (this.timeValues[timestamp]) {
                     this.timeValues[timestamp][splitBy].value = valueObject.measures ? valueObject.measures[visibleMeasure] : null;
                     if (Utils.safeNotNullOrUndefined(() => valueObject.measures[visibleMeasure]))
                         this.allValues.push(valueObject.measures[visibleMeasure]);
@@ -67,4 +67,4 @@ class HeatmapData {
         });
     }
 }
-export {HeatmapData}
+export { HeatmapData }

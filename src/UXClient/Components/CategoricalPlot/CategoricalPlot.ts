@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
-import { Plot } from '../../Interfaces/Plot';
-import Utils from '../../Utils';
-import { DataTypes } from "../../Constants/Enums";
-import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../Constants/Constants";
+import { Plot } from '../../interfaces/Plot';
+import Utils from '../../utils';
+import { DataTypes } from "../../constants/Enums";
+import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../constants/Constants";
 
 const TOPMARGIN = 4;
 
@@ -14,12 +14,12 @@ class CategoricalPlot extends Plot {
     private categoricalMouseout;
     private splitBysGroup;
 
-    constructor (svgSelection) {
+    constructor(svgSelection) {
         super(svgSelection);
         this.plotDataType = DataTypes.Categorical;
     }
 
-    private onMouseover (d, rectWidth) {
+    private onMouseover(d, rectWidth) {
         let visibleMeasures = this.getVisibleMeasures(d.measures);
 
         this.hoverRect.attr('visibility', 'visible')
@@ -33,12 +33,12 @@ class CategoricalPlot extends Plot {
             });
     }
 
-    private onMouseout () {
+    private onMouseout() {
         this.hoverRect.attr('visibility', 'hidden');
         this.categoricalMouseout();
     }
 
-    private createHoverRect () {
+    private createHoverRect() {
         if (!this.hoverRect) {
             this.hoverRect = this.chartGroup.append('rect')
                 .attr('class', 'tsi-categoricalHoverRect')
@@ -49,25 +49,25 @@ class CategoricalPlot extends Plot {
         }
     }
 
-    private getSeriesEndDate () {
+    private getSeriesEndDate() {
         if (this.chartDataOptions.searchSpan) {
             return new Date(this.chartDataOptions.searchSpan.to);
         }
         return new Date(this.chartComponentData.toMillis);
     }
 
-    private getBucketEndDate (d, i) {
+    private getBucketEndDate(d, i) {
         let data = this.chartComponentData.timeArrays[d.aggregateKey][d.splitBy];
         if (i + 1 < data.length) {
-            return data[i+1].dateTime; 
+            return data[i + 1].dateTime;
         } else {
             let shouldRoundEnd = Utils.safeNotNullOrUndefined(() => this.chartDataOptions.searchSpan) && Utils.safeNotNullOrUndefined(() => this.chartDataOptions.searchSpan.bucketSize);
-            return shouldRoundEnd ? Utils.roundToMillis(this.getSeriesEndDate().valueOf(), Utils.parseTimeInput(this.chartDataOptions.searchSpan.bucketSize)) : this.getSeriesEndDate();        
+            return shouldRoundEnd ? Utils.roundToMillis(this.getSeriesEndDate().valueOf(), Utils.parseTimeInput(this.chartDataOptions.searchSpan.bucketSize)) : this.getSeriesEndDate();
         }
     }
 
-    public render (chartOptions, visibleAggI, agg, aggVisible: boolean, aggregateGroup, chartComponentData, yExtent,  
-        chartHeight, visibleAggCount, colorMap, previousAggregateData, x, areaPath, strokeOpacity, y, yMap, defs, 
+    public render(chartOptions, visibleAggI, agg, aggVisible: boolean, aggregateGroup, chartComponentData, yExtent,
+        chartHeight, visibleAggCount, colorMap, previousAggregateData, x, areaPath, strokeOpacity, y, yMap, defs,
         chartDataOptions, previousIncludeDots, yTopAndHeight, chartGroup, categoricalMouseover, categoricalMouseout) {
         this.chartOptions = chartOptions;
         this.yTop = yTopAndHeight[0];
@@ -90,18 +90,18 @@ class CategoricalPlot extends Plot {
         }
 
         let gradientData = [];
-        
+
         var durationFunction = (d) => {
             let previousUndefined = previousAggregateData.get(this) === undefined;
             return (self.chartOptions.noAnimate || previousUndefined) ? 0 : self.TRANSDURATION
         }
 
-        let self = this;    
-        this.createHoverRect(); 
+        let self = this;
+        this.createHoverRect();
 
         let series: Array<string> = this.getVisibleSeries(aggKey);
 
-        let heightPerSeries = Math.max((self.chartDataOptions.height - (series.length * TOPMARGIN))/ series.length, 0);
+        let heightPerSeries = Math.max((self.chartDataOptions.height - (series.length * TOPMARGIN)) / series.length, 0);
         let splitByGroups = this.splitBysGroup.selectAll(".tsi-splitByGroup")
             .data(series, (d) => {
                 return d.splitBy;
@@ -123,13 +123,13 @@ class CategoricalPlot extends Plot {
                     var xPos1 = Math.max(self.x(new Date(d.dateTime)), 0);
                     var xPos2 = self.x(self.getBucketEndDate(d, i));
                     return Math.max(xPos2 - xPos1, 1);
-                }	
+                }
 
                 const categoricalBucketsEntered = categoricalBuckets.enter()
                     .append("rect")
                     .attr("class", "tsi-valueElement tsi-categoricalBucket")
                     .merge(categoricalBuckets)
-                    .style("visibility", (d: any) => { 
+                    .style("visibility", (d: any) => {
                         return (self.chartComponentData.isSplitByVisible(aggKey, splitBy) && self.hasData(d)) ? "visible" : "hidden";
                     })
                     .on('mouseover', (event, d: any) => {
@@ -168,13 +168,13 @@ class CategoricalPlot extends Plot {
                     });
                 categoricalBuckets.exit().remove();
             });
-            splitByGroups.exit().remove();
-        
+        splitByGroups.exit().remove();
+
         //corresponding linear gradients
         let gradients = this.defs.selectAll('linearGradient')
-                        .data(gradientData, (d) => {
-                            return d[1].splitBy;
-                        });
+            .data(gradientData, (d) => {
+                return d[1].splitBy;
+            });
         let enteredGradients = gradients.enter()
             .append('linearGradient')
             .attr("x2", "0%")
@@ -186,7 +186,7 @@ class CategoricalPlot extends Plot {
                 self.addGradientStops(d[1], d3.select(this));
             });
         gradients.exit().remove();
-        
+
     }
 }
 export default CategoricalPlot;

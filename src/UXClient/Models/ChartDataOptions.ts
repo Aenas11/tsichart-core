@@ -1,6 +1,6 @@
-import { InterpolationFunctions, DataTypes, EventElementTypes } from "../Constants/Enums";
-import Utils from "../Utils";
-import { HorizontalMarker } from '../Utils/Interfaces'
+import { InterpolationFunctions, DataTypes, EventElementTypes } from "../constants/Enums";
+import Utils from "../utils";
+import { HorizontalMarker } from '../utils/Interfaces'
 
 const DEFAULT_HEIGHT = 40;
 // Represents an expression that is suitable for use as the expression options parameter in a chart component
@@ -38,7 +38,7 @@ class ChartDataOptions {
     public isVariableAliasShownOnTooltip: boolean;
     public horizontalMarkers: Array<HorizontalMarker>;
 
-    constructor (optionsObject: Object){
+    constructor(optionsObject: Object) {
         this.searchSpan = Utils.getValueOrDefault(optionsObject, 'searchSpan');
         this.measureTypes = Utils.getValueOrDefault(optionsObject, 'measureTypes');
         this.color = Utils.getValueOrDefault(optionsObject, 'color');
@@ -72,4 +72,4 @@ class ChartDataOptions {
         this.horizontalMarkers = Utils.getValueOrDefault(optionsObject, 'horizontalMarkers', []);
     }
 }
-export {ChartDataOptions}
+export { ChartDataOptions }

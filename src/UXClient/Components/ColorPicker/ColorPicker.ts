@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
-import { Component } from '../../Interfaces/Component';
-import Utils from '../../Utils';
+import { Component } from '../../interfaces/Component';
+import Utils from '../../utils';
 import './ColorPicker.scss';
-import { KeyCodes } from '../../Constants/Enums';
+import { KeyCodes } from '../../constants/Enums';
 
 interface ColorPickerOptions {
     theme?: string,
@@ -14,18 +14,18 @@ interface ColorPickerOptions {
     onClick?: (event: any) => void
 };
 
-class ColorPicker extends Component{
+class ColorPicker extends Component {
     private colorPickerElem: any;
     private selectedColor: string | null;
     private isColorGridVisible: boolean;
     private componentId: string;
 
-    constructor(renderTarget: Element, componentId: string = Utils.guid()){
+    constructor(renderTarget: Element, componentId: string = Utils.guid()) {
         super(renderTarget);
         this.componentId = componentId;
     }
 
-    public render (options: ColorPickerOptions = {}) {
+    public render(options: ColorPickerOptions = {}) {
         this.chartOptions.setOptions(options);
         this.selectedColor = this.chartOptions.defaultColor;
         if (this.chartOptions.colors.indexOf(this.selectedColor) === -1) {
@@ -33,8 +33,8 @@ class ColorPicker extends Component{
         }
 
         this.colorPickerElem = d3.select(this.renderTarget).classed("tsi-colorPicker", true);
-        this.colorPickerElem.text(''); 
-        super.themify( this.colorPickerElem, this.chartOptions.theme);
+        this.colorPickerElem.text('');
+        super.themify(this.colorPickerElem, this.chartOptions.theme);
 
         // color selection button
         let colorPickerButton = this.colorPickerElem.append('button').classed("tsi-colorPickerButton", true)
@@ -59,7 +59,7 @@ class ColorPicker extends Component{
             .text(this.selectedColor ? this.selectedColor : this.getString('No color'));
 
         // color grid
-        let colorGridElem =  this.colorPickerElem.append('div').classed("tsi-colorGrid", true).attr("id", `tsi-colorGrid_${this.componentId}`).attr("role", "grid");
+        let colorGridElem = this.colorPickerElem.append('div').classed("tsi-colorGrid", true).attr("id", `tsi-colorGrid_${this.componentId}`).attr("role", "grid");
         let colorGridRowElem = colorGridElem.append('div').classed("tsi-colorGridRow", true).attr("role", "row");
         this.chartOptions.colors.forEach((c, idx) => {
             let gridItem = colorGridRowElem.append('div').classed("tsi-colorItem", true).classed("tsi-selected", c === this.selectedColor)
@@ -80,8 +80,8 @@ class ColorPicker extends Component{
                     } else if (event.keyCode === KeyCodes.Enter) {
                         event.preventDefault();
                         event.stopPropagation();
-                        this.chartOptions.onSelect(c); 
-                        this.hideColorGrid(true); 
+                        this.chartOptions.onSelect(c);
+                        this.hideColorGrid(true);
                         this.setSelectedColor(c, gridItem);
                     } else if (event.keyCode === KeyCodes.Esc) {
                         event.preventDefault();

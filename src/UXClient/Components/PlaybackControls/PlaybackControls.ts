@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './PlaybackControls.scss';
-import { Component } from "./../../Interfaces/Component";
-import Utils from '../../Utils';
-import { TemporalXAxisComponent } from '../../Interfaces/TemporalXAxisComponent';
+import { Component } from "./../../interfaces/Component";
+import Utils from '../../utils';
+import { TemporalXAxisComponent } from '../../interfaces/TemporalXAxisComponent';
 
 type d3Selection = d3.Selection<d3.BaseType, unknown, null, undefined>;
 
@@ -31,7 +31,7 @@ class PlaybackControls extends Component {
   readonly handleRadius: number = 7;
   readonly minimumPlaybackInterval: number = 1000; // 1 second
 
-  constructor(renderTarget: Element, initialTimeStamp: Date = null){
+  constructor(renderTarget: Element, initialTimeStamp: Date = null) {
     super(renderTarget);
     this.playbackInterval = null;
     this.selectedTimeStamp = initialTimeStamp;
@@ -40,11 +40,11 @@ class PlaybackControls extends Component {
   get currentTimeStamp() {
     return this.selectedTimeStamp;
   }
-  
+
   render(
-    start: Date, 
-    end: Date, 
-    onSelectTimeStamp: (d: Date) => {}, 
+    start: Date,
+    end: Date,
+    onSelectTimeStamp: (d: Date) => {},
     options,
     playbackSettings: IPlaybackSettings) {
     this.end = end;
@@ -108,7 +108,7 @@ class PlaybackControls extends Component {
       .classed('tsi-left-of-handle', true)
       .attr('y1', this.trackYOffset)
       .attr('y2', this.trackYOffset);
-    
+
     this.track.append('line')
       .classed('tsi-right-of-handle', true)
       .attr('y1', this.trackYOffset)
@@ -178,7 +178,7 @@ class PlaybackControls extends Component {
     let newValue = this.selectedTimeStamp.valueOf() + this.playbackSettings.stepSizeMillis;
     newValue = Math.min(newValue, this.end.valueOf());
     this.selectedTimeStamp = new Date(newValue);
-    
+
     let handlePosition = this.timeStampToPosition(this.selectedTimeStamp);
     this.updateSelection(handlePosition, this.selectedTimeStamp);
 
@@ -191,8 +191,8 @@ class PlaybackControls extends Component {
   }
 
   private onDrag(positionX: number) {
-    this.wasPlayingWhenDragStarted = this.wasPlayingWhenDragStarted || 
-    (this.playbackInterval !== null);
+    this.wasPlayingWhenDragStarted = this.wasPlayingWhenDragStarted ||
+      (this.playbackInterval !== null);
     this.pause();
 
     let handlePosition = this.clamp(positionX, 0, this.trackWidth);
@@ -203,7 +203,7 @@ class PlaybackControls extends Component {
 
   private onDragEnd() {
     this.selectTimeStampCallback(this.selectedTimeStamp);
-    if(this.wasPlayingWhenDragStarted){
+    if (this.wasPlayingWhenDragStarted) {
       this.play();
       this.wasPlayingWhenDragStarted = false;
     }
@@ -213,7 +213,7 @@ class PlaybackControls extends Component {
     this.track.select('.tsi-left-of-handle')
       .attr('x1', this.trackXOffset)
       .attr('x2', this.trackXOffset + handlePositionX);
-  
+
     this.track.select('.tsi-right-of-handle')
       .attr('x1', this.trackXOffset + handlePositionX)
       .attr('x2', this.trackXOffset + this.trackWidth);

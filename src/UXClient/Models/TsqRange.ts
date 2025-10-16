@@ -1,6 +1,6 @@
-import Utils from '../Utils';
+import Utils from '../utils';
 
-class TsqRange{
+class TsqRange {
     public from: Date;
     public to: Date;
     private bucketSizeMs: number;
@@ -11,7 +11,7 @@ class TsqRange{
         '1s', '2s', '3s', '4s', '5s', '6s', '10s', '12s', '15s', '20s', '30s',
         '1m', '2m', '3m', '4m', '5m', '6m', '10m', '12m', '15m', '20m', '30m',
         '1h', '2h', '3h', '4h', '6h', '8h', '12h',
-        '1d', '2d', '3d', '4d', '5d', '6d', '7d' 
+        '1d', '2d', '3d', '4d', '5d', '6d', '7d'
     ];
 
     static NeatIntervalsMs = [
@@ -69,11 +69,11 @@ class TsqRange{
     static millisToLargestUnit(interval: number) {
         let value: number, unit: string;
 
-        if (interval < 1000) { 
+        if (interval < 1000) {
             value = interval;
             unit = 'ms';
         } else if (interval < 1000 * 60) {
-            value =  Math.ceil(interval / 1000);
+            value = Math.ceil(interval / 1000);
             unit = 's';
         } else if (interval < 1000 * 60 * 60) {
             value = Math.ceil(interval / (1000 * 60));

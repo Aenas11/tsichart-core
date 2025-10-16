@@ -1,5 +1,5 @@
-import Utils from "../Utils";
-import { ShiftTypes,  DataTypes, valueTypes  } from "../Constants/Enums";
+import Utils from "../utils";
+import { ShiftTypes, DataTypes, valueTypes } from "../constants/Enums";
 
 class ChartComponentData {
     public data: any = {};
@@ -19,14 +19,14 @@ class ChartComponentData {
     public allTimestampsArray: any;
     public isFromHeatmap: boolean = false;
 
-	constructor(){
+    constructor() {
     }
 
     protected getSwimlane = (aggKey) => {
         return (this.displayState[aggKey].aggregateExpression ? this.displayState[aggKey].aggregateExpression.swimLane : null);
     }
 
-    protected setAllTimestampsArray () {
+    protected setAllTimestampsArray() {
         var allTimestamps = {};
         this.data.forEach(ae => {
             var aeObj = ae[Object.keys(ae)[0]];
@@ -39,12 +39,12 @@ class ChartComponentData {
         this.allTimestampsArray = Object.keys(allTimestamps).sort();
     }
 
-    public getDataType (aggKey) {
+    public getDataType(aggKey) {
         return this.displayState[aggKey] ? this.displayState[aggKey].dataType : DataTypes.Numeric;
     }
 
     //add colors if none present
-    private fillColors (aggregateExpressionOptions) {
+    private fillColors(aggregateExpressionOptions) {
         if (aggregateExpressionOptions == null)
             aggregateExpressionOptions = [];
         // correct aEOs to add empty objects if the length doesn't match up with the data
@@ -52,7 +52,7 @@ class ChartComponentData {
             for (var i = aggregateExpressionOptions.length; i < this.data.length; i++) {
                 aggregateExpressionOptions.push({});
             }
-        } 
+        }
         var colorlessCount = aggregateExpressionOptions.reduce((colorlessCount, aEO) => {
             if (aEO.color != null)
                 return colorlessCount;
@@ -64,7 +64,7 @@ class ChartComponentData {
             if (aEO.color == null) {
                 aEO.color = colors[colorI];
                 colorI++;
-            }  
+            }
         });
         return aggregateExpressionOptions;
     }
@@ -98,19 +98,19 @@ class ChartComponentData {
 
         this.data = this.data.map((aggregate: any, i: number) => {
             var aggName: string = Object.keys(aggregate)[0];
-            let aggregateCopy = {...aggregate};
+            let aggregateCopy = { ...aggregate };
             let aggKey = aggKeys[i];
 
             this.data[i].aggKey = aggKey;
             aggregateCopy.aggKey = aggKey;
-            
+
             if (this.displayState[aggKey]) {
                 newDisplayState[aggKey] = {
-                    visible: (aggregateExpressionOptions[i] && aggregateExpressionOptions[i].visibilityState) ? 
-                    aggregateExpressionOptions[i].visibilityState[0] : this.displayState[aggKey].visible,
+                    visible: (aggregateExpressionOptions[i] && aggregateExpressionOptions[i].visibilityState) ?
+                        aggregateExpressionOptions[i].visibilityState[0] : this.displayState[aggKey].visible,
                     name: this.displayState[aggKey].name,
-                    color: ((aggregateExpressionOptions[i] && aggregateExpressionOptions[i].color) ? 
-                             aggregateExpressionOptions[i].color : this.displayState[aggKey].color),
+                    color: ((aggregateExpressionOptions[i] && aggregateExpressionOptions[i].color) ?
+                        aggregateExpressionOptions[i].color : this.displayState[aggKey].color),
                     interpolationFunction: aggregateExpressionOptions[i].interpolationFunction,
                     yExtent: aggregateExpressionOptions[i].yExtent,
                     includeEnvelope: aggregateExpressionOptions[i].includeEnvelope,
@@ -122,12 +122,12 @@ class ChartComponentData {
                 }
             } else {
                 newDisplayState[aggKey] = {
-                    visible: (aggregateExpressionOptions[i] && aggregateExpressionOptions[i].visibilityState) ? 
+                    visible: (aggregateExpressionOptions[i] && aggregateExpressionOptions[i].visibilityState) ?
                         aggregateExpressionOptions[i].visibilityState[0] : true,
                     splitBys: {},
                     name: aggName,
-                    color: ((aggregateExpressionOptions[i] && aggregateExpressionOptions[i].color) ? 
-                             aggregateExpressionOptions[i].color : "teal"),
+                    color: ((aggregateExpressionOptions[i] && aggregateExpressionOptions[i].color) ?
+                        aggregateExpressionOptions[i].color : "teal"),
                     interpolationFunction: aggregateExpressionOptions[i].interpolationFunction,
                     yExtent: aggregateExpressionOptions[i].yExtent,
                     includeEnvelope: aggregateExpressionOptions[i].includeEnvelope,
@@ -135,11 +135,11 @@ class ChartComponentData {
                     dataType: aggregateExpressionOptions[i].dataType,
                     visibleSplitByCap: 10,
                     shownSplitBys: 20
-                }                    
-            } 
+                }
+            }
             if (aggregateExpressionOptions) {
-                newDisplayState[aggKey].contextMenuActions = aggregateExpressionOptions[i] ? 
-                                                aggregateExpressionOptions[i].contextMenu : [];
+                newDisplayState[aggKey].contextMenuActions = aggregateExpressionOptions[i] ?
+                    aggregateExpressionOptions[i].contextMenu : [];
                 newDisplayState[aggKey].aggregateExpression = aggregateExpressionOptions[i];
                 // impose cap on visible splitBys if relevant
                 if (aggregateExpressionOptions[i] && aggregateExpressionOptions[i].visibleSplitByCap) {
@@ -147,18 +147,18 @@ class ChartComponentData {
                 }
             } else {
                 //revert to previous context menu actions if no new ones passed in and old ones exist
-                var oldContextMenuActions = (this.displayState[aggKey] && this.displayState[aggKey].contextMenuActions) ? 
-                                                this.displayState[aggKey].contextMenuActions : [];
+                var oldContextMenuActions = (this.displayState[aggKey] && this.displayState[aggKey].contextMenuActions) ?
+                    this.displayState[aggKey].contextMenuActions : [];
                 newDisplayState[aggKey].contextMenuActions = oldContextMenuActions;
-                var oldAggregateExpression = (this.displayState[aggKey] && this.displayState[aggKey].aggregateExpression) ? 
-                                                this.displayState[aggKey].aggregateExpression : {};
+                var oldAggregateExpression = (this.displayState[aggKey] && this.displayState[aggKey].aggregateExpression) ?
+                    this.displayState[aggKey].aggregateExpression : {};
                 newDisplayState[aggKey].aggregateExpression = oldAggregateExpression;
             }
             if (newDisplayState[aggKey].aggregateExpression && newDisplayState[aggKey].aggregateExpression.searchSpan) {
                 newDisplayState[aggKey].from = new Date(newDisplayState[aggKey].aggregateExpression.searchSpan.from);
                 newDisplayState[aggKey].to = new Date(newDisplayState[aggKey].aggregateExpression.searchSpan.to);
                 newDisplayState[aggKey].bucketSize = newDisplayState[aggKey].aggregateExpression.searchSpan.bucketSize ?
-                    Utils.parseTimeInput(newDisplayState[aggKey].aggregateExpression.searchSpan.bucketSize) : 
+                    Utils.parseTimeInput(newDisplayState[aggKey].aggregateExpression.searchSpan.bucketSize) :
                     null;
             }
 
@@ -167,15 +167,15 @@ class ChartComponentData {
             this.visibleTAs[aggKey] = {};
 
             Object.keys(data[i][aggName]).forEach((splitBy: string, splitByI: number) => {
-                let shiftValue = Utils.parseShift(aggregateExpressionOptions[i].timeShift, 
-                    aggregateExpressionOptions[i].startAt, 
+                let shiftValue = Utils.parseShift(aggregateExpressionOptions[i].timeShift,
+                    aggregateExpressionOptions[i].startAt,
                     aggregateExpressionOptions[i].searchSpan);
-                this.timeArrays[aggKey][splitBy] = this.convertAggregateToArray(data[i][aggName][splitBy], aggKey, aggName, splitBy, 
-                                                 newDisplayState[aggKey].from, newDisplayState[aggKey].to, 
-                                                 newDisplayState[aggKey].bucketSize, shiftValue);  
-                if (newDisplayState[aggKey].dataType === DataTypes.Categorical && aggregateExpressionOptions[i].rollupCategoricalValues){
+                this.timeArrays[aggKey][splitBy] = this.convertAggregateToArray(data[i][aggName][splitBy], aggKey, aggName, splitBy,
+                    newDisplayState[aggKey].from, newDisplayState[aggKey].to,
+                    newDisplayState[aggKey].bucketSize, shiftValue);
+                if (newDisplayState[aggKey].dataType === DataTypes.Categorical && aggregateExpressionOptions[i].rollupCategoricalValues) {
                     this.timeArrays[aggKey][splitBy] = Utils.rollUpContiguous(this.timeArrays[aggKey][splitBy]);
-                }             
+                }
 
                 let isVisible;
 
@@ -195,20 +195,20 @@ class ChartComponentData {
                 else {
                     isVisible = (splitByI < newDisplayState[aggKey].visibleSplitByCap);
                 }
-                
+
                 newDisplayState[aggKey].splitBys[splitBy] = {
                     visible: isVisible,
                     visibleType: newDisplayState[aggKey].splitBys[splitBy] ? newDisplayState[aggKey].splitBys[splitBy].visibleType : null,
                     types: newDisplayState[aggKey].splitBys[splitBy] ? newDisplayState[aggKey].splitBys[splitBy].types : [],
                 }
-                if (this.timeArrays[aggKey][splitBy] && this.timeArrays[aggKey][splitBy].length && 
+                if (this.timeArrays[aggKey][splitBy] && this.timeArrays[aggKey][splitBy].length &&
                     newDisplayState[aggKey].aggregateExpression && newDisplayState[aggKey].aggregateExpression.measureTypes) {
                     newDisplayState[aggKey].splitBys[splitBy].types = newDisplayState[aggKey].aggregateExpression.measureTypes
                 } else {
                     newDisplayState[aggKey].splitBys[splitBy].types = this.determineMeasureTypes(this.timeArrays[aggKey][splitBy])
                 }
-                if (!newDisplayState[aggKey].splitBys[splitBy].visibleType || (newDisplayState[aggKey].splitBys[splitBy].types.indexOf(newDisplayState[aggKey].splitBys[splitBy].visibleType) === -1)){
-                    var visibleMeasure = newDisplayState[aggKey].splitBys[splitBy].types.indexOf("avg") !== -1 ? "avg" : 
+                if (!newDisplayState[aggKey].splitBys[splitBy].visibleType || (newDisplayState[aggKey].splitBys[splitBy].types.indexOf(newDisplayState[aggKey].splitBys[splitBy].visibleType) === -1)) {
+                    var visibleMeasure = newDisplayState[aggKey].splitBys[splitBy].types.indexOf("avg") !== -1 ? "avg" :
                         newDisplayState[aggKey].splitBys[splitBy].types[0];
                     newDisplayState[aggKey].splitBys[splitBy].visibleType = this.getVisibleType(aggKey, splitBy, visibleMeasure, newDisplayState[aggKey].splitBys[splitBy].types);
                 }
@@ -233,7 +233,7 @@ class ChartComponentData {
             var splitBy = this.stickiedKey.splitBy;
             var aggKey = this.stickiedKey.aggregateKey;
             if (!(newDisplayState[aggKey] && newDisplayState[aggKey].visible &&
-                 newDisplayState[aggKey].splitBys[splitBy] && newDisplayState[aggKey].splitBys[splitBy].visible)) {
+                newDisplayState[aggKey].splitBys[splitBy] && newDisplayState[aggKey].splitBys[splitBy].visible)) {
                 this.stickiedKey = null;
             }
         }
@@ -242,7 +242,7 @@ class ChartComponentData {
         this.setAllTimestampsArray();
     }
 
-    private determineMeasureTypes (timeArray) {
+    private determineMeasureTypes(timeArray) {
         var measureTypes = timeArray.reduce((measureTypes, curr) => {
             if (curr && curr.measures && Object.keys(curr.measures).length) {
                 Object.keys(curr.measures).forEach((measure) => {
@@ -254,7 +254,7 @@ class ChartComponentData {
         return Object.keys(measureTypes);
     }
 
-    public getTemporalShiftStringTuple (aggKey) {
+    public getTemporalShiftStringTuple(aggKey) {
         let ae = this.displayState[aggKey].aggregateExpression;
         if (ae) {
             if (Utils.isStartAt(ae.startAt, ae.searchSpan)) {
@@ -262,12 +262,12 @@ class ChartComponentData {
             }
             if (ae.timeShift) {
                 return [ShiftTypes.shifted, ae.timeShift];
-            }    
+            }
         }
         return null;
-    } 
+    }
 
-    public getTemporalShiftMillis (aggKey) {
+    public getTemporalShiftMillis(aggKey) {
         let ae = this.displayState[aggKey].aggregateExpression;
         if (ae) {
             return Utils.parseShift(ae.timeShift, ae.startAt, ae.searchSpan);
@@ -275,20 +275,20 @@ class ChartComponentData {
         return 0;
     }
 
-    public doesTimeArrayUseSeconds (timeArray) {
+    public doesTimeArrayUseSeconds(timeArray) {
         return timeArray.reduce((prev, curr) => {
             return curr.dateTime.getSeconds() != 0 || prev;
         }, false);
     }
 
-    public doesTimeArrayUseMillis (timeArray) {
+    public doesTimeArrayUseMillis(timeArray) {
         return timeArray.reduce((prev, curr) => {
             return curr.dateTime.getMilliseconds() != 0 || prev;
         }, false);
     }
 
     //returns the from and to of all values
-    public setAllValuesAndVisibleTAs () {
+    public setAllValuesAndVisibleTAs() {
         var toMillis = 0;
         var fromMillis = Infinity;
         this.allValues = [];
@@ -320,7 +320,7 @@ class ChartComponentData {
                         this.usesMillis = this.usesMillis || this.doesTimeArrayUseMillis(this.timeArrays[aggKey][splitBy]);
                     }
                 });
-            }            
+            }
         });
         //set this.toMillis and this.fromMillis if new values are more extreme 
         this.toMillis = (toMillis > this.toMillis) ? toMillis : this.toMillis;
@@ -331,7 +331,7 @@ class ChartComponentData {
         return [new Date(this.fromMillis), new Date(this.toMillis)];
     }
 
-    public findLastTimestampWithValue (aggKey, splitBy) {
+    public findLastTimestampWithValue(aggKey, splitBy) {
         let timeArray = this.timeArrays[aggKey][splitBy];
         let i = timeArray.length - 1;
         let lastValue = null;
@@ -344,12 +344,12 @@ class ChartComponentData {
         return lastValue;
     }
 
-    private findFirstBucket (agg, fromMillis, bucketSize) {
+    private findFirstBucket(agg, fromMillis, bucketSize) {
         if (agg == null || Object.keys(agg).length == 0)
             return null;
 
         let possibleFirstKeys = Object.keys(agg).filter((a) => {
-            return ((new Date(a)).valueOf() + bucketSize) > fromMillis; 
+            return ((new Date(a)).valueOf() + bucketSize) > fromMillis;
         });
 
         if (possibleFirstKeys.length === 0) {
@@ -365,27 +365,27 @@ class ChartComponentData {
         })[0];
 
         var firstMillis = (new Date(firstPresentKey)).valueOf();
-        while(firstMillis > fromMillis) {
+        while (firstMillis > fromMillis) {
             firstMillis += -bucketSize;
         }
         return firstMillis;
     }
 
-    private getNumberOfPaddedBuckets (from, to, bucketSize) {
+    private getNumberOfPaddedBuckets(from, to, bucketSize) {
         return Math.ceil((to - from) / bucketSize);
     }
 
     //aggregates object => array of objects containing timestamp and values. Pad with 
-    public convertAggregateToArray (agg: any, aggKey: string, aggName: string, splitBy: string, 
-                                    from: Date = null, to: Date = null, bucketSize: number = null, 
-                                    shiftValue: number): Array<any> {
-        
+    public convertAggregateToArray(agg: any, aggKey: string, aggName: string, splitBy: string,
+        from: Date = null, to: Date = null, bucketSize: number = null,
+        shiftValue: number): Array<any> {
+
         let aggArray: Array<any> = [];
         let isoStringAgg = {};
         Object.keys(agg).forEach((dateString: string) => {
             let shiftedDate = new Date((new Date(dateString)).valueOf() - shiftValue);
             let jsISOString = shiftedDate.toISOString();
-            isoStringAgg[jsISOString] = agg[dateString]; 
+            isoStringAgg[jsISOString] = agg[dateString];
         });
         agg = isoStringAgg;
         var createTimeValueObject = () => {
@@ -424,16 +424,16 @@ class ChartComponentData {
                         aggArray.push(timeValueObject);
                         this.fromMillis = Math.min(from.valueOf(), currTime.valueOf());
                         this.toMillis = Math.max(to.valueOf(), currTime.valueOf() + bucketSize);
-                    }    
+                    }
                 } else {
                     Object.keys(agg).forEach((currTimeString) => {
                         var timeValueObject: any = createTimeValueObject();
-                        timeValueObject["dateTime"] = new Date(currTimeString);    
+                        timeValueObject["dateTime"] = new Date(currTimeString);
                         var currMeasures = agg[currTimeString];
                         Object.keys(currMeasures).forEach((measure: string) => {
                             timeValueObject["measures"][measure] = currMeasures[measure];
                         });
-                        aggArray.push(timeValueObject);                        
+                        aggArray.push(timeValueObject);
                     });
                 }
             }
@@ -444,7 +444,7 @@ class ChartComponentData {
                 if (agg[dateTime]) {
                     Object.keys(agg[dateTime]).forEach((measure: string) => {
                         timeValueObject["measures"][measure] = agg[dateTime][measure];
-                    });    
+                    });
                 }
                 aggArray.push(timeValueObject);
             });
@@ -474,15 +474,15 @@ class ChartComponentData {
         return this.displayState[aggI].splitBys[splitBy].visibleType;
     }
 
-    public getAggVisible (aggKey): boolean {
+    public getAggVisible(aggKey): boolean {
         return this.displayState[aggKey].visible;
-    } 
-    
-    public getSplitByVisible(aggKey, splitBy) {
-        return (this.getAggVisible(aggKey) && this.displayState[aggKey].splitBys[splitBy].visible); 
     }
 
-    public aggHasVisibleSplitBys (aggKey) {
+    public getSplitByVisible(aggKey, splitBy) {
+        return (this.getAggVisible(aggKey) && this.displayState[aggKey].splitBys[splitBy].visible);
+    }
+
+    public aggHasVisibleSplitBys(aggKey) {
         if (!this.getAggVisible(aggKey))
             return false;
         var hasVisibleSplitBy = false;
@@ -493,18 +493,18 @@ class ChartComponentData {
         return hasVisibleSplitBy;
     }
 
-    public valueAtTS (aggKey, splitByName, ts) {
+    public valueAtTS(aggKey, splitByName, ts) {
         var splitBy = this.displayState[aggKey].splitBys[splitByName];
         return this.data[aggKey][this.displayState[aggKey].name][splitByName][ts][splitBy.visibleType];
     }
 
-    public setFilteredAggregates () {
+    public setFilteredAggregates() {
         this.filteredAggregates = Object.keys(this.displayState).filter((aggKey) => {
             return this.displayState[aggKey].visible;
         });
     }
 
-    private guessValueType (v: any) {
+    private guessValueType(v: any) {
         if (typeof v === 'number') {
             return valueTypes.Double;
         }
@@ -513,9 +513,9 @@ class ChartComponentData {
         }
         return valueTypes.Dynamic;
     }
-    
 
-    public generateCSVString (offset: number = 0, dateLocale: string = 'en', spMeasures = null): string {
+
+    public generateCSVString(offset: number = 0, dateLocale: string = 'en', spMeasures = null): string {
         //replace comma at end of line with end line character
         var endLine = (s: string): string => {
             return s.slice(0, s.length - 1) + "\n";
@@ -533,16 +533,16 @@ class ChartComponentData {
                 var splitByString = Utils.stripNullGuid(this.displayState[aggKey].name);
                 if (splitByObject !== undefined && splitByObject !== null) {
                     splitByString += "/" + splitByObject.property + "/" + splitBy;
-                } else if (splitBy !== ''){
+                } else if (splitBy !== '') {
                     splitByString += '/' + splitBy;
-                } else if (this.displayState[aggKey].aggregateExpression.variableAlias){
+                } else if (this.displayState[aggKey].aggregateExpression.variableAlias) {
                     splitByString += '/' + this.displayState[aggKey].aggregateExpression.variableAlias;
                 }
 
                 let types = spMeasures ? spMeasures : this.displayState[aggKey].splitBys[splitBy].types;
                 types.forEach((type) => {
-                    var rowKey = aggKey + "_" + splitBy + "_" + type; 
-                    rowMap[rowKey] = { };
+                    var rowKey = aggKey + "_" + splitBy + "_" + type;
+                    rowMap[rowKey] = {};
                     rowOrder.push(rowKey);
                     headerString += Utils.sanitizeString(splitByString + "." + type, valueTypes.String) + ",";
                 });
@@ -555,10 +555,10 @@ class ChartComponentData {
             if (value.measures && Object.keys(value.measures).length != 0) {
                 Object.keys(value.measures).forEach((type) => {
                     var rowKey = value.aggregateKey + "_" + value.splitBy + "_" + type;
-                    if(rowKey in rowMap){
-                        rowMap[rowKey][value.dateTime.valueOf()] = 
-                        (value.measures[type] == null || value.measures[type] == undefined) ? 
-                        "" : Utils.sanitizeString(value.measures[type], this.guessValueType(value.measures[type]));
+                    if (rowKey in rowMap) {
+                        rowMap[rowKey][value.dateTime.valueOf()] =
+                            (value.measures[type] == null || value.measures[type] == undefined) ?
+                                "" : Utils.sanitizeString(value.measures[type], this.guessValueType(value.measures[type]));
                     }
                 });
             }
@@ -569,7 +569,7 @@ class ChartComponentData {
             csvString += Utils.timeFormat(this.usesSeconds, this.usesMillis, offset, null, null, null, dateLocale)(new Date(millis)) + ",";
             csvString += Utils.timeFormat(this.usesSeconds, this.usesMillis, 0, null, null, null, dateLocale)(new Date(millis)) + ",";
             rowOrder.forEach((rowKey) => {
-                csvString += (rowMap[rowKey][millis] != undefined ? rowMap[rowKey][millis] : "")  + ",";
+                csvString += (rowMap[rowKey][millis] != undefined ? rowMap[rowKey][millis] : "") + ",";
             });
             csvString = endLine(csvString);
         });
@@ -577,11 +577,11 @@ class ChartComponentData {
         return csvString;
     }
 
-    public getVisibilityState () {
+    public getVisibilityState() {
         let visibilityStateArray = [];
         Object.keys(this.displayState).forEach((aggKey) => {
-            let aggDisplayState = this.displayState[aggKey]; 
-            let visibleSplitBys = !aggDisplayState.visible ? [] : 
+            let aggDisplayState = this.displayState[aggKey];
+            let visibleSplitBys = !aggDisplayState.visible ? [] :
                 Object.keys(aggDisplayState.splitBys).filter((splitByName) => {
                     return aggDisplayState.splitBys[splitByName].visible
                 });
@@ -593,4 +593,4 @@ class ChartComponentData {
         return visibilityStateArray;
     }
 }
-export {ChartComponentData}
+export { ChartComponentData }

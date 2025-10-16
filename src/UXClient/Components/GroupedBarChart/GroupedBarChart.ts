@@ -1,13 +1,13 @@
 import * as d3 from 'd3';
 import './GroupedBarChart.scss';
-import Utils from "../../Utils";
-import { TooltipMeasureFormat } from "./../../Constants/Enums";
+import Utils from "../../utils";
+import { TooltipMeasureFormat } from "./../../constants/Enums";
 import Legend from './../Legend';
 import Slider from './../Slider';
-import { GroupedBarChartData } from '../../Models/GroupedBarChartData';
+import { GroupedBarChartData } from '../../models/GroupedBarChartData';
 import ContextMenu from './../ContextMenu';
 import Tooltip from '../Tooltip';
-import { ChartVisualizationComponent } from '../../Interfaces/ChartVisualizationComponent';
+import { ChartVisualizationComponent } from '../../interfaces/ChartVisualizationComponent';
 
 class GroupedBarChart extends ChartVisualizationComponent {
     private contextMenu: ContextMenu;
@@ -16,13 +16,13 @@ class GroupedBarChart extends ChartVisualizationComponent {
     private isStacked: boolean = null;
     private stackedButton: any = null;
     chartComponentData = new GroupedBarChartData();
-    
-    constructor(renderTarget: Element){
+
+    constructor(renderTarget: Element) {
         super(renderTarget);
         this.chartMargins = {
             top: 52,
             bottom: 48,
-            left: 70, 
+            left: 70,
             right: 60
         }
     }
@@ -32,7 +32,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
         super.render(data, options, aggregateExpressionOptions);
         if (options && options.stacked || this.isStacked == null) {
             this.isStacked = this.chartOptions.stacked;
-        } 
+        }
 
         this.chartMargins.top = (this.chartOptions.legend === 'compact') ? 84 : 52;
 
@@ -40,22 +40,22 @@ class GroupedBarChart extends ChartVisualizationComponent {
         var height = Math.max((<any>d3.select(this.renderTarget).node()).clientHeight, this.MINHEIGHT);
 
         this.chartComponentData.mergeDataToDisplayStateAndTimeArrays(this.data, this.timestamp, this.aggregateExpressionOptions);
-        this.timestamp = (options && options.timestamp != undefined) ? options.timestamp : this.chartComponentData.allTimestampsArray[0]; 
+        this.timestamp = (options && options.timestamp != undefined) ? options.timestamp : this.chartComponentData.allTimestampsArray[0];
 
-        var chartHeight = height - this.chartMargins.bottom - this.chartMargins.top; 
+        var chartHeight = height - this.chartMargins.bottom - this.chartMargins.top;
         this.chartWidth = this.getChartWidth();
 
-        if(this.svgSelection == null){
+        if (this.svgSelection == null) {
             var targetElement = d3.select(this.renderTarget)
                 .classed("tsi-barChart", true);
             var svgSelection = targetElement.append("svg")
                 .attr("class", "tsi-barChartSVG tsi-chartSVG")
                 .attr('title', this.getString('Bar chart'))
                 .style("height", height)
-                .style("width", this.getSVGWidth()  + 'px');
+                .style("width", this.getSVGWidth() + 'px');
             this.svgSelection = svgSelection;
 
-            
+
             var g = svgSelection.append("g")
                 .attr("transform", "translate(" + this.chartMargins.left + "," + this.chartMargins.top + ")");
 
@@ -102,45 +102,45 @@ class GroupedBarChart extends ChartVisualizationComponent {
                     .attr("stroke-opacity", 1)
                     .attr("fill-opacity", 1);
                 //filter out the selected timeseries/splitby
-                var selectedFilter = (d: any, j: number ) => {
+                var selectedFilter = (d: any, j: number) => {
                     var currAggKey: string;
                     var currSplitBy: string;
                     if (d.aggKey) {
                         currAggKey = d.aggKey;
                         currSplitBy = d.splitBy;
-                    } else  if (d && d.length) {
+                    } else if (d && d.length) {
                         currAggKey = d[0].aggKey;
                         currSplitBy = d[0].splitBy
-                    } else 
+                    } else
                         return true;
                     return !(aggKey == currAggKey && (splitBy == null || splitBy == currSplitBy))
                 }
 
                 svgSelection.selectAll(".tsi-valueElement")
-                            .filter(selectedFilter)
-                            .attr("stroke-opacity", .3)
-                            .attr("fill-opacity", .3);
+                    .filter(selectedFilter)
+                    .attr("stroke-opacity", .3)
+                    .attr("fill-opacity", .3);
                 var text = svgSelection.selectAll(".barGroup")
-                            .filter((d: any) => {
-                                return d == aggKey;
-                            })
-                            .select(".labelGroup").select("text").text(null);
+                    .filter((d: any) => {
+                        return d == aggKey;
+                    })
+                    .select(".labelGroup").select("text").text(null);
                 var dy = parseFloat(text.attr("dy"));
 
                 let aggLabelGroup = text.append("tspan").attr('class', "tsi-labelGroupLine");
-                Utils.appendFormattedElementsFromString(aggLabelGroup, self.chartComponentData.displayState[aggKey].name, {inSvg: true, additionalClassName: "tsi-aggregateLabelGroupText"});
+                Utils.appendFormattedElementsFromString(aggLabelGroup, self.chartComponentData.displayState[aggKey].name, { inSvg: true, additionalClassName: "tsi-aggregateLabelGroupText" });
                 let splitByLabelGroup = text.append("tspan").attr('class', "tsi-labelGroupLine");
-                Utils.appendFormattedElementsFromString(splitByLabelGroup, splitBy, {inSvg: true, additionalClassName: "tsi-splitByLabelGroupText"});
+                Utils.appendFormattedElementsFromString(splitByLabelGroup, splitBy, { inSvg: true, additionalClassName: "tsi-splitByLabelGroupText" });
 
-                splitByLabelGroup.selectAll('.tsi-splitByLabelGroupText').each(function(d, i) {
+                splitByLabelGroup.selectAll('.tsi-splitByLabelGroupText').each(function (d, i) {
                     if (i == 0) {
                         d3.select(this).attr("y", text.attr("y"))
-                        .attr("x", text.attr("x"))
-                        .attr("dy", (dy + dy * 2) + "em")
-                        .attr("text-anchor", "middle");
+                            .attr("x", text.attr("x"))
+                            .attr("dy", (dy + dy * 2) + "em")
+                            .attr("text-anchor", "middle");
                     }
                 });
-                rePositionLabelGroupBoxes(svgSelection, aggKey);         
+                rePositionLabelGroupBoxes(svgSelection, aggKey);
             }
 
             var labelMouseout = (svgSelection, aggKey) => {
@@ -149,18 +149,18 @@ class GroupedBarChart extends ChartVisualizationComponent {
                     .selectAll(".labelGroup")
                     .selectAll("text")
                     .text(null);
-                allText.each(function(aggKey) {
+                allText.each(function (aggKey) {
                     var text = d3.select(this);
                     if (self.chartComponentData.displayState[aggKey] != undefined) {
-                        Utils.appendFormattedElementsFromString(text, self.chartComponentData.displayState[aggKey].name, {inSvg: true, additionalClassName: "tsi-aggregateLabelGroupText"});
+                        Utils.appendFormattedElementsFromString(text, self.chartComponentData.displayState[aggKey].name, { inSvg: true, additionalClassName: "tsi-aggregateLabelGroupText" });
                     }
                 })
                 rePositionLabelGroupBoxes(svgSelection);
-            }                         
+            }
 
             var calcSpacePerAgg = () => {
                 var aggregateCount = Math.max(Object.keys(this.chartComponentData.filteredAggregates).length, 1);
-                return Math.max((this.chartWidth / 2) / aggregateCount, 0); 
+                return Math.max((this.chartWidth / 2) / aggregateCount, 0);
             }
 
             var rePositionLabelGroupBoxes = (svgSelection, aggKey = null) => {
@@ -169,46 +169,46 @@ class GroupedBarChart extends ChartVisualizationComponent {
                         return true;
                     return d == aggKey
                 })
-                .each(function () {         
-                    if (d3.select(this).select('.labelGroup').select('text').node() == null)
-                        return; 
-                    var textElemDimensions = (<any>d3.select(this).select('.labelGroup').select('text').node())
-                        .getBoundingClientRect();
-                    var spacePerAgg = calcSpacePerAgg();
-                    var aggregateWidth = d3.select(this).attr("width");
-                    
-                    // //truncate text to fit in spacePerAggregate of width
-                    var textSelection: any = d3.select(this).select('.labelGroup').select("text");
+                    .each(function () {
+                        if (d3.select(this).select('.labelGroup').select('text').node() == null)
+                            return;
+                        var textElemDimensions = (<any>d3.select(this).select('.labelGroup').select('text').node())
+                            .getBoundingClientRect();
+                        var spacePerAgg = calcSpacePerAgg();
+                        var aggregateWidth = d3.select(this).attr("width");
 
-                    var truncateText = (textSelection, childrenSize = 1) => {
-                        if(textSelection.node().getComputedTextLength) {
-                            var textLength = textSelection.node().getComputedTextLength();
-                            var text = textSelection.text();
-                            while ( textLength > ((spacePerAgg-6)/childrenSize) && text.length > 0) {
-                                text = text.slice(0, -1);
-                                textSelection.text(text + '...');
-                                textLength = textSelection.node().getComputedTextLength();
+                        // //truncate text to fit in spacePerAggregate of width
+                        var textSelection: any = d3.select(this).select('.labelGroup').select("text");
+
+                        var truncateText = (textSelection, childrenSize = 1) => {
+                            if (textSelection.node().getComputedTextLength) {
+                                var textLength = textSelection.node().getComputedTextLength();
+                                var text = textSelection.text();
+                                while (textLength > ((spacePerAgg - 6) / childrenSize) && text.length > 0) {
+                                    text = text.slice(0, -1);
+                                    textSelection.text(text + '...');
+                                    textLength = textSelection.node().getComputedTextLength();
+                                }
                             }
                         }
-                    }
 
-                    //text is either in tspans or just in text. Either truncate text directly or through tspan
-                    if (textSelection.selectAll("tspan").filter(function() {return !d3.select(this).classed("tsi-labelGroupLine")}).size() === 0)
-                        truncateText(textSelection)
-                    else {
-                        textSelection.selectAll("tspan").filter(function() {return !d3.select(this).classed("tsi-labelGroupLine")}).each(function() {
-                            var tspanTextSelection = d3.select(this);
-                            let childrenSize = tspanTextSelection.classed("tsi-splitByLabelGroupText") ? textSelection.selectAll(".tsi-splitByLabelGroupText").size() : textSelection.selectAll(".tsi-aggregateLabelGroupText").size();
-                            truncateText(tspanTextSelection, childrenSize);
-                        });
-                    }
+                        //text is either in tspans or just in text. Either truncate text directly or through tspan
+                        if (textSelection.selectAll("tspan").filter(function () { return !d3.select(this).classed("tsi-labelGroupLine") }).size() === 0)
+                            truncateText(textSelection)
+                        else {
+                            textSelection.selectAll("tspan").filter(function () { return !d3.select(this).classed("tsi-labelGroupLine") }).each(function () {
+                                var tspanTextSelection = d3.select(this);
+                                let childrenSize = tspanTextSelection.classed("tsi-splitByLabelGroupText") ? textSelection.selectAll(".tsi-splitByLabelGroupText").size() : textSelection.selectAll(".tsi-aggregateLabelGroupText").size();
+                                truncateText(tspanTextSelection, childrenSize);
+                            });
+                        }
 
-                    d3.select(this).select('.labelGroup').select("rect")
-                        .attr("height", textElemDimensions.height + 4)
-                        .attr("y", chartHeight + 6)
-                        .attr("x", 0)
-                        .attr("width", spacePerAgg);
-                });
+                        d3.select(this).select('.labelGroup').select("rect")
+                            .attr("height", textElemDimensions.height + 4)
+                            .attr("y", chartHeight + 6)
+                            .attr("x", 0)
+                            .attr("width", spacePerAgg);
+                    });
             }
 
             var draw = (isFromResize = false) => {
@@ -222,7 +222,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                 if (!isFromResize) {
                     this.chartWidth = this.getChartWidth();
                 }
-                
+
                 super.themify(targetElement, this.chartOptions.theme);
 
                 if (!this.chartOptions.hideChartControlPanel && this.chartControlsPanel === null) {
@@ -236,14 +236,14 @@ class GroupedBarChart extends ChartVisualizationComponent {
                         })
                         .attr("type", "button")
                         .attr('title', this.getString('Stack/Unstack Bars'));
-                } else  if (this.chartOptions.hideChartControlPanel && this.chartControlsPanel !== null){
+                } else if (this.chartOptions.hideChartControlPanel && this.chartControlsPanel !== null) {
                     this.removeControlPanel();
                 }
 
                 if (this.chartControlsPanel) {
                     this.stackedButton.attr('aria-label', this.chartOptions.stacked ? this.getString("Unstack bars") : this.getString("Stack bars"))
                 }
-        
+
                 if (this.chartControlsPanel !== null && this.ellipsisItemsExist()) {
                     this.drawEllipsisMenu();
                     this.chartControlsPanel.style("top", Math.max((this.chartMargins.top - 24), 0) + 'px');
@@ -253,18 +253,18 @@ class GroupedBarChart extends ChartVisualizationComponent {
 
                 /********* Determine the number of timestamps present, add margin for slider *********/
 
-                if(this.chartComponentData.allTimestampsArray.length > 1)
+                if (this.chartComponentData.allTimestampsArray.length > 1)
                     this.chartMargins.bottom = 88;
                 /*******************/
-                chartHeight = height - this.chartMargins.bottom - this.chartMargins.top; 
+                chartHeight = height - this.chartMargins.bottom - this.chartMargins.top;
                 focus.select("line").attr("x2", this.chartWidth);
 
                 svgSelection.style("width", `${this.getSVGWidth()}px`);
                 if (this.timestamp.substring(this.timestamp.length - 5, this.timestamp.length) == ".000Z")
                     this.timestamp = this.timestamp.substring(0, this.timestamp.length - 5) + "Z";
-                
+
                 var aggregateCount = Math.max(Object.keys(this.chartComponentData.filteredAggregates).length, 1);
-                
+
                 svgSelection.select('g').attr("transform", "translate(" + this.chartMargins.left + "," + this.chartMargins.top + ")")
                     .selectAll('.barGroup')
                     .attr("visibility", "hidden");
@@ -275,27 +275,27 @@ class GroupedBarChart extends ChartVisualizationComponent {
                 var xPosMap = this.chartComponentData.filteredAggregates.reduce((map, aggKey, aggKeyI) => {
                     map[aggKey] = ((1 / (aggregateCount + 1)) * (aggKeyI + 1) * this.chartWidth - (spacePerAggregate / 2))
                     return map;
-                }, {});            
-                
-                this.legendObject.draw(this.chartOptions.legend, this.chartComponentData, labelMouseover, 
-                                        svgSelection, this.chartOptions, labelMouseout);
+                }, {});
+
+                this.legendObject.draw(this.chartOptions.legend, this.chartComponentData, labelMouseover,
+                    svgSelection, this.chartOptions, labelMouseout);
 
                 barGroups = barGroups.enter()
                     .append("g")
                     .attr("class", "barGroup")
                     .merge(barGroups)
-                    .attr("display", (d, i) => {return (this.chartComponentData.displayState[d].visible ? "inherit" : "none");})
+                    .attr("display", (d, i) => { return (this.chartComponentData.displayState[d].visible ? "inherit" : "none"); })
                     .attr("visibility", "visible")
-                    .attr("transform",(d, i) => {
+                    .attr("transform", (d, i) => {
                         if (xPosMap[d])
                             return "translate(" + xPosMap[d] + ",0)";
                         return "";
                     });
-            
+
                 this.chartComponentData.setEntireRangeData(this.chartOptions.scaledToCurrentTime);
                 var allValues: Array<number> = this.chartComponentData.valuesOfVisibleType;
                 var aggsSeries = this.chartComponentData.aggsSeries;
-                
+
                 var yScale = d3.scaleLinear()
                     .range([chartHeight, 0]);
                 var extent = d3.extent(allValues);
@@ -306,17 +306,17 @@ class GroupedBarChart extends ChartVisualizationComponent {
                                 yScale.domain([0, d3.extent(allValues)[1]])
                             else
                                 yScale.domain([d3.extent(allValues)[0], Math.max(d3.extent(allValues)[1], 0)])
-                        } 
+                        }
                         else {
                             var offset = (Math.abs(d3.extent(allValues)[1]) * .05);
                             yScale.domain([d3.extent(allValues)[0] - offset, (d3.extent(allValues)[1] + offset)]);
                         }
                     } else {
-                        yScale.domain([0,0]);
-                    }      
+                        yScale.domain([0, 0]);
+                    }
                 } else {
-                    yScale.domain([Math.min(this.chartComponentData.globalMin, this.chartComponentData.globalMax), 
-                                   Math.max(this.chartComponentData.globalMin, this.chartComponentData.globalMax)]);
+                    yScale.domain([Math.min(this.chartComponentData.globalMin, this.chartComponentData.globalMax),
+                    Math.max(this.chartComponentData.globalMin, this.chartComponentData.globalMax)]);
                 }
 
                 var barBase = (yScale.domain()[0] > 0) ? yScale(yScale.domain()[0]) : yScale(0);
@@ -340,7 +340,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                     labelGroupEntered.append("rect");
                     var labelGroupText = labelGroupEntered.append("text")
                         .attr("dy", ".71em");
-                    Utils.appendFormattedElementsFromString(labelGroupText, self.chartComponentData.displayState[aggKey].name, {inSvg: true, additionalClassName: "tsi-aggregateLabelGroupText"});
+                    Utils.appendFormattedElementsFromString(labelGroupText, self.chartComponentData.displayState[aggKey].name, { inSvg: true, additionalClassName: "tsi-aggregateLabelGroupText" });
 
                     var labelGroupBox: any = labelGroupEntered.merge(labelGroup)
                         .select("rect")
@@ -353,12 +353,12 @@ class GroupedBarChart extends ChartVisualizationComponent {
                     d3.select(this).select(".labelGroup").select("text")
                         .transition()
                         .duration(self.TRANSDURATION)
-                        .ease(d3.easeExp)                        
+                        .ease(d3.easeExp)
                         .attr("x", (d) => (spacePerAggregate / 2))
                         .attr("y", chartHeight + 12)
                         .style("fill", (d) => self.chartComponentData.displayState[aggKey].color)
                         .attr("text-anchor", "middle");
-                    
+
                     labelGroup.exit().remove();
 
                     rePositionLabelGroupBoxes(svgSelection, aggKey);
@@ -384,8 +384,8 @@ class GroupedBarChart extends ChartVisualizationComponent {
                             if (d.val > 0)
                                 return yScale(d.val);
                             return yScale(0);
-                        } 
-                        if (aggsSeries[d.aggKey] != undefined && aggsSeries[d.aggKey].length != 0){
+                        }
+                        if (aggsSeries[d.aggKey] != undefined && aggsSeries[d.aggKey].length != 0) {
                             return yScale(aggsSeries[d.aggKey][i][0][1]);
                         }
                         return 0;
@@ -394,7 +394,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                     //calculate the height of an element given its data
                     var calcHeight = (d, i, dValue = null) => {
                         if (!self.chartOptions.stacked) {
-                            if (yScale.domain()[0] >= 0) 
+                            if (yScale.domain()[0] >= 0)
                                 return chartHeight - calcYPos(d, i);
                             dValue = (dValue != null) ? dValue : d.val;
                             if (dValue > 0)
@@ -408,7 +408,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                     var splitByXPosMap = filteredSplitBys.reduce((map, splitBy, splitByI) => {
                         map[splitBy] = xScale(splitByI);
                         return map;
-                    }, {});  
+                    }, {});
 
                     var valueElementsEntered = valueElements.enter()
                         .append("g")
@@ -420,14 +420,14 @@ class GroupedBarChart extends ChartVisualizationComponent {
                     var valueElementMouseout = (event, d) => {
                         if (self.contextMenu && self.contextMenu.contextMenuVisible)
                             return;
-                        focus.style("display", "none");                        
+                        focus.style("display", "none");
                         (<any>legendObject.legendElement.selectAll('.tsi-splitByLabel').filter(function (filteredSplitBy: string) {
                             return (d3.select(this.parentNode).datum() == d.aggKey) && (filteredSplitBy == d.splitBy);
                         })).classed("inFocus", false);
                         event.stopPropagation();
                         svgSelection.selectAll(".tsi-valueElement")
-                                    .attr("stroke-opacity", 1)
-                                    .attr("fill-opacity", 1);
+                            .attr("stroke-opacity", 1)
+                            .attr("fill-opacity", 1);
                         labelMouseout(svgSelection, d.aggKey);
                         tooltip.hide();
                     }
@@ -437,14 +437,14 @@ class GroupedBarChart extends ChartVisualizationComponent {
 
                     var splitByColors = Utils.createSplitByColors(self.chartComponentData.displayState, aggKey, self.chartOptions.keepSplitByColor);
                     valueElementsEntered.merge(valueElements)
-                        .select<SVGGElement>("rect") 
+                        .select<SVGGElement>("rect")
                         .attr("fill", (d, j) => {
                             return splitByColors[j];
                         })
                         .on("mouseover", function (event, d) {
                             if (self.contextMenu && self.contextMenu.contextMenuVisible)
                                 return;
-                            
+
                             (legendObject.legendElement.selectAll('.tsi-splitByLabel').filter(function (filteredSplitBy: string) {
                                 return (d3.select(this.parentNode).datum() == d.aggKey) && (filteredSplitBy == d.splitBy);
                             })).classed("inFocus", true);
@@ -460,15 +460,15 @@ class GroupedBarChart extends ChartVisualizationComponent {
                                 .attr("transform", "translate(0," + yPos + ")");
 
                             focus.select('.vHoverG')
-                            .select("text")
-                            .text(() => {
-                                if (!self.chartOptions.stacked)
-                                    return Utils.formatYAxisNumber(d.val);
-                                var yVal = yScale.invert(calcYPos(d, j))
-                                if (d.val < 0)
-                                    yVal += d.val;
-                                return Utils.formatYAxisNumber(yVal);
-                            });
+                                .select("text")
+                                .text(() => {
+                                    if (!self.chartOptions.stacked)
+                                        return Utils.formatYAxisNumber(d.val);
+                                    var yVal = yScale.invert(calcYPos(d, j))
+                                    if (d.val < 0)
+                                        yVal += d.val;
+                                    return Utils.formatYAxisNumber(yVal);
+                                });
                             var textElemDimensions = (<any>focus.select('.vHoverG').select("text")
                                 .node()).getBoundingClientRect();
                             focus.select(".vHoverG").select("rect")
@@ -476,7 +476,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                                 .attr("y", -(textElemDimensions.height / 2) - 3)
                                 .attr("width", textElemDimensions.width + 6)
                                 .attr("height", textElemDimensions.height + 4);
-                            
+
                             (<any>focus.node()).parentNode.appendChild(focus.node());
                         })
                         .on("mousemove", function (event, d) {
@@ -485,7 +485,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                                 const i = e.indexOf(event.currentTarget);
                                 var mousePos = d3.pointer(event, <any>g.node());
                                 tooltip.render(self.chartOptions.theme)
-                                tooltip.draw(d, self.chartComponentData, mousePos[0], mousePos[1], self.chartMargins,(text) => {
+                                tooltip.draw(d, self.chartComponentData, mousePos[0], mousePos[1], self.chartMargins, (text) => {
                                     self.tooltipFormat(self.convertToTimeValueFormat(d), text, TooltipMeasureFormat.SingleValue);
                                 }, null, 20, 20, splitByColors[i]);
                             } else {
@@ -494,25 +494,25 @@ class GroupedBarChart extends ChartVisualizationComponent {
                         })
                         .on("mouseout", valueElementMouseout)
                         .on("contextmenu", (event, d: any) => {
-                            if (self.chartComponentData.displayState[d.aggKey].contextMenuActions && 
-                                    self.chartComponentData.displayState[d.aggKey].contextMenuActions.length) {
+                            if (self.chartComponentData.displayState[d.aggKey].contextMenuActions &&
+                                self.chartComponentData.displayState[d.aggKey].contextMenuActions.length) {
                                 var mousePosition = d3.pointer(event, <any>targetElement.node());
                                 event.preventDefault();
-                                self.contextMenu.draw(self.chartComponentData, self.renderTarget, self.chartOptions, 
-                                                      mousePosition, d.aggKey, d.splitBy, mouseOutValueElementOnContextMenuClick,
-                                                      new Date(self.chartComponentData.timestamp));
+                                self.contextMenu.draw(self.chartComponentData, self.renderTarget, self.chartOptions,
+                                    mousePosition, d.aggKey, d.splitBy, mouseOutValueElementOnContextMenuClick,
+                                    new Date(self.chartComponentData.timestamp));
                             }
                         })
                         .transition()
                         .duration(self.TRANSDURATION)
-                        .ease(d3.easeExp)                        
+                        .ease(d3.easeExp)
                         .attr("y", (d, i) => calcYPos(d, i))
                         .attr("height", (d, i) => {
                             if (self.chartOptions.stacked && (splitByXPosMap[d.splitBy] == undefined))
                                 return 0;
                             return Math.max(calcHeight(d, i), 0);
                         })
-                        .attr("x", function (d, i)  {
+                        .attr("x", function (d, i) {
                             if (self.chartOptions.stacked)
                                 return 0;
                             if (splitByXPosMap[d.splitBy] != undefined)
@@ -529,14 +529,14 @@ class GroupedBarChart extends ChartVisualizationComponent {
                             return 0;
                         })
                         .attr("width", (d, i) => {
-                            if (self.chartOptions.stacked) 
+                            if (self.chartOptions.stacked)
                                 return spacePerAggregate;
                             if (splitByXPosMap[d.splitBy] != undefined)
                                 return barWidth;
                             return 0;
                         });
 
-                        valueElementsEntered.merge(valueElements)
+                    valueElementsEntered.merge(valueElements)
                         .select("line")
                         .classed("tsi-baseLine", true)
                         .attr("stroke-width", 2)
@@ -544,14 +544,14 @@ class GroupedBarChart extends ChartVisualizationComponent {
                         .duration(self.TRANSDURATION)
                         .ease(d3.easeExp)
                         .attr("x1", (d, i) => {
-                            if (self.chartOptions.stacked) 
+                            if (self.chartOptions.stacked)
                                 return 0;
                             if (splitByXPosMap[d.splitBy] != undefined)
                                 return splitByXPosMap[d.splitBy];
                             return 0;
                         })
                         .attr("x2", (d, i) => {
-                            if (self.chartOptions.stacked) 
+                            if (self.chartOptions.stacked)
                                 return spacePerAggregate;
                             if (splitByXPosMap[d.splitBy] != undefined)
                                 return splitByXPosMap[d.splitBy] + barWidth;
@@ -580,7 +580,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                 barGroups.exit().remove();
 
                 var yAxis: any = g.selectAll(".yAxis")
-                .data([yScale]);
+                    .data([yScale]);
                 yAxis.enter()
                     .append("g")
                     .attr("class", "yAxis")
@@ -589,31 +589,33 @@ class GroupedBarChart extends ChartVisualizationComponent {
                 yAxis.exit().remove();
 
                 baseLine
-                .attr("x1", 0)
-                .attr("x2", this.chartWidth)
-                .attr("y1", barBase + 1)
-                .attr("y2", barBase + 1);
+                    .attr("x1", 0)
+                    .attr("x2", this.chartWidth)
+                    .attr("y1", barBase + 1)
+                    .attr("y2", barBase + 1);
 
                 /******************** Stack/Unstack button ************************/
                 this.stackedButton.style("opacity", this.chartOptions.stacked ? 1 : .5)
                     .classed('tsi-lightTheme', this.chartOptions.theme == 'light')
                     .classed('tsi-darkTheme', this.chartOptions.theme == 'dark');
-                
+
                 /******************** Temporal Slider ************************/
-                if(this.chartComponentData.allTimestampsArray.length > 1){
+                if (this.chartComponentData.allTimestampsArray.length > 1) {
                     d3.select(this.renderTarget).select('.tsi-sliderWrapper').classed('tsi-hidden', false);
                     slider.render(this.chartComponentData.allTimestampsArray.map(ts => {
                         var action = () => {
                             this.chartOptions.timestamp = ts;
                             this.render(this.chartComponentData.data, this.chartOptions, this.aggregateExpressionOptions);
                         }
-                        return {label: Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
-                              this.chartOptions.offset, this.chartOptions.is24HourTime, null, null, this.chartOptions.dateLocale)(new Date(ts)), action: action};
-                    }), this.chartOptions, this.getSVGWidth(), Utils.timeFormat(this.chartComponentData.usesSeconds, 
-                                  this.chartComponentData.usesMillis, this.chartOptions.offset, this.chartOptions.is24HourTime, 
-                                  null, null, this.chartOptions.dateLocale)(new Date(this.chartComponentData.timestamp)));
+                        return {
+                            label: Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
+                                this.chartOptions.offset, this.chartOptions.is24HourTime, null, null, this.chartOptions.dateLocale)(new Date(ts)), action: action
+                        };
+                    }), this.chartOptions, this.getSVGWidth(), Utils.timeFormat(this.chartComponentData.usesSeconds,
+                        this.chartComponentData.usesMillis, this.chartOptions.offset, this.chartOptions.is24HourTime,
+                        null, null, this.chartOptions.dateLocale)(new Date(this.chartComponentData.timestamp)));
                 }
-                else{
+                else {
                     slider.remove();
                     d3.select(this.renderTarget).select('.tsi-sliderWrapper').classed('tsi-hidden', true);
                 }
@@ -623,10 +625,10 @@ class GroupedBarChart extends ChartVisualizationComponent {
 
             this.legendObject = new Legend(draw, this.renderTarget, this.CONTROLSWIDTH);
             this.contextMenu = new ContextMenu(this.draw, this.renderTarget);
-            
+
             // temporal slider
             var slider = new Slider(<any>d3.select(this.renderTarget).select('.tsi-sliderWrapper').node());
-            
+
             this.draw = draw;
             window.addEventListener("resize", () => {
                 if (!this.chartOptions.suppressResizeListener)

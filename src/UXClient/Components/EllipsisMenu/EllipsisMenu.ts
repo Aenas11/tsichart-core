@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import './EllipsisMenu.scss';
-import {Component} from "./../../Interfaces/Component";
+import { Component } from "./../../interfaces/Component";
 
 class EllipsisMenu extends Component {
 
@@ -10,11 +10,11 @@ class EllipsisMenu extends Component {
     private menuItems: Array<any>;
     private menuIsVisible: boolean;
 
-	constructor(renderTarget: Element) {
+    constructor(renderTarget: Element) {
         super(renderTarget);
     }
 
-    private createIconPath (iconName: string, theme: string): string {
+    private createIconPath(iconName: string, theme: string): string {
         var supportedNames: Array<string> = ["flag", "grid", "download"];
         return (supportedNames.indexOf(iconName) != -1) ? iconName + "Icon" : "";
     }
@@ -24,7 +24,7 @@ class EllipsisMenu extends Component {
         this.containerElement.classed("tsi-ellipsisMenuShown", this.menuIsVisible);
     }
 
-    private focusOnMenuItem (itemIndex: number = 0) {
+    private focusOnMenuItem(itemIndex: number = 0) {
         itemIndex = (itemIndex + this.menuItems.length) % this.menuItems.length;
         let menuItem = this.menuElement.selectAll(".tsi-ellipsisMenuItem").filter((d, i) => {
             return (itemIndex === i);
@@ -32,8 +32,8 @@ class EllipsisMenu extends Component {
         menuItem.node().focus();
     }
 
-    private menuItemKeyHandler (event, d, i) {
-        switch(event.keyCode) {
+    private menuItemKeyHandler(event, d, i) {
+        switch (event.keyCode) {
             case 9: //tab
                 this.focusOnMenuItem(i + 1);
                 event.preventDefault();
@@ -54,7 +54,7 @@ class EllipsisMenu extends Component {
         }
     }
 
-    public render (menuItems, options: any = {}) {
+    public render(menuItems, options: any = {}) {
         this.menuIsVisible = false;
         this.chartOptions.setOptions(options);
 
@@ -71,13 +71,13 @@ class EllipsisMenu extends Component {
             .attr("type", "button")
             .on("click", function () {
                 d3.select(this).attr("aria-label", !self.menuIsVisible ? self.getString("Show ellipsis menu") : self.getString("Hide ellipsis menu"))
-                               .attr("title", !self.menuIsVisible ? self.getString("Show ellipsis menu") : self.getString("Hide ellipsis menu"));
+                    .attr("title", !self.menuIsVisible ? self.getString("Show ellipsis menu") : self.getString("Hide ellipsis menu"));
                 self.setMenuVisibility(!self.menuIsVisible);
-                if(self.menuIsVisible) {
+                if (self.menuIsVisible) {
                     self.focusOnMenuItem(0);
                 }
             });
-        
+
         this.menuElement = d3.select(this.renderTarget).insert("div")
             .attr("class", "tsi-ellipsisMenu")
             .attr("role", "menu");
@@ -106,7 +106,7 @@ class EllipsisMenu extends Component {
                     .append("div")
                     .classed("tsi-ellipsisMenuLabel", true)
                     .text((d: any) => d.label);
-                    
+
                 d3.select(this)
                     .append("div")
                     .classed("tsi-ellipsisMenuDescription", true)
@@ -114,10 +114,10 @@ class EllipsisMenu extends Component {
             });
     }
 
-    private setMenuItems (rawMenuItems: Array<any>) {
+    private setMenuItems(rawMenuItems: Array<any>) {
         this.menuItems = rawMenuItems.reduce((menuItems, currMenuItem) => {
             menuItems.push({
-                iconClass : currMenuItem.iconClass,
+                iconClass: currMenuItem.iconClass,
                 label: currMenuItem.label,
                 action: currMenuItem.action,
                 description: currMenuItem.description

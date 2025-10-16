@@ -1,5 +1,5 @@
-import Utils from "../Utils";
-import {ChartComponentData} from "./ChartComponentData";
+import Utils from "../utils";
+import { ChartComponentData } from "./ChartComponentData";
 import * as d3 from 'd3';
 
 class GroupedBarChartData extends ChartComponentData {
@@ -14,11 +14,11 @@ class GroupedBarChartData extends ChartComponentData {
     public globalMin: number = Number.MAX_VALUE;
     public stackedAggregateObject;
 
-	constructor(){
+    constructor() {
         super();
     }
 
-    public mergeDataToDisplayStateAndTimeArrays (data, timestamp, aggregateExpressionOptions = null) {
+    public mergeDataToDisplayStateAndTimeArrays(data, timestamp, aggregateExpressionOptions = null) {
         super.mergeDataToDisplayStateAndTimeArrays(data, aggregateExpressionOptions);
         this.timestamp = timestamp;
         this.setValuesAtTimestamp();
@@ -26,15 +26,15 @@ class GroupedBarChartData extends ChartComponentData {
     }
 
     private stackMin = (series): number => {
-        return Number(d3.min(series, function(d) { return d[0][0]; }));
-      }
-      
+        return Number(d3.min(series, function (d) { return d[0][0]; }));
+    }
+
     private stackMax = (series): number => {
-        return Number(d3.max(series, function(d) { return d[0][1]; }));
+        return Number(d3.max(series, function (d) { return d[0][1]; }));
     }
 
     //setting the data related to the entire time range (aggsSeries, allValus, globalMax, globalMin)
-    public setEntireRangeData (scaledToCurrentTime) {
+    public setEntireRangeData(scaledToCurrentTime) {
         this.globalMax = -Number.MAX_VALUE;
         this.globalMin = Number.MAX_VALUE;
         this.aggsSeries = {};
@@ -54,15 +54,15 @@ class GroupedBarChartData extends ChartComponentData {
                             value = this.data[aggI][this.displayState[aggKey].name][splitByName][ts][splitBy.visibleType];
                         else
                             value = Number.MIN_VALUE;
-                        if (!splitBy.visible){
+                        if (!splitBy.visible) {
                             if (value > 0)
                                 value = Number.MIN_VALUE;
                             else
                                 value = -Number.MIN_VALUE;
-                        } 
+                        }
                         sAO[splitByName] = value;
 
-                        if ((!scaledToCurrentTime || ts == this.timestamp) && splitBy.visible){ 
+                        if ((!scaledToCurrentTime || ts == this.timestamp) && splitBy.visible) {
                             this.valuesOfVisibleType.push(value);
                         }
                         return sAO;
@@ -86,7 +86,7 @@ class GroupedBarChartData extends ChartComponentData {
         });
     }
 
-    public setValuesAtTimestamp () {
+    public setValuesAtTimestamp() {
         var aggregateCounterMap = {};
         this.valuesAtTimestamp = {};
         this.data.forEach((aggregate, aggI) => {
@@ -101,22 +101,22 @@ class GroupedBarChartData extends ChartComponentData {
             }
             this.valuesAtTimestamp[aggKey] = {};
             this.valuesAtTimestamp[aggKey].splitBys = Object.keys(aggregate[aggName])
-                                                .reduce((aggSplitBys: any, splitBy: string, splitByI: number) => {
-                aggSplitBys[splitBy] = {};
-                aggSplitBys[splitBy].measurements = aggregate[aggName][splitBy][this.timestamp];
-                return aggSplitBys;
-            }, {});
+                .reduce((aggSplitBys: any, splitBy: string, splitByI: number) => {
+                    aggSplitBys[splitBy] = {};
+                    aggSplitBys[splitBy].measurements = aggregate[aggName][splitBy][this.timestamp];
+                    return aggSplitBys;
+                }, {});
         });
     }
 
-    public getValueContainerData (aggKey): Array<any> {
+    public getValueContainerData(aggKey): Array<any> {
         return Object.keys(this.displayState[aggKey].splitBys).map((splitBy) => {
             var measureType = this.displayState[aggKey].splitBys[splitBy].visibleType;
             var val;
-            if (this.valuesAtTimestamp[aggKey].splitBys[splitBy].measurements  && 
+            if (this.valuesAtTimestamp[aggKey].splitBys[splitBy].measurements &&
                 this.valuesAtTimestamp[aggKey].splitBys[splitBy].measurements[measureType])
                 val = this.valuesAtTimestamp[aggKey].splitBys[splitBy].measurements[measureType];
-            else 
+            else
                 val = null;
             return {
                 measureType: measureType,
@@ -127,4 +127,4 @@ class GroupedBarChartData extends ChartComponentData {
         })
     }
 }
-export {GroupedBarChartData}
+export { GroupedBarChartData }

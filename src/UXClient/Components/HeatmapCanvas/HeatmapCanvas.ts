@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './HeatmapCanvas.scss';
-import Utils from "../../Utils";
-import { ChartComponent } from "../../Interfaces/ChartComponent";
-import { HeatmapData } from "../../Models/HeatmapData";
+import Utils from "../../utils";
+import { ChartComponent } from "../../interfaces/ChartComponent";
+import { HeatmapData } from "../../models/HeatmapData";
 
 class HeatmapCanvas extends ChartComponent {
     private heatmapData: HeatmapData;
@@ -12,7 +12,7 @@ class HeatmapCanvas extends ChartComponent {
     private rawCellWidth: number;
     private cellWidthMod: number;
     private rawCellHeight: number;
-    private cellHeightMod: number; 
+    private cellHeightMod: number;
     private colorLegend: any;
     private colorScale: any;
     private gradientWidth = 8;
@@ -27,12 +27,12 @@ class HeatmapCanvas extends ChartComponent {
     private aggI: number;
     private isOnlyAgg: boolean;
 
-    constructor (renderTarget) {
+    constructor(renderTarget) {
         super(renderTarget);
         this.legendWidth = 80;
     }
 
-    private renderScale (aggColor: any, isOnlyAgg: boolean) {
+    private renderScale(aggColor: any, isOnlyAgg: boolean) {
         this.colorLegend.selectAll("*").remove();
         if (this.colorScale.domain() === null || isNaN(this.colorScale.domain()[0]) || isNaN(this.colorScale.domain()[1])) {
             return;
@@ -40,15 +40,15 @@ class HeatmapCanvas extends ChartComponent {
         let gradientGuid = Utils.guid();
         var gradient = this.colorLegend.append("defs")
             .append("linearGradient")
-              .attr("id", "gradient" + this.aggI + gradientGuid)
-              .attr("x1", "0%")
-              .attr("y1", "100%")
-              .attr("x2", "0%")
-              .attr("y2", "0%");
+            .attr("id", "gradient" + this.aggI + gradientGuid)
+            .attr("x1", "0%")
+            .attr("y1", "100%")
+            .attr("x2", "0%")
+            .attr("y2", "0%");
 
         let interpolatedColors = [];
 
-        var percentileCalc = (i) => i * (this.colorScale.domain()[1] - this.colorScale.domain()[0]) + this.colorScale.domain()[0]; 
+        var percentileCalc = (i) => i * (this.colorScale.domain()[1] - this.colorScale.domain()[0]) + this.colorScale.domain()[0];
         for (let i = 0; i <= 20; i++) {
             const color = this.getColor(aggColor, percentileCalc(i / 20), isOnlyAgg);
 
@@ -116,19 +116,19 @@ class HeatmapCanvas extends ChartComponent {
 
         var self = this;
 
-        gradientRect.on("mousemove", function(event) {
+        gradientRect.on("mousemove", function (event) {
             var yPos = d3.pointer(event)[1];
             var percentile = 1 - ((yPos - 6) / (self.height - 12));
 
             self.highlightedValue = self.colorScale.domain()[0] + (range * percentile);
             setHighlightedValueLineAndText(highlightedLine, highlightedText);
         })
-        .on("mouseleave", () => {
-            this.render(this.data, this.chartOptions, this.aggKey, null, null, this.onCellFocus, null, this.isOnlyAgg);
-        })
+            .on("mouseleave", () => {
+                this.render(this.data, this.chartOptions, this.aggKey, null, null, this.onCellFocus, null, this.isOnlyAgg);
+            })
     }
 
-    private getExtent () {
+    private getExtent() {
         let rawExtent = d3.extent(this.heatmapData.allValues);
         let extent = rawExtent;
         if (rawExtent[0] === rawExtent[1]) {
@@ -137,7 +137,7 @@ class HeatmapCanvas extends ChartComponent {
         return extent;
     }
 
-    public render (data, chartOptions, aggKey, highlightedSplitBy: string = null, highlightedTime: Date = null, onCellFocus, aggI: number, isOnlyAgg: boolean) {
+    public render(data, chartOptions, aggKey, highlightedSplitBy: string = null, highlightedTime: Date = null, onCellFocus, aggI: number, isOnlyAgg: boolean) {
         this.chartOptions.setOptions(chartOptions);
         this.aggKey = aggKey;
         this.data = data;
@@ -151,10 +151,10 @@ class HeatmapCanvas extends ChartComponent {
         var container = d3.select(this.renderTarget).classed("tsi-heatmapCanvasWrapper", true);
         super.themify(container, this.chartOptions.theme);
 
-        if (highlightedSplitBy != null) 
-            this.highlightedSplitBy = highlightedSplitBy; 
+        if (highlightedSplitBy != null)
+            this.highlightedSplitBy = highlightedSplitBy;
         this.highlightedTime = highlightedTime;
-    
+
         if (this.highlightedSplitBy != null && this.highlightedTime) {
             if (this.heatmapData.timeValues[this.highlightedTime.toISOString()][this.highlightedSplitBy] != null) {
                 this.highlightedValue = this.heatmapData.timeValues[this.highlightedTime.toISOString()][this.highlightedSplitBy].value;
@@ -164,10 +164,10 @@ class HeatmapCanvas extends ChartComponent {
         if (onCellFocus)
             this.onCellFocus = onCellFocus;
 
-        if (!container.select("canvas").empty()) 
+        if (!container.select("canvas").empty())
             this.canvas = container.select("canvas");
-        else 
-            this.canvas = container.append("canvas").attr("class", "tsi-heatmapCanvas");   
+        else
+            this.canvas = container.append("canvas").attr("class", "tsi-heatmapCanvas");
 
         this.width = Math.floor(container.node().getBoundingClientRect().width - this.legendWidth - 10);
         this.height = Math.floor(container.node().getBoundingClientRect().height);
@@ -175,8 +175,8 @@ class HeatmapCanvas extends ChartComponent {
         this.canvas.attr("height", this.height);
 
         this.ctx = this.canvas.node().getContext("2d");
-        this.ctx.clearRect(0,0, this.width, this.height);
-        
+        this.ctx.clearRect(0, 0, this.width, this.height);
+
         container.selectAll("svg").remove();
         var self = this;
         this.canvas.on("mousemove", function (event) {
@@ -204,9 +204,9 @@ class HeatmapCanvas extends ChartComponent {
                     });
                 var startDate = new Date(sortedDates[self.focusedXIndex]);
                 this.highlightedTime = startDate;
-                self.onCellFocus(startDate, new Date(startDate.valueOf() + self.heatmapData.bucketSize), 
-                                 Math.max(0, cellX), cellX + self.calcCellWidth(self.focusedXIndex), 
-                                 self.calcCellY(self.focusedYIndex), highlightedSplitBy);
+                self.onCellFocus(startDate, new Date(startDate.valueOf() + self.heatmapData.bucketSize),
+                    Math.max(0, cellX), cellX + self.calcCellWidth(self.focusedXIndex),
+                    self.calcCellY(self.focusedYIndex), highlightedSplitBy);
             }
             self.render(self.data, self.chartOptions, self.aggKey, highlightedSplitBy, this.highlightedTime, self.onCellFocus, null, self.isOnlyAgg);
         }).on("mouseout", function () {
@@ -221,8 +221,8 @@ class HeatmapCanvas extends ChartComponent {
         this.rawCellWidth = this.width / this.heatmapData.numCols;
         this.cellWidthMod = this.width % this.heatmapData.numCols;
 
-        
-        this.colorLegend = container.append("svg").attr("class", "tsi-heatmapColorLegend")     
+
+        this.colorLegend = container.append("svg").attr("class", "tsi-heatmapColorLegend")
         this.colorLegend.attr("width", this.legendWidth)
             .attr("height", this.height)
             .style("left", (this.width) + "px");
@@ -251,30 +251,30 @@ class HeatmapCanvas extends ChartComponent {
                     } else {
                         this.drawCell(cellData.rowI, cellData.colI, cellData.value, aggColor, isOnlyAgg);
                     }
-                } 
+                }
             });
         });
 
-        
+
     }
 
-    private calcCellXIndex (x: number) {
+    private calcCellXIndex(x: number) {
         let xI = 0;
-        while(Math.round(xI * this.rawCellWidth) < x) {
+        while (Math.round(xI * this.rawCellWidth) < x) {
             xI++;
         }
         return Math.max(xI - 1, 0);
     }
 
-    private calcCellYIndex (y) {
+    private calcCellYIndex(y) {
         if (y < (this.cellHeightMod * (this.rawCellHeight + 1)))
             return Math.floor(y / (this.rawCellHeight + 1));
         var modOffset = this.cellHeightMod * (this.rawCellHeight + 1);
-        return Math.floor((y - modOffset) / this.rawCellHeight) + this.cellHeightMod; 
+        return Math.floor((y - modOffset) / this.rawCellHeight) + this.cellHeightMod;
     }
 
-    private calcCellHeight (i) {
-        return this.rawCellHeight + (i < this.cellHeightMod ? 1 : 0) - (this.rawCellWidth > 10 ? 1 : 0);; 
+    private calcCellHeight(i) {
+        return this.rawCellHeight + (i < this.cellHeightMod ? 1 : 0) - (this.rawCellWidth > 10 ? 1 : 0);;
     }
 
     private calcCellX(i) {
@@ -290,7 +290,7 @@ class HeatmapCanvas extends ChartComponent {
         return Math.min(i, this.cellHeightMod) + (this.rawCellHeight * i);
     }
 
-    private drawCell (rowI, colI, value, aggColor, isOnlyAgg, outOfFocus: boolean = false) {
+    private drawCell(rowI, colI, value, aggColor, isOnlyAgg, outOfFocus: boolean = false) {
         var x = this.calcCellX(colI);
         var y = this.calcCellY(rowI);
         this.ctx.fillStyle = value !== null ? this.getColor(aggColor, value, isOnlyAgg) : "transparent";

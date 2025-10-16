@@ -30,7 +30,7 @@
         $grays: grays('dark');
         @include spColors($grays);
         .tsi-resizeGutter {
-            background-image: url(./../../Icons/drag_handle_dark.svg);
+            background-image: url(./../../icons/drag_handle_dark.svg);
         }
 
     }
@@ -38,7 +38,7 @@
         $grays: grays('light');
         @include spColors($grays);
         .tsi-resizeGutter {
-            background-image: url(./../../Icons/drag_handle_light.svg);
+            background-image: url(./../../icons/drag_handle_light.svg);
         }
     }
     // Hide data type dropdown in scatter plot -- selection has no effect

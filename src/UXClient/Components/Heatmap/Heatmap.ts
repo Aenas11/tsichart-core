@@ -1,11 +1,11 @@
 import * as d3 from 'd3';
 import './Heatmap.scss';
-import Utils from "../../Utils";
+import Utils from "../../utils";
 import Legend from '../Legend';
 import HeatmapCanvas from '../HeatmapCanvas';
-import AggregateExpression from '../../Models/AggregateExpression';
+import AggregateExpression from '../../models/AggregateExpression';
 import EllipsisMenu from '../EllipsisMenu';
-import { TemporalXAxisComponent } from '../../Interfaces/TemporalXAxisComponent';
+import { TemporalXAxisComponent } from '../../interfaces/TemporalXAxisComponent';
 
 class Heatmap extends TemporalXAxisComponent {
     private lineHeight = 12;
@@ -18,34 +18,34 @@ class Heatmap extends TemporalXAxisComponent {
     private timeLabelsHeight = 52;
     private visibleAggs = null;
 
-    constructor (renderTarget: Element){
-        super(renderTarget);        
-        this.chartMargins = {        
+    constructor(renderTarget: Element) {
+        super(renderTarget);
+        this.chartMargins = {
             top: 0,
             bottom: 8,
-            left: 40, 
+            left: 40,
             right: 20
         };
     }
 
-    private focusOnEllipsis () {
+    private focusOnEllipsis() {
         if (this.ellipsisContainer !== null) {
             this.ellipsisContainer.select(".tsi-ellipsisButton").node().focus();
         }
     }
 
-    private createControlsPanel () {
+    private createControlsPanel() {
         this.chartControlsPanel = Utils.createControlPanel(this.renderTarget, this.CONTROLSWIDTH, 52, this.chartOptions);
         this.ellipsisContainer = this.chartControlsPanel.append("div")
             .attr("class", "tsi-ellipsisContainerDiv");
         this.ellipsisMenu = new EllipsisMenu(this.ellipsisContainer.node());
     }
 
-    private chartControlsExist () {
+    private chartControlsExist() {
         return (this.ellipsisItemsExist() && !this.chartOptions.hideChartControlPanel);
     }
 
-    private addTimeLabels () {
+    private addTimeLabels() {
         if (this.timeLabels === null || this.svgSelection === null) {
             this.svgSelection = this.heatmapWrapper.append('svg')
                 .attr('class', 'tsi-heatmapSVG')
@@ -60,7 +60,7 @@ class Heatmap extends TemporalXAxisComponent {
             this.drawXAxis(this.chartHeight - 60);
             this.xAxis.exit().remove();
 
-            var xAxisBaseline =  this.timeLabels.selectAll(".xAxisBaseline").data([this.x]);
+            var xAxisBaseline = this.timeLabels.selectAll(".xAxisBaseline").data([this.x]);
             var xAxisBaselineEntered = xAxisBaseline.enter().append("line")
                 .attr("class", "xAxisBaseline")
                 .attr("x1", .5)
@@ -86,15 +86,15 @@ class Heatmap extends TemporalXAxisComponent {
             heatmapCanvas.render(this.chartComponentData, this.chartOptions, hoveredAggKey, null, null, null, null, this.visibleAggs.length === 1);
     }
 
-    public render (data, chartOptions, aggregateExpressionOptions) {
+    public render(data, chartOptions, aggregateExpressionOptions) {
         super.render(data, chartOptions, aggregateExpressionOptions);
         // override visibleSplitByCap
         this.aggregateExpressionOptions = this.aggregateExpressionOptions.map((aE: AggregateExpression) => {
-            return {...aE, visibleSplitByCap : 10000 };
+            return { ...aE, visibleSplitByCap: 10000 };
         });
         this.chartOptions.setOptions(chartOptions);
         var targetElement = d3.select(this.renderTarget).classed("tsi-heatmapComponent", true);
-		if(targetElement.style("position") == "static")
+        if (targetElement.style("position") == "static")
             targetElement.style("position", "relative");
 
         this.chartComponentData.mergeDataToDisplayStateAndTimeArrays(this.data, this.aggregateExpressionOptions);
@@ -102,7 +102,7 @@ class Heatmap extends TemporalXAxisComponent {
 
         if (this.chartControlsExist() && this.chartControlsPanel === null) {
             this.createControlsPanel();
-        } else  if ((this.chartOptions.hideChartControlPanel || !this.ellipsisItemsExist()) && this.chartControlsPanel !== null){
+        } else if ((this.chartOptions.hideChartControlPanel || !this.ellipsisItemsExist()) && this.chartControlsPanel !== null) {
             this.chartControlsPanel.remove();
             this.chartControlsPanel = null;
         }
@@ -111,24 +111,24 @@ class Heatmap extends TemporalXAxisComponent {
             this.chartControlsPanel.style("top", (16 + (this.chartOptions.legend === 'compact' ? 32 : 0)) + 'px');
             this.drawEllipsisMenu();
         }
-            
+
         if (this.heatmapWrapper == null) {
             this.heatmapWrapper = targetElement.append('div')
                 .attr("class", "tsi-heatmapWrapper");
 
-            this.draw = (isFromResize = false) => { 
+            this.draw = (isFromResize = false) => {
 
-                this.height = Math.floor(Math.max((<any>d3.select(this.renderTarget).node()).clientHeight, this.MINHEIGHT));        
+                this.height = Math.floor(Math.max((<any>d3.select(this.renderTarget).node()).clientHeight, this.MINHEIGHT));
                 this.chartHeight = this.height - ((12 + (this.chartControlsExist() ? 28 : 0) + (this.chartOptions.legend === 'compact' ? 48 : 0)));
 
                 super.themify(targetElement, this.chartOptions.theme);
                 this.width = this.getWidth();
                 if (!isFromResize) {
                     this.chartWidth = this.getChartWidth();
-                } 
+                }
 
                 this.x = d3.scaleTime()
-                .rangeRound([0, this.chartWidth - 90]); // HARDCODED to be the width of a heatmapCanvas
+                    .rangeRound([0, this.chartWidth - 90]); // HARDCODED to be the width of a heatmapCanvas
 
                 var fromAndTo: any = this.chartComponentData.setAllValuesAndVisibleTAs();
                 this.x.domain(fromAndTo);
@@ -166,7 +166,7 @@ class Heatmap extends TemporalXAxisComponent {
                         self.heatmapCanvasMap[aggKey] = heatmapCanvas;
                         var renderHeatmapCanvas = () => {
 
-                            function onCellFocus (focusStartTime, focusEndTime, focusX1, focusX2, focusY, splitBy) {
+                            function onCellFocus(focusStartTime, focusEndTime, focusX1, focusX2, focusY, splitBy) {
                                 let shiftMillis = self.chartComponentData.getTemporalShiftMillis(aggKey);
                                 self.renderTimeLabels(focusStartTime, focusEndTime, focusX1, focusX2, focusY, (aggI * canvasWrapperHeightTotal / self.visibleAggs.length), shiftMillis);
                                 self.legendObject.triggerSplitByFocus(aggKey, splitBy);
@@ -175,7 +175,7 @@ class Heatmap extends TemporalXAxisComponent {
 
                             heatmapCanvas.render(self.chartComponentData, self.chartOptions, aggKey, null, null, onCellFocus, aggI, self.visibleAggs.length === 1);
                         }
-                        renderHeatmapCanvas();         
+                        renderHeatmapCanvas();
                     }).on("mouseleave", () => {
                         self.timeLabels.selectAll(".tsi-heatmapTimeLabels").remove();
                         self.legendObject.legendElement.selectAll('.tsi-splitByLabel').classed("inFocus", false);
@@ -183,7 +183,7 @@ class Heatmap extends TemporalXAxisComponent {
                     })
                 canvasWrappers.exit().remove();
 
-                this.legendObject.draw(this.chartOptions.legend, this.chartComponentData, this.mouseover, 
+                this.legendObject.draw(this.chartOptions.legend, this.chartComponentData, this.mouseover,
                     this.heatmapWrapper, this.chartOptions, this.mouseout);
 
                 //remove all the colorKeys
@@ -195,7 +195,7 @@ class Heatmap extends TemporalXAxisComponent {
             }
             this.legendObject = new Legend(this.draw, this.renderTarget, this.CONTROLSWIDTH);
 
-           
+
         }
         this.chartComponentData.mergeDataToDisplayStateAndTimeArrays(this.data, this.aggregateExpressionOptions);
         this.draw();
@@ -224,19 +224,19 @@ class Heatmap extends TemporalXAxisComponent {
             .attr("x1", focusX2)
             .attr("x2", focusX2)
             .attr("y1", focusY + yOffset)
-            .attr("y2", this.chartHeight - this.timeLabelsHeight); 
-        
+            .attr("y2", this.chartHeight - this.timeLabelsHeight);
+
         var textBoxG = this.timeLabels.append("g")
             .attr("class", "tsi-heatmapTimeLabelTextBox tsi-heatmapTimeLabels");
 
         var text = textBoxG.append("text");
-        
-        text.append("tspan").text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
-                 this.chartOptions.offset, this.chartOptions.is24HourTime, shiftMillis, null, this.chartOptions.dateLocale)(focusStartTime))
+
+        text.append("tspan").text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
+            this.chartOptions.offset, this.chartOptions.is24HourTime, shiftMillis, null, this.chartOptions.dateLocale)(focusStartTime))
             .attr("x", 0)
             .attr("y", 16);
-        text.append("tspan").text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
-                 this.chartOptions.offset, this.chartOptions.is24HourTime, shiftMillis, null, this.chartOptions.dateLocale)(focusEndTime))
+        text.append("tspan").text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
+            this.chartOptions.offset, this.chartOptions.is24HourTime, shiftMillis, null, this.chartOptions.dateLocale)(focusEndTime))
             .attr("x", 0)
             .attr("y", 30);
 

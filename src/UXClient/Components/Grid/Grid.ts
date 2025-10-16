@@ -1,16 +1,16 @@
 import * as d3 from 'd3';
 import './Grid.scss';
-import Utils from "../../Utils";
-import { Component } from "./../../Interfaces/Component";
-import { ChartOptions } from '../../Models/ChartOptions';
-import { ChartComponentData } from '../../Models/ChartComponentData';
-import { GRIDCONTAINERCLASS } from '../../Constants/Constants';
+import Utils from "../../utils";
+import { Component } from "./../../interfaces/Component";
+import { ChartOptions } from '../../models/ChartOptions';
+import { ChartComponentData } from '../../models/ChartComponentData';
+import { GRIDCONTAINERCLASS } from '../../constants/Constants';
 
 class Grid extends Component {
-	private gridComponent: any;
-	private rowLabelKey: string = "__tsiLabel__";
-	private colorKey: string = "__tsiColor__";
-	private aggIndexKey: string = '__tsiAggIndex__';
+    private gridComponent: any;
+    private rowLabelKey: string = "__tsiLabel__";
+    private colorKey: string = "__tsiColor__";
+    private aggIndexKey: string = '__tsiAggIndex__';
     private chartComponentData: ChartComponentData = new ChartComponentData();
     private draw;
     private closeButton = null;
@@ -20,94 +20,94 @@ class Grid extends Component {
     private tableHeaderRow;
     private tableContentRows;
 
-	public usesSeconds: boolean = false;
-	public usesMillis:boolean = false;
+    public usesSeconds: boolean = false;
+    public usesMillis: boolean = false;
 
-	constructor(renderTarget: Element){
-		super(renderTarget);
+    constructor(renderTarget: Element) {
+        super(renderTarget);
     }
-    
-    static hideGrid (renderTarget: any) {
+
+    static hideGrid(renderTarget: any) {
         d3.select(renderTarget).selectAll(`.${GRIDCONTAINERCLASS}`).remove();
     }
 
-    static showGrid(renderTarget: any, chartOptions: ChartOptions, aggregateExpressionOptions: any, 
-            chartComponentData: ChartComponentData) {
-        chartOptions.fromChart = true; 
+    static showGrid(renderTarget: any, chartOptions: ChartOptions, aggregateExpressionOptions: any,
+        chartComponentData: ChartComponentData) {
+        chartOptions.fromChart = true;
         d3.select(renderTarget).selectAll(`.${GRIDCONTAINERCLASS}`).remove();
         let gridContainer: any = d3.select(renderTarget).append('div')
-                .attr('class', GRIDCONTAINERCLASS)
-                .style('width', '100%')
-                .style('height', '100%');
+            .attr('class', GRIDCONTAINERCLASS)
+            .style('width', '100%')
+            .style('height', '100%');
 
         var gridComponent: Grid = new Grid(gridContainer.node());
         gridComponent.usesSeconds = chartComponentData.usesSeconds;
-        gridComponent.usesMillis = chartComponentData.usesMillis; 
+        gridComponent.usesMillis = chartComponentData.usesMillis;
         var grid = gridComponent.renderFromAggregates(chartComponentData.data, chartOptions, aggregateExpressionOptions, chartComponentData);
-        gridComponent.focus(0,0);
+        gridComponent.focus(0, 0);
     }
 
-    static createGridEllipsisOption (renderTarget: any, chartOptions: ChartOptions, aggregateExpressionOptions: any, 
-                                     chartComponentData: ChartComponentData, labelText = 'Display Grid') {
+    static createGridEllipsisOption(renderTarget: any, chartOptions: ChartOptions, aggregateExpressionOptions: any,
+        chartComponentData: ChartComponentData, labelText = 'Display Grid') {
         return {
             iconClass: "grid",
             label: labelText,
-            action: () => { 
+            action: () => {
                 this.showGrid(renderTarget, chartOptions, aggregateExpressionOptions, chartComponentData);
             },
             description: ""
         };
     }
 
-	Grid() {
-	}
-
-	private cellClass = (ridx, cidx) => {
-		return "tsi-table-" + ridx + '-' + cidx;
-	}
-
-	public focus = (rowIdx, colIdx) => { 
-		try {
-			(<any>this.gridComponent.select('.' + this.cellClass(rowIdx, colIdx)).node())
-				.focus();
-	 	} catch(e) {
-			console.log(e);
-		}
-	}
-	
-	public renderFromAggregates(data: any, options: any, aggregateExpressionOptions: any, chartComponentData) {
-		this.chartOptions.setOptions(options);
-		var dataAsJson = data.reduce((p,c,i) => {
-			var aeName = Object.keys(c)[0]; 
-			Object.keys(c[aeName]).forEach(sbName => {
-				var row = {};
-				Object.keys(c[aeName][sbName]).forEach(dt => {
-					row[dt] = c[aeName][sbName][dt];
-				})
-				row[this.rowLabelKey] = (Object.keys(c[aeName]).length == 1 && sbName == "" ? aeName : sbName);
-				if(aggregateExpressionOptions && aggregateExpressionOptions[i].color)
-					row[this.colorKey] = aggregateExpressionOptions[i].color;
-				row[this.aggIndexKey] = i;
-				p.push(row);
-			})
-			return p;
-		},[]);
-		return this.render(dataAsJson, options, aggregateExpressionOptions, chartComponentData);
+    Grid() {
     }
-    
-    private getRowData () {
+
+    private cellClass = (ridx, cidx) => {
+        return "tsi-table-" + ridx + '-' + cidx;
+    }
+
+    public focus = (rowIdx, colIdx) => {
+        try {
+            (<any>this.gridComponent.select('.' + this.cellClass(rowIdx, colIdx)).node())
+                .focus();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    public renderFromAggregates(data: any, options: any, aggregateExpressionOptions: any, chartComponentData) {
+        this.chartOptions.setOptions(options);
+        var dataAsJson = data.reduce((p, c, i) => {
+            var aeName = Object.keys(c)[0];
+            Object.keys(c[aeName]).forEach(sbName => {
+                var row = {};
+                Object.keys(c[aeName][sbName]).forEach(dt => {
+                    row[dt] = c[aeName][sbName][dt];
+                })
+                row[this.rowLabelKey] = (Object.keys(c[aeName]).length == 1 && sbName == "" ? aeName : sbName);
+                if (aggregateExpressionOptions && aggregateExpressionOptions[i].color)
+                    row[this.colorKey] = aggregateExpressionOptions[i].color;
+                row[this.aggIndexKey] = i;
+                p.push(row);
+            })
+            return p;
+        }, []);
+        return this.render(dataAsJson, options, aggregateExpressionOptions, chartComponentData);
+    }
+
+    private getRowData() {
         let rowData = [];
         Object.keys(this.chartComponentData.timeArrays).forEach((aggKey) => {
-            Object.keys(this.chartComponentData.timeArrays[aggKey]).forEach((sb,sbI) => {
+            Object.keys(this.chartComponentData.timeArrays[aggKey]).forEach((sb, sbI) => {
                 if (this.chartComponentData.getSplitByVisible(aggKey, sb)) {
                     rowData.push([aggKey, sb]);
-                } 
-            })            
+                }
+            })
         });
         return rowData;
     }
 
-    private convertSeriesToGridData (allTimeStampMap, currSeries) {
+    private convertSeriesToGridData(allTimeStampMap, currSeries) {
         Object.keys(allTimeStampMap).forEach(k => allTimeStampMap[k] = {});
         currSeries = currSeries.filter((d) => {
             return d.measures !== null;
@@ -122,7 +122,7 @@ class Grid extends Component {
 
     private getFormattedDate = (h) => {
         var hAsDate = <any>(new Date(h));
-        if(hAsDate != this.getString('Invalid Date'))
+        if (hAsDate != this.getString('Invalid Date'))
             return Utils.timeFormat(this.usesSeconds, this.usesMillis, this.chartOptions.offset, null, null, null, this.chartOptions.dateLocale)(hAsDate);
         return h;
     }
@@ -133,23 +133,23 @@ class Grid extends Component {
         } else {
             this.filteredTimestamps = this.chartComponentData.allTimestampsArray.filter((ts) => {
                 let currMillis = (new Date(ts)).valueOf();
-                return (currMillis >= this.chartComponentData.fromMillis && currMillis < this.chartComponentData.toMillis); 
-            });    
+                return (currMillis >= this.chartComponentData.fromMillis && currMillis < this.chartComponentData.toMillis);
+            });
         }
     }
 
-    private addHeaderCells () {
+    private addHeaderCells() {
         let headerCellData = this.filteredTimestamps;// this.chartComponentData.allTimestampsArray;
         let headerCells = this.tableHeaderRow.selectAll('.tsi-headerCell').data(headerCellData);
         let headerCellsEntered = headerCells.enter()
             .append('th')
             .attr("tabindex", 1)
             .merge(headerCells)
-            .attr("class", (d, i) => this.cellClass(0, i+1) + ' tsi-headerCell')
+            .attr("class", (d, i) => this.cellClass(0, i + 1) + ' tsi-headerCell')
             .on("keydown", (event, d) => {
                 const e = headerCellsEntered.nodes();
                 const i = e.indexOf(event.currentTarget);
-                this.arrowNavigate(event, 0, i+1)
+                this.arrowNavigate(event, 0, i + 1)
             })
             .text(this.getFormattedDate)
             .attr('aria-label', (h) => {
@@ -158,7 +158,7 @@ class Grid extends Component {
         headerCellsEntered.exit().remove();
     }
 
-    private addValueCells () {
+    private addValueCells() {
         let rowData = this.getRowData();
         let rows = this.table.selectAll('.tsi-gridContentRow').data(rowData);
         let self = this;
@@ -172,7 +172,7 @@ class Grid extends Component {
         let rowsEntered = rows.enter()
             .append('tr')
             .classed('tsi-gridContentRow', true)
-            .each(function(d, i) {
+            .each(function (d, i) {
                 let aggKey = d[0];
                 let splitBy = d[1];
                 let seriesData = self.convertSeriesToGridData(allTimeStampMap, self.chartComponentData.timeArrays[aggKey][splitBy]);
@@ -181,12 +181,12 @@ class Grid extends Component {
 
                 //Row header with the name of the series
                 let headerCell = d3.select(this).selectAll<any, unknown>('tsi-rowHeaderCell').data([d]);
-                
+
                 let getRowHeaderText = (d) => {
                     return `${self.chartComponentData.displayState[aggKey].name}${(splitBy !== '' ? (': ' + splitBy) : '')}`;
                 }
 
-                headerCell.enter()  
+                headerCell.enter()
                     .append('td')
                     .attr("tabindex", 1)
                     .merge(headerCell)
@@ -226,28 +226,28 @@ class Grid extends Component {
                     .attr("tabindex", 1)
                     .attr('aria-label', (d: any, i) => {
                         if (!d.measures || Object.keys(d.measures).length === 0) {
-                            return `${self.getString('no values at')} ${getRowHeaderText(d)} and ${self.getFormattedDate(new Date(headerCellData[i]))}`; 
+                            return `${self.getString('no values at')} ${getRowHeaderText(d)} and ${self.getFormattedDate(new Date(headerCellData[i]))}`;
                         }
                         let formattedValues = Object.keys(d.measures).map((measureName) => {
                             return `${measureName}: ${d.measures[measureName]}`;
                         }).join(', ');
                         return `${self.getString('values for cell at')} ${getRowHeaderText(d)} ${self.getString('and')} ${self.getFormattedDate(d.dateTime)} ${self.getString('are')} ${formattedValues}`;
                     })
-                    .each(function (d: any, i) {      
+                    .each(function (d: any, i) {
                         let measures = d3.select(this).selectAll('.tsi-measureValue').data(measuresData);
                         measures.enter()
                             .append('div')
                             .attr('class', 'tsi-measureValue')
                             .text((measure: string) => d.measures ? d.measures[measure] : '');
-                        measures.exit().remove(); 
+                        measures.exit().remove();
                     });
                 cellsEntered.exit().remove();
             });
 
         rowsEntered.exit().remove();
     }
-	
-	public render(data: any, options: any, aggregateExpressionOptions: any, chartComponentData: ChartComponentData = null) {
+
+    public render(data: any, options: any, aggregateExpressionOptions: any, chartComponentData: ChartComponentData = null) {
         data = Utils.standardizeTSStrings(data);
         this.chartOptions.setOptions(options);
         this.gridComponent = d3.select(this.renderTarget);
@@ -259,27 +259,27 @@ class Grid extends Component {
 
         this.setFilteredTimestamps();
 
-        super.themify(this.gridComponent, this.chartOptions.theme);        
+        super.themify(this.gridComponent, this.chartOptions.theme);
 
         this.gridComponent
             .classed("tsi-gridComponent", true)
             .classed("tsi-fromChart", !!options.fromChart)
-		var grid = this.gridComponent
-			.append('div')
-			.attr("class", "tsi-gridWrapper")
-			.attr("tabindex", 0)
-			.on("click", () => { 
-				if (this) {
-					this.focus(0,0);
-				} 
+        var grid = this.gridComponent
+            .append('div')
+            .attr("class", "tsi-gridWrapper")
+            .attr("tabindex", 0)
+            .on("click", () => {
+                if (this) {
+                    this.focus(0, 0);
+                }
             });
-            
-		var headers = Object.keys(data.reduce((p,c) => {
-			Object.keys(c).forEach(k => {
-				if(k != this.rowLabelKey && k != this.colorKey)
-					p[k] = true;
-			})
-			return p;
+
+        var headers = Object.keys(data.reduce((p, c) => {
+            Object.keys(c).forEach(k => {
+                if (k != this.rowLabelKey && k != this.colorKey)
+                    p[k] = true;
+            })
+            return p;
         }, {})).sort();
 
         if (!this.table) {
@@ -287,7 +287,7 @@ class Grid extends Component {
             this.tableHeaderRow = this.table.append('tr').classed('tsi-gridHeaderRow', true);
             this.tableHeaderRow.append('th')
                 .attr("tabindex", 0)
-                .attr("class", "tsi-topLeft " + this.cellClass(0,0))
+                .attr("class", "tsi-topLeft " + this.cellClass(0, 0))
                 .on("keydown", (event) => {
                     this.arrowNavigate(event, 0, 0);
                 });
@@ -309,27 +309,27 @@ class Grid extends Component {
                     }
                 })
                 .on("click", () => {
-                    if(!!options.fromChart) {
+                    if (!!options.fromChart) {
                         Utils.focusOnEllipsisButton(this.renderTarget.parentNode);
                         this.gridComponent.remove();
                     }
                 });
-        } 
+        }
     }
 
     private arrowNavigate = (d3event: any, rowIdx: number, colIdx: number) => {
-        if(d3event.keyCode === 9){
-            if (this.closeButton){
+        if (d3event.keyCode === 9) {
+            if (this.closeButton) {
                 (this.closeButton.node()).focus();
                 d3event.preventDefault();
-            } 
+            }
             return;
         }
         var codes = [37, 38, 39, 40];
         var codeIndex = codes.indexOf(d3event.keyCode);
-        if(codeIndex == -1)
+        if (codeIndex == -1)
             return;
-        switch(codeIndex){
+        switch (codeIndex) {
             case 0:
                 // left
                 this.focus(rowIdx, colIdx - 1);

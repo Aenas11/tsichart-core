@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './HierarchyNavigation.scss';
-import Utils from "../../Utils";
-import { Component } from "./../../Interfaces/Component";
-import ModelAutocomplete from '../ModelAutocomplete';
+import Utils from "../../utils";
+import { Component } from "./../../interfaces/Component";
+import ModelAutocomplete from '../modelAutocomplete';
 
 class HierarchyNavigation extends Component {
 

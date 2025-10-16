@@ -1,21 +1,21 @@
 import * as d3 from 'd3';
 import moment from 'moment-timezone';
-import Grid from "../Components/Grid/Grid";
-import { ChartOptions } from '../Models/ChartOptions';
-import { ChartComponentData } from '../Models/ChartComponentData';
-import { CharactersToEscapeForExactSearchInstance, nullTsidDisplayString, GRIDCONTAINERCLASS, NONNUMERICTOPMARGIN } from '../Constants/Constants';
-import { YAxisStates, valueTypes } from '../Constants/Enums';
+import Grid from "../components/Grid/Grid";
+import { ChartOptions } from '../models/ChartOptions';
+import { ChartComponentData } from '../models/ChartComponentData';
+import { CharactersToEscapeForExactSearchInstance, nullTsidDisplayString, GRIDCONTAINERCLASS, NONNUMERICTOPMARGIN } from '../constants/Constants';
+import { YAxisStates, valueTypes } from '../constants/Enums';
 
-export default class Utils { 
+export default class Utils {
     static guidForNullTSID = Utils.guid();
 
-    static formatYAxisNumber (val: number) {
+    static formatYAxisNumber(val: number) {
         if (Math.abs(val) < 1000000) {
             if (Math.abs(val) < .0000001)
                 return d3.format('.2n')(val); // scientific for less than 1 billionth
             else {
                 // grouped thousands with 7 significant digits, trim insginificant trailing 0s
-                var formatted = d3.format(',.7r')(val); 
+                var formatted = d3.format(',.7r')(val);
                 if (formatted.indexOf('.') != -1) {
                     var lastChar = formatted[formatted.length - 1]
                     while (lastChar == '0') {
@@ -38,9 +38,9 @@ export default class Utils {
     static getStackStates() {
         return YAxisStates;
     }
-    
+
     // format [0-9]+[ms|s|m|h|d], convert to millis
-    static parseTimeInput (inputString: string) {
+    static parseTimeInput(inputString: string) {
         inputString = inputString.toLowerCase();
         let getNumber = (inputString, charsFromEnd) => {
             let startAt = inputString.indexOf('pt') !== -1 ? 2 : (inputString.indexOf('p') !== -1 ? 1 : 0);
@@ -64,7 +64,7 @@ export default class Utils {
         return -1;
     }
 
-    static findClosestTime (prevMillis: number, timeMap: any): number {
+    static findClosestTime(prevMillis: number, timeMap: any): number {
         var minDistance = Infinity;
         var closestValue = null;
         Object.keys(timeMap).forEach((intervalCenterString) => {
@@ -78,68 +78,68 @@ export default class Utils {
     }
 
 
-    static getValueOfVisible (d: any, visibleMeasure: string) {
+    static getValueOfVisible(d: any, visibleMeasure: string) {
         if (d.measures) {
             if (d.measures[visibleMeasure] != null || d.measures[visibleMeasure] != undefined)
                 return d.measures[visibleMeasure];
-        } 
+        }
         return null;
     }
 
-    static isStartAt (startAtString: string = null, searchSpan: any = null) {
+    static isStartAt(startAtString: string = null, searchSpan: any = null) {
         return (startAtString !== null && searchSpan !== null && searchSpan.from !== null);
     }
-    
-    static parseShift (shiftString: string, startAtString: any = null, searchSpan: any = null) {
+
+    static parseShift(shiftString: string, startAtString: any = null, searchSpan: any = null) {
         if (this.isStartAt(startAtString, searchSpan)) {
             return (new Date(startAtString)).valueOf() - (new Date(searchSpan.from)).valueOf();
         }
-        
+
         if (shiftString === undefined || shiftString === null || shiftString.length === 0) {
             return 0;
         }
         let millis: number;
         if (shiftString[0] === '-' || shiftString[0] === '+') {
-            millis = (shiftString[0] === '-' ? -1 : 1) * this.parseTimeInput(shiftString.slice(1,shiftString.length));
+            millis = (shiftString[0] === '-' ? -1 : 1) * this.parseTimeInput(shiftString.slice(1, shiftString.length));
         } else {
             millis = this.parseTimeInput(shiftString);
         }
         return -millis;
     }
 
-    static adjustStartMillisToAbsoluteZero (fromMillis, bucketSize) {
+    static adjustStartMillisToAbsoluteZero(fromMillis, bucketSize) {
         let epochAdjustment = 62135596800000;
         return Math.floor((fromMillis + epochAdjustment) / bucketSize) * bucketSize - epochAdjustment;
     }
 
-    static bucketSizeToTsqInterval (bucketSize: string) {
-        if (!bucketSize) {return null;}
+    static bucketSizeToTsqInterval(bucketSize: string) {
+        if (!bucketSize) { return null; }
         let bucketSizeInMillis = Utils.parseTimeInput(bucketSize);
         let padLeadingZeroes = (number) => {
             let numberAsString = String(number);
-            if(numberAsString.length < 3) 
+            if (numberAsString.length < 3)
                 numberAsString = (numberAsString.length === 2 ? '0' : '00') + numberAsString;
             return numberAsString
         }
         if (bucketSizeInMillis < 1000) {
-            bucketSize = (bucketSize.toLowerCase().indexOf('d') !== -1) ? 'd.' : '.' + padLeadingZeroes(bucketSizeInMillis) + "s"; 
+            bucketSize = (bucketSize.toLowerCase().indexOf('d') !== -1) ? 'd.' : '.' + padLeadingZeroes(bucketSizeInMillis) + "s";
         }
         let prefix = bucketSize.toLowerCase().indexOf('d') !== -1 ? 'P' : 'PT';
         return (prefix + bucketSize).toUpperCase();
     }
 
-    static createEntityKey (aggName: string, aggIndex: number) {
+    static createEntityKey(aggName: string, aggIndex: number) {
         return encodeURIComponent(aggName).split(".").join("_") + "_" + aggIndex;
     }
 
-    static getColorForValue (chartDataOptions, value) {
+    static getColorForValue(chartDataOptions, value) {
         if (chartDataOptions.valueMapping && (chartDataOptions.valueMapping[value] !== undefined)) {
             return chartDataOptions.valueMapping[value].color;
         }
         return null;
     }
 
-    static rollUpContiguous (data) {
+    static rollUpContiguous(data) {
         let areEquivalentBuckets = (d1, d2) => {
             if (!d1.measures || !d2.measures) {
                 return false;
@@ -160,10 +160,10 @@ export default class Utils {
         });
     }
 
-    static formatOffsetMinutes (offset) {
-        return (offset < 0 ? '-' : '+') + 
-            Math.floor(offset / 60) + ':' + 
-            (offset % 60 < 10 ? '0' : '') + (offset % 60) + ''; 
+    static formatOffsetMinutes(offset) {
+        return (offset < 0 ? '-' : '+') +
+            Math.floor(offset / 60) + ':' +
+            (offset % 60 < 10 ? '0' : '') + (offset % 60) + '';
 
     }
 
@@ -178,13 +178,13 @@ export default class Utils {
         }
     }
 
-    static offsetUTC (date: Date) {
-        let offsettedDate = new Date(date.valueOf() - date.getTimezoneOffset()*60*1000);
-        return offsettedDate; 
+    static offsetUTC(date: Date) {
+        let offsettedDate = new Date(date.valueOf() - date.getTimezoneOffset() * 60 * 1000);
+        return offsettedDate;
     }
 
     // inverse of getOffsetMinutes, this is the conversion factor of an offsettedTime to UTC in minutes 
-    static getMinutesToUTC (offset: any, millisInOffset: number) {
+    static getMinutesToUTC(offset: any, millisInOffset: number) {
         if (offset == 'Local') {
             return moment.tz.zone(moment.tz.guess()).utcOffset(millisInOffset);
         }
@@ -195,26 +195,26 @@ export default class Utils {
         }
     }
 
-    static addOffsetGuess (timezoneName) {
+    static addOffsetGuess(timezoneName) {
         let timezone = moment.tz(new Date(), timezoneName.split(' ').join('_'));
         let formatted = timezone.format('Z');
         return "UTC" + formatted;
     }
 
-    static timezoneAbbreviation (timezoneName) {
+    static timezoneAbbreviation(timezoneName) {
         let abbr = moment.tz(new Date(), timezoneName).format('z');
         if (abbr[0] === '-' || abbr[0] === '+')
             return '';
         return abbr;
-    } 
+    }
 
-    static createTimezoneAbbreviation (offset) {
+    static createTimezoneAbbreviation(offset) {
         let timezone = Utils.parseTimezoneName(offset);
         let timezoneAbbreviation = Utils.timezoneAbbreviation(timezone);
         return (timezoneAbbreviation.length !== 0 ? timezoneAbbreviation : Utils.addOffsetGuess(timezone));
     }
 
-    static parseTimezoneName (timezoneRaw: any) {
+    static parseTimezoneName(timezoneRaw: any) {
         if (!isNaN(timezoneRaw)) {
             if (timezoneRaw === 0) {
                 return 'UTC';
@@ -223,17 +223,17 @@ export default class Utils {
         }
         if (timezoneRaw == 'Local') {
             return moment.tz.guess();
-        } 
-        return timezoneRaw !== null ? timezoneRaw.split(' ').join('_'): '';
+        }
+        return timezoneRaw !== null ? timezoneRaw.split(' ').join('_') : '';
     }
 
-    static convertTimezoneToLabel (timezone , locdLocal = 'Local') {
+    static convertTimezoneToLabel(timezone, locdLocal = 'Local') {
         let timezoneName = this.parseTimezoneName(timezone);
         let localPrefix = '';
         let offsetPrefix = '';
         if (timezone == 'Local') {
             localPrefix = locdLocal + ' - ';
-        } 
+        }
         if (timezone !== 'UTC') {
             offsetPrefix = ' (' + this.addOffsetGuess(timezoneName) + ')';
         }
@@ -242,7 +242,7 @@ export default class Utils {
         return offsetPrefix + " " + localPrefix + timezoneName.replace(/_/g, ' ') + timezoneSuffix;
     }
 
-    static rangeTimeFormat (rangeMillis: number) {
+    static rangeTimeFormat(rangeMillis: number) {
         var rangeText = "";
         var oneSecond = 1000;
         var oneMinute = 60 * 1000;
@@ -268,11 +268,11 @@ export default class Utils {
         return millis + "ms";
     }
 
-    static subDateTimeFormat (is24HourTime, usesSeconds ,usesMillis) {
+    static subDateTimeFormat(is24HourTime, usesSeconds, usesMillis) {
         return (is24HourTime ? "HH" : "hh") + ":mm" + (usesSeconds ? (":ss" + (usesMillis ? ".SSS" : "")) : "") + (is24HourTime ? "" : " A");
     };
-    
-    static timeFormat(usesSeconds = false, usesMillis = false, offset: any = 0, is24HourTime: boolean = true, shiftMillis: number = null, timeFormat: string = null, locale='en') {
+
+    static timeFormat(usesSeconds = false, usesMillis = false, offset: any = 0, is24HourTime: boolean = true, shiftMillis: number = null, timeFormat: string = null, locale = 'en') {
         return (d) => {
             if (shiftMillis !== 0) {
                 d = new Date(d.valueOf() + shiftMillis);
@@ -291,7 +291,7 @@ export default class Utils {
         }
     }
 
-    static splitTimeLabel (text: any) {
+    static splitTimeLabel(text: any) {
 
         let shouldSplit = (str) => {
             let splitLines = str.split(' ');
@@ -299,7 +299,7 @@ export default class Utils {
         }
 
         text.each(function () {
-            if(this.children == undefined || this.children.length == 0){  // don't split already split labels
+            if (this.children == undefined || this.children.length == 0) {  // don't split already split labels
                 var text = d3.select(this);
                 var lines = text.text().split(" ");
                 var dy = parseFloat(text.attr("dy"));
@@ -315,30 +315,30 @@ export default class Utils {
                         .attr("x", 0)
                         .attr("y", text.attr("y"))
                         .attr("dy", (dy + dy * 1.4) + "em")
-                        .text(newSecondLine);    
+                        .text(newSecondLine);
                 }
             }
         });
     }
-    
-    static getUTCHours (d: Date, is24HourTime: boolean = true) {
+
+    static getUTCHours(d: Date, is24HourTime: boolean = true) {
         var hours = d.getUTCHours();
         if (!is24HourTime) {
-            if (hours == 0) 
+            if (hours == 0)
                 hours = 12;
-            if (hours > 12) 
+            if (hours > 12)
                 hours = hours - 12;
         }
         return hours;
     }
 
-    static UTCTwelveHourFormat (d: Date) {
+    static UTCTwelveHourFormat(d: Date) {
         var hours: string = String(this.getUTCHours(d));
         var minutes: string = (d.getUTCMinutes() < 10 ? "0" : "") + String(d.getUTCMinutes());
         var amPm: string = (d.getUTCHours() < 12) ? "AM" : "PM";
         return hours + ":" + minutes + " " + amPm;
     }
-    
+
     static getAgVisible(displayState: any, aggI: string, splitBy: string) {
         return (displayState[aggI].visible) ? displayState[aggI].splitBys[splitBy].visible : false;
     }
@@ -355,7 +355,7 @@ export default class Utils {
                 .attr("width", 7)
                 .attr("height", 7)
                 .attr("transform", "rotate(45)");
-        } 
+        }
         else if (seriesType == "state") {
             g.append("rect")
                 .attr("width", 15)
@@ -381,7 +381,7 @@ export default class Utils {
         return text;
     }
 
-    static setSeriesLabelSubtitleText (subtitle, isInFocus: boolean = false) {
+    static setSeriesLabelSubtitleText(subtitle, isInFocus: boolean = false) {
         let subtitleDatum = subtitle.data()[0];
         if (!subtitle.select('.tsi-splitBy').empty()) {
             let textAfterSplitByExists = subtitleDatum.timeShift !== '' || subtitleDatum.variableAlias;
@@ -400,7 +400,7 @@ export default class Utils {
         }
     }
 
-    static revertAllSubtitleText (markerValues, opacity = 1) {
+    static revertAllSubtitleText(markerValues, opacity = 1) {
         let self = this;
         markerValues.classed('tsi-isExpanded', false)
             .style('opacity', opacity)
@@ -409,29 +409,29 @@ export default class Utils {
             });
     }
 
-    static generateColors (numColors: number, includeColors: string[] = null) {
-        let defaultColors = ['#008272', '#D869CB', '#FF8C00', '#8FE6D7', '#3195E3', '#F7727E', '#E0349E', '#C8E139', '#60B9AE', 
-                             '#93CFFB', '#854CC7', '#258225', '#0078D7', '#FF2828', '#FFF100'];
-        var postDefaultColors = d3.scaleSequential(d3.interpolateCubehelixDefault).domain([defaultColors.length -.5, numColors - .5]);
+    static generateColors(numColors: number, includeColors: string[] = null) {
+        let defaultColors = ['#008272', '#D869CB', '#FF8C00', '#8FE6D7', '#3195E3', '#F7727E', '#E0349E', '#C8E139', '#60B9AE',
+            '#93CFFB', '#854CC7', '#258225', '#0078D7', '#FF2828', '#FFF100'];
+        var postDefaultColors = d3.scaleSequential(d3.interpolateCubehelixDefault).domain([defaultColors.length - .5, numColors - .5]);
         var colors = [];
         let colorsIndex = 0;
-        if(includeColors) {//add the colors we want to include first
-            for(let i = 0; i < includeColors.length && colorsIndex < numColors; i++) {
+        if (includeColors) {//add the colors we want to include first
+            for (let i = 0; i < includeColors.length && colorsIndex < numColors; i++) {
                 let color = includeColors[i];
                 if (colors.indexOf(color) === -1) {
                     colors.push(color);
                     colorsIndex++;
                 }
-            }  
-        } 
-        for(let i = 0; colorsIndex < numColors; i++) {
+            }
+        }
+        for (let i = 0; colorsIndex < numColors; i++) {
             if (i < defaultColors.length) {
-                if(colors.indexOf(defaultColors[i]) === -1) {
+                if (colors.indexOf(defaultColors[i]) === -1) {
                     colors.push(defaultColors[i]);
                     colorsIndex++;
                 }
             }
-            else if(colors.indexOf(postDefaultColors(i)) === -1) {
+            else if (colors.indexOf(postDefaultColors(i)) === -1) {
                 colors.push(postDefaultColors(i));
                 colorsIndex++;
             }
@@ -439,52 +439,52 @@ export default class Utils {
         return colors;
     }
 
-    static convertFromLocal (date: Date) {
+    static convertFromLocal(date: Date) {
         return new Date(date.valueOf() - date.getTimezoneOffset() * 60 * 1000);
     }
 
-    static adjustDateFromTimezoneOffset (date: Date) {
+    static adjustDateFromTimezoneOffset(date: Date) {
         let dateCopy = new Date(date.valueOf());
-        dateCopy.setTime(dateCopy.getTime() + dateCopy.getTimezoneOffset()*60*1000 );
-        return dateCopy;    
+        dateCopy.setTime(dateCopy.getTime() + dateCopy.getTimezoneOffset() * 60 * 1000);
+        return dateCopy;
     }
 
-    static offsetFromUTC (date: Date, offset = 0) {
+    static offsetFromUTC(date: Date, offset = 0) {
         let offsetMinutes = Utils.getOffsetMinutes(offset, date.valueOf());
         var dateCopy = new Date(date.valueOf() + offsetMinutes * 60 * 1000);
-        return dateCopy;    
+        return dateCopy;
     }
 
-    static offsetToUTC (date: Date, offset = 0) {
+    static offsetToUTC(date: Date, offset = 0) {
         let offsetMinutes = Utils.getOffsetMinutes(offset, date.valueOf())
         var dateCopy = new Date(date.valueOf() - offsetMinutes * 60 * 1000);
-        return dateCopy;    
+        return dateCopy;
     }
 
 
-    static parseUserInputDateTime (timeText, offset) {
-        let dateTimeFormat = "L " + this.subDateTimeFormat(true,true, true);
+    static parseUserInputDateTime(timeText, offset) {
+        let dateTimeFormat = "L " + this.subDateTimeFormat(true, true, true);
         let parsedDate = moment(timeText, dateTimeFormat).toDate();
         let utcDate = this.offsetToUTC(this.convertFromLocal(parsedDate), offset);
         return utcDate.valueOf();
     }
-    
-    static getBrighterColor (color: string) {
+
+    static getBrighterColor(color: string) {
         let hclColor = <any>d3.hcl(color);
         if (hclColor.l < 80) {
             return hclColor.brighter().toString();
-        } 
+        }
         return hclColor.toString();
 
     }
 
     static createSplitByColors(displayState: any, aggKey: string, ignoreIsOnlyAgg: boolean = false) {
-        if (Object.keys(displayState[aggKey]["splitBys"]).length == 1) 
+        if (Object.keys(displayState[aggKey]["splitBys"]).length == 1)
             return [displayState[aggKey].color];
         var isOnlyAgg: boolean = Object.keys(displayState).reduce((accum, currAgg): boolean => {
             if (currAgg == aggKey)
                 return accum;
-            if (displayState[currAgg]["visible"] == false) 
+            if (displayState[currAgg]["visible"] == false)
                 return accum && true;
             return false;
         }, true);
@@ -492,10 +492,10 @@ export default class Utils {
             return this.generateColors(Object.keys(displayState[aggKey]["splitBys"]).length);
         }
         var aggColor = displayState[aggKey].color;
-        var interpolateColor = d3.scaleLinear().domain([0,Object.keys(displayState[aggKey]["splitBys"]).length])
+        var interpolateColor = d3.scaleLinear().domain([0, Object.keys(displayState[aggKey]["splitBys"]).length])
             .range([d3.hcl(aggColor).darker().l, d3.hcl(aggColor).brighter().l]);
         var colors = [];
-        for(var i = 0; i < Object.keys(displayState[aggKey]["splitBys"]).length; i++){
+        for (var i = 0; i < Object.keys(displayState[aggKey]["splitBys"]).length; i++) {
             const newColor = d3.hcl(aggColor);
             newColor.l = interpolateColor(i);
             colors.push(newColor.formatHex());
@@ -504,35 +504,35 @@ export default class Utils {
     }
 
     static colorSplitBy(displayState: any, splitByIndex: number, aggKey: string, ignoreIsOnlyAgg: boolean = false) {
-        if (Object.keys(displayState[aggKey]["splitBys"]).length == 1) 
+        if (Object.keys(displayState[aggKey]["splitBys"]).length == 1)
             return displayState[aggKey].color;
 
         var isOnlyAgg: boolean = Object.keys(displayState).reduce((accum, currAgg): boolean => {
-                        if (currAgg == aggKey)
-                            return accum;
-                        if (displayState[currAgg]["visible"] == false) 
-                            return accum && true;
-                        return false;
-                    }, true);
-            
+            if (currAgg == aggKey)
+                return accum;
+            if (displayState[currAgg]["visible"] == false)
+                return accum && true;
+            return false;
+        }, true);
+
         if (isOnlyAgg && !ignoreIsOnlyAgg) {
             var splitByColors = this.generateColors(Object.keys(displayState[aggKey]["splitBys"]).length);
             return splitByColors[splitByIndex];
         }
 
         var aggColor = displayState[aggKey].color;
-        var interpolateColor = d3.scaleLinear().domain([0,Object.keys(displayState[aggKey]["splitBys"]).length])
+        var interpolateColor = d3.scaleLinear().domain([0, Object.keys(displayState[aggKey]["splitBys"]).length])
             .range([d3.hcl(aggColor).darker().l, d3.hcl(aggColor).brighter().l]);
         const newColor = d3.hcl(aggColor);
         newColor.l = interpolateColor(splitByIndex);
         return newColor.formatHex();
     }
-    
-    static getTheme(theme: any){
-         return theme ? 'tsi-' + theme : 'tsi-dark';
+
+    static getTheme(theme: any) {
+        return theme ? 'tsi-' + theme : 'tsi-dark';
     }
-    
-    static clearSelection(){
+
+    static clearSelection() {
         var sel = window.getSelection ? window.getSelection() : (<any>document).selection;
         if (sel) {
             if (sel.removeAllRanges) {
@@ -543,67 +543,67 @@ export default class Utils {
         }
     }
 
-    static mark(filter, text){
-        if(filter.length == 0)
+    static mark(filter, text) {
+        if (filter.length == 0)
             return text;
         var regExp = new RegExp(filter, 'gi');
-        return text.replace(regExp, function(m){ return '<mark>'+m+'</mark>';});
+        return text.replace(regExp, function (m) { return '<mark>' + m + '</mark>'; });
     }
 
     static hash(str) {
         var hash = 5381,
-            i    = str.length;
-      
-        while(i) {
-          hash = (hash * 33) ^ str.charCodeAt(--i);
+            i = str.length;
+
+        while (i) {
+            hash = (hash * 33) ^ str.charCodeAt(--i);
         }
-      
+
         /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
          * integers. Since we want the results to be always positive, convert the
          * signed int to an unsigned by doing an unsigned bitshift. */
         return hash >>> 0;
-      }
-      
-
-    static guid () {
-        var  s4 = () => {
-            return Math.floor((1 + Math.random()) * 0x10000)
-              .toString(16)
-              .substring(1);
-        }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-               s4() + '-' + s4() + s4() + s4();
     }
 
-    static createValueFilter (aggregateKey, splitBy) {
-        return (d: any, j: number ) => {
+
+    static guid() {
+        var s4 = () => {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
+
+    static createValueFilter(aggregateKey, splitBy) {
+        return (d: any, j: number) => {
             var currAggKey: string;
             var currSplitBy: string;
             if (d.aggregateKey) {
                 currAggKey = d.aggregateKey;
                 currSplitBy = d.splitBy;
-            } else  if (d && d.length){
+            } else if (d && d.length) {
                 currAggKey = d[0].aggregateKey;
                 currSplitBy = d[0].splitBy
-            } else 
+            } else
                 return true;
             return (currAggKey == aggregateKey && (splitBy == null || splitBy == currSplitBy));
-        }     
-    } 
+        }
+    }
 
-    static downloadCSV (csvString: string, csvName: string = "Table") {
+    static downloadCSV(csvString: string, csvName: string = "Table") {
         var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
         var blobURL = window.URL.createObjectURL(blob);
         var link = document.createElement("a");
         link.setAttribute("href", blobURL);
         link.setAttribute("download", csvName + ".csv");
         link.setAttribute("tabindex", "0");
-        link.innerHTML= "";
+        link.innerHTML = "";
         document.body.appendChild(link);
         link.click();
-    }  
+    }
 
-    static sanitizeString (str: any, type: String) {
+    static sanitizeString(str: any, type: String) {
         if (str === null || str === undefined) {
             return "";
         }
@@ -612,48 +612,48 @@ export default class Utils {
             if (jsonifiedString.indexOf(',') !== -1 || jsonifiedString.indexOf('"') !== -1 || jsonifiedString.indexOf('\n') !== -1 || type === valueTypes.Dynamic) {
                 let replacedString = jsonifiedString.replace(/"/g, '""');
                 return '"' + replacedString + '"';
-           }
+            }
         }
         return str;
     }
 
-    static focusOnEllipsisButton (renderTarget) {
+    static focusOnEllipsisButton(renderTarget) {
         let ellipsisContainer = d3.select(renderTarget).select(".tsi-ellipsisContainerDiv");
         if (!ellipsisContainer.empty()) {
             (<any>ellipsisContainer.select(".tsi-ellipsisButton").node()).focus();
         }
     }
 
-    static createDownloadEllipsisOption (csvStringGenerator, action = () => {}, downloadLabel = "Download as CSV") {
+    static createDownloadEllipsisOption(csvStringGenerator, action = () => { }, downloadLabel = "Download as CSV") {
         return {
             iconClass: "download",
             label: downloadLabel,
-            action:() => {
+            action: () => {
                 Utils.downloadCSV(csvStringGenerator());
-                action();  
+                action();
             },
             description: ""
         };
     }
 
 
-    static createControlPanel (renderTarget: any, legendWidth: number, topChartMargin: number, chartOptions: any) {
+    static createControlPanel(renderTarget: any, legendWidth: number, topChartMargin: number, chartOptions: any) {
         d3.select(renderTarget).selectAll(".tsi-chartControlsPanel").remove();
-        var controlPanelWidth = Math.max(1, (<any>d3.select(renderTarget).node()).clientWidth - 
-                                            (chartOptions.legend == "shown" ? legendWidth : 0));
+        var controlPanelWidth = Math.max(1, (<any>d3.select(renderTarget).node()).clientWidth -
+            (chartOptions.legend == "shown" ? legendWidth : 0));
         var chartControlsPanel = d3.select(renderTarget).append("div")
             .attr("class", "tsi-chartControlsPanel")
             .style("width", controlPanelWidth + "px")
             .style("top", Math.max((topChartMargin - 32), 0) + "px");
-            
+
         return chartControlsPanel;
     }
 
-    static escapeQuotesCommasAndNewlines (stringToEscape: string) {
+    static escapeQuotesCommasAndNewlines(stringToEscape: string) {
         var escapedString = "";
-        if (stringToEscape && (stringToEscape.indexOf("\"") != -1 || 
-                               stringToEscape.indexOf(",") != -1 || 
-                               stringToEscape.indexOf("\n") != -1)) {
+        if (stringToEscape && (stringToEscape.indexOf("\"") != -1 ||
+            stringToEscape.indexOf(",") != -1 ||
+            stringToEscape.indexOf("\n") != -1)) {
             stringToEscape = stringToEscape.replace(/"/g, "\"\"");
             escapedString += "\"";
             escapedString += stringToEscape;
@@ -665,43 +665,43 @@ export default class Utils {
         }
     };
 
-    static getNonNumericHeight (rawHeight: number) {
+    static getNonNumericHeight(rawHeight: number) {
         return rawHeight + NONNUMERICTOPMARGIN;
     }
 
-    static getControlPanelWidth (renderTarget, legendWidth, isLegendShown) {
+    static getControlPanelWidth(renderTarget, legendWidth, isLegendShown) {
         return Math.max(1, (<any>d3.select(renderTarget).node()).clientWidth -
-                (isLegendShown ? legendWidth : 0));
+            (isLegendShown ? legendWidth : 0));
     };
 
-    static getValueOrDefault (chartOptionsObj, propertyName, defaultValue = null) {
+    static getValueOrDefault(chartOptionsObj, propertyName, defaultValue = null) {
         let propertyValue = chartOptionsObj[propertyName];
-        if (propertyValue == undefined){
+        if (propertyValue == undefined) {
             if (this[propertyName] == undefined)
                 return defaultValue;
             return this[propertyName];
-        } 
-        return propertyValue;  
+        }
+        return propertyValue;
     }
 
-    static safeNotNullOrUndefined (valueLambda) {
+    static safeNotNullOrUndefined(valueLambda) {
         try {
             let value = valueLambda();
-            return !(value === null || value === undefined); 
+            return !(value === null || value === undefined);
         }
-        catch (err){
+        catch (err) {
             return false;
         }
     }
 
-    static equalToEventTarget = (function (current, event)  {
+    static equalToEventTarget = (function (current, event) {
         return (current == event.target);
     });
 
-    static getAggKeys (data) {
+    static getAggKeys(data) {
         let aggregateCounterMap = {};
         return data.map((aggregate) => {
-            var aggName: string = Object.keys(aggregate)[0];            
+            var aggName: string = Object.keys(aggregate)[0];
             let aggKey;
             if (aggregateCounterMap[aggName]) {
                 aggKey = Utils.createEntityKey(aggName, aggregateCounterMap[aggName]);
@@ -714,11 +714,11 @@ export default class Utils {
         });
     }
 
-    static roundToMillis (rawTo, bucketSize) {
+    static roundToMillis(rawTo, bucketSize) {
         return Math.ceil((rawTo + 62135596800000) / (bucketSize)) * (bucketSize) - 62135596800000;
     }
 
-    static mergeSeriesForScatterPlot(chartData: any, scatterMeasures: any){
+    static mergeSeriesForScatterPlot(chartData: any, scatterMeasures: any) {
         let xMeasure = chartData[scatterMeasures.X_MEASURE], yMeasure = chartData[scatterMeasures.Y_MEASURE], rMeasure = chartData[scatterMeasures.R_MEASURE];
 
         let measureNames = Utils.getScatterPlotMeasureNames(chartData, scatterMeasures);
@@ -727,11 +727,11 @@ export default class Utils {
         let xLabel = xMeasure.additionalFields.Variable.substring(0, 15) + (xMeasure.additionalFields.Variable.length > 15 ? "... vs" : " vs");
         let yLabel = " " + yMeasure.additionalFields.Variable.substring(0, 15) + (yMeasure.additionalFields.Variable.length > 15 ? "... " : "");
         let rLabel = (rMeasure != null ? " vs " + rMeasure.additionalFields.Variable.substring(0, 15) + (rMeasure.additionalFields.Variable.length > 15 ? "... " : "") : "");
-        let dataTitle =  xLabel + yLabel + rLabel;
-        
+        let dataTitle = xLabel + yLabel + rLabel;
+
         // Initialize scatter plot data object
         let scatterData = {
-            [dataTitle] : {
+            [dataTitle]: {
                 "": {}
             }
         };
@@ -748,9 +748,9 @@ export default class Utils {
             let newTS = {}
             Object.keys(query.data[query.alias][""]).forEach((key) => {
                 let oldTime = new Date(key).valueOf();
-                let timeShift = query.timeShift != "" ? this.parseShift(query.timeShift, query.startAt, query.searchSpan): 0;
+                let timeShift = query.timeShift != "" ? this.parseShift(query.timeShift, query.startAt, query.searchSpan) : 0;
                 // Calculate real timeshift based on bucket snapping
-                let bucketShiftInMillis =  this.adjustStartMillisToAbsoluteZero(timeShift, this.parseShift(query.searchSpan.bucketSize));
+                let bucketShiftInMillis = this.adjustStartMillisToAbsoluteZero(timeShift, this.parseShift(query.searchSpan.bucketSize));
                 let normalizedTime = oldTime - bucketShiftInMillis;
                 let timestamp = new Date(normalizedTime).toISOString();
 
@@ -762,63 +762,62 @@ export default class Utils {
         // Normalize timestamp data
         xMeasure.data[xMeasure.alias][""] = normalizeTimestampKeys(xMeasure);
         yMeasure.data[yMeasure.alias][""] = normalizeTimestampKeys(yMeasure);
-        if(rMeasure){
+        if (rMeasure) {
             rMeasure.data[rMeasure.alias][""] = normalizeTimestampKeys(rMeasure);
             measureTypes.R_MEASURE_TYPE = 'avg' in rMeasure.measureTypes ? rMeasure.measureTypes['avg'] : rMeasure.measureTypes[0]
         }
 
         // For each timestamp in X data mix measures of other series
         Object.keys(xMeasure.data[xMeasure.alias][""]).forEach((key) => {
-            if(key in yMeasure.data[yMeasure.alias][""]){
+            if (key in yMeasure.data[yMeasure.alias][""]) {
                 let measures = {}
-                
+
                 measures[measureNames.X_MEASURE] = xMeasure.data[xMeasure.alias][""][key][measureTypes.X_MEASURE_TYPE];
                 measures[measureNames.Y_MEASURE] = yMeasure.data[yMeasure.alias][""][key][measureTypes.Y_MEASURE_TYPE];
 
                 // Add optional R measure
-                if(rMeasure != null && key in rMeasure.data[rMeasure.alias][""]){
+                if (rMeasure != null && key in rMeasure.data[rMeasure.alias][""]) {
                     measures[measureNames.R_MEASURE] = rMeasure.data[rMeasure.alias][""][key][measureTypes.R_MEASURE_TYPE];
                 }
 
                 // Discard timestamps with null valued measures
-                if(xMeasure.data[xMeasure.alias][""][key][measureTypes.X_MEASURE_TYPE] && yMeasure.data[yMeasure.alias][""][key][measureTypes.Y_MEASURE_TYPE])
-                {
-                    if(rMeasure != null){
-                        if(key in rMeasure.data[rMeasure.alias][""] && rMeasure.data[rMeasure.alias][""][key][measureTypes.R_MEASURE_TYPE])
+                if (xMeasure.data[xMeasure.alias][""][key][measureTypes.X_MEASURE_TYPE] && yMeasure.data[yMeasure.alias][""][key][measureTypes.Y_MEASURE_TYPE]) {
+                    if (rMeasure != null) {
+                        if (key in rMeasure.data[rMeasure.alias][""] && rMeasure.data[rMeasure.alias][""][key][measureTypes.R_MEASURE_TYPE])
                             scatterData[dataTitle][""][key] = measures;
                     }
-                    else{
+                    else {
                         scatterData[dataTitle][""][key] = measures;
-                    } 
-                } 
+                    }
+                }
             }
         });
         return scatterData;
     }
 
-    static getScatterPlotMeasureNames(chartData: any, scatterMeasures: any){
+    static getScatterPlotMeasureNames(chartData: any, scatterMeasures: any) {
         let uniqueNameMap = {}
-        
-        let xMeasureName = chartData[scatterMeasures.X_MEASURE].alias + " " + chartData[scatterMeasures.X_MEASURE].additionalFields.Variable + 
+
+        let xMeasureName = chartData[scatterMeasures.X_MEASURE].alias + " " + chartData[scatterMeasures.X_MEASURE].additionalFields.Variable +
             (chartData[scatterMeasures.X_MEASURE].timeShift == "" ? "" : " " + chartData[scatterMeasures.X_MEASURE].timeShift);
         uniqueNameMap[xMeasureName] = 1;
-        
-        let yMeasureName = chartData[scatterMeasures.Y_MEASURE].alias + " " + chartData[scatterMeasures.Y_MEASURE].additionalFields.Variable + 
+
+        let yMeasureName = chartData[scatterMeasures.Y_MEASURE].alias + " " + chartData[scatterMeasures.Y_MEASURE].additionalFields.Variable +
             (chartData[scatterMeasures.Y_MEASURE].timeShift == "" ? "" : " " + chartData[scatterMeasures.Y_MEASURE].timeShift);
 
-        if(yMeasureName in uniqueNameMap){
+        if (yMeasureName in uniqueNameMap) {
             let tempName = yMeasureName;
             yMeasureName += " (" + uniqueNameMap[yMeasureName].toString() + ")";
             uniqueNameMap[tempName] = uniqueNameMap[tempName] + 1;
-        } else{
+        } else {
             uniqueNameMap[yMeasureName] = 1;
         }
 
         let rMeasureName = chartData[scatterMeasures.R_MEASURE] ? chartData[scatterMeasures.R_MEASURE].alias + " " + chartData[scatterMeasures.R_MEASURE].additionalFields.Variable +
             (chartData[scatterMeasures.R_MEASURE].timeShift == "" ? "" : " " + chartData[scatterMeasures.R_MEASURE].timeShift) : null;
 
-        if(rMeasureName != null){
-            if(rMeasureName in uniqueNameMap){
+        if (rMeasureName != null) {
+            if (rMeasureName in uniqueNameMap) {
                 rMeasureName += " (" + uniqueNameMap[rMeasureName].toString() + ")";
             }
         }
@@ -842,7 +841,7 @@ export default class Utils {
         return false;
     }
 
-    static getMinWarmTime (warmStoreFrom, retentionString) {
+    static getMinWarmTime(warmStoreFrom, retentionString) {
         let minWarmTime = new Date(warmStoreFrom);
         if (retentionString !== null) {
             let retentionPeriod = Utils.parseTimeInput(retentionString);
@@ -851,7 +850,7 @@ export default class Utils {
         return minWarmTime;
     }
 
-    static standardizeTSStrings (rawData) {
+    static standardizeTSStrings(rawData) {
         let convertedData = [];
         rawData.forEach((dG, i) => {
             let dGName = Object.keys(dG)[0];
@@ -869,7 +868,7 @@ export default class Utils {
                             try {
                                 isoString = (new Date(rawTS)).toISOString();
                                 convertedDataGroup[seriesName][isoString] = dataGroup[seriesName][rawTS];
-                            } catch(RangeError) {
+                            } catch (RangeError) {
                                 console.log(`${rawTS} is not a valid ISO time`);
                             }
                         });
@@ -882,25 +881,25 @@ export default class Utils {
 
     // takes in an availability distribution and a min and max date, returns a tuple, where the first is the new distribution 
     // excluding values out of the range, and the second is all excluded values
-    static cullValuesOutOfRange (availabilityDistribution: any, minDateString: string, maxDateString: string) {
+    static cullValuesOutOfRange(availabilityDistribution: any, minDateString: string, maxDateString: string) {
         const dateZero = '0000-01-01T00:00:00Z';
         let minDateValue = new Date(minDateString).valueOf();
         let maxDateValue = new Date(maxDateString).valueOf();
 
-        if (new Date(availabilityDistribution.range.from).valueOf() < minDateValue || 
+        if (new Date(availabilityDistribution.range.from).valueOf() < minDateValue ||
             new Date(availabilityDistribution.range.to).valueOf() > maxDateValue) {
 
             let inRangeValues = {};
             let outOfRangeValues = {};
-                    
+
             let highestNotOverMaxString = dateZero;
             let highestNotOverMaxValue = (new Date(highestNotOverMaxString)).valueOf();
-            let lowestAboveMinValue = Infinity; 
+            let lowestAboveMinValue = Infinity;
 
             Object.keys(availabilityDistribution.distribution).forEach((bucketKey: string) => {
                 let bucketValue = (new Date(bucketKey)).valueOf();
                 if (bucketValue > maxDateValue || bucketValue < minDateValue) {
-                    outOfRangeValues[bucketKey] = availabilityDistribution.distribution[bucketKey]; 
+                    outOfRangeValues[bucketKey] = availabilityDistribution.distribution[bucketKey];
                 } else {
                     inRangeValues[bucketKey] = availabilityDistribution.distribution[bucketKey];
                     if (bucketValue > highestNotOverMaxValue) {
@@ -914,15 +913,15 @@ export default class Utils {
             });
 
             const bucketSize = this.parseTimeInput(availabilityDistribution.intervalSize);
-            
+
             if (highestNotOverMaxString !== dateZero) { // a value exists 
                 let nowMillis = new Date().valueOf();
-                if(highestNotOverMaxValue < nowMillis && (highestNotOverMaxValue + bucketSize) > nowMillis){
+                if (highestNotOverMaxValue < nowMillis && (highestNotOverMaxValue + bucketSize) > nowMillis) {
                     // the new end value was before now, but after adding bucket size, its after now
                     // so we set it to now to avoid setting it to a date in the future
                     availabilityDistribution.range.to = new Date(nowMillis).toISOString();
                 }
-                else{
+                else {
                     availabilityDistribution.range.to = new Date(highestNotOverMaxValue + bucketSize).toISOString();
                 }
             } else {
@@ -931,28 +930,28 @@ export default class Utils {
                     availabilityDistribution.range.to = maxDateString;
                 } else {
                     let toValue = Math.min(maxDateValue + bucketSize, (new Date(availabilityDistribution.range.to)).valueOf()); //clamped to maxDateString passed in
-                    availabilityDistribution.range.to = (new Date(toValue)).toISOString();    
+                    availabilityDistribution.range.to = (new Date(toValue)).toISOString();
                 }
             }
 
             if (lowestAboveMinValue !== Infinity) { // a value exists
                 availabilityDistribution.range.from = (new Date(lowestAboveMinValue)).toISOString();
-            } else { 
+            } else {
                 let rangeFromValue: number = (new Date(availabilityDistribution.range.from)).valueOf();
                 if (maxDateValue < (new Date(availabilityDistribution.range.from)).valueOf()) { // entire window is to the left of distribution range
                     availabilityDistribution.range.from = minDateString;
                 } else {
                     let fromValue = Math.max(minDateValue, rangeFromValue); // clamped to minDateString passed in
-                    availabilityDistribution.range.from = (new Date(fromValue)).toISOString();                        
+                    availabilityDistribution.range.from = (new Date(fromValue)).toISOString();
                 }
             }
             availabilityDistribution.distribution = inRangeValues;
-            return[availabilityDistribution, outOfRangeValues];
+            return [availabilityDistribution, outOfRangeValues];
         }
         return [availabilityDistribution, {}];
     }
-    
-    static mergeAvailabilities (warmAvailability, coldAvailability, retentionString = null) {
+
+    static mergeAvailabilities(warmAvailability, coldAvailability, retentionString = null) {
         let warmStoreRange = warmAvailability.range;
         let minWarmTime = this.getMinWarmTime(warmStoreRange.from, retentionString);
         let warmStoreToMillis = new Date(warmStoreRange.to).valueOf();
@@ -969,9 +968,9 @@ export default class Utils {
         return mergedAvailability;
     }
 
-    static languageGuess () {
+    static languageGuess() {
         return navigator.languages && navigator.languages[0] || // Chrome / Firefox
-        navigator.language; // All browsers
+            navigator.language; // All browsers
     }
 
     static getInstanceKey = (instance) => { // for keying instances using timeseriesid to be used data object to render hierarchy navigation
@@ -997,28 +996,28 @@ export default class Utils {
     static instanceHasEmptyTSID = (instance) => {
         return !instance.timeSeriesId || instance.timeSeriesId.length === 0;
     }
-    
+
     // appends dom elements of stripped strings including hits (for instance search results) and mono classed spans (for null tsid)
-    static appendFormattedElementsFromString = (targetElem, str, options: {additionalClassName?: string, inSvg?: boolean, splitByTag?: string} = null) => {
+    static appendFormattedElementsFromString = (targetElem, str, options: { additionalClassName?: string, inSvg?: boolean, splitByTag?: string } = null) => {
         interface FormattedElemData {
             str: string;
             isHit?: boolean;
             isNull?: boolean;
         };
 
-        let data : Array<FormattedElemData> = [];
-        let splitByNullGuid = (str) : Array<any> => {
+        let data: Array<FormattedElemData> = [];
+        let splitByNullGuid = (str): Array<any> => {
             let data = [];
             let splittedByNull = str.split(Utils.guidForNullTSID);
             splittedByNull.forEach((s, i) => {
-                if (i === 0) { 
+                if (i === 0) {
                     if (s) {
-                        data.push({str: s});
+                        data.push({ str: s });
                     }
                 } else {
-                    data.push({str: nullTsidDisplayString, isNull: true});
+                    data.push({ str: nullTsidDisplayString, isNull: true });
                     if (s) {
-                        data.push({str: s});
+                        data.push({ str: s });
                     }
                 }
             });
@@ -1032,7 +1031,7 @@ export default class Utils {
                 data = data.concat(splitByNullGuid(s));
             } else {
                 let splittedByHitClose = s.split(`</${splitByTag}>`);
-                data.push({str: splittedByHitClose[0], isHit: true});
+                data.push({ str: splittedByHitClose[0], isHit: true });
                 data = data.concat(splitByNullGuid(splittedByHitClose[1]));
             }
         });
@@ -1040,10 +1039,10 @@ export default class Utils {
         let additionalClassName = options && options.additionalClassName ? options.additionalClassName : '';
         let children = targetElem.selectAll('.tsi-formattedChildren').data(data);
         children.enter()
-            .append(d => 
+            .append(d =>
                 d.isHit ? document.createElement('mark')
-                : options && options.inSvg ? document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
-                    : document.createElement('span')
+                    : options && options.inSvg ? document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
+                        : document.createElement('span')
             )
             .classed('tsi-formattedChildren', true)
             .merge(children)
@@ -1063,7 +1062,7 @@ export default class Utils {
         return escapedTsid;
     }
 
-    static memorySizeOf (obj) {
+    static memorySizeOf(obj) {
         let bytes = 0;
 
         let sizeOf = (obj) => {
@@ -1082,7 +1081,7 @@ export default class Utils {
                         let objClass = Object.prototype.toString.call(obj).slice(8, -1);
                         if (objClass === 'Object' || objClass === 'Array') {
                             for (let key in obj) {
-                                if (!obj.hasOwnProperty(key)) {continue; }
+                                if (!obj.hasOwnProperty(key)) { continue; }
                                 sizeOf(key);
                                 sizeOf(obj[key]);
                             }

@@ -1,0 +1,582 @@
+@use "sass:list";
+@use "sass:color";
+@use "sass:math";
+@use "sass:string";
+@use "sass:map";
+
+@forward "sass:list";
+@forward "sass:color";
+@forward "sass:math";
+
+// global gray colors mixin based on theme
+// Array of [text color, hover color, element color, background color, alt element, hover text]
+@function grays($theme) {
+  @if $theme =="dark" {
+    @return #fff, #62666c, #0d0f0e, #1e2223, #31373e, #60aaff, #666666;
+  }
+
+  @if $theme =="light" {
+    @return #000, #b3d6f2, #ffffff, #f2f2f2, #dcdcdc, #136bfb, #a6a6a6;
+  }
+}
+
+div[class^="tsi-"] {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.tsi-textWrap {
+  overflow: hidden;
+  white-space: pre-wrap;
+  text-overflow: ellipsis;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.tsi-hidden {
+  display: none;
+}
+
+@keyframes tsi-slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes tsi-slideRight {
+  from {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+
+@mixin baseContextMenuColors($grays) {
+  $gray1: list.nth($grays, 1); // text
+  $gray2: list.nth($grays, 2); // hover
+  $gray3: list.nth($grays, 3); // element
+  $gray4: list.nth($grays, 4); // background
+  $gray5: list.nth($grays, 5); // alt element
+  $gray6: list.nth($grays, 6);
+
+  .tsi-baseContextMenu {
+    border-color: $gray6;
+    background-color: $gray3;
+    box-shadow: 0 1px 3px 0 rgba($gray1, 0.16);
+
+    >div {
+
+      &:hover,
+      &:focus {
+        background-color: $gray2;
+      }
+    }
+
+    .tsi-break {
+      border-top: 1px solid rgba($gray6, 0.2);
+
+      &:hover,
+      &:focus {
+        background-color: $gray3;
+      }
+    }
+  }
+
+  .tsi-searchInput {
+    border: 1px solid $gray5;
+
+    &:focus {
+      border: 1px solid $gray6;
+    }
+  }
+
+  .tsi-baseMono {
+    background: $gray4;
+  }
+}
+
+.tsi-resizeGutter {
+  width: 6px;
+  cursor: e-resize;
+  padding: 2px;
+  background-position-y: 50%;
+  background-position-x: 0px;
+  background-repeat: no-repeat;
+}
+
+.tsi-chartValueTextBox {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 11px;
+  padding: 1px 4px;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3);
+  line-height: 16px;
+}
+
+.tsi-baseContextMenu {
+  white-space: nowrap;
+  padding: 4px 0;
+  animation: tsi-slideRight 0.367s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  border-width: 1px;
+  border-radius: 2px;
+  border-style: solid;
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3);
+  text-align: left;
+
+  >div,
+  >li,
+  >button {
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .tsi-break {
+    height: 4px;
+    margin-top: 4px;
+    padding: 0 0 4px 0;
+    cursor: default;
+
+    &:last-of-type {
+      display: none;
+    }
+  }
+}
+
+.tsi-primaryButton {
+  height: 36px;
+  border-radius: 4px;
+  border-width: 1px;
+  border-style: solid;
+
+  &.disabled {
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+.tsi-chartControlsPanel {
+  height: 20px;
+  right: 0px;
+  width: 100px;
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+
+  .tsi-ellipsisContainerDiv {
+    pointer-events: all;
+    left: auto;
+    right: 20px;
+    top: 0px;
+    position: absolute;
+
+    .tsi-ellipsisMenuContainer {
+      pointer-events: all;
+
+      .tsi-ellipsisMenu {
+        z-index: 2 !important;
+      }
+    }
+  }
+
+  .tsi-stackedButton {
+    pointer-events: all;
+    display: block;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    height: 100%;
+    width: 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+  }
+
+  .tsi-scooterButton {
+    display: block;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    height: 20px;
+    width: 20px;
+  }
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+.tsi-select {
+  margin: 2px;
+  position: relative;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 6px;
+  padding-right: 28px;
+  border-width: 1px;
+  border-radius: 2px;
+  border-style: solid;
+  white-space: nowrap;
+  overflow: hidden;
+  height: 32px;
+  background-position-y: 12px;
+  background-position-x: calc(100% - 4px);
+
+  option {
+    padding: 6px;
+  }
+}
+
+.tsi-warmRect {
+  fill: #ffa800;
+  stroke: #ffa800;
+}
+
+.pika-single {
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+
+  .pika-lendar {
+    text-decoration: none;
+    width: 196px;
+    margin-left: 12px;
+    margin-right: 12px;
+
+    abbr {
+      text-decoration: none;
+    }
+
+    .pika-table {
+      .pika-row {
+        height: 28px;
+        margin: 0px;
+
+        td {
+          padding: 0px;
+
+          &.is-inrange {
+            .pika-day {
+              background-color: #d5ebe9;
+            }
+          }
+
+          &.is-endrange,
+          &.is-startrange {
+            .pika-day {
+              background-color: #309d90;
+              color: white;
+
+              &:hover {
+                background-color: #309d90;
+                color: white;
+              }
+            }
+          }
+
+          &.is-startrange {
+            button {
+              border-bottom-left-radius: 8px;
+              border-top-left-radius: 8px;
+            }
+          }
+
+          &.is-endrange {
+            button {
+              border-bottom-right-radius: 8px;
+              border-top-right-radius: 8px;
+            }
+          }
+
+          .pika-day {
+            width: 100%;
+            height: 28px;
+            width: 28px;
+            margin: 0px;
+
+            &:hover {
+              background-color: #309d90;
+              color: white;
+            }
+          }
+        }
+      }
+
+      .pika-button {
+        border-radius: 0px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.tsi-search {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  position: relative;
+
+  .tsi-search-icon {
+    width: 21px;
+    height: 17px;
+    background-repeat: no-repeat;
+    margin-left: 8px;
+    background-size: 14px;
+    background-position-y: 2px;
+  }
+
+  .tsi-searchInput {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding-left: 28px;
+    background: transparent;
+    outline: none;
+    text-overflow: ellipsis;
+  }
+}
+
+.tsi-baseMono {
+  display: inline-block;
+  padding: 4px;
+  border-radius: 3px;
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 85%;
+  line-height: 85%;
+  font-weight: 300;
+}
+
+@mixin chartColors($grays) {
+  $gray1: list.nth($grays, 1); // text
+  $gray2: list.nth($grays, 2); // hover
+  $gray3: list.nth($grays, 3); // element
+  $gray4: list.nth($grays, 4); // background
+  $gray5: list.nth($grays, 5);
+  $gray6: list.nth($grays, 6); // text hover
+  $gray7: list.nth($grays, 7); // scroll bar thumb
+
+  .yAxis,
+  .xAxis {
+    path {
+      stroke: $gray1;
+    }
+
+    .tick {
+      text {
+        fill: $gray1;
+      }
+
+      line {
+        stroke: $gray1;
+      }
+    }
+
+    @media screen and (-ms-high-contrast: white-on-black) {
+      path {
+        stroke: #fff;
+      }
+
+      .tick {
+        text {
+          fill: #fff !important;
+        }
+
+        line {
+          stroke: #fff;
+        }
+      }
+    }
+  }
+
+  .vHoverBox,
+  .hHoverBox {
+    fill: $gray3;
+    stroke: $gray6;
+  }
+
+  .tsi-resizeGutter {
+    &.tsi-isDragging {
+      background-color: $gray5;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: none;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $gray7;
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: $gray7;
+  }
+
+  ::-webkit-scrollbar-track:hover {
+    background: $gray4;
+  }
+
+  .hHoverText {
+    text-anchor: middle;
+  }
+
+  .vHoverText {
+    text-anchor: end;
+  }
+
+  .hoverText {
+    stroke: none;
+  }
+
+  .hHoverText,
+  .vHoverText {
+    font-size: 11px !important;
+  }
+
+  .hHoverValueBar {
+    stroke: $gray1;
+  }
+
+  .hoverText {
+    fill: $gray1;
+  }
+
+  .stacked {
+    g {
+      path {
+        fill: $gray1 !important;
+      }
+    }
+  }
+
+  .tooltip {
+    text {
+      fill: $gray1;
+    }
+
+    rect {
+      fill: $gray3;
+      stroke: $gray6;
+    }
+  }
+
+  .tsi-primaryButton {
+    color: $gray1;
+    border-color: rgba($gray1, 0.8);
+    background-color: $gray4;
+
+    &:hover {
+      background-color: $gray2;
+    }
+  }
+
+  .yAxis,
+  .xAxis {
+    path {
+      stroke-width: 1px !important;
+    }
+
+    .tick {
+      text {
+        user-select: none;
+      }
+    }
+  }
+
+  rect,
+  line {
+    shape-rendering: crispedges;
+  }
+
+  .stacked {
+    g {
+      path {
+        stroke-width: 1;
+        pointer-events: all;
+        stroke: none;
+      }
+    }
+
+    rect {
+      cursor: pointer;
+      fill: transparent;
+      stroke-width: 1;
+    }
+  }
+
+  .tooltip {
+    pointer-events: none;
+
+    text {
+      alignment-baseline: hanging;
+    }
+
+    .title {
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .value {
+      font-weight: normal;
+      font-size: 12px;
+      font-weight: lighter;
+
+      &.visibleValue {
+        font-weight: bold;
+      }
+    }
+  }
+
+  .tsi-gridComponent {
+    z-index: 3 !important;
+  }
+
+  .hHoverValueBar {
+    stroke-width: 4px;
+  }
+
+  .focus {
+    display: none;
+  }
+
+  svg {
+    display: block;
+  }
+
+  .tsi-chartValueTextBox {
+    background-color: $gray3;
+    border-color: $gray2;
+  }
+
+  .tsi-baseMono {
+    background: $gray4;
+  }
+}

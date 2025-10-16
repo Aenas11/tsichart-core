@@ -34,7 +34,7 @@
     .tsi-ellipsisButton{
         @media screen and (-ms-high-contrast: white-on-black) { 
             background-color: #fff;
-            background-image: url(../../Icons/Ellipsis_Icon_Dark_Theme.svg) !important;                    
+            background-image: url(../../icons/Ellipsis_Icon_Dark_Theme.svg) !important;                    
         }
     }
 }
@@ -118,7 +118,7 @@
         @include ellipsisMenuColors($grays);
         .tsi-ellipsisButton {
             background-size: 20px 20px;
-            background-image: url(../../Icons/Ellipsis_Icon_Dark_Theme.svg);            
+            background-image: url(../../icons/Ellipsis_Icon_Dark_Theme.svg);            
         }
 
         .tsi-ellipsisMenu {
@@ -126,15 +126,15 @@
                 .tsi-ellipsisMenuIcon {
                     &.flagIcon {
                         background-size: 20px 20px;
-                        background-image: url(../../Icons/flag_dark_theme.svg);
+                        background-image: url(../../icons/flag_dark_theme.svg);
                     }
                     &.gridIcon {
                         background-size: 20px 20px;
-                        background-image: url(../../Icons/Grid_Icon_Dark_Theme.svg);
+                        background-image: url(../../icons/Grid_Icon_Dark_Theme.svg);
                     }
                     &.downloadIcon {
                         background-size: 16px 16px;
-                        background-image: url(../../Icons/Download_Icon_Dark.svg);
+                        background-image: url(../../icons/Download_Icon_Dark.svg);
                     }
                 }
             }
@@ -145,7 +145,7 @@
         @include ellipsisMenuColors($grays);
         .tsi-ellipsisButton {
             background-size: 20px 20px;
-            background-image: url(../../Icons/Ellipsis_Icon_Light_Theme.svg);            
+            background-image: url(../../icons/Ellipsis_Icon_Light_Theme.svg);            
         }
 
         .tsi-ellipsisMenu {
@@ -153,15 +153,15 @@
                 .tsi-ellipsisMenuIcon {
                     &.flagIcon {
                         background-size: 20px 20px;                        
-                        background-image: url(../../Icons/flag_light_theme.svg);
+                        background-image: url(../../icons/flag_light_theme.svg);
                     }
                     &.gridIcon {
                         background-size: 20px 20px;
-                        background-image: url(../../Icons/Grid_Icon_Light_Theme.svg);
+                        background-image: url(../../icons/Grid_Icon_Light_Theme.svg);
                     }
                     &.downloadIcon {
                         background-size: 16px 16px;
-                        background-image: url(../../Icons/Download_Icon_Light.svg);
+                        background-image: url(../../icons/Download_Icon_Light.svg);
                     }
                 }
             }

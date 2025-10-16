@@ -1,0 +1,159 @@
+@use "sass:list";
+@use "sass:color";
+@use "../../styles" as *;
+
+@mixin modelSearchColors($grays){
+	$gray1: list.nth($grays, 1); // text
+    $gray2: list.nth($grays, 2); // hover
+    $gray3: list.nth($grays, 3); // element
+    $gray4: list.nth($grays, 4); // background
+	$gray5: list.nth($grays, 5); // alt element
+    $gray6: list.nth($grays, 6);
+    
+    background: $gray3;
+    color: $gray1;
+    
+    hit{
+        background: #fff9a8;
+        font-weight: 600;
+        color: black;
+    }
+    .tsi-showMore{
+        color: $gray6;
+    }
+    .tsi-modelSearchInstances{
+        > div{
+            border-bottom: 1px solid rgba($gray1, .05);
+            &:hover, &:focus, &.tsi-resultSelected{
+                background-color: $gray2;
+                &::after{
+                    content: "";
+                    position: absolute;
+                    width: 14px;
+                    height: 14px;
+                    top: 8px;
+                    left: calc(100% - 20px);
+                    background: url(../../icons/chevron.svg) no-repeat;
+                    transform: rotate(-90deg);
+                }
+            }
+        }
+    }
+    @include baseContextMenuColors($grays);
+    :global{
+        .awesomplete > ul {
+            background: $gray4;
+            color: $gray1;
+            border: 1px solid $gray1;
+            li[aria-selected="true"], li:hover{
+                background: $gray2;
+            }
+        }
+    }
+}
+
+
+.tsi-modelSearchWrapper{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+
+    .tsi-modelSearchInputWrapper{
+        width: 100%;
+        z-index: 2;
+        height: 48px;
+    }
+
+    .tsi-hierarchyWrapper{
+        position: absolute;
+        top: 40px;
+        width: 100%;
+        height: calc(100% - 40px);
+        left: 0;
+        .tsi-filterWrapper{
+            display: none;
+        }
+        .tsi-navTabWrapper{
+            display: none;
+        }
+    }
+    
+    &.tsi-dark{
+        $grays: grays('dark');
+        @include modelSearchColors($grays);
+    }
+    &.tsi-light{
+        $grays: grays('light');
+        @include modelSearchColors($grays);
+    }
+
+    .tsi-modelSearchResults{
+        flex-grow: 1;
+        display: flex;
+        height: calc(100% - 48px);
+        overflow: auto;
+        .tsi-noResults{
+            padding: 20px;
+            white-space: nowrap;
+            height: 40px;
+            margin-left: 40px;
+        }
+        .tsi-showMore{
+            cursor: pointer;
+            text-align: center;
+            padding-bottom: 8px;
+            font-size: 13px;
+            &:hover{
+                text-decoration: underline;
+            }
+        }
+        .tsi-modelSearchInstancesWrapper{
+            width: 100%;
+        }
+        .tsi-modelSearchInstances{
+            flex-grow: 1;
+            .tsi-modelResultWrapper{
+                cursor: pointer;
+                position: relative;
+                max-height: 206px;
+                overflow: hidden;
+                .tsi-modelResult{
+                    pointer-events: none;
+                    padding: 8px 20px;
+                    .tsi-modelPK{
+                        font-weight: 600;   
+                        font-size: 14px
+                    }
+                    .tsi-modelHighlights{
+                        font-size: 12px;
+                        padding-top: 2px;
+                        padding-left: 8px;
+                        padding-bottom: 2px;
+                        table{
+                            border-spacing: 0;
+                            margin-top: 2px;
+                            tr{
+                                td:first-of-type{
+                                    padding: 0;
+                                    opacity: .6;
+                                }
+                                td:nth-of-type(2){
+                                    padding: 0;
+                                    padding-left: 8px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .tsi-modelSearchContextMenu{
+        @extend .tsi-baseContextMenu;
+        position: absolute;
+        left: calc(100% - 20px);
+        z-index: 3;
+    }
+}

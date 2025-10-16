@@ -1,10 +1,10 @@
-import Utils from "../Utils";
+import Utils from "../utils";
 import { TimeSeriesEventCell } from "./TimeSeriesEventCell";
 
 class TimeSeriesEvent {
     public cells = {};
 
-	constructor(rawEvent, offset = null, offsetName: string = null, locale: string = 'en'){
+    constructor(rawEvent, offset = null, offsetName: string = null, locale: string = 'en') {
 
         if (offset !== null) {
             let type = 'DateTime';
@@ -14,7 +14,7 @@ class TimeSeriesEvent {
                 value: () => Utils.timeFormat(true, true, offset, true, null, null, locale)(utcOffsetDate),
                 type: type
             };
-        } 
+        }
         this.cells = Object.keys(rawEvent).reduce((cellObj, propId) => {
             var cell: TimeSeriesEventCell;
             if (propId == "timestamp ($ts)")
@@ -27,4 +27,4 @@ class TimeSeriesEvent {
         }, {});
     }
 }
-export {TimeSeriesEvent}
+export { TimeSeriesEvent }

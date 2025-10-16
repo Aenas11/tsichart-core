@@ -1,12 +1,12 @@
 import * as d3 from 'd3';
 import './Legend.scss';
-import Utils from "../../Utils";
-import { DataTypes, EventElementTypes } from "./../../Constants/Enums";
-import {Component} from "./../../Interfaces/Component";
-import { ChartComponentData } from '../../Models/ChartComponentData';
+import Utils from "../../utils";
+import { DataTypes, EventElementTypes } from "./../../constants/Enums";
+import { Component } from "./../../interfaces/Component";
+import { ChartComponentData } from '../../models/ChartComponentData';
 
 const NUMERICSPLITBYHEIGHT = 44;
-const NONNUMERICSPLITBYHEIGHT = 24; 
+const NONNUMERICSPLITBYHEIGHT = 24;
 
 class Legend extends Component {
     public drawChart: any;
@@ -19,45 +19,45 @@ class Legend extends Component {
     private svgSelection: any;
     private chartComponentData: ChartComponentData;
 
-	constructor(drawChart: any, renderTarget: Element, legendWidth: number) {
+    constructor(drawChart: any, renderTarget: Element, legendWidth: number) {
         super(renderTarget);
         this.drawChart = drawChart;
         this.legendWidth = legendWidth;
         this.legendElement = d3.select(renderTarget).insert("div", ":first-child")
-                                .attr("class", "tsi-legend")
-                                .style("left", "0px")
-                                .style("width", (this.legendWidth) + "px"); // - 16 for the width of the padding
+            .attr("class", "tsi-legend")
+            .style("left", "0px")
+            .style("width", (this.legendWidth) + "px"); // - 16 for the width of the padding
     }
 
-    private labelMouseoutWrapper (labelMouseout, svgSelection, event) {
+    private labelMouseoutWrapper(labelMouseout, svgSelection, event) {
         return (svgSelection, aggKey) => {
             event?.stopPropagation();
             svgSelection.selectAll(".tsi-valueElement")
-                        .filter(function () { return !d3.select(this).classed("tsi-valueEnvelope"); })
-                        .attr("stroke-opacity", 1)
-                        .attr("fill-opacity", 1);
+                .filter(function () { return !d3.select(this).classed("tsi-valueEnvelope"); })
+                .attr("stroke-opacity", 1)
+                .attr("fill-opacity", 1);
             svgSelection.selectAll(".tsi-valueEnvelope")
-                        .attr("fill-opacity", .2);
+                .attr("fill-opacity", .2);
             labelMouseout(svgSelection, aggKey);
         }
     }
 
-    private toggleSplitByVisible (aggregateKey: string, splitBy: string)  {
+    private toggleSplitByVisible(aggregateKey: string, splitBy: string) {
         var newState = !this.chartComponentData.displayState[aggregateKey].splitBys[splitBy].visible;
         this.chartComponentData.displayState[aggregateKey].splitBys[splitBy].visible = newState;
         this.chartComponentData.displayState[aggregateKey].visible = Object.keys(this.chartComponentData.displayState[aggregateKey].splitBys)
-                                        .reduce((prev: boolean, curr: string): boolean => {
-                                            return this.chartComponentData.displayState[aggregateKey]["splitBys"][curr]["visible"] || prev;
-                                        }, false);
-    //turn off sticky if making invisible
-        if (newState == false && (this.chartComponentData.stickiedKey != null && 
-            this.chartComponentData.stickiedKey.aggregateKey == aggregateKey && 
+            .reduce((prev: boolean, curr: string): boolean => {
+                return this.chartComponentData.displayState[aggregateKey]["splitBys"][curr]["visible"] || prev;
+            }, false);
+        //turn off sticky if making invisible
+        if (newState == false && (this.chartComponentData.stickiedKey != null &&
+            this.chartComponentData.stickiedKey.aggregateKey == aggregateKey &&
             this.chartComponentData.stickiedKey.splitBy == splitBy)) {
             this.chartComponentData.stickiedKey = null;
         }
-    } 
+    }
 
-    public triggerSplitByFocus (aggKey: string, splitBy: string) {
+    public triggerSplitByFocus(aggKey: string, splitBy: string) {
         if (this.chartOptions.legend == "hidden") {
             return;
         }
@@ -72,44 +72,44 @@ class Legend extends Component {
             var splitByNode = this.legendElement.selectAll('.tsi-splitByContainer').filter((d) => {
                 return d == aggKey;
             }).node();
-            var prospectiveScrollTop = Math.max((indexOfSplitBy - 1) * this.getHeightPerSplitBy(aggKey), 0) ;
+            var prospectiveScrollTop = Math.max((indexOfSplitBy - 1) * this.getHeightPerSplitBy(aggKey), 0);
             if (splitByNode.scrollTop < prospectiveScrollTop - (splitByNode.clientHeight - 40) || splitByNode.scrollTop > prospectiveScrollTop) {
                 splitByNode.scrollTop = prospectiveScrollTop;
-            }  
+            }
         }
     }
 
-    private getHeightPerSplitBy (aggKey) {
+    private getHeightPerSplitBy(aggKey) {
         return (this.chartComponentData.displayState[aggKey].dataType === DataTypes.Numeric ? NUMERICSPLITBYHEIGHT : NONNUMERICSPLITBYHEIGHT);
     }
 
-    private createGradient (gradientKey, svg, values) {
+    private createGradient(gradientKey, svg, values) {
         let gradient = svg.append('defs').append('linearGradient')
             .attr('id', gradientKey).attr('x1', '0%').attr('x2', '0%').attr('y1', '0%').attr('y2', '100%');
-        let catCount = Object.keys(values).length; 
-            Object.keys(values).forEach((category, i) => {
-                let currentStop = i / catCount * 100;
-                let nextStop = (i + 1) / catCount * 100;
-                let color = values[category].color;
-                
-                gradient.append('stop')
-                    .attr("offset", currentStop + "%")
-                    .attr("stop-color",  color)
-                    .attr("stop-opacity", 1);
-    
-                gradient.append('stop')
-                    .attr("offset", nextStop + "%")
-                    .attr("stop-color",  color)
-                    .attr("stop-opacity", 1);
-            });
+        let catCount = Object.keys(values).length;
+        Object.keys(values).forEach((category, i) => {
+            let currentStop = i / catCount * 100;
+            let nextStop = (i + 1) / catCount * 100;
+            let color = values[category].color;
+
+            gradient.append('stop')
+                .attr("offset", currentStop + "%")
+                .attr("stop-color", color)
+                .attr("stop-opacity", 1);
+
+            gradient.append('stop')
+                .attr("offset", nextStop + "%")
+                .attr("stop-color", color)
+                .attr("stop-opacity", 1);
+        });
     }
 
-    private isNonNumeric (aggKey) {
+    private isNonNumeric(aggKey) {
         let dataType = this.chartComponentData.displayState[aggKey].dataType;
-        return (dataType === DataTypes.Categorical || dataType === DataTypes.Events); 
+        return (dataType === DataTypes.Categorical || dataType === DataTypes.Events);
     }
 
-    private createNonNumericColorKey (dataType, colorKey, aggKey) {
+    private createNonNumericColorKey(dataType, colorKey, aggKey) {
         if (dataType === DataTypes.Categorical) {
             this.createCategoricalColorKey(colorKey, aggKey);
         }
@@ -118,7 +118,7 @@ class Legend extends Component {
         }
     }
 
-    private createCategoricalColorKey (colorKey, aggKey) {
+    private createCategoricalColorKey(colorKey, aggKey) {
         let categories = this.chartComponentData.displayState[aggKey].aggregateExpression.valueMapping;
         colorKey.classed('tsi-categoricalColorKey', true);
         colorKey.selectAll('*').remove();
@@ -134,7 +134,7 @@ class Legend extends Component {
         rect.attr('fill', "url(#" + gradientKey + ")");
     }
 
-    private createEventsColorKey (colorKey, aggKey) {
+    private createEventsColorKey(colorKey, aggKey) {
         let categories = this.chartComponentData.displayState[aggKey].aggregateExpression.valueMapping;
         let eventElementType = this.chartComponentData.displayState[aggKey].aggregateExpression.eventElementType;
         colorKey.classed('tsi-eventsColorKey', true);
@@ -143,7 +143,7 @@ class Legend extends Component {
         let colorKeyWidth = colorKey.node().getBoundingClientRect().width;
         let colorKeyHeight = colorKey.node().getBoundingClientRect().height;
         let colorKeyUnitLength = Math.floor(colorKeyHeight / Math.sqrt(2));
-        
+
         let svg = colorKey.append('svg')
             .attr('width', `${colorKeyWidth}px`)
             .attr('height', `${colorKeyHeight}px`);
@@ -165,7 +165,7 @@ class Legend extends Component {
             let rect = svg.append('rect')
                 .attr('width', colorKeyUnitLength)
                 .attr('height', colorKeyUnitLength)
-                .attr('transform', `translate(${(colorKeyWidth/2)},0)rotate(45)`)
+                .attr('transform', `translate(${(colorKeyWidth / 2)},0)rotate(45)`)
                 .attr('fill', 'black');
             rect.attr('fill', "url(#" + gradientKey + ")");
         }
@@ -174,13 +174,13 @@ class Legend extends Component {
     private renderSplitBys = (aggKey, aggSelection, dataType, noSplitBys) => {
         var splitByLabelData = Object.keys(this.chartComponentData.timeArrays[aggKey]);
         var firstSplitBy = this.chartComponentData.displayState[aggKey].splitBys
-                        [Object.keys(this.chartComponentData.displayState[aggKey].splitBys)[0]];
+        [Object.keys(this.chartComponentData.displayState[aggKey].splitBys)[0]];
         var firstSplitByType = firstSplitBy ? firstSplitBy.visibleType : null;
         var isSame = Object.keys(this.chartComponentData.displayState[aggKey].splitBys).reduce((isSame: boolean, curr: string) => {
             return (firstSplitByType == this.chartComponentData.displayState[aggKey].splitBys[curr].visibleType) && isSame;
         }, true);
         let showMoreSplitBys = () => {
-            const oldShownSplitBys = this.chartComponentData.displayState[aggKey].shownSplitBys; 
+            const oldShownSplitBys = this.chartComponentData.displayState[aggKey].shownSplitBys;
             this.chartComponentData.displayState[aggKey].shownSplitBys = Math.min(oldShownSplitBys + 20, splitByLabelData.length);
             if (oldShownSplitBys != this.chartComponentData.displayState[aggKey].shownSplitBys) {
                 this.renderSplitBys(aggKey, aggSelection, dataType, noSplitBys);
@@ -188,9 +188,9 @@ class Legend extends Component {
         }
 
         let splitByContainer = aggSelection.selectAll(".tsi-splitByContainer").data([aggKey]);
-            var splitByContainerEntered = splitByContainer.enter().append("div")
-                .merge(splitByContainer)
-                .classed("tsi-splitByContainer", true);
+        var splitByContainerEntered = splitByContainer.enter().append("div")
+            .merge(splitByContainer)
+            .classed("tsi-splitByContainer", true);
 
         var splitByLabels = splitByContainerEntered.selectAll('.tsi-splitByLabel')
             .data(splitByLabelData.slice(0, this.chartComponentData.displayState[aggKey].shownSplitBys), function (d: string): string {
@@ -199,7 +199,7 @@ class Legend extends Component {
 
         let self = this;
 
-        var splitByLabelsEntered = splitByLabels                    
+        var splitByLabelsEntered = splitByLabels
             .enter()
             .append("div")
             .merge(splitByLabels)
@@ -220,20 +220,20 @@ class Legend extends Component {
                 }
                 self.drawChart();
             })
-            .on("mouseover", function(event, splitBy: string) {
+            .on("mouseover", function (event, splitBy: string) {
                 event.stopPropagation();
                 self.labelMouseover(aggKey, splitBy);
             })
-            .on("mouseout", function(event) {
+            .on("mouseout", function (event) {
                 event.stopPropagation();
                 self.svgSelection.selectAll(".tsi-valueElement")
-                            .attr("stroke-opacity", 1)
-                            .attr("fill-opacity", 1);
+                    .attr("stroke-opacity", 1)
+                    .attr("fill-opacity", 1);
                 self.labelMouseout(self.svgSelection, aggKey);
             })
             .attr("class", (splitBy, i) => {
                 let compact = (dataType !== DataTypes.Numeric) ? 'tsi-splitByLabelCompact' : '';
-                let shown = Utils.getAgVisible(self.chartComponentData.displayState, aggKey, splitBy) ? 'shown' : ''; 
+                let shown = Utils.getAgVisible(self.chartComponentData.displayState, aggKey, splitBy) ? 'shown' : '';
                 return `tsi-splitByLabel tsi-splitByLabel ${compact} ${shown}`;
             })
             .classed("stickied", (splitBy, i) => {
@@ -246,7 +246,7 @@ class Legend extends Component {
 
         splitByLabelsEntered.each(function (splitBy, j) {
             let color = (self.chartComponentData.isFromHeatmap) ? self.chartComponentData.displayState[aggKey].color : colors[j];
-            if (dataType === DataTypes.Numeric || noSplitBys || self.legendState === 'compact'){
+            if (dataType === DataTypes.Numeric || noSplitBys || self.legendState === 'compact') {
                 let colorKey = d3.select(this).selectAll<any, unknown>('.tsi-colorKey').data([color]);
                 let colorKeyEntered = colorKey.enter()
                     .append("div")
@@ -258,10 +258,10 @@ class Legend extends Component {
                     });
                 } else {
                     self.createNonNumericColorKey(dataType, colorKeyEntered, aggKey);
-                } 
-                d3.select(this).classed('tsi-nonCompactNonNumeric', 
+                }
+                d3.select(this).classed('tsi-nonCompactNonNumeric',
                     (dataType === DataTypes.Categorical || dataType === DataTypes.Events) && this.legendState !== 'compact');
-                colorKey.exit().remove();    
+                colorKey.exit().remove();
             } else {
                 d3.select(this).selectAll('.tsi-colorKey').remove();
             }
@@ -270,7 +270,7 @@ class Legend extends Component {
                 d3.select(this).append("button")
                     .attr("class", "tsi-eyeIcon")
                     .attr('aria-label', () => {
-                        let showOrHide = self.chartComponentData.displayState[aggKey].splitBys[splitBy].visible ? self.getString('hide series') : self.getString('show series');            
+                        let showOrHide = self.chartComponentData.displayState[aggKey].splitBys[splitBy].visible ? self.getString('hide series') : self.getString('show series');
                         return `${showOrHide} ${splitBy} ${self.getString('in group')} ${self.chartComponentData.displayState[aggKey].name}`;
 
                     })
@@ -281,14 +281,14 @@ class Legend extends Component {
                         d3.select(this)
                             .classed("shown", Utils.getAgVisible(self.chartComponentData.displayState, aggKey, splitBy));
                         self.drawChart();
-                    });    
+                    });
             }
 
             if (d3.select(this).select('.tsi-seriesName').empty()) {
                 let seriesName = d3.select(this)
                     .append('div')
                     .attr('class', 'tsi-seriesName');
-                Utils.appendFormattedElementsFromString(seriesName, noSplitBys ? (self.chartComponentData.displayState[aggKey].name): splitBy);
+                Utils.appendFormattedElementsFromString(seriesName, noSplitBys ? (self.chartComponentData.displayState[aggKey].name) : splitBy);
             }
 
             if (dataType === DataTypes.Numeric) {
@@ -298,7 +298,7 @@ class Legend extends Component {
                         .attr('class', 'tsi-seriesTypeSelection')
                         .on("change", function (data: any) {
                             var seriesType: any = d3.select(this).property("value");
-                            self.chartComponentData.displayState[aggKey].splitBys[splitBy].visibleType = seriesType; 
+                            self.chartComponentData.displayState[aggKey].splitBys[splitBy].visibleType = seriesType;
                             self.drawChart();
                         })
                         .on("click", (event) => {
@@ -308,14 +308,14 @@ class Legend extends Component {
                 d3.select(this).select('.tsi-seriesTypeSelection')
                     .each(function (d) {
                         var typeLabels = d3.select(this).selectAll<HTMLOptionElement, unknown>('option')
-                        .data(data => self.chartComponentData.displayState[aggKey].splitBys[splitBy].types.map( (type) => {
-                            return {
-                                type: type,
-                                aggKey: aggKey,
-                                splitBy: splitBy,
-                                visibleMeasure: Utils.getAgVisibleMeasure(self.chartComponentData.displayState, aggKey, splitBy)
-                            }
-                        }));
+                            .data(data => self.chartComponentData.displayState[aggKey].splitBys[splitBy].types.map((type) => {
+                                return {
+                                    type: type,
+                                    aggKey: aggKey,
+                                    splitBy: splitBy,
+                                    visibleMeasure: Utils.getAgVisibleMeasure(self.chartComponentData.displayState, aggKey, splitBy)
+                                }
+                            }));
 
                         typeLabels
                             .enter()
@@ -323,9 +323,9 @@ class Legend extends Component {
                             .attr("class", "seriesTypeLabel")
                             .merge(typeLabels)
                             .property("selected", (data: any) => {
-                                return ((data.type == Utils.getAgVisibleMeasure(self.chartComponentData.displayState, data.aggKey, data.splitBy)) ? 
-                                        " selected" : "");
-                            })                           
+                                return ((data.type == Utils.getAgVisibleMeasure(self.chartComponentData.displayState, data.aggKey, data.splitBy)) ?
+                                    " selected" : "");
+                            })
                             .text((data: any) => data.type);
                         typeLabels.exit().remove();
                     });
@@ -337,11 +337,11 @@ class Legend extends Component {
 
         let shouldShowMore = self.chartComponentData.displayState[aggKey].shownSplitBys < splitByLabelData.length;
         splitByContainerEntered.selectAll('.tsi-legendShowMore').remove();
-        if(this.legendState === 'shown' && shouldShowMore) {
+        if (this.legendState === 'shown' && shouldShowMore) {
             splitByContainerEntered.append('button')
                 .text(this.getString('Show more'))
                 .attr('class', 'tsi-legendShowMore')
-                .style('display', (this.legendState === 'shown' && shouldShowMore) ? 'block': 'none')
+                .style('display', (this.legendState === 'shown' && shouldShowMore) ? 'block' : 'none')
                 .on('click', showMoreSplitBys);
         }
 
@@ -349,7 +349,7 @@ class Legend extends Component {
             if (self.chartOptions.legend === 'shown') {
                 if ((<any>this).scrollTop + (<any>this).clientHeight + 40 > (<any>this).scrollHeight) {
                     showMoreSplitBys();
-                }    
+                }
             }
         });
         splitByContainer.exit().remove();
@@ -360,9 +360,9 @@ class Legend extends Component {
         if (!this.chartComponentData.displayState[aggregateKey].visible ||
             !this.chartComponentData.displayState[aggregateKey].splitBys[splitBy].visible)
             return;
-        if (this.chartComponentData.stickiedKey != null && 
-            this.chartComponentData.stickiedKey.aggregateKey == aggregateKey && 
-            this.chartComponentData.stickiedKey.splitBy == splitBy){
+        if (this.chartComponentData.stickiedKey != null &&
+            this.chartComponentData.stickiedKey.aggregateKey == aggregateKey &&
+            this.chartComponentData.stickiedKey.splitBy == splitBy) {
             this.chartComponentData.stickiedKey = null;
         } else {
             if (this.stickySeriesAction) {
@@ -371,7 +371,7 @@ class Legend extends Component {
         }
     }
 
-	public draw(legendState: string, chartComponentData, labelMouseover, svgSelection, options, labelMouseoutAction = null, stickySeriesAction = null, event?: any) {
+    public draw(legendState: string, chartComponentData, labelMouseover, svgSelection, options, labelMouseoutAction = null, stickySeriesAction = null, event?: any) {
         this.chartOptions.setOptions(options);
         this.chartComponentData = chartComponentData;
         this.legendState = legendState;
@@ -382,7 +382,7 @@ class Legend extends Component {
         var legend = this.legendElement;
         var self = this;
 
-        
+
         super.themify(this.legendElement, this.chartOptions.theme);
 
         legend.style('visibility', this.legendState != 'hidden')
@@ -394,13 +394,13 @@ class Legend extends Component {
             .data(seriesNames, d => d);
 
         var seriesLabelsEntered = seriesLabels.enter()
-            .append("div") 
+            .append("div")
             .merge(seriesLabels)
             .attr("class", (d, i) => {
                 return "tsi-seriesLabel " + (this.chartComponentData.displayState[d]["visible"] ? " shown" : "");
             })
             .style("min-width", () => {
-                return Math.min(124, this.legendElement.node().clientWidth / seriesNames.length) + 'px';  
+                return Math.min(124, this.legendElement.node().clientWidth / seriesNames.length) + 'px';
             })
             .style("border-color", function (d, i) {
                 if (d3.select(this).classed("shown"))
@@ -426,17 +426,17 @@ class Legend extends Component {
                 .merge(seriesNameLabel)
                 .attr("class", (agg: string, i) => {
                     return "tsi-seriesNameLabel" + (self.chartComponentData.displayState[agg].visible ? " shown" : "");
-                }) 
+                })
                 .attr("aria-label", (agg: string) => {
                     let showOrHide = self.chartComponentData.displayState[agg].visible ? self.getString('hide group') : self.getString('show group');
                     return `${showOrHide} ${self.getString('group')} ${Utils.stripNullGuid(self.chartComponentData.displayState[agg].name)}`;
-                })   
+                })
                 .on("click", function (event, d: string) {
                     var newState = !self.chartComponentData.displayState[d].visible;
                     self.chartComponentData.displayState[d].visible = newState;
 
                     //turn off sticky if making invisible
-                    if (newState == false && (self.chartComponentData.stickiedKey != null && 
+                    if (newState == false && (self.chartComponentData.stickiedKey != null &&
                         self.chartComponentData.stickiedKey.aggregateKey == d)) {
                         self.chartComponentData.stickiedKey = null;
                     }
@@ -465,10 +465,10 @@ class Legend extends Component {
                 .append("h4")
                 .merge(seriesNameLabelText)
                 .attr("title", (d: string) => Utils.stripNullGuid(self.chartComponentData.displayState[d].name))
-                .each(function() {
+                .each(function () {
                     Utils.appendFormattedElementsFromString(d3.select(this), self.chartComponentData.displayState[aggKey].name);
                 });
-            
+
 
             seriesNameLabelText.exit().remove();
             seriesNameLabel.exit().remove();
@@ -496,28 +496,28 @@ class Legend extends Component {
                 .classed("tsi-splitByContainer", true);
 
             let aggSelection = d3.select(this);
-            
+
             var sBs = self.renderSplitBys(aggKey, aggSelection, dataType, noSplitBys);
             splitByContainerEntered.on("scroll", function () {
                 if (self.chartOptions.legend == "shown") {
                     if ((<any>this).scrollTop + (<any>this).clientHeight + 40 > (<any>this).scrollHeight) {
-                        const oldShownSplitBys = self.chartComponentData.displayState[aggKey].shownSplitBys; 
+                        const oldShownSplitBys = self.chartComponentData.displayState[aggKey].shownSplitBys;
                         self.chartComponentData.displayState[aggKey].shownSplitBys = Math.min(oldShownSplitBys + 20, splitByLabelData.length);
                         if (oldShownSplitBys != self.chartComponentData.displayState[aggKey].shownSplitBys) {
                             self.renderSplitBys(aggKey, aggSelection, dataType, noSplitBys);
                         }
-                    }    
+                    }
                 }
             });
             d3.select(this).on('scroll', function () {
                 if (self.chartOptions.legend == "compact") {
                     if ((<any>this).scrollLeft + (<any>this).clientWidth + 40 > (<any>this).scrollWidth) {
-                        const oldShownSplitBys = self.chartComponentData.displayState[aggKey].shownSplitBys; 
+                        const oldShownSplitBys = self.chartComponentData.displayState[aggKey].shownSplitBys;
                         self.chartComponentData.displayState[aggKey].shownSplitBys = Math.min(oldShownSplitBys + 20, splitByLabelData.length);
                         if (oldShownSplitBys != self.chartComponentData.displayState[aggKey].shownSplitBys) {
-                            this.renderSplitBys(dataType);                   
+                            this.renderSplitBys(dataType);
                         }
-                    }    
+                    }
                 }
             });
             splitByContainer.exit().remove();
@@ -544,7 +544,7 @@ class Legend extends Component {
         }
 
         seriesLabels.exit().remove();
-	}
+    }
 }
 
 export default Legend;

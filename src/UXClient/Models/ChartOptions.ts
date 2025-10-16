@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
-import Utils from '../Utils';
+import Utils from '../utils';
 import { Strings } from './Strings';
-import { DefaultHierarchyNavigationOptions } from '../Constants/Constants';
-import { InterpolationFunctions, YAxisStates } from '../Constants/Enums';
-import { HorizontalMarker } from '../Utils/Interfaces';
+import { DefaultHierarchyNavigationOptions } from '../constants/Constants';
+import { InterpolationFunctions, YAxisStates } from '../constants/Enums';
+import { HorizontalMarker } from '../utils/Interfaces';
 
 // Interfaces
 interface swimLaneOption {

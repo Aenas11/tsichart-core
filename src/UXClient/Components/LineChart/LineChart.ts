@@ -1,22 +1,22 @@
 import * as d3 from 'd3';
 import * as d3Voronoi from 'd3-voronoi';
 import './LineChart.scss';
-import Utils from "../../Utils";
-import { DataTypes, YAxisStates, TooltipMeasureFormat } from "./../../Constants/Enums";
-import { LINECHARTTOPPADDING, LINECHARTCHARTMARGINS, VALUEBARHEIGHT, SERIESLABELWIDTH } from "./../../Constants/Constants";
+import Utils from "../../utils";
+import { DataTypes, YAxisStates, TooltipMeasureFormat } from "./../../constants/Enums";
+import { LINECHARTTOPPADDING, LINECHARTCHARTMARGINS, VALUEBARHEIGHT, SERIESLABELWIDTH } from "./../../constants/Constants";
 import Legend from "./../Legend";
-import {TemporalXAxisComponent} from "./../../Interfaces/TemporalXAxisComponent";
-import {LineChartData} from "./../../Models/LineChartData";
-import ContextMenu  from '../ContextMenu';
-import Tooltip  from '../Tooltip';
-import { ChartDataOptions } from '../../Models/ChartDataOptions';
+import { TemporalXAxisComponent } from "./../../interfaces/TemporalXAxisComponent";
+import { LineChartData } from "./../../models/LineChartData";
+import ContextMenu from '../ContextMenu';
+import Tooltip from '../Tooltip';
+import { ChartDataOptions } from '../../models/ChartDataOptions';
 import LinePlot from '../LinePlot';
 import CategoricalPlot from '../CategoricalPlot';
 import EventsPlot from '../EventsPlot';
-import { AxisState } from '../../Models/AxisState';
+import { AxisState } from '../../models/AxisState';
 import Marker from '../Marker';
-import { swimlaneLabelConstants} from '../../Constants/Constants'
-import { HorizontalMarker } from '../../Utils/Interfaces';
+import { swimlaneLabelConstants } from '../../constants/Constants'
+import { HorizontalMarker } from '../../utils/Interfaces';
 
 class LineChart extends TemporalXAxisComponent {
     private targetElement: any;
@@ -80,23 +80,23 @@ class LineChart extends TemporalXAxisComponent {
     private xOffset = 8;
 
     private swimlaneYExtents = {}; // mapping of swimlanes to the y extents of that swimlane
-    private swimLaneContents = {}; 
+    private swimLaneContents = {};
 
     private originalSwimLanes: Array<number>;
     private originalSwimLaneOptions: any;
 
-    constructor(renderTarget: Element){
+    constructor(renderTarget: Element) {
         super(renderTarget);
         this.MINHEIGHT = 26;
         this.chartMargins = Object.assign({}, LINECHARTCHARTMARGINS);
     }
 
-    LineChart() { 
+    LineChart() {
     }
 
 
     //get the left and right positions of the brush
-    public getBrushPositions () {
+    public getBrushPositions() {
         var leftPos = null;
         var rightPos = null;
         if (this.brushStartTime) {
@@ -117,33 +117,33 @@ class LineChart extends TemporalXAxisComponent {
 
     private resetValueElementsFocus = () => {
         this.svgSelection.selectAll(".tsi-valueElement")
-                    .attr("stroke-opacity", this.strokeOpacity)
-                    .filter(function () {
-                        return !d3.select(this).classed("tsi-valueEnvelope");
-                    })
-                    .attr("fill-opacity", 1);
+            .attr("stroke-opacity", this.strokeOpacity)
+            .filter(function () {
+                return !d3.select(this).classed("tsi-valueEnvelope");
+            })
+            .attr("fill-opacity", 1);
 
         this.svgSelection.selectAll(".tsi-valueEnvelope")
             .attr("fill-opacity", .2);
-            
-            Utils.revertAllSubtitleText(d3.select(this.renderTarget).selectAll('.tsi-markerValue'));
+
+        Utils.revertAllSubtitleText(d3.select(this.renderTarget).selectAll('.tsi-markerValue'));
 
         this.focusedAggKey = null;
         this.focusedSplitby = null;
     }
 
-    private hideFocusElements () {
+    private hideFocusElements() {
         this.focus.style('display', 'none');
         this.verticalValueBox.style('display', 'none');
         this.horizontalValueBox.style('display', 'none');
     }
 
-    private voronoiMouseout (event, d: any)  {
+    private voronoiMouseout(event, d: any) {
         //supress if the context menu is visible
         if (this.contextMenu && this.contextMenu.contextMenuVisible)
             return;
-        
-        this.hideFocusElements();        
+
+        this.hideFocusElements();
         this.tooltip.hide();
         (<any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel')).classed("inFocus", false);
         if (event && event.type != 'end') {
@@ -162,18 +162,18 @@ class LineChart extends TemporalXAxisComponent {
         }
     }
 
-    private createMarkerInstructions () {
+    private createMarkerInstructions() {
         this.targetElement.selectAll(".tsi-markerInstructions").remove();
         this.targetElement.append("div")
             .classed("tsi-markerInstructions", true)
             .attr('role', 'alert')
             .attr('aria-live', 'assertive')
-            .text(this.getString("Click to drop marker") + "," + this.getString("drag to reposition") + "."); 
+            .text(this.getString("Click to drop marker") + "," + this.getString("drag to reposition") + ".");
     }
 
-    private destroyMarkerInstructions () {
+    private destroyMarkerInstructions() {
         this.targetElement.selectAll(".tsi-markerInstructions").remove();
-    }   
+    }
 
     public triggerLineFocus = (aggKey: string, splitBy: string) => {
         this.focusedAggKey = null;
@@ -181,25 +181,25 @@ class LineChart extends TemporalXAxisComponent {
         this.focusOnlyHoveredSeries(aggKey, splitBy, true);
     }
 
-    private getMouseoverFunction (chartType =DataTypes.Numeric) {
+    private getMouseoverFunction(chartType = DataTypes.Numeric) {
         switch (chartType) {
             case DataTypes.Categorical:
                 return this.categoricalMouseover;
             case DataTypes.Events:
                 return this.discreteEventsMouseover;
             default:
-                return () => {}
+                return () => { }
         }
     }
 
-    private getMouseoutFunction (chartType = DataTypes.Numeric) {
+    private getMouseoutFunction(chartType = DataTypes.Numeric) {
         switch (chartType) {
             case DataTypes.Categorical:
                 return this.categoricalMouseout;
             case DataTypes.Events:
                 return this.discreteEventsMouseout;
             default:
-                return () => {}
+                return () => { }
         }
     }
 
@@ -242,13 +242,13 @@ class LineChart extends TemporalXAxisComponent {
 
         let yValue = this.getValueOfVisible(d);
 
-        if (this.chartOptions.tooltip){
+        if (this.chartOptions.tooltip) {
             this.tooltip.render(this.chartOptions.theme);
             this.tooltip.draw(d, this.chartComponentData, xPos, y, this.chartMargins, (text) => {
                 this.tooltipFormat(d, text, TooltipMeasureFormat.SingleValue);
             }, width, 0, 0);
         }
-        else 
+        else
             this.tooltip.hide();
         return true;
     }
@@ -258,7 +258,7 @@ class LineChart extends TemporalXAxisComponent {
         this.resetValueElementsFocus();
         this.tooltip.hide();
     }
-    private mismatchingChartType (aggKey) {
+    private mismatchingChartType(aggKey) {
         if (!this.plotComponents[aggKey]) {
             return false;
         }
@@ -279,14 +279,14 @@ class LineChart extends TemporalXAxisComponent {
 
         let yValue = this.getValueOfVisible(d);
 
-        if (this.chartOptions.tooltip){
+        if (this.chartOptions.tooltip) {
             this.tooltip.render(this.chartOptions.theme);
             this.tooltip.draw(d, this.chartComponentData, xPos, y, this.chartMargins, (text) => {
                 d.endDate = endDate;
-                this.tooltipFormat(d, text,TooltipMeasureFormat.SingleValue);
+                this.tooltipFormat(d, text, TooltipMeasureFormat.SingleValue);
             }, width, 0, 0);
         }
-        else 
+        else
             this.tooltip.hide();
         return true;
     }
@@ -297,29 +297,29 @@ class LineChart extends TemporalXAxisComponent {
         this.tooltip.hide();
     }
 
-    private setHorizontalValuePosAndText (d: any, xPos: number, xValue: any, shiftMillis: number) {
+    private setHorizontalValuePosAndText(d: any, xPos: number, xValue: any, shiftMillis: number) {
         var bucketSize = this.chartComponentData.displayState[d.aggregateKey].bucketSize;
         var endValue = bucketSize ? (new Date(xValue.valueOf() + bucketSize)) : null;
-        
+
         this.horizontalValueBox.text('')
             .style('left', `${xPos}px`)
             .style('top', `${(this.chartMargins.top + this.chartHeight + VALUEBARHEIGHT)}px`)
             .style('display', 'block');
         this.horizontalValueBox.append('div')
             .attr('class', 'tsi-valueBoxText')
-            .text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
+            .text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
                 this.chartOptions.offset, this.chartOptions.is24HourTime, shiftMillis, null, this.chartOptions.dateLocale)(xValue))
         if (endValue !== null) {
             this.horizontalValueBox.append('div')
                 .attr('class', 'tsi-valueBoxText')
-                .text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
+                .text(Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
                     this.chartOptions.offset, this.chartOptions.is24HourTime, shiftMillis, null, this.chartOptions.dateLocale)(endValue))
         }
-            
+
 
     }
 
-    private setVerticalValueAndPosition (yValue: number, yPos) {
+    private setVerticalValueAndPosition(yValue: number, yPos) {
         this.verticalValueBox.style('top', `${yPos}px`)
             .style('right', `${(this.chartMargins.right + this.chartWidth)}px`)
             .style('display', 'block')
@@ -345,7 +345,7 @@ class LineChart extends TemporalXAxisComponent {
 
         this.setHorizontalValuePosAndText(d, xPos + this.getSVGLeftOffset() + this.chartMargins.left, xValue, shiftMillis);
         this.setVerticalValueAndPosition(yValue, yPos + this.chartMargins.top);
-        
+
         var bucketSize = this.chartComponentData.displayState[d.aggregateKey].bucketSize;
         var endValue = bucketSize ? (new Date(xValue.valueOf() + bucketSize)) : null;
 
@@ -360,15 +360,15 @@ class LineChart extends TemporalXAxisComponent {
         } else {
             this.horizontalValueBar.style('display', 'none');
         }
-        if (this.chartOptions.tooltip){
+        if (this.chartOptions.tooltip) {
             this.tooltip.render(this.chartOptions.theme);
             this.tooltip.draw(d, this.chartComponentData, xPos, yPos, this.chartMargins, (text) => {
                 this.tooltipFormat(d, text, TooltipMeasureFormat.Enveloped);
             }, null, 20, 20, this.colorMap[d.aggregateKey + "_" + d.splitBy]);
         }
-        else 
+        else
             this.tooltip.hide();
-        
+
         (<any>this.focus.node()).parentNode.appendChild(this.focus.node());
         this.legendObject.triggerSplitByFocus(d.aggregateKey, d.splitBy);
 
@@ -379,9 +379,9 @@ class LineChart extends TemporalXAxisComponent {
                 .style("fill-opacity", .5)
                 .classed("standardYAxisText", true);
             this.svgSelection.selectAll(".yAxis")
-            .filter((yAxisAggKey) => {
-                return yAxisAggKey == d.aggregateKey; 
-            })
+                .filter((yAxisAggKey) => {
+                    return yAxisAggKey == d.aggregateKey;
+                })
                 .selectAll("text")
                 .style("fill-opacity", 1)
                 .classed("standardYAxisText", false)
@@ -390,7 +390,7 @@ class LineChart extends TemporalXAxisComponent {
 
         if (this.chartOptions.yAxisHidden) {
             this.svgSelection.selectAll(".yAxis").style("display", "hidden");
-        } 
+        }
         if (this.chartOptions.xAxisHidden) {
             this.svgSelection.selectAll(".xAxis").style("display", "none");
         }
@@ -399,14 +399,14 @@ class LineChart extends TemporalXAxisComponent {
     }
 
     //get the extent of an array of timeValues
-    private getYExtent (aggValues, isEnvelope, aggKey = null) {   
+    private getYExtent(aggValues, isEnvelope, aggKey = null) {
         let extent;
         if (aggKey !== null && (this.chartComponentData.displayState[aggKey].yExtent !== null)) {
             return this.chartComponentData.displayState[aggKey].yExtent;
         }
         if (this.chartOptions.yExtent !== null) {
             return this.chartOptions.yExtent;
-        } 
+        }
         if (isEnvelope) {
             var filteredValues = this.getFilteredValues(aggValues);
             var flatValuesList = [];
@@ -428,7 +428,7 @@ class LineChart extends TemporalXAxisComponent {
                     }
                 }
             });
-            extent = d3.extent(flatValuesList);        
+            extent = d3.extent(flatValuesList);
         } else {
             extent = d3.extent(this.getFilteredValues(aggValues), (d: any) => {
                 var visibleMeasure = this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy);
@@ -436,20 +436,20 @@ class LineChart extends TemporalXAxisComponent {
                     return d.measures[visibleMeasure];
                 }
                 return null;
-            });    
+            });
         }
         if (extent[0] == undefined || extent[1] == undefined)
-            return [0,1]
+            return [0, 1]
         return extent;
     }
 
-    private getFilteredValues (aggValues) {
+    private getFilteredValues(aggValues) {
         return aggValues.filter((d: any) => {
             return (d.measures && this.getValueOfVisible(d) !== null);
         });
     }
 
-    private getFilteredAndSticky (aggValues) { //getFilteredValues, then filter by sticky
+    private getFilteredAndSticky(aggValues) { //getFilteredValues, then filter by sticky
         var filteredValues = this.getFilteredValues(aggValues);
         let numericFiltered = filteredValues.filter((d: any) => {
             return (this.getDataType(d.aggregateKey) === DataTypes.Numeric)
@@ -458,13 +458,13 @@ class LineChart extends TemporalXAxisComponent {
             return numericFiltered;
         return numericFiltered.filter((d: any) => {
             return d.aggregateKey == this.chartComponentData.stickiedKey.aggregateKey &&
-                ((this.chartComponentData.stickiedKey.splitBy == null) ? true : 
-                d.splitBy == this.chartComponentData.stickiedKey.splitBy);
+                ((this.chartComponentData.stickiedKey.splitBy == null) ? true :
+                    d.splitBy == this.chartComponentData.stickiedKey.splitBy);
         });
     }
 
     public stickyOrUnstickySeries = (aggKey, splitBy) => {
-        if (this.chartComponentData.stickiedKey && this.chartComponentData.stickiedKey.aggregateKey === aggKey && 
+        if (this.chartComponentData.stickiedKey && this.chartComponentData.stickiedKey.aggregateKey === aggKey &&
             this.chartComponentData.stickiedKey.splitBy === splitBy) {
             this.unstickySeries(aggKey, splitBy);
         } else {
@@ -498,19 +498,19 @@ class LineChart extends TemporalXAxisComponent {
             splitBy: (splitBy == null ? null : splitBy)
         };
 
-        (<any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel').filter(function (filteredSplitBy: any)  {
+        (<any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel').filter(function (filteredSplitBy: any) {
             return (d3.select(this.parentNode).datum() == aggregateKey) && (filteredSplitBy == splitBy);
         })).classed("stickied", true);
 
         this.voronoiDiagram = this.voronoi(this.getFilteredAndSticky(this.chartComponentData.allValues));
-        this.chartOptions.onSticky(aggregateKey, splitBy);    
+        this.chartOptions.onSticky(aggregateKey, splitBy);
     }
 
-    private getHandleHeight (): number {
+    private getHandleHeight(): number {
         return Math.min(Math.max(this.chartHeight / 2, 24), this.chartHeight + 8);
     }
 
-    private getXPosition (d, x) {
+    private getXPosition(d, x) {
         var bucketSize = this.chartComponentData.displayState[d.aggregateKey].bucketSize;
         if (bucketSize)
             return (x(d.dateTime) + x((new Date(d.dateTime.valueOf() + bucketSize)))) / 2
@@ -521,11 +521,11 @@ class LineChart extends TemporalXAxisComponent {
         this.brushStartTime = startTime;
     }
 
-    public setBrushEndTime (endTime) {
+    public setBrushEndTime(endTime) {
         this.brushEndTime = endTime;
     }
 
-    public setBrush () {
+    public setBrush() {
         if (this.brushStartTime && this.brushEndTime && this.brushElem && this.brush) {
             var rawLeftSide = this.x(this.brushStartTime);
             var rawRightSide = this.x(this.brushEndTime);
@@ -540,7 +540,7 @@ class LineChart extends TemporalXAxisComponent {
 
             let leftSide = Math.min(this.chartWidth - (2 * this.xOffset), Math.max(this.xOffset, this.x(this.brushStartTime)));
             let rightSide = Math.min(this.chartWidth - (2 * this.xOffset), Math.max(this.xOffset, this.x(this.brushEndTime)));
-            
+
             this.surpressBrushTimeSet = true;
             this.brushStartPosition = leftSide;
             this.brushEndPosition = rightSide;
@@ -552,11 +552,11 @@ class LineChart extends TemporalXAxisComponent {
                     rightSide += 1;
                 }
             }
-            this.brushElem.call(this.brush.move, [leftSide, rightSide]);        
+            this.brushElem.call(this.brush.move, [leftSide, rightSide]);
         }
     }
 
-    private findClosestValidTime (rawMillis: number) {
+    private findClosestValidTime(rawMillis: number) {
         var minDiff = Infinity;
         return Object.keys(this.chartComponentData.timeMap).reduce((closestValue: number, currValue: any) => {
             var diff = Math.abs(Number(currValue) - rawMillis);
@@ -568,20 +568,20 @@ class LineChart extends TemporalXAxisComponent {
         }, Infinity);
     }
 
-    private getMarkerMarginLeft () {
+    private getMarkerMarginLeft() {
         var legendWidth = this.legendObject.legendElement.node().getBoundingClientRect().width;
-        return this.chartMargins.left + (this.chartOptions.legend === "shown" || this.chartOptions.legend === "hidden" ? legendWidth : 0) + 
+        return this.chartMargins.left + (this.chartOptions.legend === "shown" || this.chartOptions.legend === "hidden" ? legendWidth : 0) +
             (this.chartOptions.legend === "shown" ? this.GUTTERWIDTH : 0);
     }
 
-    public exportMarkers () {
+    public exportMarkers() {
         this.chartOptions.markers = Object.keys(this.markerGuidMap)
             .filter((markerGuid) => !this.activeMarker || this.activeMarker.getGuid() !== markerGuid)
-            .map((markerGuid) => {return [this.markerGuidMap[markerGuid].getMillis(), this.markerGuidMap[markerGuid].getLabelText()]});
+            .map((markerGuid) => { return [this.markerGuidMap[markerGuid].getMillis(), this.markerGuidMap[markerGuid].getLabelText()] });
         this.chartOptions.onMarkersChange(this.chartOptions.markers);
     }
 
-    private createOnMarkerChange (markerGuid: string, marker: any) {
+    private createOnMarkerChange(markerGuid: string, marker: any) {
         return (isDeleting, droppedMarker, shouldSort: boolean = true) => {
             if (droppedMarker) {
                 this.markerGuidMap[markerGuid] = marker;
@@ -598,14 +598,14 @@ class LineChart extends TemporalXAxisComponent {
                 } else {
                     this.focusOnEllipsis();
                 }
-            }   
+            }
             this.exportMarkers();
             if (shouldSort)
                 this.sortMarkers();
         }
     }
 
-    private renderMarker (marker: Marker, millis: number, onChange: any = null, labelText: string = null, isSeriesLabels: boolean = false) {
+    private renderMarker(marker: Marker, millis: number, onChange: any = null, labelText: string = null, isSeriesLabels: boolean = false) {
         marker.render(millis, this.chartOptions, this.chartComponentData, {
             chartMargins: this.chartMargins,
             x: this.x,
@@ -620,14 +620,14 @@ class LineChart extends TemporalXAxisComponent {
         });
     }
 
-    private sortMarkers () {
-        d3.select(this.renderTarget).selectAll(".tsi-markerContainer").sort((a: any, b: any) =>  {
+    private sortMarkers() {
+        d3.select(this.renderTarget).selectAll(".tsi-markerContainer").sort((a: any, b: any) => {
             return (a.timestamp < b.timestamp) ? 1 : -1;
         });
     }
 
-    private getAllLinesTransitionsComplete () {
-        return new Promise ((resolve, reject) => {
+    private getAllLinesTransitionsComplete() {
+        return new Promise((resolve, reject) => {
             let checkAllLines = (numberOfAttempts: number = 0) => {
                 if (numberOfAttempts < 5) {
                     setTimeout(() => {
@@ -638,7 +638,7 @@ class LineChart extends TemporalXAxisComponent {
                         d3.select(this.renderTarget).selectAll('.tsi-valueLine').data().forEach((d: any) => {
                             allOutOfTransition = allOutOfTransition && !d.inTransition;
                         });
-                        if (allOutOfTransition){
+                        if (allOutOfTransition) {
                             resolve(null);
                         } else {
                             checkAllLines(numberOfAttempts + 1);
@@ -652,7 +652,7 @@ class LineChart extends TemporalXAxisComponent {
         });
     }
 
-    private importMarkers () {
+    private importMarkers() {
         if (this.chartOptions.markers && this.chartOptions.markers.length > 0) {
             // delete all the old markers
             if (Object.keys(this.markerGuidMap).length) {
@@ -661,7 +661,7 @@ class LineChart extends TemporalXAxisComponent {
                     delete this.markerGuidMap[guid];
                 });
             }
-            this.markerGuidMap = {};            
+            this.markerGuidMap = {};
             this.chartOptions.markers.forEach((markerValueTuples, markerIndex) => {
                 if (markerValueTuples === null || markerValueTuples === undefined) {
                     return;
@@ -686,17 +686,17 @@ class LineChart extends TemporalXAxisComponent {
     }
 
 
-    private createSeriesLabelsMarker () {
+    private createSeriesLabelsMarker() {
         this.seriesLabelsMarker = new Marker(this.renderTarget);
     }
 
-    private renderSeriesLabelsMarker () {
+    private renderSeriesLabelsMarker() {
         if (this.chartOptions.labelSeriesWithMarker) {
-            this.renderMarker(this.seriesLabelsMarker, this.x.domain()[1], () => {}, null, true);
+            this.renderMarker(this.seriesLabelsMarker, this.x.domain()[1], () => { }, null, true);
         }
     }
 
-    private renderAllMarkers () {
+    private renderAllMarkers() {
         this.getAllLinesTransitionsComplete().then(() => {
             Object.keys(this.markerGuidMap).forEach((guid) => {
                 let marker = this.markerGuidMap[guid];
@@ -705,11 +705,11 @@ class LineChart extends TemporalXAxisComponent {
             });
             if (this.seriesLabelsMarker) {
                 this.renderSeriesLabelsMarker();
-            }    
+            }
         });
     }
 
-    private focusOnEllipsis () {
+    private focusOnEllipsis() {
         if (this.ellipsisContainer !== null) {
             this.ellipsisContainer.select(".tsi-ellipsisButton").node().focus();
         }
@@ -732,7 +732,7 @@ class LineChart extends TemporalXAxisComponent {
         }
 
         Utils.focusOnEllipsisButton(this.renderTarget);
-        
+
         let marker = new Marker(this.renderTarget);
         let markerUID = Utils.guid();
         let onChange = this.createOnMarkerChange(markerUID, marker);
@@ -741,18 +741,18 @@ class LineChart extends TemporalXAxisComponent {
         this.renderMarker(marker, Infinity, onChange, `${this.getString('Marker')} ${Object.keys(this.markerGuidMap).length}`);
     }
 
-    private voronoiExists (): boolean {
-        return (this.getVisibleNumerics() !== 0); 
+    private voronoiExists(): boolean {
+        return (this.getVisibleNumerics() !== 0);
     }
 
-    private voronoiMousemove (mouseEvent) {
+    private voronoiMousemove(mouseEvent) {
         if (!this.filteredValueExist() || !this.voronoiExists()) return;
         this.mx = mouseEvent[0];
         this.my = mouseEvent[1];
-        const [mx, my] = mouseEvent;      
+        const [mx, my] = mouseEvent;
         var site: any = this.voronoiDiagram.find(this.mx, this.my);
         if (!this.isDroppingMarker) {
-            this.voronoiMouseover(site.data);  
+            this.voronoiMouseover(site.data);
         } else {
             let rawTime = this.x.invert(mx);
             let closestTime = Utils.findClosestTime(rawTime.valueOf(), this.chartComponentData.timeMap);
@@ -765,13 +765,13 @@ class LineChart extends TemporalXAxisComponent {
             this.focusMarkerLabel(selectedFilter, site.data.aggregateKey, site.data.splitBy);
             this.focusOnlyHoveredSeries(site.data.aggregateKey, site.data.splitBy, true);
         }
-    } 
+    }
 
-    private voronoiContextMenu (d3Event, mouseEvent) {
+    private voronoiContextMenu(d3Event, mouseEvent) {
         if (!this.filteredValueExist() || !this.voronoiExists()) return;
         const [mx, my] = d3.pointer(d3Event, mouseEvent);
         const site: any = this.voronoiDiagram.find(mx, my);
-        if (this.chartComponentData.displayState[site.data.aggregateKey].contextMenuActions && 
+        if (this.chartComponentData.displayState[site.data.aggregateKey].contextMenuActions &&
             this.chartComponentData.displayState[site.data.aggregateKey].contextMenuActions.length) {
             var mousePosition = d3.pointer(d3Event, <any>this.targetElement.node());
 
@@ -781,13 +781,13 @@ class LineChart extends TemporalXAxisComponent {
             } else {
                 sitePageCoords = this.voronoiRegion.node().getBoundingClientRect();
             }
-            
-            let eventSite = {pageX: sitePageCoords.left + site[0], pageY: sitePageCoords.top + site[1] - 12}
+
+            let eventSite = { pageX: sitePageCoords.left + site[0], pageY: sitePageCoords.top + site[1] - 12 }
 
             d3Event.preventDefault();
-            this.contextMenu.draw(this.chartComponentData, this.renderTarget, this.chartOptions, 
-                                mousePosition, site.data.aggregateKey, site.data.splitBy, null,
-                                site.data.dateTime, null, eventSite);
+            this.contextMenu.draw(this.chartComponentData, this.renderTarget, this.chartOptions,
+                mousePosition, site.data.aggregateKey, site.data.splitBy, null,
+                site.data.dateTime, null, eventSite);
             if (this.brushContextMenu) {
                 this.brushContextMenu.hide();
             }
@@ -795,11 +795,11 @@ class LineChart extends TemporalXAxisComponent {
         }
     }
 
-    private voronoiClick (d3Event, mouseEvent) {
+    private voronoiClick(d3Event, mouseEvent) {
         //supress if the context menu is visible
         if (this.contextMenu && this.contextMenu.contextMenuVisible)
             return;
-    
+
         if (!this.filteredValueExist() || !this.voronoiExists()) return;
         if (this.brushElem && !this.isDroppingMarker) return;
         const [mx, my] = d3.pointer(d3Event, mouseEvent);
@@ -815,7 +815,7 @@ class LineChart extends TemporalXAxisComponent {
                     this.unstickySeries(site.data.aggregateKey, site.data.splitBy);
                     return;
                 }
-                this.stickySeries(site.data.aggregateKey, site.data.splitBy);    
+                this.stickySeries(site.data.aggregateKey, site.data.splitBy);
             }
         } else {
             if (!this.hasBrush) {
@@ -831,19 +831,19 @@ class LineChart extends TemporalXAxisComponent {
         }
     }
 
-    private getValueOfVisible (d) {
+    private getValueOfVisible(d) {
         return Utils.getValueOfVisible(d, this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy));
     }
 
-    private brushBrush (event) {
+    private brushBrush(event) {
         var handleHeight = this.getHandleHeight();
         this.brushElem.selectAll('.handle')
             .attr('height', handleHeight)
             .attr('y', (this.chartHeight - handleHeight) / 2);
 
-        if (!event.sourceEvent){
+        if (!event.sourceEvent) {
             return;
-        } 
+        }
         if (event.sourceEvent && event.sourceEvent.type === 'mousemove') {
             this.brushElem.select(".selection").attr("visibility", "visible");
             //check boundary conditions for width of the brush
@@ -857,13 +857,13 @@ class LineChart extends TemporalXAxisComponent {
             this.surpressBrushTimeSet = false;
             return;
         }
-        if (!event.selection) return; 
+        if (!event.selection) return;
 
         if (this.contextMenu)
             this.contextMenu.hide();
         if (this.brushContextMenu)
             this.brushContextMenu.hide();
-        
+
         var newBrushStartPosition = event.selection[0];
         var newBrushEndPosition = event.selection[1];
         if (newBrushStartPosition != this.brushStartPosition) {
@@ -874,13 +874,13 @@ class LineChart extends TemporalXAxisComponent {
             this.brushEndTime = this.x.invert(event.selection[1]);
             this.brushEndPosition = newBrushEndPosition;
         }
-    
+
         if (this.chartOptions.brushMoveAction) {
             this.chartOptions.brushMoveAction(this.brushStartTime, this.brushEndTime);
         }
     }
 
-    private brushEnd (d3Event, mouseEvent) {
+    private brushEnd(d3Event, mouseEvent) {
         if (this.isClearingBrush) {
             this.isClearingBrush = false;
             if (this.brushContextMenu) {
@@ -963,7 +963,7 @@ class LineChart extends TemporalXAxisComponent {
         if (this.chartOptions.brushMoveEndAction && (d3Event.sourceEvent && d3Event.sourceEvent.type == 'mouseup')) {
             this.chartOptions.brushMoveEndAction(this.brushStartTime, this.brushEndTime);
         }
-        if (this.chartOptions.brushContextMenuActions && this.chartOptions.autoTriggerBrushContextMenu && 
+        if (this.chartOptions.brushContextMenuActions && this.chartOptions.autoTriggerBrushContextMenu &&
             (d3Event.sourceEvent && d3Event.sourceEvent.type == 'mouseup')) {
             if (!this.chartOptions.brushContextMenuActions || this.chartOptions.brushContextMenuActions.length == 0)
                 return;
@@ -973,19 +973,19 @@ class LineChart extends TemporalXAxisComponent {
             var correctedMousePositionX = Math.min(boundingCRect.width, Math.max(mousePosition[0], 0));
             var correctedMousePositionY = Math.min(boundingCRect.height, Math.max(mousePosition[1], 0));
             var correctedMousePosition = [correctedMousePositionX, correctedMousePositionY];
-            
-            this.brushContextMenu.draw(this.chartComponentData, this.renderTarget, this.chartOptions, 
-                                correctedMousePosition, null, null, null, this.brushStartTime, this.brushEndTime);
+
+            this.brushContextMenu.draw(this.chartComponentData, this.renderTarget, this.chartOptions,
+                correctedMousePosition, null, null, null, this.brushStartTime, this.brushEndTime);
         }
         if (transformCall) {
             transformCall();
             if (this.brushContextMenu && isZeroWidth) {
                 this.brushContextMenu.hide();
-            } 
+            }
         }
     }
 
-    private focusMarkerLabel (filterFunction, aggKey, splitBy) {
+    private focusMarkerLabel(filterFunction, aggKey, splitBy) {
         Utils.revertAllSubtitleText(d3.select(this.renderTarget).selectAll(".tsi-markerValue"), .2);
 
 
@@ -996,16 +996,16 @@ class LineChart extends TemporalXAxisComponent {
             .each(function () {
                 Utils.setSeriesLabelSubtitleText(d3.select(this).selectAll('.tsi-tooltipSubtitle'), true);
             });
-        
+
         d3.select(this.renderTarget).selectAll(".tsi-markerContainer").each(function () {
-            d3.select(this).selectAll(".tsi-markerValue").sort(function (a: any, b: any) { 
-                return (a.aggregateKey == aggKey && (splitBy == null || splitBy == a.splitBy)) ? 1 : -1;            
+            d3.select(this).selectAll(".tsi-markerValue").sort(function (a: any, b: any) {
+                return (a.aggregateKey == aggKey && (splitBy == null || splitBy == a.splitBy)) ? 1 : -1;
             });
         });
-    }  
+    }
 
     public labelMouseout = () => {
-        if (this.svgSelection) {    
+        if (this.svgSelection) {
             Utils.revertAllSubtitleText(d3.select(this.renderTarget).selectAll('.tsi-markerValue'));
             this.svgSelection.selectAll(".tsi-valueElement")
                 .filter(function () { return !d3.select(this).classed("tsi-valueEnvelope"); })
@@ -1020,7 +1020,7 @@ class LineChart extends TemporalXAxisComponent {
         this.focusOnlyHoveredSeries(aggregateKey, splitBy, false);
     }
 
-    private drawBrushRange () {
+    private drawBrushRange() {
         if (this.chartOptions.brushRangeVisible) {
             if (this.targetElement.select('.tsi-rangeTextContainer').empty() && (this.brushStartTime || this.brushEndTime)) {
                 var rangeTextContainer = this.targetElement.append("div")
@@ -1030,11 +1030,11 @@ class LineChart extends TemporalXAxisComponent {
         }
     }
 
-    private getSVGLeftOffset () {
+    private getSVGLeftOffset() {
         return this.chartOptions.legend === 'shown' ? (this.width - this.svgSelection.node().getBoundingClientRect().width) : 0;
     }
 
-    public updateBrushRange () {
+    public updateBrushRange() {
         let svgLeftOffset = this.getSVGLeftOffset();
         if (!(this.brushStartTime || this.brushEndTime)) {
             this.deleteBrushRange();
@@ -1044,49 +1044,49 @@ class LineChart extends TemporalXAxisComponent {
         let rangeText = Utils.rangeTimeFormat(this.brushEndTime.valueOf() - this.brushStartTime.valueOf());
         let rangeTextContainer = this.targetElement.select('.tsi-rangeTextContainer');
 
-        let leftPos = this.chartMargins.left + 
+        let leftPos = this.chartMargins.left +
             Math.min(Math.max(0, this.x(this.brushStartTime)), this.x.range()[1]) + svgLeftOffset;
 
-        let rightPos = this.chartMargins.left + 
+        let rightPos = this.chartMargins.left +
             Math.min(Math.max(0, this.x(this.brushEndTime)), this.x.range()[1]) + svgLeftOffset;
- 
+
         rangeTextContainer
             .text(rangeText)
             .style("left", Math.max(8, Math.round((leftPos + rightPos) / 2)) + "px")
             .style("top", (this.chartMargins.top + this.chartOptions.aggTopMargin) + 'px')
-        
+
         if (this.chartOptions.color) {
             rangeTextContainer
                 .style('background-color', this.chartOptions.color)
                 .style('color', 'white');
         }
 
-        let calcedWidth = rangeTextContainer.node().getBoundingClientRect().width;	
-        if (this.chartOptions.isCompact && (rightPos - leftPos) < calcedWidth) {	
-            rangeTextContainer.style('visibility', 'hidden');	
+        let calcedWidth = rangeTextContainer.node().getBoundingClientRect().width;
+        if (this.chartOptions.isCompact && (rightPos - leftPos) < calcedWidth) {
+            rangeTextContainer.style('visibility', 'hidden');
         } else {
             rangeTextContainer.style('visibility', 'visible');
         }
     }
 
-    public deleteBrushRange () {
+    public deleteBrushRange() {
         this.targetElement.select('.tsi-rangeTextContainer').remove();
     }
 
-    public getYExtents(){
+    public getYExtents() {
         return this.chartComponentData.yExtents;
     }
 
     private nextStackedState = () => {
-        if (this.chartOptions.yAxisState === YAxisStates.Stacked) 
+        if (this.chartOptions.yAxisState === YAxisStates.Stacked)
             return "shared";
         else if (this.chartOptions.yAxisState === YAxisStates.Shared)
             return "overlap";
-        else  
+        else
             return "stacked";
     };
 
-    private clearBrush () {
+    private clearBrush() {
         this.svgSelection.select('.svgGroup').select(".brushElem").call(this.brush.move, null);
         this.deleteBrushRange();
         if (this.brushContextMenu) {
@@ -1094,7 +1094,7 @@ class LineChart extends TemporalXAxisComponent {
         }
     }
 
-    private getVisibleNumerics () {
+    private getVisibleNumerics() {
         let visibleGroups = this.data.filter((agg) => this.chartComponentData.displayState[agg.aggKey]["visible"]);
         let visibleCDOs = this.aggregateExpressionOptions.filter((cDO) => this.chartComponentData.displayState[cDO.aggKey]["visible"]);
         return visibleGroups.filter((aggKey, i) => {
@@ -1102,7 +1102,7 @@ class LineChart extends TemporalXAxisComponent {
         }).length;
     }
 
-    private getSwimlaneOffsets (linechartTopPadding: number, visibleGroups: Array<ChartDataOptions>, visibleCDOs: Array<ChartDataOptions>, heightPerNumeric: number, swimLaneSet: any) {
+    private getSwimlaneOffsets(linechartTopPadding: number, visibleGroups: Array<ChartDataOptions>, visibleCDOs: Array<ChartDataOptions>, heightPerNumeric: number, swimLaneSet: any) {
         let cumulativeOffset = LINECHARTTOPPADDING;
         //initialize to null and set while going through swimLanes
         let visibleGroupEndValues = visibleGroups.map(() => null);
@@ -1128,7 +1128,7 @@ class LineChart extends TemporalXAxisComponent {
                     if (aggGroup.swimLane === swimlane) {
                         visibleGroupEndValues[i] = [cumulativeOffset, this.getEventsCollapsedSwimlaneHeight(visibleCDOs, swimlane)]
                     }
-                });    
+                });
             } else {
                 visibleCDOs.forEach((aggGroup, i) => {
                     if (aggGroup.swimLane === swimlane && aggGroup.dataType !== DataTypes.Numeric) {
@@ -1136,21 +1136,21 @@ class LineChart extends TemporalXAxisComponent {
                         visibleGroupEndValues[i] = [swimLaneOffset + cumulativeOffset, currGroupsHeight]
                         swimLaneOffset += currGroupsHeight;
                     }
-                });    
+                });
             }
-            cumulativeOffset += swimLaneOffset; 
+            cumulativeOffset += swimLaneOffset;
         });
         return visibleGroupEndValues;
     }
 
-    private setSwimLaneYExtents (visibleGroups, visibleCDOs, swimLanes, swimLaneOptions) {
+    private setSwimLaneYExtents(visibleGroups, visibleCDOs, swimLanes, swimLaneOptions) {
         let extents = {};
         swimLanes.forEach((lane) => {
             let extent = [];
 
             // Check if swim lane options sets y-axis extents for this lane. If so use that
             // value for yExtents.
-            if(swimLaneOptions && swimLaneOptions[lane] && swimLaneOptions[lane].yExtent) {
+            if (swimLaneOptions && swimLaneOptions[lane] && swimLaneOptions[lane].yExtent) {
                 extents[lane] = swimLaneOptions[lane].yExtent;
                 return;
             }
@@ -1165,10 +1165,10 @@ class LineChart extends TemporalXAxisComponent {
                     let aggKey = cDO.aggKey;
                     Object.keys(this.chartComponentData.visibleTAs[aggKey]).forEach((splitBy) => {
                         aggValues = aggValues.concat(this.chartComponentData.visibleTAs[aggKey][splitBy]);
-                    });    
-                    let yExtent = this.getYExtent(aggValues, 
-                        this.chartComponentData.displayState[aggKey].includeEnvelope ? 
-                            this.chartComponentData.displayState[aggKey].includeEnvelope : 
+                    });
+                    let yExtent = this.getYExtent(aggValues,
+                        this.chartComponentData.displayState[aggKey].includeEnvelope ?
+                            this.chartComponentData.displayState[aggKey].includeEnvelope :
                             this.chartOptions.includeEnvelope, aggKey);
                     extent = d3.extent(yExtent.concat(extent));
                     extents[lane] = extent;
@@ -1179,19 +1179,19 @@ class LineChart extends TemporalXAxisComponent {
         this.swimlaneYExtents = extents;
     }
 
-    private getEventsCollapsedSwimlaneHeight (visibleCDOs, swimlane) {
+    private getEventsCollapsedSwimlaneHeight(visibleCDOs, swimlane) {
         // if a swimlane has collapsed events, the events height impact is the largest height of a visible events group in the swimlane
         let rawHeight = visibleCDOs.reduce((tallest, currGroup) => {
             if (currGroup.dataType === DataTypes.Events && currGroup.swimLane === swimlane) {
                 return Math.max(tallest, currGroup.height);
-            } 
+            }
             return tallest;
         }, 0);
         return rawHeight !== 0 ? Utils.getNonNumericHeight(rawHeight) : 0;
     }
 
     //returns an array of tuples of y offset and height for each visible aggregate group 
-    private createYOffsets () {
+    private createYOffsets() {
         let visibleGroups = this.data.filter((agg) => this.chartComponentData.displayState[agg.aggKey]["visible"]);
         let visibleCDOs = this.aggregateExpressionOptions.filter((cDO) => this.chartComponentData.displayState[cDO.aggKey]["visible"]);
 
@@ -1206,7 +1206,7 @@ class LineChart extends TemporalXAxisComponent {
 
         visibleCDOs.forEach((cDO) => {
             swimLaneSet[cDO.swimLane] = swimLaneSet[cDO.swimLane] || (cDO.dataType === DataTypes.Numeric);
-        });    
+        });
         visibleNumericCount = Object.keys(swimLaneSet).reduce((visibleCount, swimLane) => {
             return visibleCount + (swimLaneSet[swimLane] ? 1 : 0);
         }, 0);
@@ -1224,7 +1224,7 @@ class LineChart extends TemporalXAxisComponent {
                 if (sLO.collapseEvents) {
                     let swimlaneHeight = this.getEventsCollapsedSwimlaneHeight(visibleCDOs, swimlane);
                     fixedEventsHeight += swimlaneHeight;
-                }    
+                }
             });
         }
         let heightNonNumeric = visibleCDOs.reduce((sumPrevious, currGroup, i) => {
@@ -1234,12 +1234,12 @@ class LineChart extends TemporalXAxisComponent {
             return sumPrevious + (currGroup.dataType !== DataTypes.Numeric ? Utils.getNonNumericHeight(currGroup.height) : 0);
         }, 0);
         heightNonNumeric += fixedEventsHeight;
-        
+
         let heightPerNumeric = (useableHeight - heightNonNumeric) / countNumericLanes;
-        
+
         this.setSwimLaneYExtents(
-            visibleGroups, 
-            visibleCDOs, 
+            visibleGroups,
+            visibleCDOs,
             Object.keys(swimLaneSet)
                 .filter((lane) => swimLaneSet[lane])
                 .map((stringLane) => Number(stringLane)),
@@ -1248,29 +1248,29 @@ class LineChart extends TemporalXAxisComponent {
         return this.getSwimlaneOffsets(linechartTopPadding, visibleGroups, visibleCDOs, heightPerNumeric, swimLaneSet);
     }
 
-    private heightNonNumeric () {
+    private heightNonNumeric() {
         let visibleCDOs = this.aggregateExpressionOptions.filter((agg) => this.chartComponentData.displayState[agg.aggKey]["visible"]);
         return visibleCDOs.reduce((sumPrevious, currGroup) => {
             return sumPrevious + (currGroup.dataType !== DataTypes.Numeric ? Utils.getNonNumericHeight(currGroup.height) : 0);
         }, 0);
     }
 
-    private getGroupYExtent (aggKey, aggVisible, aggValues, yExtent) {        
+    private getGroupYExtent(aggKey, aggVisible, aggValues, yExtent) {
         if ((this.chartOptions.yAxisState === YAxisStates.Shared) || (Object.keys(this.chartComponentData.timeArrays)).length < 2 || !aggVisible) {
-            yExtent = this.getYExtent(this.chartComponentData.allNumericValues, this.chartComponentData.displayState[aggKey].includeEnvelope ? 
-                        this.chartComponentData.displayState[aggKey].includeEnvelope : 
-                        this.chartOptions.includeEnvelope, null);
+            yExtent = this.getYExtent(this.chartComponentData.allNumericValues, this.chartComponentData.displayState[aggKey].includeEnvelope ?
+                this.chartComponentData.displayState[aggKey].includeEnvelope :
+                this.chartOptions.includeEnvelope, null);
         } else if (this.chartComponentData.aggHasVisibleSplitBys(aggKey)) {
-            yExtent = this.getYExtent(aggValues, this.chartComponentData.displayState[aggKey].includeEnvelope ? 
-                this.chartComponentData.displayState[aggKey].includeEnvelope : 
+            yExtent = this.getYExtent(aggValues, this.chartComponentData.displayState[aggKey].includeEnvelope ?
+                this.chartComponentData.displayState[aggKey].includeEnvelope :
                 this.chartOptions.includeEnvelope, aggKey);
         } else {
-            yExtent = [0,1];
+            yExtent = [0, 1];
         }
         return yExtent;
     }
 
-    private getAggAxisType (agg) {
+    private getAggAxisType(agg) {
         if (this.chartOptions.yAxisState === YAxisStates.Stacked) {
             if (this.chartOptions.swimLaneOptions && this.chartOptions.swimLaneOptions[agg.swimLane] && this.chartOptions.swimLaneOptions[agg.swimLane].yAxisType) {
                 return this.chartOptions.swimLaneOptions[agg.swimLane].yAxisType;
@@ -1281,7 +1281,7 @@ class LineChart extends TemporalXAxisComponent {
         return this.chartOptions.yAxisState;
     }
 
-    private adjustSwimLanes () {
+    private adjustSwimLanes() {
         if (this.chartOptions.yAxisState === YAxisStates.Shared || this.chartOptions.yAxisState === YAxisStates.Overlap) {
             this.aggregateExpressionOptions.forEach((aEO) => {
                 aEO.swimLane = 0;
@@ -1292,43 +1292,43 @@ class LineChart extends TemporalXAxisComponent {
                 Object.values(this.chartOptions.swimLaneOptions).forEach((lane) => {
                     horizontalMarkers.push(...lane.horizontalMarkers);
                 });
-                this.chartOptions.swimLaneOptions = {0: {yAxisType: this.chartOptions.yAxisState, horizontalMarkers: horizontalMarkers}};
+                this.chartOptions.swimLaneOptions = { 0: { yAxisType: this.chartOptions.yAxisState, horizontalMarkers: horizontalMarkers } };
             }
         } else {
             let minimumPresentSwimLane = this.aggregateExpressionOptions.reduce((currMin, aEO) => {
-                return Math.max(aEO.swimLane, currMin); 
+                return Math.max(aEO.swimLane, currMin);
             }, 0);
             this.aggregateExpressionOptions.forEach((aEO) => {
                 if (aEO.swimLane === null) {
                     aEO.swimLane = ++minimumPresentSwimLane;
                 }
-            }); 
+            });
         }
     }
 
-    private overwriteSwimLanes () {
+    private overwriteSwimLanes() {
         this.aggregateExpressionOptions.forEach((aEO, i) => {
             this.aggregateExpressionOptions[i].swimLane = this.originalSwimLanes[i];
         });
         this.chartOptions.swimLaneOptions = this.originalSwimLaneOptions;
     }
 
-    private getHorizontalMarkersWithYScales ()  {
+    private getHorizontalMarkersWithYScales() {
         let visibleCDOs = this.aggregateExpressionOptions.filter((cDO) => this.chartComponentData.displayState[cDO.aggKey]["visible"]);
         const markerList = [];
         const pushMarker = (cDO, marker, markerList) => {
             if (this.chartOptions.yAxisState === YAxisStates.Overlap) {
                 return;
             }
-            const domain = this.chartOptions.yAxisState === YAxisStates.Stacked ? 
+            const domain = this.chartOptions.yAxisState === YAxisStates.Stacked ?
                 this.swimlaneYExtents[cDO.swimLane] :
                 this.swimlaneYExtents[0];
             // filter out markers not in the y range of that lane and in lanes that have overlap axis
-            if (domain && 
+            if (domain &&
                 this.chartOptions.swimLaneOptions?.[cDO.swimLane]?.yAxisType !== YAxisStates.Overlap &&
-                marker.value >= domain[0] && 
+                marker.value >= domain[0] &&
                 marker.value <= domain[1]) {
-                markerList.push({yScale: this.yMap[cDO.aggKey], ...marker});
+                markerList.push({ yScale: this.yMap[cDO.aggKey], ...marker });
             }
         }
         visibleCDOs.forEach((cDO) => {
@@ -1359,11 +1359,11 @@ class LineChart extends TemporalXAxisComponent {
     }
 
     // having horizontal markers present should add additional right hand margin to allow space for series labels 
-    private getAdditionalOffsetFromHorizontalMargin () {
+    private getAdditionalOffsetFromHorizontalMargin() {
         return this.getHorizontalMarkersWithYScales().length ? 16 : 0;
     }
 
-    private drawHorizontalMarkers () {
+    private drawHorizontalMarkers() {
         const markerList = this.getHorizontalMarkersWithYScales();
         const self = this;
 
@@ -1382,7 +1382,7 @@ class LineChart extends TemporalXAxisComponent {
                     .selectAll<SVGTextElement, unknown>('.tsi-horizontalMarkerText')
                     .data([marker.value]);
                 valueText
-                    .enter() 
+                    .enter()
                     .append('text')
                     .merge(valueText)
                     .attr('class', 'tsi-horizontalMarkerText')
@@ -1409,7 +1409,7 @@ class LineChart extends TemporalXAxisComponent {
         markerContainers.exit().remove();
     }
 
-    private createSwimlaneLabels(offsetsAndHeights, visibleCDOs){
+    private createSwimlaneLabels(offsetsAndHeights, visibleCDOs) {
 
         // swimLaneLabels object contains data needed to render each lane label
         let swimLaneLabels: {
@@ -1429,12 +1429,12 @@ class LineChart extends TemporalXAxisComponent {
             their lane, their position data is used, otherwise, their height is added to the 
             current height of the lane. 
         */
-       
+
         const useAggForLaneLabel = (aggGroup) => {
             let swimLane = aggGroup.swimLane;
             let aggIndex = visibleCDOs.findIndex(el => el.aggKey === aggGroup.aggKey);
             let onClick = null;
-            if(typeof this.chartOptions?.swimLaneOptions?.[swimLane]?.onClick === 'function'){
+            if (typeof this.chartOptions?.swimLaneOptions?.[swimLane]?.onClick === 'function') {
                 onClick = () => this.chartOptions?.swimLaneOptions?.[swimLane]?.onClick?.(swimLane)
             }
             swimLaneLabels[swimLane] = {
@@ -1447,7 +1447,7 @@ class LineChart extends TemporalXAxisComponent {
 
         // First add numeric dataTypes (share Y-Axis) to label map
         visibleCDOs.filter(aggGroup => aggGroup.dataType === DataTypes.Numeric).forEach(aggGroup => {
-            if(!(aggGroup.swimLane in swimLaneLabels)){ // Only add swimlanes once to swimLaneLabels map
+            if (!(aggGroup.swimLane in swimLaneLabels)) { // Only add swimlanes once to swimLaneLabels map
                 useAggForLaneLabel(aggGroup);
             }
         })
@@ -1455,10 +1455,10 @@ class LineChart extends TemporalXAxisComponent {
         // Then, map over any non-numeric dataType and increment heights if they're sharing a lane
         visibleCDOs.filter(aggGroup => aggGroup.dataType !== DataTypes.Numeric).forEach(aggGroup => {
             let aggIndex = visibleCDOs.findIndex(el => el.aggKey === aggGroup.aggKey);
-            if(!(aggGroup.swimLane in swimLaneLabels)){ // Only add swimlanes once to swimLaneLabels map
+            if (!(aggGroup.swimLane in swimLaneLabels)) { // Only add swimlanes once to swimLaneLabels map
                 useAggForLaneLabel(aggGroup);
-            } else{ // if lane contains non-numeric data and is being added to another lane
-                if(!this.chartOptions?.swimLaneOptions?.[aggGroup.swimLane]?.collapseEvents){ // Only increment event heights if collapseEvents === false
+            } else { // if lane contains non-numeric data and is being added to another lane
+                if (!this.chartOptions?.swimLaneOptions?.[aggGroup.swimLane]?.collapseEvents) { // Only increment event heights if collapseEvents === false
                     swimLaneLabels[aggGroup.swimLane].height += offsetsAndHeights[aggIndex][1]; // add heights (non-numerics don't share Y axis)
                 }
             }
@@ -1470,11 +1470,11 @@ class LineChart extends TemporalXAxisComponent {
         // Function to trim labels to max height
         const truncateLabel = (labelRef: HTMLElement, data) => {
             const maxHeight = data.height - swimlaneLabelConstants.swimLaneLabelHeightPadding; // padding on actual lane height
-            if(data.label){
+            if (data.label) {
                 let labelClientRect = labelRef.getBoundingClientRect();
                 let labelText = labelRef.textContent;
 
-                while ( labelClientRect.height > maxHeight && labelText.length > 0) {
+                while (labelClientRect.height > maxHeight && labelText.length > 0) {
                     labelText = labelText.slice(0, -1);
                     labelRef.textContent = labelText + '...';
                     labelClientRect = labelRef.getBoundingClientRect();
@@ -1490,7 +1490,7 @@ class LineChart extends TemporalXAxisComponent {
         }
 
         const onClickPresentAndValid = (dp) => dp.onClick && typeof dp.onClick === 'function';
-        
+
         // Map over swimLanes and create labels
         Object.keys(swimLaneLabels).forEach(lane => {
             let labelData = [swimLaneLabels[lane]];
@@ -1501,16 +1501,16 @@ class LineChart extends TemporalXAxisComponent {
                 .attr("class", (d) => `tsi-swimLaneLabel-${lane} tsi-swimLaneLabel ${onClickPresentAndValid(d) ? 'tsi-boldOnHover' : ''}`)
                 .merge(label)
                 .style("text-anchor", "middle")
-                .attr("transform", d => `translate(${( -this.horizontalLabelOffset + swimlaneLabelConstants.labelLeftPadding )},${(d.offset + d.height / 2)}) rotate(-90)`)
+                .attr("transform", d => `translate(${(-this.horizontalLabelOffset + swimlaneLabelConstants.labelLeftPadding)},${(d.offset + d.height / 2)}) rotate(-90)`)
                 .text(d => d.label)
-                .each(function(d){truncateLabel(this, d)})
+                .each(function (d) { truncateLabel(this, d) })
                 .on("click", (event, d) => {
-                    if(onClickPresentAndValid(d)){
+                    if (onClickPresentAndValid(d)) {
                         d.onClick()
                     }
                 })
                 .on("mouseover", (event, d) => {
-                    if(onClickPresentAndValid(d)){
+                    if (onClickPresentAndValid(d)) {
                         boldYAxisText(true, lane);
                     }
                 })
@@ -1518,13 +1518,13 @@ class LineChart extends TemporalXAxisComponent {
                     boldYAxisText(false, lane);
                 })
                 .append("svg:title")
-                    .text(d => d.label);
+                .text(d => d.label);
 
             label.exit().remove();
         })
     }
 
-    public render (data: any, options: any, aggregateExpressionOptions: any) {
+    public render(data: any, options: any, aggregateExpressionOptions: any) {
         super.render(data, options, aggregateExpressionOptions);
 
         this.originalSwimLanes = this.aggregateExpressionOptions.map((aEO) => {
@@ -1541,7 +1541,7 @@ class LineChart extends TemporalXAxisComponent {
             this.chartMargins.top = 72;
         else
             this.chartMargins.top = 40;
-        
+
         if (this.chartOptions.hideChartControlPanel) {
             this.chartMargins.top += -28;
         }
@@ -1567,7 +1567,7 @@ class LineChart extends TemporalXAxisComponent {
             this.chartMargins.bottom = 5;
         }
 
-        this.chartHeight = Math.max(1, this.height - this.chartMargins.bottom - this.chartMargins.top); 
+        this.chartHeight = Math.max(1, this.height - this.chartMargins.bottom - this.chartMargins.top);
         this.chartWidth = this.getChartWidth();
 
         if (this.brush && this.svgSelection.select('.svgGroup').select(".brushElem") && !this.chartOptions.keepBrush) {
@@ -1577,7 +1577,7 @@ class LineChart extends TemporalXAxisComponent {
             this.brushEndPosition = null;
             this.clearBrush();
         }
-        
+
         if (!this.chartOptions.hideChartControlPanel && this.chartControlsPanel === null) {
             this.chartControlsPanel = Utils.createControlPanel(this.renderTarget, this.legendWidth + (this.GUTTERWIDTH / 2), Math.max((this.chartMargins.top + 12), 0), this.chartOptions);
             var self = this;
@@ -1590,11 +1590,11 @@ class LineChart extends TemporalXAxisComponent {
                 .attr("type", "button")
                 .on("click", function () {
                     self.overwriteSwimLanes();
-                    self.render(self.data, {...self.chartOptions, yAxisState: self.nextStackedState()}, self.aggregateExpressionOptions);
+                    self.render(self.data, { ...self.chartOptions, yAxisState: self.nextStackedState() }, self.aggregateExpressionOptions);
                     d3.select(this).attr("aria-label", () => self.getString("set axis state to") + ' ' + self.nextStackedState());
-                    setTimeout (() => (d3.select(this).node() as any).focus(), 200);
+                    setTimeout(() => (d3.select(this).node() as any).focus(), 200);
                 });
-        } else if (this.chartOptions.hideChartControlPanel && this.chartControlsPanel !== null){
+        } else if (this.chartOptions.hideChartControlPanel && this.chartControlsPanel !== null) {
             this.hasStackedButton = false;
             this.removeControlPanel();
         }
@@ -1610,24 +1610,24 @@ class LineChart extends TemporalXAxisComponent {
         }
 
         this.adjustSwimLanes();
-        
-        if(this.svgSelection == null){
-            
+
+        if (this.svgSelection == null) {
+
             /******************** Static Elements *********************************/
             this.targetElement = d3.select(this.renderTarget)
-                                .classed("tsi-lineChart", true)
+                .classed("tsi-lineChart", true)
             this.svgSelection = this.targetElement.append("svg")
-                                            .attr("class", "tsi-lineChartSVG tsi-chartSVG")
-                                            .attr('title', this.getString('Line chart'))
-                                            .attr("height", this.height);
-             
+                .attr("class", "tsi-lineChartSVG tsi-chartSVG")
+                .attr('title', this.getString('Line chart'))
+                .attr("height", this.height);
+
             var g = this.svgSelection.append("g")
-                        .classed("svgGroup", true)
-                        .attr("transform", "translate(" + this.chartMargins.left + "," + this.chartMargins.top + ")");
-            
+                .classed("svgGroup", true)
+                .attr("transform", "translate(" + this.chartMargins.left + "," + this.chartMargins.top + ")");
+
             var defs = this.svgSelection.append('defs');
-            
-            this.brushElem = null; 
+
+            this.brushElem = null;
             if (this.hasBrush) {
                 this.brushElem = g.append("g")
                     .attr("class", "brushElem");
@@ -1636,11 +1636,11 @@ class LineChart extends TemporalXAxisComponent {
                 //if there is no brushElem, the voronoi lives here
                 this.voronoiRegion = g.append("rect").classed("voronoiRect", true);
             }
-    
+
             this.focus = g.append("g")
                 .attr("transform", "translate(-200,-100)")
                 .attr("class", "tsi-focus");
-            
+
             this.focus.append("line")
                 .attr("class", "tsi-focusLine tsi-vLine")
                 .attr("x1", 0)
@@ -1653,35 +1653,35 @@ class LineChart extends TemporalXAxisComponent {
                 .attr("x2", this.chartWidth)
                 .attr("y1", 0)
                 .attr("y2", 0);
-    
+
             this.focus.append("circle")
                 .attr("r", 4);
-    
+
             this.horizontalValueBox = d3.select(this.renderTarget)
                 .append('div')
                 .attr('class', 'tsi-horizontalValueBox tsi-chartValueTextBox')
                 .style('display', 'none')
                 .attr('pointer-events', 'none');
 
-            this.verticalValueBox =  d3.select(this.renderTarget)
+            this.verticalValueBox = d3.select(this.renderTarget)
                 .append('div')
                 .attr('class', 'tsi-verticalValueBox')
                 .style('display', 'none');
-                
+
             this.horizontalValueBar = this.focus.append('line')
                 .attr('y1', 0)
                 .attr('y2', 0)
                 .attr('class', 'tsi-horizontalValueBar')
-                .style('display', 'none');        
+                .style('display', 'none');
 
             this.swimLaneLabelGroup = g.append("g").
                 attr("class", "tsi-swimLaneLabels");
 
             if (!this.tooltip) {
-                this.tooltip = new Tooltip(d3.select(this.renderTarget));                        
+                this.tooltip = new Tooltip(d3.select(this.renderTarget));
             }
 
-            this.draw = (isFromResize = false, event) => {  
+            this.draw = (isFromResize = false, event) => {
                 this.minBrushWidth = (this.chartOptions.minBrushWidth) ? this.chartOptions.minBrushWidth : this.minBrushWidth;
                 this.focus.attr("visibility", (this.chartOptions.focusHidden) ? "hidden" : "visible");
                 this.verticalValueBox.style("visibility", (this.chartOptions.focusHidden) ? "hidden" : "visible");
@@ -1695,14 +1695,14 @@ class LineChart extends TemporalXAxisComponent {
                 this.aggregateExpressionOptions.filter((aggExpOpt) => {
                     return this.chartComponentData.displayState[aggExpOpt.aggKey]["visible"];
                 }).forEach(visibleAgg => {
-                    if(this.originalSwimLaneOptions?.[visibleAgg.swimLane]?.label){
+                    if (this.originalSwimLaneOptions?.[visibleAgg.swimLane]?.label) {
                         isLabelVisible = true;
                     }
                 });
 
-                if(isLabelVisible){
+                if (isLabelVisible) {
                     this.chartMargins.left = this.horizontalLabelOffset;
-                } else if(this.chartMargins.left === this.horizontalLabelOffset){
+                } else if (this.chartMargins.left === this.horizontalLabelOffset) {
                     this.chartMargins.left = LINECHARTCHARTMARGINS.left;
                 }
 
@@ -1711,7 +1711,7 @@ class LineChart extends TemporalXAxisComponent {
                     this.chartWidth = this.getChartWidth();
                 }
                 this.height = Math.max((<any>d3.select(this.renderTarget).node()).clientHeight, this.MINHEIGHT);
-                this.chartHeight = Math.max(1, this.height - this.chartMargins.bottom - this.chartMargins.top); 
+                this.chartHeight = Math.max(1, this.height - this.chartMargins.bottom - this.chartMargins.top);
 
                 g.attr("transform", "translate(" + this.chartMargins.left + "," + this.chartMargins.top + ")");
 
@@ -1724,33 +1724,33 @@ class LineChart extends TemporalXAxisComponent {
                 this.svgSelection
                     .style("width", this.getSVGWidth() + "px")
                     .style("height", this.height + "px");
-                     
+
                 super.themify(this.targetElement, this.chartOptions.theme);
 
-                
+
                 if (!isFromResize) {
                     this.legendObject.draw(
                         this.chartOptions.legend,
                         this.chartComponentData,
-                        (aggKey, splitBy) => { this.labelMouseover(aggKey, splitBy); }, 
+                        (aggKey, splitBy) => { this.labelMouseover(aggKey, splitBy); },
                         this.svgSelection,
                         this.chartOptions, () => {
                             Utils.revertAllSubtitleText(d3.select(this.renderTarget).selectAll('.tsi-markerValue'));
                         },
                         this.stickySeries,
                         event);
-                }        
+                }
 
-                this.svgSelection.selectAll(".yAxis").style("visibility", "hidden");    
+                this.svgSelection.selectAll(".yAxis").style("visibility", "hidden");
 
                 this.x = d3.scaleTime()
-                            .rangeRound([this.xOffset, Math.max(this.xOffset, this.chartWidth - (2 * this.xOffset))]);
-        
+                    .rangeRound([this.xOffset, Math.max(this.xOffset, this.chartWidth - (2 * this.xOffset))]);
+
                 this.y = d3.scaleLinear()
-                        .range([Math.max(this.chartHeight - this.heightNonNumeric(), this.chartOptions.aggTopMargin) - LINECHARTTOPPADDING, this.chartOptions.aggTopMargin]);
+                    .range([Math.max(this.chartHeight - this.heightNonNumeric(), this.chartOptions.aggTopMargin) - LINECHARTTOPPADDING, this.chartOptions.aggTopMargin]);
 
                 var fromAndTo: any = this.chartComponentData.setAllValuesAndVisibleTAs();
-                var xExtent: any = (this.chartComponentData.allValues.length != 0) ? d3.extent(this.chartComponentData.allValues, (d: any) => d.dateTime) : [0,1];
+                var xExtent: any = (this.chartComponentData.allValues.length != 0) ? d3.extent(this.chartComponentData.allValues, (d: any) => d.dateTime) : [0, 1];
                 var xRange = (this.chartComponentData.allValues.length != 0) ? Math.max(2, (xExtent[1].valueOf() - xExtent[0].valueOf())) : 2;
                 var xOffsetPercentage = this.xOffset / this.chartWidth;
                 if (this.chartOptions.timeFrame) {
@@ -1763,8 +1763,8 @@ class LineChart extends TemporalXAxisComponent {
                 //allPossibleTimes -> a combination of the beginning and end of buckets
                 this.chartComponentData.setTimeMap();
                 var startOfBuckets = this.chartComponentData.allValues.map((d: any) => d.dateTime);
-                var endOfBuckets = this.chartComponentData.allValues.filter((d: any) => {return d.bucketSize != null})
-                                        .map((d: any) => {return new Date(d.dateTime.valueOf() + d.bucketSize)});
+                var endOfBuckets = this.chartComponentData.allValues.filter((d: any) => { return d.bucketSize != null })
+                    .map((d: any) => { return new Date(d.dateTime.valueOf() + d.bucketSize) });
                 var allPossibleTimes = startOfBuckets.concat(endOfBuckets);
                 var timeSet = new Set(allPossibleTimes);
                 this.possibleTimesArray = Array.from(timeSet.values()).sort().map((ts: string) => {
@@ -1781,27 +1781,27 @@ class LineChart extends TemporalXAxisComponent {
                 if (this.brushElem) {
                     var self = this;
                     this.brush = d3.brushX()
-                    .extent([[this.xLowerBound, Math.min(this.chartHeight, this.chartOptions.aggTopMargin)],
-                             [this.xUpperBound, this.chartHeight]])
-                    .on("start", function(event) {
-                        if (self.activeMarker !== null && self.isDroppingMarker) {
-                            self.voronoiClick(event, this);
-                        }
-                        var handleHeight = self.getHandleHeight();
-                        self.brushElem.selectAll('.handle')
-                            .attr('height', handleHeight)
-                            .attr('y', (self.chartHeight - handleHeight) / 2)
-                            .attr('rx', '4px')
-                            .attr('ry', '4px');
-                    })
-                    .on("brush", function (event) { 
-                        self.brushBrush(event); 
-                        self.drawBrushRange();
-                    })
-                    .on("end", function (event) { 
-                        self.brushEnd(event, this);
-                        self.drawBrushRange();
-                    });
+                        .extent([[this.xLowerBound, Math.min(this.chartHeight, this.chartOptions.aggTopMargin)],
+                        [this.xUpperBound, this.chartHeight]])
+                        .on("start", function (event) {
+                            if (self.activeMarker !== null && self.isDroppingMarker) {
+                                self.voronoiClick(event, this);
+                            }
+                            var handleHeight = self.getHandleHeight();
+                            self.brushElem.selectAll('.handle')
+                                .attr('height', handleHeight)
+                                .attr('y', (self.chartHeight - handleHeight) / 2)
+                                .attr('rx', '4px')
+                                .attr('ry', '4px');
+                        })
+                        .on("brush", function (event) {
+                            self.brushBrush(event);
+                            self.drawBrushRange();
+                        })
+                        .on("end", function (event) {
+                            self.brushEnd(event, this);
+                            self.drawBrushRange();
+                        });
                     this.brushElem.call(this.brush);
                     this.setBrush();
                 }
@@ -1814,25 +1814,25 @@ class LineChart extends TemporalXAxisComponent {
                 if (this.chartOptions.isArea) {
                     this.areaPath = d3.area()
                         .curve(this.chartOptions.interpolationFunction)
-                        .defined( (d: any) => { 
-                            return (d.measures !== null) && 
-                                    (d.measures[this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy)] !== null);
+                        .defined((d: any) => {
+                            return (d.measures !== null) &&
+                                (d.measures[this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy)] !== null);
                         })
                         .x((d: any) => {
                             return this.getXPosition(d, this.x);
                         })
-                        .y0((d: any) => { 
+                        .y0((d: any) => {
                             return d.measures ? this.y(d.measures[this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy)]) : 0;
                         })
                         .y1(this.chartHeight);
                 }
-                    
+
                 if (!this.chartOptions.xAxisHidden) {
                     this.xAxis = g.selectAll(".xAxis").data([this.x]);
                     this.drawXAxis(this.chartHeight);
                     this.xAxis.exit().remove();
 
-                    var xAxisBaseline =  g.selectAll(".xAxisBaseline").data([this.x]);
+                    var xAxisBaseline = g.selectAll(".xAxisBaseline").data([this.x]);
                     var xAxisBaselineEntered = xAxisBaseline.enter().append("line")
                         .attr("class", "xAxisBaseline")
                         .attr("x1", .5)
@@ -1846,12 +1846,12 @@ class LineChart extends TemporalXAxisComponent {
                     g.selectAll(".xAxis").style("visibility", ((!this.chartOptions.xAxisHidden) ? "visible" : "hidden"));
                 }
 
-            
+
                 /******************** Draw Line and Points ************************/
                 this.visibleAggCount = Object.keys(this.chartComponentData.timeArrays).reduce((count: number, aggKey: string): number => {
                     return count + (this.chartComponentData.displayState[aggKey]['visible'] ? 1 : 0);
                 }, 0);
-    
+
                 this.yMap = {};
                 this.colorMap = {};
                 this.svgSelection.selectAll(".yAxis").remove();
@@ -1868,107 +1868,108 @@ class LineChart extends TemporalXAxisComponent {
                 let swimLaneCounts = {};
 
                 // Reset public facing yExtents
-                this.chartComponentData.resetYExtents(); 
+                this.chartComponentData.resetYExtents();
 
                 let aggregateGroups = this.svgSelection.select('.svgGroup').selectAll('.tsi-aggGroup')
                     .data(visibleCDOs, (agg) => agg.aggKey);
-                    var self = this;
+                var self = this;
 
-                    let visibleNumericI = 0;
-                    aggregateGroups.enter()
-                        .append('g')
-                        .classed('tsi-aggGroup', true)
-                        .merge(aggregateGroups)
-                        .transition()
-                        .duration((this.chartOptions.noAnimate) ? 0 : self.TRANSDURATION)            
-                        .ease(d3.easeExp)                                         
-                        .attr('transform', (agg, i) => {
-                            return self.chartOptions.isArea ? null : 'translate(0,' + offsetsAndHeights[i][0] + ')';
-                        })
-                        .each(function (agg, i) {
-                            let yExtent ;
-                            let aggVisible = true;
-                            var aggValues: Array<any> = [];
-                            let aggKey = agg.aggKey;
-                            Object.keys(self.chartComponentData.visibleTAs[aggKey]).forEach((splitBy) => {
-                                aggValues = aggValues.concat(self.chartComponentData.visibleTAs[aggKey][splitBy]);
-                            });
-
-                            yExtent = self.getGroupYExtent(aggKey, aggVisible, aggValues, yExtent);
-
-                            if (self.plotComponents[aggKey] === undefined || self.mismatchingChartType(aggKey)) {
-                                let g = d3.select(this);
-                                delete self.plotComponents[aggKey];
-                                g.selectAll('*').remove();
-                                self.plotComponents[aggKey] = self.createPlot(g, i, visibleCDOs);
-                            }
-
-                            let mouseoverFunction = self.getMouseoverFunction(visibleCDOs[i].dataType);
-                            let mouseoutFunction = self.getMouseoutFunction(visibleCDOs[i].dataType);
-                            let positionInGroup = visibleNumericI;
-                            if (self.getAggAxisType(agg) === YAxisStates.Shared) {
-                                yExtent = self.swimlaneYExtents[agg.swimLane];
-                            }
-
-                            // Update yExtent index in LineChartData after all local yExtent updates (this is public facing yExtent)
-                            // Only update if dataType is numeric
-                            if(agg.dataType === 'numeric'){
-                                let idx = self.aggregateExpressionOptions.findIndex(el => el.aggKey === aggKey)
-                                self.chartComponentData.setYExtents(idx, yExtent);
-                            }
-
-                            //should count all as same swim lane when not in stacked.
-                            let swimLane = agg.swimLane;
-                            let offsetImpact = (agg.dataType === DataTypes.Numeric) ? 1 : 0;
-                            if (swimLaneCounts[swimLane]) {
-                                positionInGroup = swimLaneCounts[swimLane];
-                                swimLaneCounts[swimLane] += offsetImpact;
-                            } else {
-                                positionInGroup = 0;
-                                swimLaneCounts[swimLane] = offsetImpact;
-                            }
-
-                            let axisState = new AxisState(self.getAggAxisType(agg), yExtent, positionInGroup);
-
-                            let yAxisOnClick = null;
-                            if(typeof self.chartOptions?.swimLaneOptions?.[swimLane]?.onClick === 'function'){
-                                yAxisOnClick = () => self.chartOptions.swimLaneOptions[swimLane].onClick?.(swimLane);
-                            }
-
-                            self.plotComponents[aggKey].render(self.chartOptions, visibleNumericI, agg, true, d3.select(this), self.chartComponentData, axisState, 
-                                self.chartHeight, self.visibleAggCount, self.colorMap, self.previousAggregateData, 
-                                self.x, self.areaPath, self.strokeOpacity, self.y, self.yMap, defs, visibleCDOs[i], self.previousIncludeDots, offsetsAndHeights[i], 
-                                g, mouseoverFunction, mouseoutFunction, yAxisOnClick);
-                            
-                            //increment index of visible numerics if appropriate
-                            visibleNumericI += (visibleCDOs[i].dataType === DataTypes.Numeric ? 1 : 0);
-                        });
-                    aggregateGroups.exit().remove();
-                    /******************** Voronoi diagram for hover action ************************/
-
-                    this.voronoi = d3Voronoi.voronoi()
-                        .x(function(d: any) {
-                            return (d.bucketSize != undefined ? self.x(new Date(d.dateTime.valueOf() + (d.bucketSize / 2))) : self.x(d.dateTime))})
-                        .y(function(d: any) { 
-                            if (d.measures) {
-                                return self.yMap[d.aggregateKey] ? self.yMap[d.aggregateKey](self.getValueOfVisible(d)) : null;
-                            }
-                            return null;
-                        })
-                        .extent([[0, 0], [this.chartWidth, this.chartHeight]]);
-
-                    //if brushElem present then use the overlay, otherwise create a rect to put the voronoi on
-                    var voronoiSelection = (this.brushElem ? this.brushElem.select(".overlay") : this.voronoiRegion);
-                    
-                    voronoiSelection.on("mousemove", function (event) {
-                        let mouseEvent = d3.pointer(event);
-                        self.voronoiMousemove(mouseEvent);
+                let visibleNumericI = 0;
+                aggregateGroups.enter()
+                    .append('g')
+                    .classed('tsi-aggGroup', true)
+                    .merge(aggregateGroups)
+                    .transition()
+                    .duration((this.chartOptions.noAnimate) ? 0 : self.TRANSDURATION)
+                    .ease(d3.easeExp)
+                    .attr('transform', (agg, i) => {
+                        return self.chartOptions.isArea ? null : 'translate(0,' + offsetsAndHeights[i][0] + ')';
                     })
-                    .on("mouseout", function (event, d)  {
+                    .each(function (agg, i) {
+                        let yExtent;
+                        let aggVisible = true;
+                        var aggValues: Array<any> = [];
+                        let aggKey = agg.aggKey;
+                        Object.keys(self.chartComponentData.visibleTAs[aggKey]).forEach((splitBy) => {
+                            aggValues = aggValues.concat(self.chartComponentData.visibleTAs[aggKey][splitBy]);
+                        });
+
+                        yExtent = self.getGroupYExtent(aggKey, aggVisible, aggValues, yExtent);
+
+                        if (self.plotComponents[aggKey] === undefined || self.mismatchingChartType(aggKey)) {
+                            let g = d3.select(this);
+                            delete self.plotComponents[aggKey];
+                            g.selectAll('*').remove();
+                            self.plotComponents[aggKey] = self.createPlot(g, i, visibleCDOs);
+                        }
+
+                        let mouseoverFunction = self.getMouseoverFunction(visibleCDOs[i].dataType);
+                        let mouseoutFunction = self.getMouseoutFunction(visibleCDOs[i].dataType);
+                        let positionInGroup = visibleNumericI;
+                        if (self.getAggAxisType(agg) === YAxisStates.Shared) {
+                            yExtent = self.swimlaneYExtents[agg.swimLane];
+                        }
+
+                        // Update yExtent index in LineChartData after all local yExtent updates (this is public facing yExtent)
+                        // Only update if dataType is numeric
+                        if (agg.dataType === 'numeric') {
+                            let idx = self.aggregateExpressionOptions.findIndex(el => el.aggKey === aggKey)
+                            self.chartComponentData.setYExtents(idx, yExtent);
+                        }
+
+                        //should count all as same swim lane when not in stacked.
+                        let swimLane = agg.swimLane;
+                        let offsetImpact = (agg.dataType === DataTypes.Numeric) ? 1 : 0;
+                        if (swimLaneCounts[swimLane]) {
+                            positionInGroup = swimLaneCounts[swimLane];
+                            swimLaneCounts[swimLane] += offsetImpact;
+                        } else {
+                            positionInGroup = 0;
+                            swimLaneCounts[swimLane] = offsetImpact;
+                        }
+
+                        let axisState = new AxisState(self.getAggAxisType(agg), yExtent, positionInGroup);
+
+                        let yAxisOnClick = null;
+                        if (typeof self.chartOptions?.swimLaneOptions?.[swimLane]?.onClick === 'function') {
+                            yAxisOnClick = () => self.chartOptions.swimLaneOptions[swimLane].onClick?.(swimLane);
+                        }
+
+                        self.plotComponents[aggKey].render(self.chartOptions, visibleNumericI, agg, true, d3.select(this), self.chartComponentData, axisState,
+                            self.chartHeight, self.visibleAggCount, self.colorMap, self.previousAggregateData,
+                            self.x, self.areaPath, self.strokeOpacity, self.y, self.yMap, defs, visibleCDOs[i], self.previousIncludeDots, offsetsAndHeights[i],
+                            g, mouseoverFunction, mouseoutFunction, yAxisOnClick);
+
+                        //increment index of visible numerics if appropriate
+                        visibleNumericI += (visibleCDOs[i].dataType === DataTypes.Numeric ? 1 : 0);
+                    });
+                aggregateGroups.exit().remove();
+                /******************** Voronoi diagram for hover action ************************/
+
+                this.voronoi = d3Voronoi.voronoi()
+                    .x(function (d: any) {
+                        return (d.bucketSize != undefined ? self.x(new Date(d.dateTime.valueOf() + (d.bucketSize / 2))) : self.x(d.dateTime))
+                    })
+                    .y(function (d: any) {
+                        if (d.measures) {
+                            return self.yMap[d.aggregateKey] ? self.yMap[d.aggregateKey](self.getValueOfVisible(d)) : null;
+                        }
+                        return null;
+                    })
+                    .extent([[0, 0], [this.chartWidth, this.chartHeight]]);
+
+                //if brushElem present then use the overlay, otherwise create a rect to put the voronoi on
+                var voronoiSelection = (this.brushElem ? this.brushElem.select(".overlay") : this.voronoiRegion);
+
+                voronoiSelection.on("mousemove", function (event) {
+                    let mouseEvent = d3.pointer(event);
+                    self.voronoiMousemove(mouseEvent);
+                })
+                    .on("mouseout", function (event, d) {
                         if (!self.filteredValueExist() || !self.voronoiExists()) return;
                         const [mx, my] = d3.pointer(event);
                         const site = self.voronoiDiagram.find(mx, my);
-                        self.voronoiMouseout(event, site.data); 
+                        self.voronoiMouseout(event, site.data);
                         self.chartOptions.onMouseout();
                         if (self.tooltip)
                             self.tooltip.hide();
@@ -1977,39 +1978,39 @@ class LineChart extends TemporalXAxisComponent {
                         self.voronoiContextMenu(event, this);
                     })
                     .on("click", function (event, d) {
-                       self.voronoiClick(event, this);
+                        self.voronoiClick(event, this);
                     });
 
-                    if (this.brushElem) {
-                        this.brushElem.selectAll(".selection, .handle").on("contextmenu", function (event, d) {
-                            if (!self.chartOptions.brushContextMenuActions || self.chartOptions.brushContextMenuActions.length == 0 || self.chartOptions.autoTriggerBrushContextMenu)
-                                return;
-                            var mousePosition = d3.pointer(event, <any>self.targetElement.node());
-                            event.preventDefault();
-                            self.brushContextMenu.draw(self.chartComponentData, self.renderTarget, self.chartOptions, 
-                                                mousePosition, null, null, null, self.brushStartTime, self.brushEndTime);
-                        });
-                        this.brushElem.selectAll('.selection')
-                            .attr('stroke', this.chartOptions.color ? this.chartOptions.color : 'none')
-                            .attr('fill', this.chartOptions.color ? this.chartOptions.color : 'grey');
+                if (this.brushElem) {
+                    this.brushElem.selectAll(".selection, .handle").on("contextmenu", function (event, d) {
+                        if (!self.chartOptions.brushContextMenuActions || self.chartOptions.brushContextMenuActions.length == 0 || self.chartOptions.autoTriggerBrushContextMenu)
+                            return;
+                        var mousePosition = d3.pointer(event, <any>self.targetElement.node());
+                        event.preventDefault();
+                        self.brushContextMenu.draw(self.chartComponentData, self.renderTarget, self.chartOptions,
+                            mousePosition, null, null, null, self.brushStartTime, self.brushEndTime);
+                    });
+                    this.brushElem.selectAll('.selection')
+                        .attr('stroke', this.chartOptions.color ? this.chartOptions.color : 'none')
+                        .attr('fill', this.chartOptions.color ? this.chartOptions.color : 'grey');
 
-                        var handleHeight = self.getHandleHeight();
-                        this.brushElem.selectAll('.handle')
-                            .attr('fill', this.chartOptions.color ? this.chartOptions.color : 'grey')
-                            .attr('height', handleHeight)
-                            .attr('y', (this.chartHeight - handleHeight) / 2);
-                    }
+                    var handleHeight = self.getHandleHeight();
+                    this.brushElem.selectAll('.handle')
+                        .attr('fill', this.chartOptions.color ? this.chartOptions.color : 'grey')
+                        .attr('height', handleHeight)
+                        .attr('y', (this.chartHeight - handleHeight) / 2);
+                }
 
                 /******************** Stack/Unstack button ************************/
                 if (this.hasStackedButton) {
-                    this.stackedButton.style("opacity",  () => {
+                    this.stackedButton.style("opacity", () => {
                         if (this.chartOptions.yAxisState === YAxisStates.Stacked) return 1;
                         if (this.chartOptions.yAxisState === YAxisStates.Shared) return .6;
                         return .3;
                     })
-                    .style("display", this.visibleAggCount < 2 ? "none" : "block")
-                    .classed('tsi-lightTheme', this.chartOptions.theme == 'light')
-                    .classed('tsi-darkTheme', this.chartOptions.theme == 'dark');
+                        .style("display", this.visibleAggCount < 2 ? "none" : "block")
+                        .classed('tsi-lightTheme', this.chartOptions.theme == 'light')
+                        .classed('tsi-darkTheme', this.chartOptions.theme == 'dark');
                 }
 
                 let timeFrame = (this.chartOptions.timeFrame) ? this.chartOptions.timeFrame : this.x.domain();
@@ -2042,7 +2043,7 @@ class LineChart extends TemporalXAxisComponent {
 
         if (this.chartOptions.labelSeriesWithMarker && this.seriesLabelsMarker === null) {
             this.createSeriesLabelsMarker();
-        } 
+        }
 
         this.renderSeriesLabelsMarker();
 
@@ -2056,12 +2057,12 @@ class LineChart extends TemporalXAxisComponent {
             }
         });
 
-        this.legendPostRenderProcess(this.chartOptions.legend, this.svgSelection, true, () => {                
+        this.legendPostRenderProcess(this.chartOptions.legend, this.svgSelection, true, () => {
             this.updateBrushRange();
         });
     }
 
-    private createPlot (svgGroup, i, cDO) {
+    private createPlot(svgGroup, i, cDO) {
         let chartType = cDO[i].dataType;
         if (chartType === DataTypes.Numeric) {
             return new LinePlot(svgGroup);

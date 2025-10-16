@@ -1,7 +1,7 @@
 // import * as atlas from "azure-maps-control";
 import "./GeoProcessGraphic.scss";
-import HistoryPlayback from "./../../Components/HistoryPlayback";
-import TsqExpression from "../../Models/TsqExpression";
+import HistoryPlayback from "./../../components/HistoryPlayback";
+import TsqExpression from "../../models/TsqExpression";
 
 class GeoProcessGraphic extends HistoryPlayback {
   // private dataSource: atlas.source.DataSource;

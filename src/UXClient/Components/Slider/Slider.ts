@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 import './Slider.scss';
-import Utils from "../../Utils";
-import {Component} from "./../../Interfaces/Component";
+import Utils from "../../utils";
+import { Component } from "./../../interfaces/Component";
 
-class Slider extends Component{
+class Slider extends Component {
     private sliderSVG: any = null;
     public sliderTextDiv: any = null;
     private xScale: any;
@@ -18,15 +18,15 @@ class Slider extends Component{
         right: 60
     }
     private height = 55;
-	
-	constructor(renderTarget: Element){
-		super(renderTarget);
-	}
 
-	Slider() {
+    constructor(renderTarget: Element) {
+        super(renderTarget);
     }
-    
-    private getXPositionOfLabel (label: string) {
+
+    Slider() {
+    }
+
+    private getXPositionOfLabel(label: string) {
         if (this.data.map(d => d.label).indexOf(label) != -1) {
             return this.xScale(label);
         }
@@ -36,31 +36,31 @@ class Slider extends Component{
             for (var i = 0; i < this.data.length; i++) {
                 if (Utils.parseTimeInput(this.data[i].label) > labelMillis) {
                     return (this.xScale(this.data[i].label) + this.xScale(this.data[Math.max(i - 1, 0)].label)) / 2;
-                } 
+                }
             }
             return this.xScale(this.data[this.data.length - 1].label);
         }
         return 0;
     }
 
-    private determineIfAscendingTimePeriods () {
+    private determineIfAscendingTimePeriods() {
         let left = this.data.length > 0 ? Utils.parseTimeInput(this.data[0].label) : -1;
         let isAscending = left !== -1;
-        for( let i = 0; isAscending && i < this.data.length - 1; i++) {
-            isAscending = left < (left = Utils.parseTimeInput(this.data[i+1].label));
+        for (let i = 0; isAscending && i < this.data.length - 1; i++) {
+            isAscending = left < (left = Utils.parseTimeInput(this.data[i + 1].label));
         }
         return isAscending;
     }
-	
-	public render(data: Array<any>, options: any, width: number, selectedLabel: string = null){
+
+    public render(data: Array<any>, options: any, width: number, selectedLabel: string = null) {
         this.chartOptions.setOptions(options);
         this.data = data;
         this.isAscendingTimePeriods = this.determineIfAscendingTimePeriods();
         this.width = width;
         var marginsTotal = this.margins.left + this.margins.right
         this.sliderWidth = width - marginsTotal;
-		var targetElement = d3.select(this.renderTarget);		
-		if(targetElement.style("position") == "static")
+        var targetElement = d3.select(this.renderTarget);
+        if (targetElement.style("position") == "static")
             targetElement.style("position", "relative");
         if (selectedLabel)
             this.selectedLabel = selectedLabel;
@@ -71,7 +71,7 @@ class Slider extends Component{
 
         width = Math.max(width, marginsTotal);
         var self = this;
-        
+
         if (this.sliderSVG == null) {
             this.sliderSVG = targetElement.append("svg")
                 .attr("class", "tsi-sliderComponent");
@@ -79,12 +79,12 @@ class Slider extends Component{
                 .attr("class", "slider tsi-sliderG")
             slider.append("line")
                 .attr("class", "slider-track tsi-sliderTrack")
-                .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+                .select(function () { return this.parentNode.appendChild(this.cloneNode(true)); })
                 .attr("class", "track-overlay tsi-sliderTrackOverlay")
                 .call(d3.drag()
-                    .on("start.interrupt", function() { slider.interrupt(); })
-                    .on("start drag", (event, d) => { 
-                        self.onDrag(event.x); 
+                    .on("start.interrupt", function () { slider.interrupt(); })
+                    .on("start drag", (event, d) => {
+                        self.onDrag(event.x);
                     })
                     .on("end", (event, d) => {
                         self.onDragEnd(event.x);
@@ -113,7 +113,7 @@ class Slider extends Component{
         this.sliderSVG.attr("width", width + "px");
 
         var slider = this.sliderSVG.select(".tsi-sliderG")
-                                   .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")");
+            .attr("transform", "translate(" + this.margins.left + "," + (this.height / 2) + ")");
 
         slider.select(".tsi-sliderTrack")
             .attr("x1", 0)
@@ -130,33 +130,33 @@ class Slider extends Component{
     }
 
     public remove() {
-        if(this.sliderSVG)
+        if (this.sliderSVG)
             this.sliderSVG.remove();
         this.sliderSVG = null;
-        if(this.sliderTextDiv)
+        if (this.sliderTextDiv)
             this.sliderTextDiv.remove();
     }
 
-    private onDrag (h) {
+    private onDrag(h) {
         // find the closest time and set position to that
-        let newSelectedLabel = this.setSelectedLabelAndGetLabelAction(h);        
-        if(!this.chartOptions.throttleSlider){
+        let newSelectedLabel = this.setSelectedLabelAndGetLabelAction(h);
+        if (!this.chartOptions.throttleSlider) {
             newSelectedLabel.action(newSelectedLabel.label);
         }
 
-        this.setStateFromLabel(); 
+        this.setStateFromLabel();
     }
 
-    private onDragEnd (h) {
-        if(this.chartOptions.throttleSlider){
-            let newSelectedLabel = this.setSelectedLabelAndGetLabelAction(h, true);        
+    private onDragEnd(h) {
+        if (this.chartOptions.throttleSlider) {
+            let newSelectedLabel = this.setSelectedLabelAndGetLabelAction(h, true);
             newSelectedLabel.action(newSelectedLabel.label);
         }
     }
 
     private setSelectedLabelAndGetLabelAction = (h, useFirstValue = false) => {
         //find the closest time and set position to that
-        let reduceFirstValue = useFirstValue ? this.data[0] : {label: this.selectedLabel, action: () => {}};
+        let reduceFirstValue = useFirstValue ? this.data[0] : { label: this.selectedLabel, action: () => { } };
         var newSelectedLabel = this.data.reduce((prev, curr) => {
             var currDiff = Math.abs(this.getXPositionOfLabel(curr.label) - h);
             var prevDiff = Math.abs(this.getXPositionOfLabel(prev.label) - h);
@@ -165,16 +165,16 @@ class Slider extends Component{
         this.selectedLabel = (newSelectedLabel != null) ? newSelectedLabel.label : this.selectedLabel;
         return newSelectedLabel;
     }
-    
+
     private setSliderTextDivLabel = () => {
         this.sliderTextDiv.attr("aria-label", () => {
-            return this.getString("Currently displayed time is") +  ' ' + this.selectedLabel + ". " + 
-                this.getString("Left arrow to go back in time") + ", " + this.getString("right arrow to go forward"); 
+            return this.getString("Currently displayed time is") + ' ' + this.selectedLabel + ". " +
+                this.getString("Left arrow to go back in time") + ", " + this.getString("right arrow to go forward");
         });
     }
 
     //set the position of the slider and text, and set the text, given a label
-    private setStateFromLabel () {
+    private setStateFromLabel() {
         this.sliderSVG.select(".handle").attr("cx", this.getXPositionOfLabel(this.selectedLabel));
         this.sliderTextDiv.text(this.selectedLabel);
         this.setSliderTextDivLabel();
@@ -183,7 +183,7 @@ class Slider extends Component{
         this.sliderTextDiv.style("right", (this.width - (this.margins.right + this.getXPositionOfLabel(this.selectedLabel))) - centerDivOffset + "px");
     }
 
-    private moveLeft () {
+    private moveLeft() {
         for (var i = 0; i < this.data.length; i++) {
             if (this.data[i].label == this.selectedLabel) {
                 var newI = Math.max(0, i - 1);
@@ -195,7 +195,7 @@ class Slider extends Component{
         }
     }
 
-    private moveRight () {
+    private moveRight() {
         for (var i = 0; i < this.data.length; i++) {
             if (this.data[i].label == this.selectedLabel) {
                 var newI = Math.min(this.data.length - 1, i + 1);

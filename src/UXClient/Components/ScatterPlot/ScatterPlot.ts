@@ -1,13 +1,13 @@
 import * as d3 from 'd3';
 import * as d3Voronoi from 'd3-voronoi';
 import './ScatterPlot.scss';
-import { ChartVisualizationComponent } from './../../Interfaces/ChartVisualizationComponent';
+import { ChartVisualizationComponent } from './../../interfaces/ChartVisualizationComponent';
 import Legend from './../Legend';
-import { ScatterPlotData } from '../../Models/ScatterPlotData';
+import { ScatterPlotData } from '../../models/ScatterPlotData';
 import Slider from './../Slider';
 import Tooltip from '../Tooltip';
-import Utils from '../../Utils';
-import { TooltipMeasureFormat } from "./../../Constants/Enums";
+import Utils from '../../utils';
+import { TooltipMeasureFormat } from "./../../constants/Enums";
 
 class ScatterPlot extends ChartVisualizationComponent {
     private activeDot: any = null;
@@ -40,57 +40,57 @@ class ScatterPlot extends ChartVisualizationComponent {
     private xAxisLabel: any;
     private yAxisLabel: any;
 
-    readonly lowOpacity = 0.15; 
-    readonly standardOpacity = 0.6; 
+    readonly lowOpacity = 0.15;
+    readonly standardOpacity = 0.6;
     private focusOpacity = 0.8;
     readonly standardStroke = 1;
     readonly lowStroke = 0.3;
-    
+
     chartComponentData = new ScatterPlotData();
 
-    constructor(renderTarget: Element){
+    constructor(renderTarget: Element) {
         super(renderTarget);
-        this.chartMargins = {        
+        this.chartMargins = {
             top: 40,
             bottom: 48,
-            left: 70, 
+            left: 70,
             right: 60
         };
     }
 
-    ScatterPlot(){}
+    ScatterPlot() { }
     public render(data: any, options: any, aggregateExpressionOptions: any, fromSlider: boolean = false) {
         super.render(data, options, aggregateExpressionOptions);
         // If measure options not set, or less than 2, return
-        if(this.chartOptions["spMeasures"] == null || (this.chartOptions["spMeasures"] != null && this.chartOptions["spMeasures"].length < 2)){
-            let invalidMessage = "spMeasures not correctly specified or has length < 2: " + this.chartOptions["spMeasures"] + 
-            "\n\nPlease add the following chartOption: {spMeasures: ['example_x_axis_measure', 'example_y_axis_measure', 'example_radius_measure']} " +
-            "where the measures correspond to the data key names."
+        if (this.chartOptions["spMeasures"] == null || (this.chartOptions["spMeasures"] != null && this.chartOptions["spMeasures"].length < 2)) {
+            let invalidMessage = "spMeasures not correctly specified or has length < 2: " + this.chartOptions["spMeasures"] +
+                "\n\nPlease add the following chartOption: {spMeasures: ['example_x_axis_measure', 'example_y_axis_measure', 'example_radius_measure']} " +
+                "where the measures correspond to the data key names."
             console.log(invalidMessage);
             return;
         }
 
         this.chartMargins.top = (this.chartOptions.legend === 'compact') ? 84 : 40;
-        if(!this.chartOptions.hideChartControlPanel)
+        if (!this.chartOptions.hideChartControlPanel)
             this.chartMargins.top += 20;
         this.chartMargins.left = (this.chartOptions.spAxisLabels != null && this.chartOptions.spAxisLabels.length >= 2) ? 120 : 70;
 
         this.chartComponentData.mergeDataToDisplayStateAndTimeArrays(this.data, this.chartOptions.timestamp, this.aggregateExpressionOptions);
         this.chartComponentData.setExtents(this.chartOptions.spMeasures, !fromSlider);
-        
+
         // Check measure validity
-        if(!this.checkExtentValidity()) return;
+        if (!this.checkExtentValidity()) return;
 
         this.controlsOffset = (this.chartOptions.legend == "shown" ? this.CONTROLSWIDTH : 0)
         this.setWidthAndHeight();
 
-        /******** STATIC INITIALIZATION ********/   
+        /******** STATIC INITIALIZATION ********/
         if (this.svgSelection == null) {
             // Initialize extents
             //this.chartComponentData.setExtents(this.chartOptions.spMeasures);
             this.targetElement = d3.select(this.renderTarget)
                 .classed("tsi-scatterPlot", true);
-           
+
             this.svgSelection = this.targetElement.append("svg")
                 .attr("class", "tsi-scatterPlotSVG tsi-chartSVG")
                 .attr('title', this.getString('Scatter plot'))
@@ -107,7 +107,7 @@ class ScatterPlot extends ChartVisualizationComponent {
 
             // Create temporal slider div
             this.sliderWrapper = d3.select(this.renderTarget).append('div').classed('tsi-sliderWrapper', true);
-                
+
             this.tooltip = new Tooltip(d3.select(this.renderTarget));
 
             // Initialize voronoi
@@ -120,7 +120,7 @@ class ScatterPlot extends ChartVisualizationComponent {
                 .attr("transform", "translate(-100,-100)")
                 .attr("class", "tsi-focus")
                 .style("display", "none");
-            
+
             this.focus.append("line")
                 .attr("class", "tsi-focusLine tsi-vLine")
                 .attr("x1", 0)
@@ -134,7 +134,7 @@ class ScatterPlot extends ChartVisualizationComponent {
                 .attr("x2", this.chartWidth)
                 .attr("y1", 0)
                 .attr("y2", 0);
-            
+
             // Initialize focus axis data boxes
             let hHoverG: any = this.focus.append("g")
                 .attr("class", 'hHoverG')
@@ -186,21 +186,21 @@ class ScatterPlot extends ChartVisualizationComponent {
         // Draw scatter plot
         this.draw();
         this.gatedShowGrid();
-        
+
         d3.select("html").on("click." + Utils.guid(), (event) => {
             if (this.ellipsisContainer && event.target != this.ellipsisContainer.select(".tsi-ellipsisButton").node()) {
                 this.ellipsisMenu.setMenuVisibility(false);
             }
         });
-        
+
         this.legendPostRenderProcess(this.chartOptions.legend, this.svgSelection, false);
     }
-    
-    private getSliderWidth () {
+
+    private getSliderWidth() {
         return this.chartWidth + this.chartMargins.left + this.chartMargins.right - 16;
     }
 
-    protected tooltipFormat (d: any, text: any, measureFormat: TooltipMeasureFormat, xyrMeasures: any) {
+    protected tooltipFormat(d: any, text: any, measureFormat: TooltipMeasureFormat, xyrMeasures: any) {
         super.tooltipFormat(d, text, measureFormat, xyrMeasures);
         if (!this.chartOptions.isTemporal) {
             let titleGroup = text.select('.tsi-tooltipTitleGroup');
@@ -208,15 +208,15 @@ class ScatterPlot extends ChartVisualizationComponent {
                 titleGroup.append('h4')
                     .attr('class', 'tsi-tooltipSubtitle tsi-tooltipTimeStamp')
                     .text(this.formatDate(d.timestamp, this.chartComponentData.getTemporalShiftMillis(d.aggregateKey)));
-            }    
+            }
         }
     }
 
-    /******** DRAW UPDATE FUNCTION ********/   
+    /******** DRAW UPDATE FUNCTION ********/
     public draw = (isFromResize = false, event?: any) => {
         this.activeDot = null;
         this.chartComponentData.updateTemporalDataArray(this.chartOptions.isTemporal);
-        
+
         // Update extents to fit data if not temporal
         this.chartComponentData.updateExtents(this.chartOptions.spMeasures);
 
@@ -225,22 +225,22 @@ class ScatterPlot extends ChartVisualizationComponent {
         // If only one data series visible, do not highlight on hover
         let visibleSplitBys = 0;
         Object.keys(this.chartComponentData.displayState).forEach(aggKey => {
-            if(this.chartComponentData.displayState[aggKey].visible)
+            if (this.chartComponentData.displayState[aggKey].visible)
                 Object.keys(this.chartComponentData.displayState[aggKey].splitBys).forEach(splitBy => {
-                    if(this.chartComponentData.displayState[aggKey].splitBys[splitBy].visible)
+                    if (this.chartComponentData.displayState[aggKey].splitBys[splitBy].visible)
                         visibleSplitBys++
                 });
         })
 
-        if(visibleSplitBys == 1) this.focusOpacity = this.standardOpacity;
+        if (visibleSplitBys == 1) this.focusOpacity = this.standardOpacity;
         // Determine the number of timestamps present, add margin for slider
-        if(this.chartComponentData.allTimestampsArray.length > 1 && this.chartOptions.isTemporal){
+        if (this.chartComponentData.allTimestampsArray.length > 1 && this.chartOptions.isTemporal) {
             this.chartMargins.bottom = 88;
         }
-        else{
+        else {
             this.chartMargins.bottom = 48;
         }
-           
+
         this.setWidthAndHeight(isFromResize);
         this.svgSelection
             .attr("height", this.height)
@@ -248,7 +248,7 @@ class ScatterPlot extends ChartVisualizationComponent {
 
         this.g
             .attr("transform", "translate(" + this.chartMargins.left + "," + this.chartMargins.top + ")");
-        
+
         this.voronoiGroup
             .attr("width", this.chartWidth)
             .attr("height", this.chartHeight)
@@ -258,7 +258,7 @@ class ScatterPlot extends ChartVisualizationComponent {
         // Draw control panel
         if (!this.chartOptions.hideChartControlPanel && this.chartControlsPanel === null) {
             this.chartControlsPanel = Utils.createControlPanel(this.renderTarget, this.CONTROLSWIDTH, this.chartMargins.top, this.chartOptions);
-        } else  if (this.chartOptions.hideChartControlPanel && this.chartControlsPanel !== null){
+        } else if (this.chartOptions.hideChartControlPanel && this.chartControlsPanel !== null) {
             this.removeControlPanel();
         }
         if (this.chartControlsPanel !== null && this.ellipsisItemsExist()) {
@@ -272,7 +272,7 @@ class ScatterPlot extends ChartVisualizationComponent {
         this.focus.select('.tsi-hLine').attr("x2", this.chartWidth);
         this.focus.select('.tsi-vLine').attr("y2", this.chartHeight);
         this.measures = this.chartOptions.spMeasures;
-        
+
         this.xMeasure = this.measures[0];
         this.yMeasure = this.measures[1];
         this.rMeasure = this.measures[2] !== undefined ? this.measures[2] : null;
@@ -282,31 +282,31 @@ class ScatterPlot extends ChartVisualizationComponent {
 
         // Pad extents
         let xOffset = (20 / this.chartWidth) * (xExtentRange == 0 ? 1 : xExtentRange);
-        let yOffset = (20 / this.chartHeight) * (yExtentRange == 0 ? 1: yExtentRange);
+        let yOffset = (20 / this.chartHeight) * (yExtentRange == 0 ? 1 : yExtentRange);
 
         let rOffset = null;
 
-        if(this.rMeasure){
+        if (this.rMeasure) {
             let rExtentRange = this.chartComponentData.extents[this.rMeasure][1] - this.chartComponentData.extents[this.rMeasure][0];
             rOffset = (20 / this.chartHeight) * (rExtentRange == 0 ? 1 : rExtentRange);
         }
 
         // Check measure validity
-        if(!this.checkExtentValidity()) return;
-        
+        if (!this.checkExtentValidity()) return;
+
         // Init scales
         this.yScale = d3.scaleLinear()
             .range([this.chartHeight, 0])
-            .domain([this.chartComponentData.extents[this.yMeasure][0] - yOffset,this.chartComponentData.extents[this.yMeasure][1] + yOffset]);
+            .domain([this.chartComponentData.extents[this.yMeasure][0] - yOffset, this.chartComponentData.extents[this.yMeasure][1] + yOffset]);
 
         this.xScale = d3.scaleLinear()
             .range([0, this.chartWidth])
-            .domain([this.chartComponentData.extents[this.xMeasure][0] - xOffset,this.chartComponentData.extents[this.xMeasure][1] + xOffset]); 
+            .domain([this.chartComponentData.extents[this.xMeasure][0] - xOffset, this.chartComponentData.extents[this.xMeasure][1] + xOffset]);
 
         this.rScale = d3.scaleLinear()
-            .range(this.chartOptions.scatterPlotRadius.slice(0,2))
-            .domain(this.rMeasure === null ? [0, 0] : [this.chartComponentData.extents[this.rMeasure][0] - rOffset,this.chartComponentData.extents[this.rMeasure][1] + rOffset]);
-        
+            .range(this.chartOptions.scatterPlotRadius.slice(0, 2))
+            .domain(this.rMeasure === null ? [0, 0] : [this.chartComponentData.extents[this.rMeasure][0] - rOffset, this.chartComponentData.extents[this.rMeasure][1] + rOffset]);
+
         // Draw axis
         this.drawAxis();
 
@@ -318,14 +318,14 @@ class ScatterPlot extends ChartVisualizationComponent {
 
         // Draw data
         let scatter = this.pointWrapper.selectAll(".tsi-dot")
-            .data(this.cleanData(this.chartComponentData.temporalDataArray),  (d) => {
-                if(this.chartOptions.isTemporal){
+            .data(this.cleanData(this.chartComponentData.temporalDataArray), (d) => {
+                if (this.chartOptions.isTemporal) {
                     return d.aggregateKey + d.splitBy + d.splitByI;
-                } else{
+                } else {
                     return d.aggregateKey + d.splitBy + d.timestamp;
                 }
             });
-        
+
         scatter
             .enter()
             .append("circle")
@@ -348,7 +348,7 @@ class ScatterPlot extends ChartVisualizationComponent {
             .attr("stroke-width", "1px")
 
         scatter.exit().remove();
-        
+
         // Draw voronoi
         this.drawVoronoi();
 
@@ -356,20 +356,22 @@ class ScatterPlot extends ChartVisualizationComponent {
         this.setControlsPanelWidth();
 
         /******************** Temporal Slider ************************/
-        if(this.chartComponentData.allTimestampsArray.length > 1 && this.chartOptions.isTemporal){
+        if (this.chartComponentData.allTimestampsArray.length > 1 && this.chartOptions.isTemporal) {
             d3.select(this.renderTarget).select('.tsi-sliderWrapper').classed('tsi-hidden', false);
             this.slider.render(this.chartComponentData.allTimestampsArray.map(ts => {
                 var action = () => {
                     this.chartOptions.timestamp = ts;
                     this.render(this.chartComponentData.data, this.chartOptions, this.aggregateExpressionOptions, true);
                 }
-                return {label: Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, this.chartOptions.offset, 
-                    this.chartOptions.is24HourTime, null, null, this.chartOptions.dateLocale)(new Date(ts)), action: action};
-            }), this.chartOptions, this.getSliderWidth(),  Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
+                return {
+                    label: Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, this.chartOptions.offset,
+                        this.chartOptions.is24HourTime, null, null, this.chartOptions.dateLocale)(new Date(ts)), action: action
+                };
+            }), this.chartOptions, this.getSliderWidth(), Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
                 this.chartOptions.offset, this.chartOptions.is24HourTime, null, null, this.chartOptions.dateLocale)(new Date(this.chartComponentData.timestamp)));
         }
-        else{
-            if(this.slider)
+        else {
+            if (this.slider)
                 this.slider.remove();
             d3.select(this.renderTarget).select('.tsi-sliderWrapper').classed('tsi-hidden', true);
         }
@@ -378,7 +380,7 @@ class ScatterPlot extends ChartVisualizationComponent {
         this.legendObject.draw(
             this.chartOptions.legend,
             this.chartComponentData,
-            this.labelMouseOver.bind(this), 
+            this.labelMouseOver.bind(this),
             this.svgSelection,
             this.chartOptions,
             this.labelMouseOut.bind(this),
@@ -390,9 +392,9 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** DRAW CONNECTING LINES BETWEEN POINTS ********/
-    private drawConnectingLines(){
+    private drawConnectingLines() {
         // Don't render connecting lines on temporal mode
-        if(this.chartOptions.isTemporal){
+        if (this.chartOptions.isTemporal) {
             this.lineWrapper.selectAll("*").remove();
             return;
         }
@@ -408,12 +410,12 @@ class ScatterPlot extends ChartVisualizationComponent {
 
         // Map data into groups of connected points, if connectedPoints enabled for agg
         dataSet.forEach(point => {
-            if(point.aggregateKeyI !== null && point.aggregateKeyI < this.aggregateExpressionOptions.length && 
-                this.aggregateExpressionOptions[point.aggregateKeyI].connectPoints){
+            if (point.aggregateKeyI !== null && point.aggregateKeyI < this.aggregateExpressionOptions.length &&
+                this.aggregateExpressionOptions[point.aggregateKeyI].connectPoints) {
                 let series = point.aggregateKey + "_" + point.splitBy;
-                if(series in connectedSeriesMap){
+                if (series in connectedSeriesMap) {
                     connectedSeriesMap[series].data.push(point);
-                } else{
+                } else {
                     connectedSeriesMap[series] = {
                         data: [point],
                         pointConnectionMeasure: getPointConnectionMeasure(point)
@@ -423,34 +425,34 @@ class ScatterPlot extends ChartVisualizationComponent {
         })
 
         // Sort connected series by pointConnectionMeasure
-        for(let key of Object.keys(connectedSeriesMap)){
+        for (let key of Object.keys(connectedSeriesMap)) {
             let sortMeasure = connectedSeriesMap[key].pointConnectionMeasure;
             // If sort measure specified, sort by that measure
-            if(sortMeasure){
-                connectedSeriesMap[key].data.sort((a,b) => {
-                    if(a.measures[sortMeasure] < b.measures[sortMeasure]) return -1;
-                    if(a.measures[sortMeasure] > b.measures[sortMeasure]) return 1;
+            if (sortMeasure) {
+                connectedSeriesMap[key].data.sort((a, b) => {
+                    if (a.measures[sortMeasure] < b.measures[sortMeasure]) return -1;
+                    if (a.measures[sortMeasure] > b.measures[sortMeasure]) return 1;
                     return 0;
                 })
             }
         }
 
         let line = d3.line()
-            .x((d:any) => this.xScale(d.measures[this.xMeasure]))
-            .y((d:any) => this.yScale(d.measures[this.yMeasure]))
+            .x((d: any) => this.xScale(d.measures[this.xMeasure]))
+            .y((d: any) => this.yScale(d.measures[this.yMeasure]))
             .curve(this.chartOptions.interpolationFunction); // apply smoothing to the line
 
         // Group lines by aggregate
         let connectedGroups = this.lineWrapper.selectAll(`.tsi-lineSeries`).data(Object.keys(connectedSeriesMap));
 
-        let self = this; 
+        let self = this;
 
         connectedGroups.enter()
             .append("g")
             .attr("class", 'tsi-lineSeries')
             .merge(connectedGroups)
-            .each(function(seriesName){
-                let series = d3.select(this).selectAll<SVGPathElement, unknown>(`.tsi-line`).data([connectedSeriesMap[seriesName].data], d => d[0].aggregateKeyI+d[0].splitBy);
+            .each(function (seriesName) {
+                let series = d3.select(this).selectAll<SVGPathElement, unknown>(`.tsi-line`).data([connectedSeriesMap[seriesName].data], d => d[0].aggregateKeyI + d[0].splitBy);
 
                 series.exit().remove();
 
@@ -474,21 +476,21 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** CHECK VALIDITY OF EXTENTS ********/
-    private checkExtentValidity(){
-        if(this.chartComponentData.allValues == 0){
+    private checkExtentValidity() {
+        if (this.chartComponentData.allValues == 0) {
             return true;
         }
         let testExtent = {};
         this.chartOptions.spMeasures.forEach(measure => {
-            testExtent[measure] = d3.extent(this.chartComponentData.allValues, (v:any) => {
-                if(!v.measures)
+            testExtent[measure] = d3.extent(this.chartComponentData.allValues, (v: any) => {
+                if (!v.measures)
                     return null
                 return measure in v.measures ? v.measures[measure] : null
             });
         });
         Object.keys(testExtent).forEach(extent => {
             testExtent[extent].forEach(el => {
-                if(el == undefined){
+                if (el == undefined) {
                     console.log("Undefined Measure: ", extent)
                     return false;
                 }
@@ -498,7 +500,7 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** CREATE VORONOI DIAGRAM FOR MOUSE EVENTS ********/
-    private drawVoronoi(){
+    private drawVoronoi() {
         let voronoiData = this.getVoronoiData(this.chartComponentData.temporalDataArray);
         let self = this;
 
@@ -507,42 +509,42 @@ class ScatterPlot extends ChartVisualizationComponent {
             return Math.random() * (max - min) + min;
         }
         const getOffset = () => (Math.random() < 0.5 ? -1 : 1) * getRandomInRange(0, .01);
-        
+
         this.voronoi = d3Voronoi.voronoi()
-            .x((d:any) => this.xScale(d.measures[this.xMeasure]) + getOffset())
-            .y((d:any) => this.yScale(d.measures[this.yMeasure]) + getOffset())
+            .x((d: any) => this.xScale(d.measures[this.xMeasure]) + getOffset())
+            .y((d: any) => this.yScale(d.measures[this.yMeasure]) + getOffset())
             .extent([[0, 0], [this.chartWidth, this.chartHeight]]);
 
         this.voronoiDiagram = this.voronoi(voronoiData);
 
         this.voronoiGroup
-            .on("mousemove", function(event){
+            .on("mousemove", function (event) {
                 let mouseEvent = d3.pointer(event);
                 self.voronoiMouseMove(mouseEvent);
             })
-            .on("mouseover", function(event){
+            .on("mouseover", function (event) {
                 let mouseEvent = d3.pointer(event);
                 self.voronoiMouseMove(mouseEvent);
-                let site = self.voronoiDiagram.find(mouseEvent[0],  mouseEvent[1]);
-                if(site != null)
+                let site = self.voronoiDiagram.find(mouseEvent[0], mouseEvent[1]);
+                if (site != null)
                     self.labelMouseOver(site.data.aggregateKey, site.data.splitBy);
             })
-            .on("mouseout", function(){
+            .on("mouseout", function () {
                 self.voronoiMouseOut();
-            }) 
-            .on("click", function(event){
+            })
+            .on("click", function (event) {
                 let mouseEvent = d3.pointer(event);
                 self.voronoiClick(mouseEvent);
             });
     }
 
     /******** STICKY/UNSTICKY DATA GROUPS ON VORONOI DIAGRAM CLICK ********/
-    private voronoiClick(mouseEvent: any){
+    private voronoiClick(mouseEvent: any) {
         let site = this.voronoiDiagram.find(mouseEvent[0], mouseEvent[1]);
-        if(site == null) return;      
+        if (site == null) return;
         // Unsticky all
         (<any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel')).classed("stickied", false);
-        
+
         if (this.chartComponentData.stickiedKey != null) {
             this.chartComponentData.stickiedKey = null;
             // Recompute Voronoi
@@ -558,7 +560,7 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** UPDATE STICKY SPLITBY  ********/
-    public stickySeries  = (aggregateKey: string, splitBy: string = null) => {
+    public stickySeries = (aggregateKey: string, splitBy: string = null) => {
         let filteredValues = this.getVoronoiData(this.chartComponentData.temporalDataArray);
         if (filteredValues == null || filteredValues.length == 0)
             return;
@@ -568,7 +570,7 @@ class ScatterPlot extends ChartVisualizationComponent {
             splitBy: (splitBy == null ? null : splitBy)
         };
 
-        (<any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel').filter(function (filteredSplitBy: any)  {
+        (<any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel').filter(function (filteredSplitBy: any) {
             return (d3.select(this.parentNode).datum() == aggregateKey) && (filteredSplitBy == splitBy);
         })).classed("stickied", true);
 
@@ -576,50 +578,50 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** HIGHLIGHT DOT TARGETED BY CROSSHAIRS WITH BLACK / WHITE STROKE BORDER ********/
-    private highlightDot(site){
-        
+    private highlightDot(site) {
+
         //If dot is active, unhighlight
         this.unhighlightDot();
         // Add highlight border to newly focused dot
-        let highlightColor = this.chartOptions.theme == "light" ? "black": "white";
+        let highlightColor = this.chartOptions.theme == "light" ? "black" : "white";
         let idSelector = "#" + this.getClassHash(site.data.aggregateKey, site.data.splitBy, site.data.splitByI, site.data.timestamp);
 
         this.activeDot = this.svgSelection.select(idSelector);
-       
+
         this.activeDot
             .attr("stroke", highlightColor)
             .attr("stroke-width", "2px")
             // Raise active dot above crosshair
             .raise().classed("active", true);
-          
+
     }
 
-    /******** GET UNIQUE STRING HASH ID FOR EACH DOT USING DATA ATTRIBUTES ********/   
-    private getClassHash(aggKey: string, splitBy: string, splitByI: number, timestamp: string){
-        return String("dot"+Utils.hash(aggKey + splitBy + splitByI.toString() + timestamp));
+    /******** GET UNIQUE STRING HASH ID FOR EACH DOT USING DATA ATTRIBUTES ********/
+    private getClassHash(aggKey: string, splitBy: string, splitByI: number, timestamp: string) {
+        return String("dot" + Utils.hash(aggKey + splitBy + splitByI.toString() + timestamp));
     }
 
     /******** UNHIGHLIGHT ACTIVE DOT ********/
-    private unhighlightDot(){
-        if(this.activeDot){
+    private unhighlightDot() {
+        if (this.activeDot) {
             this.activeDot
-                    .attr("stroke", (d) => Utils.colorSplitBy(this.chartComponentData.displayState, d.splitByI, d.aggregateKey, this.chartOptions.keepSplitByColor))
-                    .attr("stroke-width", "1px")
+                .attr("stroke", (d) => Utils.colorSplitBy(this.chartComponentData.displayState, d.splitByI, d.aggregateKey, this.chartOptions.keepSplitByColor))
+                .attr("stroke-width", "1px")
         }
         this.activeDot = null;
     }
 
-    /******** EFFICIENTLY SWAP NEW FOCUSED GROUP WITH OLD FOCUSED GROUP ********/   
-    private labelMouseMove(aggKey: string, splitBy: string){
+    /******** EFFICIENTLY SWAP NEW FOCUSED GROUP WITH OLD FOCUSED GROUP ********/
+    private labelMouseMove(aggKey: string, splitBy: string) {
         if (aggKey !== this.focusedAggKey || splitBy !== this.focusedSplitBy) {
             let selectedFilter = Utils.createValueFilter(aggKey, splitBy);
             let oldFilter = Utils.createValueFilter(this.focusedAggKey, this.focusedSplitBy);
-          
+
             this.svgSelection.selectAll(".tsi-dot")
                 .filter(selectedFilter)
                 .attr("stroke-opacity", this.standardStroke)
                 .attr("fill-opacity", this.focusOpacity)
-            
+
             this.svgSelection.selectAll(".tsi-dot")
                 .filter(oldFilter)
                 .attr("stroke-opacity", this.lowStroke)
@@ -628,11 +630,11 @@ class ScatterPlot extends ChartVisualizationComponent {
             let lineSelectedFilter = (d: any) => {
                 return (d[0].aggregateKey === aggKey && d[0].splitBy === splitBy)
             }
-    
+
             this.svgSelection.selectAll(".tsi-line")
                 .filter((d: any) => lineSelectedFilter(d))
                 .attr("stroke-opacity", this.standardStroke)
-            
+
             this.svgSelection.selectAll(".tsi-line")
                 .filter((d: any) => !lineSelectedFilter(d))
                 .attr("stroke-opacity", this.lowStroke)
@@ -643,7 +645,7 @@ class ScatterPlot extends ChartVisualizationComponent {
         // Raise crosshair to top
         this.focus.raise().classed("active", true);
         // Raise highlighted dot above crosshairs
-        if(this.activeDot != null)
+        if (this.activeDot != null)
             this.activeDot.raise().classed("active", true);
 
         // Highlight legend group
@@ -653,23 +655,23 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** DRAW CROSSHAIRS, TOOLTIP, AND LEGEND FOCUS ********/
-    private voronoiMouseMove(mouseEvent: any){
+    private voronoiMouseMove(mouseEvent: any) {
         let mouse_x = mouseEvent[0];
         let mouse_y = mouseEvent[1];
         let site = this.voronoiDiagram.find(mouse_x, mouse_y);
-        if(site == null) return;
+        if (site == null) return;
 
         // Short circuit mouse move if focused site has not changed
-        if(this.focusedSite == null)
+        if (this.focusedSite == null)
             this.focusedSite = site;
-        else if(this.focusedSite == site) return;
+        else if (this.focusedSite == site) return;
 
         this.focusedSite = site;
 
         this.drawTooltip(site.data, [site[0], site[1]]);
         this.labelMouseMove(site.data.aggregateKey, site.data.splitBy);
         this.highlightDot(site);
-        
+
         // Draw focus cross hair
         this.focus.style("display", "block");
         this.focus.attr("transform", "translate(" + site[0] + "," + site[1] + ")");
@@ -678,9 +680,9 @@ class ScatterPlot extends ChartVisualizationComponent {
 
         // Draw horizontal hover box 
         this.focus.select('.hHoverG')
-        .attr("transform", "translate(0," + (this.chartHeight - site[1]) + ")")
-        .select("text")
-        .text((Utils.formatYAxisNumber(site.data.measures[this.xMeasure])));
+            .attr("transform", "translate(0," + (this.chartHeight - site[1]) + ")")
+            .select("text")
+            .text((Utils.formatYAxisNumber(site.data.measures[this.xMeasure])));
         let textElemDimensions = (<any>this.focus.select('.hHoverG').select("text")
             .node()).getBoundingClientRect();
         this.focus.select(".hHoverG").select("rect")
@@ -705,7 +707,7 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** HIDE TOOLTIP AND CROSSHAIRS ********/
-    private voronoiMouseOut(){
+    private voronoiMouseOut() {
         this.focusedSite = null;
         this.focus.style("display", "none");
         this.tooltip.hide();
@@ -714,11 +716,11 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** FILTER DATA BY VISIBLE AND STICKIED ********/
-    private getVoronoiData(rawData: Array<any>){
+    private getVoronoiData(rawData: Array<any>) {
         let cleanData = this.cleanData(rawData);
 
-        let filteredValues =  cleanData.filter((d) => {
-            return (this.chartComponentData.displayState[d.aggregateKey].visible && 
+        let filteredValues = cleanData.filter((d) => {
+            return (this.chartComponentData.displayState[d.aggregateKey].visible &&
                 this.chartComponentData.displayState[d.aggregateKey].splitBys[d.splitBy].visible)
         });
 
@@ -726,27 +728,27 @@ class ScatterPlot extends ChartVisualizationComponent {
 
         let stickiedValues = filteredValues.filter((d: any) => {
             return d.aggregateKey == this.chartComponentData.stickiedKey.aggregateKey &&
-                ((this.chartComponentData.stickiedKey.splitBy == null) ? true : 
-                d.splitBy == this.chartComponentData.stickiedKey.splitBy);
+                ((this.chartComponentData.stickiedKey.splitBy == null) ? true :
+                    d.splitBy == this.chartComponentData.stickiedKey.splitBy);
         });
         return stickiedValues;
     }
 
     /******** HIGHLIGHT FOCUSED GROUP ********/
-    private labelMouseOver(aggKey: string, splitBy: string = null){
+    private labelMouseOver(aggKey: string, splitBy: string = null) {
         // Remove highlight on previous legend group
         <any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel').classed("inFocus", false);
 
         // Filter selected
         let selectedFilter = (d: any) => {
             let currAggKey = null, currSplitBy = null;
-            if(d.aggregateKey != null) currAggKey = d.aggregateKey
-            if(d.splitBy != null) currSplitBy = d.splitBy
+            if (d.aggregateKey != null) currAggKey = d.aggregateKey
+            if (d.splitBy != null) currSplitBy = d.splitBy
 
-            if(splitBy == null)
+            if (splitBy == null)
                 return currAggKey == aggKey;
 
-            if(currAggKey == aggKey && currSplitBy == splitBy)
+            if (currAggKey == aggKey && currSplitBy == splitBy)
                 return false;
             return true;
         }
@@ -756,7 +758,7 @@ class ScatterPlot extends ChartVisualizationComponent {
             .filter((d: any) => !selectedFilter(d))
             .attr("stroke-opacity", this.standardStroke)
             .attr("fill-opacity", this.focusOpacity)
-        
+
         // Decrease opacity of unselected
         this.svgSelection.selectAll(".tsi-dot")
             .filter(selectedFilter)
@@ -771,9 +773,9 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** UNHIGHLIGHT FOCUSED GROUP ********/
-    private labelMouseOut(){
-         // Remove highlight on legend group
-         <any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel').classed("inFocus", false);
+    private labelMouseOut() {
+        // Remove highlight on legend group
+        <any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel').classed("inFocus", false);
 
         this.g.selectAll(".tsi-dot")
             .attr("stroke-opacity", this.standardStroke)
@@ -787,25 +789,25 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** FILTER DATA, ONLY KEEPING POINTS WITH ALL REQUIRED MEASURES ********/
-    private cleanData(data: Array<any>){
+    private cleanData(data: Array<any>) {
         // Exclude any data which does not contain the specified
         // chart option measure
         let filtered = data.filter((value) => {
-            let valOk = true;            
+            let valOk = true;
             this.chartOptions.spMeasures
-            .forEach((measure) => {
-                if(value.measures == null) valOk = false
-                else if(!(measure in value.measures)){
-                    valOk = false;
-                }
-            });
+                .forEach((measure) => {
+                    if (value.measures == null) valOk = false
+                    else if (!(measure in value.measures)) {
+                        valOk = false;
+                    }
+                });
             return valOk;
         })
         return filtered;
     }
 
     /******** UPDATE CHART DIMENSIONS ********/
-    private setWidthAndHeight(isFromResize = false){
+    private setWidthAndHeight(isFromResize = false) {
         this.height = Math.max((<any>d3.select(this.renderTarget).node()).clientHeight, this.MINHEIGHT);
         this.chartHeight = this.height - this.chartMargins.top - this.chartMargins.bottom;
         this.width = this.getWidth();
@@ -815,16 +817,16 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** SCALE AND DRAW AXIS ********/
-    private drawAxis(){
+    private drawAxis() {
         // Draw dynamic x axis and label
-        this.xAxis = this.pointWrapper.selectAll(".xAxis").data([this.xScale]); 
+        this.xAxis = this.pointWrapper.selectAll(".xAxis").data([this.xScale]);
         this.xAxis.enter()
             .append("g")
             .attr("class", "xAxis")
             .merge(this.xAxis)
             .attr("transform", "translate(0," + (this.chartHeight) + ")")
-            .call(d3.axisBottom(this.xScale).ticks(Math.max(2,Math.floor(this.chartWidth / 150))));
-        
+            .call(d3.axisBottom(this.xScale).ticks(Math.max(2, Math.floor(this.chartWidth / 150))));
+
         this.xAxis.exit().remove();
 
         // Draw dynamic y axis and label
@@ -834,33 +836,33 @@ class ScatterPlot extends ChartVisualizationComponent {
             .attr("class", "yAxis")
             .merge(this.yAxis)
             .call(d3.axisLeft(this.yScale).ticks(Math.max(2, Math.floor(this.chartHeight / 90))));
-            
+
         this.yAxis.exit().remove()
     }
 
     /******** DRAW X AND Y AXIS LABELS ********/
-    private drawAxisLabels(){
+    private drawAxisLabels() {
         let self = this;
         let xLabelData, yLabelData;
 
-        const truncateTextLength = (textSelection,  maxTextLengthPx: number) => {
-            if(textSelection.node() && textSelection.node().getComputedTextLength) {
+        const truncateTextLength = (textSelection, maxTextLengthPx: number) => {
+            if (textSelection.node() && textSelection.node().getComputedTextLength) {
                 var textLength = textSelection.node().getComputedTextLength();
                 var text = textSelection.text();
-                while ( textLength > maxTextLengthPx && text.length > 0) {
+                while (textLength > maxTextLengthPx && text.length > 0) {
                     text = text.slice(0, -1);
                     textSelection.text(text + '...');
                     textLength = textSelection.node().getComputedTextLength();
                 }
             }
         }
-        
+
         // Associate axis label data
         (this.chartOptions.spAxisLabels != null && this.chartOptions.spAxisLabels.length >= 1) ?
-          xLabelData = [this.chartOptions.spAxisLabels[0]] : xLabelData = [];
+            xLabelData = [this.chartOptions.spAxisLabels[0]] : xLabelData = [];
 
         (this.chartOptions.spAxisLabels != null && this.chartOptions.spAxisLabels.length >= 2) ?
-        yLabelData = [this.chartOptions.spAxisLabels[1]] : yLabelData = [];
+            yLabelData = [this.chartOptions.spAxisLabels[1]] : yLabelData = [];
 
         this.xAxisLabel = this.pointWrapper.selectAll('.tsi-xAxisLabel').data(xLabelData);
         let xAxisLabel = this.xAxisLabel
@@ -871,15 +873,15 @@ class ScatterPlot extends ChartVisualizationComponent {
             .style("text-anchor", "middle")
             .attr("transform", "translate(" + (this.chartWidth / 2) + " ," + (this.chartHeight + 42) + ")")
             .text(null);
-        xAxisLabel.each(function(d) {
+        xAxisLabel.each(function (d) {
             let label = d3.select(this);
-            Utils.appendFormattedElementsFromString(label, d, {inSvg: true});
+            Utils.appendFormattedElementsFromString(label, d, { inSvg: true });
         });
         //text is either in tspans or just in text. Either truncate text directly or through tspan
         if (xAxisLabel.selectAll("tspan").size() == 0)
             truncateTextLength(xAxisLabel, this.chartWidth)
         else {
-            xAxisLabel.selectAll("tspan").each(function() {
+            xAxisLabel.selectAll("tspan").each(function () {
                 var tspanTextSelection = d3.select(this);
                 truncateTextLength(tspanTextSelection, self.chartWidth / xAxisLabel.selectAll("tspan").size());
             });
@@ -893,17 +895,17 @@ class ScatterPlot extends ChartVisualizationComponent {
             .attr("class", "tsi-yAxisLabel tsi-AxisLabel")
             .merge(this.yAxisLabel)
             .style("text-anchor", "middle")
-            .attr("transform", "translate(" + ( -70 ) + " ," + (this.chartHeight / 2) + ") rotate(-90)")
+            .attr("transform", "translate(" + (-70) + " ," + (this.chartHeight / 2) + ") rotate(-90)")
             .text(null);
-        yAxisLabel.each(function(d) {
+        yAxisLabel.each(function (d) {
             let label = d3.select(this);
-            Utils.appendFormattedElementsFromString(label, d, {inSvg: true});
+            Utils.appendFormattedElementsFromString(label, d, { inSvg: true });
         });
         //text is either in tspans or just in text. Either truncate text directly or through tspan
         if (yAxisLabel.selectAll("tspan").size() == 0)
             truncateTextLength(yAxisLabel, this.chartHeight)
         else {
-            yAxisLabel.selectAll("tspan").each(function() {
+            yAxisLabel.selectAll("tspan").each(function () {
                 var tspanTextSelection = d3.select(this);
                 truncateTextLength(tspanTextSelection, self.chartHeight / yAxisLabel.selectAll("tspan").size());
             });
@@ -912,9 +914,9 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** DRAW TOOLTIP IF ENABLED ********/
-    private drawTooltip (d: any, mousePosition) {
+    private drawTooltip(d: any, mousePosition) {
         let self = this;
-        if (this.chartOptions.tooltip){
+        if (this.chartOptions.tooltip) {
             let xPos = mousePosition[0];
             let yPos = mousePosition[1];
 
@@ -932,11 +934,11 @@ class ScatterPlot extends ChartVisualizationComponent {
     }
 
     /******** HELPERS TO FORMAT TIME DISPLAY ********/
-    private labelFormatUsesSeconds () {
+    private labelFormatUsesSeconds() {
         return !this.chartOptions.minutesForTimeLabels && this.chartComponentData.usesSeconds;
     }
 
-    private labelFormatUsesMillis () {
+    private labelFormatUsesMillis() {
         return !this.chartOptions.minutesForTimeLabels && this.chartComponentData.usesMillis;
     }
 

@@ -1,12 +1,12 @@
 import * as d3 from 'd3';
 import './Marker.scss';
-import Utils from "../../Utils";
-import { MARKERVALUENUMERICHEIGHT, LINECHARTXOFFSET } from "./../../Constants/Constants";
-import {Component} from "./../../Interfaces/Component";
-import { ChartOptions } from '../../Models/ChartOptions';
-import { LineChartData } from '../../Models/LineChartData';
-import Tooltip  from '../Tooltip';
-import { KeyCodes, ShiftTypes, DataTypes, TooltipMeasureFormat } from '../../Constants/Enums';
+import Utils from "../../utils";
+import { MARKERVALUENUMERICHEIGHT, LINECHARTXOFFSET } from "./../../constants/Constants";
+import { Component } from "./../../interfaces/Component";
+import { ChartOptions } from '../../models/ChartOptions';
+import { LineChartData } from '../../models/LineChartData';
+import Tooltip from '../Tooltip';
+import { KeyCodes, ShiftTypes, DataTypes, TooltipMeasureFormat } from '../../constants/Enums';
 
 const MARKERSTRINGMAXLENGTH = 250;
 const MARKERVALUEMAXWIDTH = 80;
@@ -36,25 +36,25 @@ class Marker extends Component {
 
     readonly ADDITIONALRIGHTSIDEOVERHANG = 12;
 
-	constructor(renderTarget) {
+    constructor(renderTarget) {
         super(renderTarget);
         this.guid = Utils.guid();
     }
 
-    public getGuid () {
+    public getGuid() {
         return this.guid;
     }
 
-    public setMillis (millis: number) {
+    public setMillis(millis: number) {
         this.timestampMillis = millis;
     }
 
-    public getMillis () {
+    public getMillis() {
         return this.timestampMillis;
     }
 
     // returns whether the string was trimmed to the max length
-    public setLabelText (labelText: string): boolean {
+    public setLabelText(labelText: string): boolean {
         if (labelText.length > MARKERSTRINGMAXLENGTH) {
             this.labelText = labelText.slice(0, MARKERSTRINGMAXLENGTH);
             return true;
@@ -63,11 +63,11 @@ class Marker extends Component {
         return false;
     }
 
-    public getLabelText () {
+    public getLabelText() {
         return this.labelText;
     }
 
-    private setSeriesLabelText (d, text, isSeriesLabelInFocus) {
+    private setSeriesLabelText(d, text, isSeriesLabelInFocus) {
         text.classed('tsi-isExpanded', false);
         let title = text.append('h4')
             .attr('class', 'tsi-seriesLabelGroupName tsi-tooltipTitle');
@@ -75,7 +75,7 @@ class Marker extends Component {
         let shiftTuple = this.chartComponentData.getTemporalShiftStringTuple(d.aggregateKey);
         let shiftString = '';
         if (shiftTuple !== null) {
-            shiftString = shiftTuple[0] === ShiftTypes.startAt ? this.timeFormat(new Date(shiftTuple[1])) : shiftTuple[1]; 
+            shiftString = shiftTuple[0] === ShiftTypes.startAt ? this.timeFormat(new Date(shiftTuple[1])) : shiftTuple[1];
         }
 
         let labelDatum = {
@@ -105,8 +105,8 @@ class Marker extends Component {
         Utils.setSeriesLabelSubtitleText(enteredSubtitle, false);
     }
 
-	protected tooltipFormat (d, text, measureFormat: TooltipMeasureFormat, xyrMeasures = null, isSeriesLabelInFocus = false) {
-        
+    protected tooltipFormat(d, text, measureFormat: TooltipMeasureFormat, xyrMeasures = null, isSeriesLabelInFocus = false) {
+
         let tooltipHeight = MARKERVALUENUMERICHEIGHT;
 
         // revert to default text format if none specified
@@ -119,41 +119,41 @@ class Marker extends Component {
             this.setSeriesLabelText(d, text, isSeriesLabelInFocus);
         }
         text.classed('tsi-markerValueTooltipInner', true)
-            .style('border-color', this.colorMap[d.aggregateKey + "_" + d.splitBy]);                
+            .style('border-color', this.colorMap[d.aggregateKey + "_" + d.splitBy]);
     }
 
-    private getLeft (d) {
+    private getLeft(d) {
         return Math.round(this.x(d.timestamp) + this.marginLeft);
     }
 
 
     // check to see if any marker is being dragged
-    private isMarkerDragOccuring () {
+    private isMarkerDragOccuring() {
         return this.markerIsDragging;
         return (d3.select(this.renderTarget).selectAll('.tsi-markerContainer').filter((d: any) => {
             return d.isDragging;
         }).size() > 0);
     }
 
-    private bumpMarker () {
+    private bumpMarker() {
         d3.select(this.renderTarget).selectAll('.tsi-markerContainer')
-        .style('animation', 'none')
-        .sort((a: any, b: any) => {  
-            if (a.timestamp === this.timestampMillis) {
-                return 1;
-            }
-            if (b.timestamp === this.timestampMillis){
-                return -1;
-            }
-            return a.timestamp < b.timestamp ? 1 : -1;
-        });
+            .style('animation', 'none')
+            .sort((a: any, b: any) => {
+                if (a.timestamp === this.timestampMillis) {
+                    return 1;
+                }
+                if (b.timestamp === this.timestampMillis) {
+                    return -1;
+                }
+                return a.timestamp < b.timestamp ? 1 : -1;
+            });
     }
 
-    private renderMarker () {
+    private renderMarker() {
         let self = this;
         let marker = d3.select(this.renderTarget).selectAll<HTMLDivElement, unknown>(`.tsi-markerContainer`)
             .filter((d: any) => d.guid === this.guid)
-            .data([{guid: this.guid, timestamp: this.timestampMillis}]);
+            .data([{ guid: this.guid, timestamp: this.timestampMillis }]);
         this.markerContainer = marker.enter()
             .append('div')
             .attr('class', 'tsi-markerContainer')
@@ -169,8 +169,8 @@ class Marker extends Component {
                     return false;
                 }
                 return (this.chartOptions.labelSeriesWithMarker && this.x(d.timestamp) > (this.x.range()[1] - MARKERVALUEMAXWIDTH));
-            }) 
-            .each(function(markerD) {
+            })
+            .each(function (markerD) {
                 if (self.isSeriesLabels) {
                     return;
                 }
@@ -186,14 +186,14 @@ class Marker extends Component {
                     self.markerLabel.append('div')
                         .attr('class', 'tsi-markerGrabber')
                         .on('mouseenter', () => {
-                            self.bumpMarker();    
+                            self.bumpMarker();
                         });
 
                     self.markerLabel.append('div')
                         .attr('class', 'tsi-markerLabelText')
                         .attr('contenteditable', 'true')
                         .text(self.labelText)
-                        .on('keydown', (event) =>{
+                        .on('keydown', (event) => {
                             if (event.keyCode === KeyCodes.Enter && !event.shiftKey) {
                                 event.preventDefault();
                                 self.closeButton.node().focus();
@@ -218,24 +218,24 @@ class Marker extends Component {
                         .on('mouseover', function () {
                             if (!self.isMarkerDragOccuring()) {
                                 d3.select(d3.select(this).node().parentNode).classed('tsi-markerLabelHovered', true);
-                                self.bumpMarker();    
+                                self.bumpMarker();
                             }
                         });
-                    
+
                     self.closeButton = self.markerLabel.append("button")
-                        .attr("aria-label", self.getString('Delete marker')) 
+                        .attr("aria-label", self.getString('Delete marker'))
                         .classed("tsi-closeButton", true)
                         .on("click", function () {
                             self.onChange(true, false);
                             d3.select((d3.select(this).node() as any).parentNode.parentNode).remove();
                         });
-            
+
                     self.timeLabel = d3.select(this).append("div")
                         .attr('class', 'tsi-markerTimeLabel');
                 }
                 d3.select(this).selectAll('.tsi-markerTimeLabel,.tsi-markerLine,.tsi-markerLabel')
                     .call(d3.drag()
-                        .on('start', function(event, d: any) {
+                        .on('start', function (event, d: any) {
                             d.isDragging = true;
                             self.markerIsDragging = true;
                             self.bumpMarker();
@@ -263,15 +263,15 @@ class Marker extends Component {
         marker.exit().remove();
     }
 
-    private getValueOfVisible (d: any) {
+    private getValueOfVisible(d: any) {
         return Utils.getValueOfVisible(d, this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy));
     }
 
-    private getTooltipKey (d: any) {
+    private getTooltipKey(d: any) {
         return d.aggregateKey + '_' + d.splitBy;
     }
 
-    private findYatX (x, path) {
+    private findYatX(x, path) {
         let pathParent = path.parentNode;
         let length_end = path.getTotalLength();
         let length_start = 0;
@@ -284,24 +284,24 @@ class Marker extends Component {
         while (x < point.x - error || x > point.x + error) {
             point = path.getPointAtLength((length_end + length_start) / 2)
             if (x < point.x) {
-                length_end = (length_start + length_end)/2
+                length_end = (length_start + length_end) / 2
             } else {
-                length_start = (length_start + length_end)/2
+                length_start = (length_start + length_end) / 2
             }
-            if(bisection_iterations_max < ++ bisection_iterations) {
+            if (bisection_iterations_max < ++bisection_iterations) {
                 break;
             }
         }
         let offset = path.parentNode.parentNode.transform.baseVal[0].matrix.f;  // roundabout way of getting the y transform of the agg group
         return point.y + offset;
-   }
-
-    private positionToValue (yPos: number, aggKey: string) {
-        let yScale = this.yMap[aggKey]; 
-        return yScale.invert(yPos);   
     }
 
-    private bisectionInterpolateValue (millis: number, aggKey: string, splitBy: string, path: any) {
+    private positionToValue(yPos: number, aggKey: string) {
+        let yScale = this.yMap[aggKey];
+        return yScale.invert(yPos);
+    }
+
+    private bisectionInterpolateValue(millis: number, aggKey: string, splitBy: string, path: any) {
         if (path === null) {
             return null;
         }
@@ -312,7 +312,7 @@ class Marker extends Component {
         return newDatum;
     }
 
-    private getPath (aggKey: string, splitBy: string) {
+    private getPath(aggKey: string, splitBy: string) {
         let selectedPaths = d3.select(this.renderTarget).selectAll('.tsi-valueLine').filter((d: any) => {
             if (d.length) {
                 return d[0].aggregateKey === aggKey && d[0].splitBy === splitBy;
@@ -325,7 +325,7 @@ class Marker extends Component {
         return selectedPaths.nodes()[0];
     }
 
-    private createNewDatum (aggKey, splitBy, valueOfVisible) {
+    private createNewDatum(aggKey, splitBy, valueOfVisible) {
         let newDatum: any = {};
         newDatum.aggregateKey = aggKey;
         newDatum.splitBy = splitBy;
@@ -334,7 +334,7 @@ class Marker extends Component {
         return newDatum;
     }
 
-    private findGapPath (aggKey, splitBy, millis) {
+    private findGapPath(aggKey, splitBy, millis) {
         let gapPath = d3.select(this.renderTarget).selectAll('.tsi-gapLine')
             .filter((d: any) => {
                 if (d.length === 2 && aggKey === d[0].aggregateKey && splitBy === d[0].splitBy) {
@@ -349,7 +349,7 @@ class Marker extends Component {
     }
 
     //check if a value is within the time constrained bounds of a path
-    private inBounds (path: any, millis: number) {
+    private inBounds(path: any, millis: number) {
         let filteredData = path.data()[0].filter((d) => {
             return d.measures && this.getValueOfVisible(d) !== null;
         })
@@ -361,7 +361,7 @@ class Marker extends Component {
         return false;
     }
 
-    private getIntersectingPath (aggKey: string, splitBy: string, millis: number) {
+    private getIntersectingPath(aggKey: string, splitBy: string, millis: number) {
         if (this.chartComponentData.displayState[aggKey].bucketSize) {
             millis = millis - (this.chartComponentData.displayState[aggKey].bucketSize / 2);
         }
@@ -373,7 +373,7 @@ class Marker extends Component {
         }
     }
 
-    private interpolateValue (millis, aggKey, splitBy) {
+    private interpolateValue(millis, aggKey, splitBy) {
         let path = this.getIntersectingPath(aggKey, splitBy, millis);
         if (path === null) {
             return null;
@@ -381,7 +381,7 @@ class Marker extends Component {
         return this.bisectionInterpolateValue(millis, aggKey, splitBy, path);
     }
 
-    private getValuesAtTime (closestTime) {
+    private getValuesAtTime(closestTime) {
         let valueArray = [];
         let values = this.chartComponentData.timeMap[closestTime] != undefined ? this.chartComponentData.timeMap[closestTime] : [];
         Object.keys(this.chartComponentData.visibleTAs).forEach((aggKey) => {
@@ -395,7 +395,7 @@ class Marker extends Component {
                 if (filteredValues.length === 1 && (this.getValueOfVisible(filteredValues[0]) !== null)) {
                     valueArray.push(filteredValues[0]);
                 } else {
-                    let interpolatedValue = this.interpolateValue(closestTime, aggKey, splitBy); 
+                    let interpolatedValue = this.interpolateValue(closestTime, aggKey, splitBy);
                     if (interpolatedValue !== null || !this.isSeriesLabels) {
                         valueArray.push(interpolatedValue);
                     } else {
@@ -410,10 +410,10 @@ class Marker extends Component {
         return valueArray;
     }
 
-    private setValueLabels (closestTime) {
+    private setValueLabels(closestTime) {
         let values = this.getValuesAtTime(closestTime);
         values = values.filter((d) => {
-            return d && this.chartComponentData.getDataType(d.aggregateKey) === DataTypes.Numeric; 
+            return d && this.chartComponentData.getDataType(d.aggregateKey) === DataTypes.Numeric;
         });
         let self = this;
 
@@ -433,7 +433,7 @@ class Marker extends Component {
             .each(function (d: any) {
                 let tooltipKey = self.getTooltipKey(d);
                 let tooltip;
-                
+
                 if (self.tooltipMap[tooltipKey]) {
                     tooltip = self.tooltipMap[tooltipKey];
                 } else {
@@ -442,7 +442,7 @@ class Marker extends Component {
                 }
                 tooltip.render(self.chartOptions.theme);
                 let tooltipHeight = MARKERVALUENUMERICHEIGHT;
-                tooltip.draw(d, self.chartComponentData, 0, MARKERVALUENUMERICHEIGHT/2, {right:0, left:0, top:0, bottom:0}, (tooltipTextElement) => {
+                tooltip.draw(d, self.chartComponentData, 0, MARKERVALUENUMERICHEIGHT / 2, { right: 0, left: 0, top: 0, bottom: 0 }, (tooltipTextElement) => {
                     self.tooltipFormat(d, tooltipTextElement, null, null);
                 }, null, 0, 0, self.colorMap[d.aggregateKey + "_" + d.splitBy], true);
 
@@ -462,17 +462,17 @@ class Marker extends Component {
         valueLabelsExit.remove();
     }
 
-    private calcTopOfValueLabel (d: any) {
+    private calcTopOfValueLabel(d: any) {
         let yScale = this.yMap[d.aggregateKey];
         return Math.round(yScale(this.getValueOfVisible(d)) - this.chartOptions.aggTopMargin);
     }
 
-    private getTimeFormat () {
-        return Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
-            this.chartOptions.offset, this.chartOptions.is24HourTime, 0, null, this.chartOptions.dateLocale);   
+    private getTimeFormat() {
+        return Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
+            this.chartOptions.offset, this.chartOptions.is24HourTime, 0, null, this.chartOptions.dateLocale);
     }
 
-    private setTimeLabel (closestTime: number) {
+    private setTimeLabel(closestTime: number) {
         if (this.isSeriesLabels) {
             return;
         }
@@ -490,7 +490,7 @@ class Marker extends Component {
         if (values[0].bucketSize !== null) {
             this.timeLabel.append('div')
                 .attr('class', 'tsi-markerTimeLine')
-                .text(this.timeFormat(secondValue));            
+                .text(this.timeFormat(secondValue));
         }
 
         let markerLeft: number = Number(this.markerContainer.style("left").replace("px", ""));
@@ -513,18 +513,18 @@ class Marker extends Component {
             .style("transform", translate);
     }
 
-    public focusCloseButton () {
+    public focusCloseButton() {
         if (this.closeButton) {
             this.closeButton.node().focus();
         }
     }
 
-    public isMarkerInRange (millis: number = this.timestampMillis) {
+    public isMarkerInRange(millis: number = this.timestampMillis) {
         let domain = this.x.domain();
         return !(millis < domain[0].valueOf() || millis > domain[1].valueOf());
     }
 
-    public destroyMarker () {
+    public destroyMarker() {
         if (this.markerContainer) {
             this.markerContainer.remove();
         }
@@ -533,7 +533,7 @@ class Marker extends Component {
     }
 
 
-    public render (timestampMillis: number, chartOptions: ChartOptions, chartComponentData: any, additionalMarkerFields: {chartMargins: any, x: any, marginLeft: number, colorMap: any, yMap: any, onChange: any, isDropping: boolean, chartHeight: number, labelText: string, isSeriesLabels: boolean}) {
+    public render(timestampMillis: number, chartOptions: ChartOptions, chartComponentData: any, additionalMarkerFields: { chartMargins: any, x: any, marginLeft: number, colorMap: any, yMap: any, onChange: any, isDropping: boolean, chartHeight: number, labelText: string, isSeriesLabels: boolean }) {
         this.chartMargins = Object.assign({}, additionalMarkerFields.chartMargins);
         this.chartHeight = additionalMarkerFields.chartHeight;
         this.timestampMillis = timestampMillis;
@@ -565,7 +565,7 @@ class Marker extends Component {
         super.themify(this.markerContainer, this.chartOptions.theme);
     }
 
-    public setPositionsAndLabels (millis: number) {
+    public setPositionsAndLabels(millis: number) {
         if (!this.isMarkerInRange(millis)) {
             this.destroyMarker();
             return;

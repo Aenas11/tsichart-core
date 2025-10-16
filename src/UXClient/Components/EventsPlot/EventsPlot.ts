@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 import './EventsPlot.scss';
-import { Plot } from '../../Interfaces/Plot';
-import Utils from '../../Utils';
-import { EventElementTypes, DataTypes } from "../../Constants/Enums";
-import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../Constants/Constants";
+import { Plot } from '../../interfaces/Plot';
+import Utils from '../../utils';
+import { EventElementTypes, DataTypes } from "../../constants/Enums";
+import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../constants/Constants";
 
 class EventsPlot extends Plot {
     private defs;
@@ -18,13 +18,13 @@ class EventsPlot extends Plot {
 
     private gradientArray = {};
 
-    constructor (svgSelection) {
+    constructor(svgSelection) {
         super(svgSelection);
         this.plotDataType = DataTypes.Events;
     }
 
-    private onMouseover (d, seriesNumber) {
-        
+    private onMouseover(d, seriesNumber) {
+
         let getX = () => {
             return this.x(new Date(d.dateTime));
         }
@@ -49,12 +49,12 @@ class EventsPlot extends Plot {
             });
     }
 
-    private onMouseout () {
+    private onMouseout() {
         this.hoverLine.attr('visibility', 'hidden');
         this.discreteEventsMouseout();
     }
 
-    private createHoverLine () {
+    private createHoverLine() {
         if (!this.hoverLine) {
             this.hoverLine = this.chartGroup.append('line')
                 .attr('class', 'tsi-discreteEventHoverLine')
@@ -67,9 +67,9 @@ class EventsPlot extends Plot {
         }
     }
 
-    private setEventHeight (visibleSeriesCount) {
+    private setEventHeight(visibleSeriesCount) {
         let useableHeight = this.height - NONNUMERICTOPMARGIN;
-        this.eventHeight = Math.floor((useableHeight / visibleSeriesCount) / Math.sqrt(2)); 
+        this.eventHeight = Math.floor((useableHeight / visibleSeriesCount) / Math.sqrt(2));
     }
 
     private eventOnClick = (d: any) => {
@@ -81,16 +81,16 @@ class EventsPlot extends Plot {
     private colorFunction = (d) => {
         if (d.measures) {
             if (Object.keys(d.measures).length === 1) {
-                return this.getColorForValue(Object.keys(d.measures)[0]);                            
+                return this.getColorForValue(Object.keys(d.measures)[0]);
             } else {
                 return 'grey';
             }
         }
         return 'none';
     }
-    
+
     private createDateStringFunction = (shiftMillis: number) => {
-        return Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis, 
+        return Utils.timeFormat(this.chartComponentData.usesSeconds, this.chartComponentData.usesMillis,
             this.chartOptions.offset, this.chartOptions.is24HourTime, shiftMillis, null, this.chartOptions.dateLocale);
     }
 
@@ -115,7 +115,7 @@ class EventsPlot extends Plot {
         let shiftMillis = this.chartComponentData.getTemporalShiftMillis(this.aggKey);
         let dateStringFn = this.createDateStringFunction(shiftMillis)
 
-        switch(this.chartDataOptions.eventElementType) {
+        switch (this.chartDataOptions.eventElementType) {
             case EventElementTypes.Teardrop:
                 if (discreteEvents.size() && discreteEvents.classed('tsi-discreteEventDiamond')) {
                     g.selectAll('.tsi-discreteEvent').remove();
@@ -174,12 +174,12 @@ class EventsPlot extends Plot {
             .on('touchstart', (event, d) => {
                 this.eventOnClick(d);
             })
-            .on('keydown', function (event, d: any)  {
+            .on('keydown', function (event, d: any) {
                 if (event.keyCode === 9) {
                     sortEvents();
                     d3.select(this).node().focus();
                 }
-                if(event.keyCode === 32 || event.keyCode === 13){
+                if (event.keyCode === 32 || event.keyCode === 13) {
                     self.eventOnClick(d);
                 }
             })
@@ -187,17 +187,17 @@ class EventsPlot extends Plot {
             .attr('tabindex', this.chartDataOptions.onElementClick ? '0' : null)
             .attr('cursor', this.chartDataOptions.onElementClick ? 'pointer' : 'inherit')
             .attr('aria-label', (d) => {
-               if (this.chartDataOptions.onElementClick) {
-                   let dateString = dateStringFn(d);
-                   let retString = `${this.getString('event in series')} ${d.aggregateName} ${this.getString('at time')} ${dateString}.`;
+                if (this.chartDataOptions.onElementClick) {
+                    let dateString = dateStringFn(d);
+                    let retString = `${this.getString('event in series')} ${d.aggregateName} ${this.getString('at time')} ${dateString}.`;
                     Object.keys(d.measures).forEach((mKey) => {
                         retString += ` ${this.getString('measure with key')} ${mKey} ${this.getString('and value')} ${d.measures[mKey]}.`
                     });
-                   return retString;
-               }
-               return null;
+                    return retString;
+                }
+                return null;
             })
-            .style('visibility', (d: any) => { 
+            .style('visibility', (d: any) => {
                 return (self.chartComponentData.isSplitByVisible(this.aggKey, splitBy) && self.hasData(d)) ? 'visible' : 'hidden';
             })
 
@@ -206,7 +206,7 @@ class EventsPlot extends Plot {
                     let gradientKey = self.createGradientKey(d, splitByIndex, i);
                     self.gradientData.push([gradientKey, d]);
                     d3.select(this)
-                        .attr(self.chartDataOptions.eventElementType === EventElementTypes.Teardrop ? 'stroke' : 'fill', "url(#" + gradientKey + ")");    
+                        .attr(self.chartDataOptions.eventElementType === EventElementTypes.Teardrop ? 'stroke' : 'fill', "url(#" + gradientKey + ")");
                 }
             });
         discreteEvents.exit().remove();
@@ -215,7 +215,7 @@ class EventsPlot extends Plot {
     private shouldDrawBackdrop = () => {
         //check to see if this is the first aggregate within a collapsed swimlane. 
         let lane = this.chartComponentData.getSwimlane(this.aggKey)
-        if (!this.chartOptions.swimLaneOptions || !this.chartOptions.swimLaneOptions[lane] || 
+        if (!this.chartOptions.swimLaneOptions || !this.chartOptions.swimLaneOptions[lane] ||
             !this.chartOptions.swimLaneOptions[lane].collapseEvents) {
             return true;
         }
@@ -225,8 +225,8 @@ class EventsPlot extends Plot {
         return eventSeriesInLane.indexOf(this.aggKey) === 0;
     }
 
-    public render (chartOptions, visibleAggI, agg, aggVisible: boolean, aggregateGroup, chartComponentData, yExtent,  
-        chartHeight, visibleAggCount, colorMap, previousAggregateData, x, areaPath, strokeOpacity, y, yMap, defs, 
+    public render(chartOptions, visibleAggI, agg, aggVisible: boolean, aggregateGroup, chartComponentData, yExtent,
+        chartHeight, visibleAggCount, colorMap, previousAggregateData, x, areaPath, strokeOpacity, y, yMap, defs,
         chartDataOptions, previousIncludeDots, yTopAndHeight, chartGroup, discreteEventsMouseover, discreteEventsMouseout) {
         this.chartOptions = chartOptions;
         this.yTop = yTopAndHeight[0];
@@ -270,19 +270,19 @@ class EventsPlot extends Plot {
             .attr("class", "tsi-eventsGroup tsi-splitByGroup " + this.aggKey)
             .merge(splitByGroups)
             .attr('transform', (d, i) => {
-                return 'translate(0,' + (  + (i * (this.chartDataOptions.height / series.length))) + ')';
+                return 'translate(0,' + (+ (i * (this.chartDataOptions.height / series.length))) + ')';
             })
             .each(function (splitBy, j) {
                 self.createEventElements(splitBy, d3.select(this), j);
-            }).each(function() {
+            }).each(function () {
                 self.themify(d3.select(this), self.chartOptions.theme);
             })
-            splitByGroups.exit().remove();
+        splitByGroups.exit().remove();
 
         let gradients = this.defs.selectAll('linearGradient')
-        .data(this.gradientData, (d) => {
-            return d[1].splitBy;
-        });
+            .data(this.gradientData, (d) => {
+                return d[1].splitBy;
+            });
         let enteredGradients = gradients.enter()
             .append('linearGradient')
             .attr("x2", "0%")
