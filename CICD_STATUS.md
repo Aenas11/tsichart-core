@@ -10,7 +10,7 @@ All GitHub Actions workflows have been **successfully updated** to work with the
 
 #### `publishNpm.yml` ✅
 - **Before**: Used npm, published root package
-- **After**: Uses pnpm, publishes `@tsichart/core` package
+- **After**: Uses pnpm, publishes `tsichart-core` package
 - **Status**: Ready for npm publishing when tags are created
 - **Backwards Compatible**: Yes
 
@@ -83,9 +83,9 @@ All GitHub Actions workflows have been **successfully updated** to work with the
 ```bash
 1. Install dependencies with pnpm
 2. Build all packages
-3. Publish @tsichart/core to NPM with provenance
-4. (Future) Publish @tsichart/react
-5. (Future) Publish @tsichart/vue
+3. Publish tsichart-core to NPM with provenance
+4. (Future) Publish tsichart-react
+5. (Future) Publish tsichart-vue
 ```
 
 ### Deploy Examples (deploy-examples.yml)
@@ -143,7 +143,7 @@ ls -la tsiclient.js tsiclient.css
 
 2. **On next tag push (v*)**:
    - `publishNpm.yml` will attempt to publish
-   - Will publish `@tsichart/core` to NPM
+   - Will publish `tsichart-core` to NPM
 
 3. **On changes to pages/**:
    - `deploy-examples.yml` will deploy to GitHub Pages
@@ -152,7 +152,7 @@ ls -la tsiclient.js tsiclient.css
 
 | Feature | Legacy (Before) | New (After) | Status |
 |---------|----------------|-------------|--------|
-| NPM Publishing | ✅ Root package | ✅ @tsichart/core | Compatible |
+| NPM Publishing | ✅ Root package | ✅ tsichart-core | Compatible |
 | Build System | ✅ Webpack + Rollup | ✅ Both systems work | Compatible |
 | Examples Deployment | ✅ Works | ✅ Works | Compatible |
 | Dependencies | ✅ npm | ✅ pnpm (with npm fallback) | Compatible |

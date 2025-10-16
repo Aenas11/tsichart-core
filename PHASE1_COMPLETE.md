@@ -5,9 +5,9 @@
 Phase 1 of the TSIChart monorepo restructuring has been **successfully implemented** on the `main` branch. The project now has a modern monorepo architecture that supports:
 
 1. ✅ **Unit testing infrastructure** (ready for Jest)
-2. ✅ **Framework-agnostic core package** (`@tsichart/core`)
-3. ✅ **React wrapper package scaffold** (`@tsichart/react`)
-4. ✅ **Vue wrapper package scaffold** (`@tsichart/vue`)
+2. ✅ **Framework-agnostic core package** (`tsichart-core`)
+3. ✅ **React wrapper package scaffold** (`tsichart-react`)
+4. ✅ **Vue wrapper package scaffold** (`tsichart-vue`)
 
 ---
 
@@ -18,7 +18,7 @@ Phase 1 of the TSIChart monorepo restructuring has been **successfully implement
 ```
 tsichart-core/
 ├── packages/                          # NEW: Monorepo packages
-│   ├── core/                          # @tsichart/core
+│   ├── core/                          # tsichart-core
 │   │   ├── src/
 │   │   │   ├── components/            # 32 chart components
 │   │   │   ├── models/                # Data models & expressions
@@ -34,8 +34,8 @@ tsichart-core/
 │   │   ├── tsconfig.json              # TypeScript config
 │   │   ├── rollup.config.mjs          # Build config
 │   │   └── README.md                  # Documentation
-│   ├── react/                         # @tsichart/react (scaffold)
-│   └── vue/                           # @tsichart/vue (scaffold)
+│   ├── react/                         # tsichart-react (scaffold)
+│   └── vue/                           # tsichart-vue (scaffold)
 │
 ├── src/                               # PRESERVED: Original structure
 ├── pnpm-workspace.yaml                # NEW: Workspace config
@@ -83,7 +83,7 @@ pnpm install
 
 ## 📦 Package Information
 
-### @tsichart/core
+### tsichart-core
 
 **Status**: ✅ Ready for development & testing
 
@@ -92,29 +92,29 @@ pnpm install
 **Exports**:
 ```typescript
 // Named exports (tree-shakeable)
-import { LineChart, PieChart, Utils } from '@tsichart/core';
+import { LineChart, PieChart, Utils } from 'tsichart-core';
 
 // Default export (backwards compatible)
-import UXClient from '@tsichart/core';
+import UXClient from 'tsichart-core';
 
 // Styles
-import '@tsichart/core/styles';
+import 'tsichart-core/styles';
 ```
 
 **Scripts**:
 ```bash
-pnpm --filter @tsichart/core build    # Build package
-pnpm --filter @tsichart/core test     # Run tests (Phase 2)
-pnpm --filter @tsichart/core clean    # Clean dist/
+pnpm --filter tsichart-core build    # Build package
+pnpm --filter tsichart-core test     # Run tests (Phase 2)
+pnpm --filter tsichart-core clean    # Clean dist/
 ```
 
-### @tsichart/react
+### tsichart-react
 
 **Status**: 🚧 Scaffold only (Phase 4)
 
 **Location**: `packages/react/`
 
-### @tsichart/vue
+### tsichart-vue
 
 **Status**: 🚧 Scaffold only (Phase 5)
 
@@ -219,9 +219,9 @@ The **original structure is preserved**:
 ### Breaking Changes (Future)
 
 When we switch to the new structure:
-- Import paths will change: `@tsichart/core` instead of `tsichart-core`
+- Import paths will change: `tsichart-core` instead of `tsichart-core`
 - Window globals removed: No more `window.TsiClient`
-- CSS imports: `@tsichart/core/styles` instead of `tsiclient.css`
+- CSS imports: `tsichart-core/styles` instead of `tsiclient.css`
 
 ### Migration Path
 

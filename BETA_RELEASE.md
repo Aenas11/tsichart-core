@@ -1,6 +1,6 @@
 # 🚀 Quick Start: Beta Release
 
-## Publishing @tsichart/core@2.0.0-beta.1
+## Publishing tsichart-core@2.0.0-beta.1
 
 ### Current Configuration
 - ✅ **Version**: Changed to `2.0.0-beta.1`
@@ -55,16 +55,16 @@ After pushing the tag, GitHub Actions will automatically:
 #### 5. Verify Publication
 ```bash
 # Check the package was published
-npm view @tsichart/core
+npm view tsichart-core
 
 # Check beta tag specifically
-npm view @tsichart/core@beta
+npm view tsichart-core@beta
 
 # Check all versions
-npm view @tsichart/core versions
+npm view tsichart-core versions
 
 # Check dist-tags
-npm dist-tag ls @tsichart/core
+npm dist-tag ls tsichart-core
 ```
 
 Expected output:
@@ -75,13 +75,13 @@ beta: 2.0.0-beta.1
 #### 6. Test Beta Installation
 ```bash
 # Install the beta version
-npm install @tsichart/core@beta
+npm install tsichart-core@beta
 
 # Or install specific version
-npm install @tsichart/core@2.0.0-beta.1
+npm install tsichart-core@2.0.0-beta.1
 
 # Test in Node.js
-node -e "const { UXClient } = require('@tsichart/core'); console.log('✅ Beta package loaded successfully');"
+node -e "const { UXClient } = require('tsichart-core'); console.log('✅ Beta package loaded successfully');"
 ```
 
 ---
@@ -89,23 +89,23 @@ node -e "const { UXClient } = require('@tsichart/core'); console.log('✅ Beta p
 ## What Happens with Beta Tag?
 
 ### For Beta Releases:
-- ✅ Published to npm as `@tsichart/core@2.0.0-beta.1`
+- ✅ Published to npm as `tsichart-core@2.0.0-beta.1`
 - ✅ Tagged as `beta` (not `latest`)
 - ✅ Users must explicitly install with `@beta` or `@2.0.0-beta.1`
-- ✅ Won't be installed by default with `npm install @tsichart/core`
+- ✅ Won't be installed by default with `npm install tsichart-core`
 - ✅ Safe for testing without affecting production users
 
 ### To Install Beta:
 ```bash
 # Users must explicitly request beta
-npm install @tsichart/core@beta
-npm install @tsichart/core@2.0.0-beta.1
+npm install tsichart-core@beta
+npm install tsichart-core@2.0.0-beta.1
 ```
 
 ### To Install Latest (after you publish v2.0.0):
 ```bash
 # Default install gets latest stable
-npm install @tsichart/core
+npm install tsichart-core
 ```
 
 ---

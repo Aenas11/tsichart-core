@@ -1,4 +1,4 @@
-# Publishing Guide for @tsichart/core (Time Series Interactive Charts)
+# Publishing Guide for tsichart-core (Time Series Interactive Charts)
 
 This guide walks you through publishing this library to npm as a generic, reusable package.
 
@@ -33,23 +33,23 @@ The following changes have been made to convert this from Microsoft's TSIClient 
 
 ### Step 1: Package Name - ALREADY CHOSEN ✅
 
-Package name: **`@tsichart/core`**
+Package name: **`tsichart-core`**
 
 This name was chosen because:
 - "TSI" rebranded as "Time Series Interactive" (not Time Series Insights)
-- Scoped package allows future expansion (@tsichart/react, @tsichart/themes, etc.)
+- Scoped package allows future expansion (tsichart-react, @tsichart/themes, etc.)
 - Professional, memorable, and maintains some continuity with original name
 - Short and easy to remember
 
 **Verify availability:**
 ```bash
-npm view @tsichart/core
+npm view tsichart-core
 # Should show "npm ERR! 404 Not Found" if available
 ```
 
 ### Step 2: Update All References - ALREADY DONE ✅
 
-Files already updated with `@tsichart/core`:
+Files already updated with `tsichart-core`:
 - [x] `package.json` - name field
 - [x] `README.md` - all import examples
 - [x] `CHANGELOG.md` - package references
@@ -130,12 +130,12 @@ npm view @yourscope/timeseries-charts
 npm install @yourscope/timeseries-charts
 ```
 
-## Package Name: @tsichart/core ✅
+## Package Name: tsichart-core ✅
 
 **Chosen and implemented!**
 
 Alternative names that were considered:
-- `chronos-charts` (good fallback if @tsichart/core is taken)
+- `chronos-charts` (good fallback if tsichart-core is taken)
 - `@temporal/charts`
 - `timeseries-visualizer`
 - `timeline-charts`
@@ -144,7 +144,7 @@ Alternative names that were considered:
 
 - [x] All Azure/TSI/Microsoft references removed from user-facing docs
 - [x] TSI rebranded as "Time Series Interactive"
-- [x] Package name chosen: `@tsichart/core`
+- [x] Package name chosen: `tsichart-core`
 - [x] Package name updated everywhere
 - [ ] ⚠️ **Author information updated** (YOU NEED TO DO THIS)
 - [ ] ⚠️ **Repository URL updated with your GitHub username** (YOU NEED TO DO THIS)
@@ -175,9 +175,9 @@ Alternative names that were considered:
 
 4. **Badges already added to README:**
    ```markdown
-   [![npm version](https://badge.fury.io/js/%40tsichart%2Fcore.svg)](https://badge.fury.io/js/@tsichart/core)
+   [![npm version](https://badge.fury.io/js/%40tsichart%2Fcore.svg)](https://badge.fury.io/js/tsichart-core)
    [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-   [![Downloads](https://img.shields.io/npm/dm/@tsichart/core.svg)](https://www.npmjs.com/package/@tsichart/core)
+   [![Downloads](https://img.shields.io/npm/dm/tsichart-core.svg)](https://www.npmjs.com/package/tsichart-core)
    ```
 
 ## Maintaining the Package

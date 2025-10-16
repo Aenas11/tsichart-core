@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Beta Release - Monorepo Restructure
 
-This is a **beta release** of `@tsichart/core` for testing and feedback before the final v2.0.0 release.
+This is a **beta release** of `tsichart-core` for testing and feedback before the final v2.0.0 release.
 
 ### Added
 - ✨ **Monorepo Structure**: Migrated to pnpm workspaces for better package management
@@ -28,7 +28,7 @@ This is a **beta release** of `@tsichart/core` for testing and feedback before t
 - ✨ **Release Documentation**: Comprehensive RELEASE_GUIDE.md
 
 ### Changed
-- 🔄 **Package Name**: Scoped package `@tsichart/core` (was `tsichart-core`)
+- 🔄 **Package Name**: Scoped package `tsichart-core` (was `tsichart-core`)
 - 🔄 **Build System**: Unified on Rollup 4 for consistent, optimized builds
 - 🔄 **Export Structure**: Clean, modular exports instead of window globals
 - 🔄 **Directory Structure**: Reorganized into `packages/core` monorepo structure
@@ -46,7 +46,7 @@ This is a **beta release** of `@tsichart/core` for testing and feedback before t
 
 ### Breaking Changes
 - ❌ **Removed `window.TsiClient` global** - No longer compatible with UMD browser scripts
-- ❌ **Changed package name** - Update from `tsichart-core` to `@tsichart/core`
+- ❌ **Changed package name** - Update from `tsichart-core` to `tsichart-core`
 - ❌ **Changed import paths** - See migration guide below
 - ❌ **Removed UMD build** - Use ESM or CommonJS instead
 
@@ -67,26 +67,26 @@ import TsiClient from 'tsichart-core';
 **After (v2.0):**
 ```typescript
 // ESM
-import { UXClient, LineChart } from '@tsichart/core';
-import '@tsichart/core/styles';
+import { UXClient, LineChart } from 'tsichart-core';
+import 'tsichart-core/styles';
 
 const uxClient = new UXClient();
 const chart = new LineChart(containerElement);
 
 // CommonJS
-const { UXClient, LineChart } = require('@tsichart/core');
-require('@tsichart/core/styles');
+const { UXClient, LineChart } = require('tsichart-core');
+require('tsichart-core/styles');
 ```
 
 **Tree-shaking Example:**
 ```typescript
 // Import only what you need
-import { LineChart } from '@tsichart/core/components/LineChart';
-import { ChartOptions } from '@tsichart/core/models/ChartOptions';
+import { LineChart } from 'tsichart-core/components/LineChart';
+import { ChartOptions } from 'tsichart-core/models/ChartOptions';
 ```
 
 ### Package Details
-- **Package**: `@tsichart/core`
+- **Package**: `tsichart-core`
 - **Version**: 2.0.0
 - **License**: MIT
 - **Repository**: https://github.com/Aenas11/tsichart-core
@@ -123,8 +123,8 @@ import { ChartOptions } from '@tsichart/core/models/ChartOptions';
 - 🧪 Add integration tests for complex components (planned)
 - 🎨 Add visual regression testing (planned)
 - ⚡ Performance benchmarks (planned)
-- 📦 React package `@tsichart/react` (deferred - not in scope for v2.0)
-- 📦 Vue package `@tsichart/vue` (deferred - not in scope for v2.0)
+- 📦 React package `tsichart-react` (deferred - not in scope for v2.0)
+- 📦 Vue package `tsichart-vue` (deferred - not in scope for v2.0)
 
 ### Contributors
 - Alex Sysoiev (@Aenas11)
@@ -134,7 +134,7 @@ import { ChartOptions } from '@tsichart/core/models/ChartOptions';
 ## [1.0.0] - 2024-10-13
 
 ### Added
-- First release as **Time Series Interactive Charts** (`@tsichart/core`)
+- First release as **Time Series Interactive Charts** (`tsichart-core`)
 - Community-maintained generic time series visualization library
 - Full TypeScript support with type definitions
 - Tree-shakeable ES modules
@@ -142,7 +142,7 @@ import { ChartOptions } from '@tsichart/core/models/ChartOptions';
 - 20+ interactive chart components for time series visualization
 
 ### Changed
-- Rebranded from Microsoft's `tsiclient` to `@tsichart/core`
+- Rebranded from Microsoft's `tsiclient` to `tsichart-core`
 - **TSI** now stands for **Time Series Interactive** (not Time Series Insights)
 - Updated all branding to be generic (removed Azure-specific references)
 - Modernized build system and dependencies

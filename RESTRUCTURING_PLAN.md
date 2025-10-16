@@ -30,7 +30,7 @@
 ```
 tsichart-core/                         # Root repository
 ├── packages/
-│   ├── core/                          # @tsichart/core - Framework-agnostic
+│   ├── core/                          # tsichart-core - Framework-agnostic
 │   │   ├── src/
 │   │   │   ├── components/            # All chart components
 │   │   │   ├── models/                # Data models
@@ -51,7 +51,7 @@ tsichart-core/                         # Root repository
 │   │   ├── tsconfig.json
 │   │   └── README.md
 │   │
-│   ├── react/                         # @tsichart/react
+│   ├── react/                         # tsichart-react
 │   │   ├── src/
 │   │   │   ├── components/            # React wrappers
 │   │   │   │   ├── LineChart.tsx
@@ -68,7 +68,7 @@ tsichart-core/                         # Root repository
 │   │   ├── jest.config.js
 │   │   └── README.md
 │   │
-│   ├── vue/                           # @tsichart/vue
+│   ├── vue/                           # tsichart-vue
 │   │   ├── src/
 │   │   │   ├── components/            # Vue component wrappers
 │   │   │   │   ├── LineChart.vue
@@ -214,7 +214,7 @@ export { default as Heatmap } from './components/Heatmap';
 #### 2.3 Create Core package.json
 ```json
 {
-  "name": "@tsichart/core",
+  "name": "tsichart-core",
   "version": "2.0.0",
   "description": "Framework-agnostic time series charting library",
   "main": "./dist/index.js",
@@ -462,8 +462,8 @@ describe('Chart Interactions', () => {
 ```typescript
 // packages/react/src/components/LineChart.tsx
 import React, { useEffect, useRef } from 'react';
-import { LineChart as CoreLineChart } from '@tsichart/core';
-import '@tsichart/core/styles';
+import { LineChart as CoreLineChart } from 'tsichart-core';
+import 'tsichart-core/styles';
 
 export interface LineChartProps {
   data: any[];
@@ -534,14 +534,14 @@ export function useChart<T>(
 #### 4.3 React Package.json
 ```json
 {
-  "name": "@tsichart/react",
+  "name": "tsichart-react",
   "version": "2.0.0",
   "description": "React components for TSIChart",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "peerDependencies": {
-    "@tsichart/core": "^2.0.0",
+    "tsichart-core": "^2.0.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
   },
@@ -565,8 +565,8 @@ export function useChart<T>(
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue';
-import { LineChart as CoreLineChart } from '@tsichart/core';
-import '@tsichart/core/styles';
+import { LineChart as CoreLineChart } from 'tsichart-core';
+import 'tsichart-core/styles';
 
 interface Props {
   data: any[];
@@ -706,11 +706,11 @@ jobs:
 
 | Package | Unit Tests | Integration | Coverage Target |
 |---------|-----------|-------------|-----------------|
-| @tsichart/core (utils) | ✅ High Priority | N/A | 95% |
-| @tsichart/core (models) | ✅ High Priority | N/A | 90% |
-| @tsichart/core (components) | ✅ High Priority | ✅ Medium | 80% |
-| @tsichart/react | ✅ Medium Priority | ✅ Medium | 75% |
-| @tsichart/vue | ✅ Medium Priority | ✅ Medium | 75% |
+| tsichart-core (utils) | ✅ High Priority | N/A | 95% |
+| tsichart-core (models) | ✅ High Priority | N/A | 90% |
+| tsichart-core (components) | ✅ High Priority | ✅ Medium | 80% |
+| tsichart-react | ✅ Medium Priority | ✅ Medium | 75% |
+| tsichart-vue | ✅ Medium Priority | ✅ Medium | 75% |
 
 ---
 
@@ -745,7 +745,7 @@ jobs:
 - [X] CI/CD workflows updated with test steps
 - [X] CHANGELOG.md updated with v2.0.0 release notes
 - [X] RELEASE_GUIDE.md created with publishing instructions
-- [ ] Publish @tsichart/core to npm
+- [ ] Publish tsichart-core to npm
 - [ ] Create GitHub release with tag v2.0.0
 - [ ] Update documentation site (if applicable)
 
@@ -785,7 +785,7 @@ This restructure introduces **breaking changes**:
    import TsiClient from 'tsichart-core';
    
    // New
-   import { LineChart, UXClient } from '@tsichart/core';
+   import { LineChart, UXClient } from 'tsichart-core';
    ```
 
 2. **No window globals**:
@@ -794,7 +794,7 @@ This restructure introduces **breaking changes**:
    const tsiClient = new window.TsiClient();
    
    // New
-   import { UXClient } from '@tsichart/core';
+   import { UXClient } from 'tsichart-core';
    const uxClient = new UXClient();
    ```
 
@@ -804,12 +804,12 @@ This restructure introduces **breaking changes**:
    import 'tsichart-core/tsiclient.css';
    
    // New
-   import '@tsichart/core/styles';
+   import 'tsichart-core/styles';
    ```
 
 ### Migration Path
 Provide a **legacy package** (`tsiclient-legacy`) that:
-- Re-exports everything from `@tsichart/core`
+- Re-exports everything from `tsichart-core`
 - Adds window globals for backwards compatibility
 - Includes deprecation warnings
 

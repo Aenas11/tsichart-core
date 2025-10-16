@@ -1,4 +1,4 @@
-# @tsichart/core
+# tsichart-core
 
 Framework-agnostic time series charting library for building interactive data visualizations.
 
@@ -15,18 +15,18 @@ Framework-agnostic time series charting library for building interactive data vi
 ## Installation
 
 ```bash
-npm install @tsichart/core
+npm install tsichart-core
 # or
-pnpm add @tsichart/core
+pnpm add tsichart-core
 # or
-yarn add @tsichart/core
+yarn add tsichart-core
 ```
 
 ## Quick Start
 
 ```typescript
-import { LineChart } from '@tsichart/core';
-import '@tsichart/core/styles';
+import { LineChart } from 'tsichart-core';
+import 'tsichart-core/styles';
 
 // Create a container element
 const container = document.getElementById('chart-container');
@@ -68,8 +68,8 @@ chart.render(data, options, aggregateExpressionOptions);
 ## Usage with Frameworks
 
 For framework-specific wrappers, see:
-- **React**: `@tsichart/react`
-- **Vue**: `@tsichart/vue`
+- **React**: `tsichart-react`
+- **Vue**: `tsichart-vue`
 
 ## Documentation
 

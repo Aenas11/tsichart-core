@@ -1,19 +1,19 @@
-# @tsichart/react
+# tsichart-react
 
 React components for TSIChart - Time Series Interactive Charts.
 
 ## Installation
 
 ```bash
-npm install @tsichart/react @tsichart/core
+npm install tsichart-react tsichart-core
 ```
 
 ## Usage
 
 ```tsx
 import React from 'react';
-import { LineChart } from '@tsichart/react';
-import '@tsichart/core/styles';
+import { LineChart } from 'tsichart-react';
+import 'tsichart-core/styles';
 
 function App() {
   const data = [/* your time series data */];

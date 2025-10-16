@@ -1,6 +1,6 @@
-# Release Guide - @tsichart/core
+# Release Guide - tsichart-core
 
-This guide walks you through releasing a new version of `@tsichart/core` to npm.
+This guide walks you through releasing a new version of `tsichart-core` to npm.
 
 ## Prerequisites
 
@@ -138,10 +138,10 @@ npm publish --access public --tag latest
 
 ```bash
 # Check on npm registry
-npm view @tsichart/core
+npm view tsichart-core
 
 # Install in a test project
-npm install @tsichart/core
+npm install tsichart-core
 ```
 
 ### 8. Create Git Tag and Release
@@ -200,7 +200,7 @@ The workflow will:
 
 ### "You do not have permission to publish"
 - Ensure you're logged in: `npm whoami`
-- Check package name isn't taken: `npm view @tsichart/core`
+- Check package name isn't taken: `npm view tsichart-core`
 - Verify you have access: `npm access ls-packages`
 
 ### "Package name too similar to existing package"
@@ -223,11 +223,11 @@ The workflow will:
 
 ## Package Information
 
-- **Package Name**: `@tsichart/core`
+- **Package Name**: `tsichart-core`
 - **Current Version**: `2.0.0`
 - **License**: MIT
 - **Repository**: https://github.com/Aenas11/tsichart-core
-- **Registry**: https://www.npmjs.com/package/@tsichart/core
+- **Registry**: https://www.npmjs.com/package/tsichart-core
 
 ## Versioning Strategy
 

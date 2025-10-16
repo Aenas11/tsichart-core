@@ -41,15 +41,15 @@ git push origin v2.0.0
 
 ```bash
 # Check package info
-npm view @tsichart/core
+npm view tsichart-core
 
 # Install in a test project
-npm install @tsichart/core
+npm install tsichart-core
 
 # Or use npx
 npx create-react-app my-test-app
 cd my-test-app
-npm install @tsichart/core
+npm install tsichart-core
 ```
 
 ## Test Local Package Before Publishing
@@ -68,7 +68,7 @@ npm install /workspaces/TSIClient/packages/core/tsichart-core-2.0.0.tgz
 
 # Test the import
 node
-> const { UXClient } = require('@tsichart/core');
+> const { UXClient } = require('tsichart-core');
 > console.log(UXClient);
 ```
 
@@ -93,7 +93,7 @@ npm login
 **"Package name too similar to existing package"**
 ```bash
 # Check if name is available
-npm view @tsichart/core
+npm view tsichart-core
 # If taken, choose different name
 ```
 
@@ -106,7 +106,7 @@ npm version patch  # 2.0.0 -> 2.0.1
 
 ## Current Package Status
 
-- **Name**: @tsichart/core
+- **Name**: tsichart-core
 - **Version**: 2.0.0
 - **Status**: Ready to publish
 - **Tests**: 114 (109 passing, 5 skipped)

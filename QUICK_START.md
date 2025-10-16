@@ -1,4 +1,4 @@
-# Quick Start Guide - Publishing @tsichart/core
+# Quick Start Guide - Publishing tsichart-core
 
 ## 🎉 Good News!
 
@@ -6,7 +6,7 @@ Almost everything is done! The package is **97% ready** to publish.
 
 ## ✅ What's Already Complete
 
-- ✅ Package name: `@tsichart/core`
+- ✅ Package name: `tsichart-core`
 - ✅ TSI rebranded as **"Time Series Interactive"**
 - ✅ All documentation updated
 - ✅ README.md with examples
@@ -15,7 +15,7 @@ Almost everything is done! The package is **97% ready** to publish.
 - ✅ LICENSE with dual copyright
 - ✅ .npmignore configured
 - ✅ Build system ready
-- ✅ All import examples use `@tsichart/core`
+- ✅ All import examples use `tsichart-core`
 
 ## ⚠️ What You Need to Do (3 Minutes)
 
@@ -64,7 +64,7 @@ Verify that `dist/` folder is created with these files:
 ### 4. Check Package Name Availability
 
 ```bash
-npm view @tsichart/core
+npm view tsichart-core
 ```
 
 If you see **"npm ERR! 404 Not Found"** - Great! The name is available.
@@ -92,18 +92,18 @@ That's it! 🚀
 ## After Publishing
 
 Your package will be available at:
-- **npm:** https://www.npmjs.com/package/@tsichart/core
-- **unpkg CDN:** https://unpkg.com/@tsichart/core
+- **npm:** https://www.npmjs.com/package/tsichart-core
+- **unpkg CDN:** https://unpkg.com/tsichart-core
 
 Users can install with:
 ```bash
-npm install @tsichart/core
+npm install tsichart-core
 ```
 
 And import with:
 ```js
-import TsiClient from '@tsichart/core';
-import '@tsichart/core/tsiclient.css';
+import TsiClient from 'tsichart-core';
+import 'tsichart-core/tsiclient.css';
 ```
 
 ## Next Steps (Optional)

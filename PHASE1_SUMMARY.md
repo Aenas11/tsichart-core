@@ -36,7 +36,7 @@ Phase 1 of the TSIChart monorepo restructuring has been successfully implemented
 
 ### 4. Package Configuration ✅
 - **Core package.json** with:
-  - Name: `@tsichart/core`
+  - Name: `tsichart-core`
   - Version: `2.0.0`
   - Modern export maps (ESM + CJS)
   - Proper peer dependencies
@@ -123,7 +123,7 @@ tsichart-core/
 ### Import Paths (Not Yet Breaking - Old Structure Still Exists)
 ```typescript
 // Future (after migration complete):
-import { LineChart } from '@tsichart/core';
+import { LineChart } from 'tsichart-core';
 
 // Old (still works):
 import TsiClient from 'tsichart-core';
@@ -131,11 +131,11 @@ import TsiClient from 'tsichart-core';
 
 ### Window Globals Removed (Core Package Only)
 ```typescript
-// ❌ No longer in @tsichart/core:
+// ❌ No longer in tsichart-core:
 window.TsiClient
 
 // ✅ Use instead:
-import { UXClient } from '@tsichart/core';
+import { UXClient } from 'tsichart-core';
 ```
 
 ## What's Still Working

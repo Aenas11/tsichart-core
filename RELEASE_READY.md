@@ -1,4 +1,4 @@
-# 🚀 @tsichart/core v2.0.0 - Ready for Rel## 📦 Package Information
+# 🚀 tsichart-core v2.0.0 - Ready for Rel## 📦 Package Information
 
 ```json
 {
@@ -23,7 +23,7 @@
 - ✅ **No blocking errors**: All systems operational
 
 ### Package Contents
-- ✅ **Package name**: `@tsichart/core`
+- ✅ **Package name**: `tsichart-core`
 ### Package Contents
 - ✅ **Package name**: `tsichart-core`
 - ✅ **Version**: `2.0.0-beta.1`
@@ -57,7 +57,7 @@
 
 ```json
 {
-  "name": "@tsichart/core",
+  "name": "tsichart-core",
   "version": "2.0.0",
   "description": "Framework-agnostic time series charting library - Core package",
   "license": "MIT",
@@ -68,7 +68,7 @@
 ```
 
 **Repository**: https://github.com/Aenas11/tsichart-core
-**NPM Registry**: https://www.npmjs.com/package/@tsichart/core (after publishing)
+**NPM Registry**: https://www.npmjs.com/package/tsichart-core (after publishing)
 **Author**: Alex Sysoiev <alexander.sysoev@gmail.com>
 
 ---
@@ -88,7 +88,7 @@ npm whoami || npm login
 npm publish --access public
 
 # 4. Verify publication
-npm view @tsichart/core
+npm view tsichart-core
 
 # 5. Create and push git tag
 cd /workspaces/TSIClient
@@ -154,7 +154,7 @@ Coverage Summary:
 
 ### Breaking Changes
 - ❌ Removed `window.TsiClient` global
-- ❌ Changed package name to `@tsichart/core`
+- ❌ Changed package name to `tsichart-core`
 - ❌ Removed UMD build (use ESM or CommonJS)
 
 ---
@@ -185,7 +185,7 @@ mkdir /tmp/test-install
 cd /tmp/test-install
 npm init -y
 npm install /workspaces/TSIClient/packages/core/tsichart-core-2.0.0.tgz
-node -e "console.log(require('@tsichart/core'))"
+node -e "console.log(require('tsichart-core'))"
 ```
 
 ---
@@ -196,17 +196,17 @@ After successful publication:
 
 1. **Verify on npm**
    ```bash
-   npm view @tsichart/core
-   npm info @tsichart/core versions
+   npm view tsichart-core
+   npm info tsichart-core versions
    ```
 
 2. **Test installation**
    ```bash
-   npm install @tsichart/core
+   npm install tsichart-core
    # Or try with npx
    npx create-react-app test-app
    cd test-app
-   npm install @tsichart/core
+   npm install tsichart-core
    ```
 
 3. **Create GitHub Release**
@@ -231,7 +231,7 @@ After successful publication:
 
 ✅ Package published to npm registry
 ✅ GitHub release created with tag v2.0.0
-✅ Package installable via `npm install @tsichart/core`
+✅ Package installable via `npm install tsichart-core`
 ✅ No major installation issues reported
 ✅ Documentation accessible and accurate
 

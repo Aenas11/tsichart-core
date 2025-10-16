@@ -13,7 +13,7 @@ Updated all GitHub Actions workflows to support the new monorepo structure while
 - Switched from `npm` to `pnpm` workspaces
 - Updated Node.js version: 20 → 22
 - Added pnpm setup with caching
-- Now publishes `@tsichart/core` package
+- Now publishes `tsichart-core` package
 - Placeholders for future React/Vue packages
 - Uses `pnpm --filter` for selective publishing
 
@@ -78,7 +78,7 @@ graph LR
 graph LR
     A[Tag v*] --> B[publishNpm.yml]
     B --> C[Build All]
-    C --> D[Publish @tsichart/core]
+    C --> D[Publish tsichart-core]
 ```
 
 ### On Main Branch Push:
@@ -183,7 +183,7 @@ All workflows are backwards compatible. The legacy build system continues to wor
 Uncomment the publish steps in `publishNpm.yml`:
 ```yaml
 - name: Publish React package
-  run: pnpm --filter @tsichart/react publish --provenance --access public --no-git-checks
+  run: pnpm --filter tsichart-react publish --provenance --access public --no-git-checks
   env:
     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
