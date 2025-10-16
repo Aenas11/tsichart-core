@@ -59,7 +59,7 @@
                 height: 14px;
                 top: 8px;
                 left: calc(100% - 20px);
-                background: url(../../icons/chevron.svg) no-repeat;
+                background: url(../../Icons/chevron.svg) no-repeat;
                 transform: rotate(-90deg);
             }
         }
@@ -175,75 +175,75 @@
         $grays: grays('dark');
         @include hierarchyColors($grays);
         .tsi-caret-icon, .tsi-down-caret-icon {
-            background-image: url(../../icons/CaretClosed_Dark_Theme.svg);
+            background-image: url(../../Icons/CaretClosed_Dark_Theme.svg);
         }
         .tsi-pin-icon {
-            background-image: url(../../icons/Pin_Icon_Dark_Theme.svg);
+            background-image: url(../../Icons/Pin_Icon_Dark_Theme.svg);
         }
         .tsi-close-icon {
-            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
+            background-image: url(../../Icons/Close_Icon_Dark_Theme.svg);
         }
 
         .tsi-tree-icon {
-            background-image: url(../../icons/Tree_Icon_Dark_Theme.svg);
+            background-image: url(../../Icons/Tree_Icon_Dark_Theme.svg);
         }
 
         .tsi-list-icon {
-            background-image: url(../../icons/List_Icon_Dark_Theme.svg);
+            background-image: url(../../Icons/List_Icon_Dark_Theme.svg);
         }
 
         .tsi-filter-icon {
-            background-image: url(../../icons/Filter_Icon_Dark_Theme.svg);
+            background-image: url(../../Icons/Filter_Icon_Dark_Theme.svg);
         }
 
         .tsi-spinner-icon {
-            background-image: url(../../icons/Spinner.svg);
+            background-image: url(../../Icons/Spinner.svg);
         }
 
         .tsi-search-icon {
-            background-image: url(../../icons/Search_Dark.svg);
+            background-image: url(../../Icons/Search_Dark.svg);
         }
 
         .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);                    
+            background-image: url(../../Icons/Close_Icon_Dark_Theme.svg);                    
         }
     }
     &.tsi-light{
         $grays: grays('light');
         @include hierarchyColors($grays);
         .tsi-caret-icon, .tsi-down-caret-icon{
-            background-image: url(../../icons/CaretClosed_Light_Theme.svg);
+            background-image: url(../../Icons/CaretClosed_Light_Theme.svg);
         }
         .tsi-pin-icon {
-            background-image: url(../../icons/Pin_Icon_Light_Theme.svg);
+            background-image: url(../../Icons/Pin_Icon_Light_Theme.svg);
         }
 
         .tsi-close-icon {
-            background-image: url(../../icons/Close_Icon_Light_Theme.svg);
+            background-image: url(../../Icons/Close_Icon_Light_Theme.svg);
         }
 
         .tsi-tree-icon {
-            background-image: url(../../icons/Tree_Icon_Light_Theme.svg);
+            background-image: url(../../Icons/Tree_Icon_Light_Theme.svg);
         }
 
         .tsi-list-icon {
-            background-image: url(../../icons/List_Icon_Light_Theme.svg);
+            background-image: url(../../Icons/List_Icon_Light_Theme.svg);
         }
 
         .tsi-filter-icon {
-            background-image: url(../../icons/Filter_Icon_Light_Theme.svg);
+            background-image: url(../../Icons/Filter_Icon_Light_Theme.svg);
         }
 
         .tsi-spinner-icon {
-            background-image: url(../../icons/Spinner.svg);
+            background-image: url(../../Icons/Spinner.svg);
         }
         
         .tsi-search-icon {
-            background-image: url(../../icons/Search_Light.svg);
+            background-image: url(../../Icons/Search_Light.svg);
         }
 
         .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Light_Theme.svg);                    
+            background-image: url(../../Icons/Close_Icon_Light_Theme.svg);                    
         }
     }
 
@@ -735,7 +735,7 @@
                 width: 16px;
                 height: 16px;
                 margin: 0;
-                background-image: url('../../icons/checkboxes.svg');
+                background-image: url('../../Icons/checkboxes.svg');
                 background-size: contain;
                 background-repeat: no-repeat;
             }
@@ -747,13 +747,13 @@
                 background-repeat: no-repeat;
                 flex-shrink: 0;
                 &.categorical {
-                    background-image: url('../../icons/categorical.svg');
+                    background-image: url('../../Icons/categorical.svg');
                 }
                 &.aggregate {
-                    background-image: url('../../icons/aggregate.svg');
+                    background-image: url('../../Icons/aggregate.svg');
                 }
                 &.numeric {
-                    background-image: url('../../icons/numeric.svg');
+                    background-image: url('../../Icons/numeric.svg');
                 }
             }
 

@@ -148,7 +148,7 @@
         .tsi-select {
             top: 4px;
             width: 100px;
-            background: url(../../icons/chevron.svg) 16px / 16px no-repeat;
+            background: url(../../Icons/chevron.svg) 16px / 16px no-repeat;
             background-position-y: 12px;
             background-position-x: calc(100% - 4px);
             width: 132px;
@@ -187,7 +187,7 @@
                 margin-left: 8px;
                 border: none;                
                 cursor: pointer;
-                background: url(../../icons/Calendar_Light_Theme.svg) 0% / 5% no-repeat;
+                background: url(../../Icons/Calendar_Light_Theme.svg) 0% / 5% no-repeat;
                 background-position-y: 10px;
                 background-size: 13px;
                 background-position-x: 8px;
@@ -242,18 +242,18 @@
 
         .tsi-zoomButtonIn{
             background-size: 16px;
-            background: url(../../icons/ZoomIn_Light_Theme.svg) no-repeat;
+            background: url(../../Icons/ZoomIn_Light_Theme.svg) no-repeat;
             @media screen and (-ms-high-contrast: white-on-black) {   
-                background: url(../../icons/Zoomin_Dark_Theme.svg) no-repeat;             
+                background: url(../../Icons/Zoomin_Dark_Theme.svg) no-repeat;             
             }  
         }
         .tsi-zoomButtonOut{
             background-size: 16px;
             margin-top: 4px;
             margin-bottom: 4px;
-            background: url(../../icons/ZoomOut_Light_Theme.svg) no-repeat;
+            background: url(../../Icons/ZoomOut_Light_Theme.svg) no-repeat;
             @media screen and (-ms-high-contrast: white-on-black) {    
-                 background: url(../../icons/ZoomOut_Dark_Theme.svg) no-repeat;             
+                 background: url(../../Icons/ZoomOut_Dark_Theme.svg) no-repeat;             
             }   
         }
     }

@@ -32,14 +32,14 @@
     $grays: grays("dark");
     @include bcColors($grays);
     .tsi-resizeGutter {
-      background-image: url(./../../icons/drag_handle_dark.svg);
+      background-image: url(./../../Icons/drag_handle_dark.svg);
     }
   }
   &.tsi-light {
     $grays: grays("light");
     @include bcColors($grays);
     .tsi-resizeGutter {
-      background-image: url(./../../icons/drag_handle_light.svg);
+      background-image: url(./../../Icons/drag_handle_light.svg);
     }
   }
 
@@ -68,10 +68,10 @@
   }
   .tsi-stackedButton {
     &.tsi-lightTheme {
-      background-image: url(../../icons/Layer_Icon_Light_Theme.svg);
+      background-image: url(../../Icons/Layer_Icon_Light_Theme.svg);
     }
     &.tsi-darkTheme {
-      background-image: url(../../icons/Layer_Icon_Dark_Theme.svg);
+      background-image: url(../../Icons/Layer_Icon_Dark_Theme.svg);
     }
   }
 }

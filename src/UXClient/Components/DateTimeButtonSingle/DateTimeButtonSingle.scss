@@ -22,14 +22,14 @@
 		$grays: grays('dark');
         @include dateTimeButtonSingleColors($grays);
         .tsi-dateTimeButton {
-            background-image: url('../../icons/dateTimeDark.svg');
+            background-image: url('../../Icons/dateTimeDark.svg');
         }
 	}
 	&.tsi-light{
 		$grays: grays('light');
         @include dateTimeButtonSingleColors($grays);
         .tsi-dateTimeButton {
-            background-image: url('../../icons/dateTimeLight.svg');
+            background-image: url('../../Icons/dateTimeLight.svg');
         }
     }
 

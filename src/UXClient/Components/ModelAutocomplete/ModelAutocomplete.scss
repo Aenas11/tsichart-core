@@ -43,20 +43,20 @@
         $grays: grays('dark');
         @include modelAutocompleteColors($grays);
         .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);                    
+            background-image: url(../../Icons/Close_Icon_Dark_Theme.svg);                    
         }
         .tsi-search-icon {
-            background-image: url(../../icons/Search_Dark.svg);
+            background-image: url(../../Icons/Search_Dark.svg);
         }
     }
     &.tsi-light{
         $grays: grays('light');
         @include modelAutocompleteColors($grays);
         .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Light_Theme.svg);                    
+            background-image: url(../../Icons/Close_Icon_Light_Theme.svg);                    
         }
         .tsi-search-icon {
-            background-image: url(../../icons/Search_Light.svg);
+            background-image: url(../../Icons/Search_Light.svg);
         }
     }
 

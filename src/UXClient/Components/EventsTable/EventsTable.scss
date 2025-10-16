@@ -81,15 +81,15 @@
     @include chartColors($grays);
     @include tableColors($grays);
     .tsi-downloadEventsIcon {
-      background-image: url("../../icons/Download_Icon_Dark.svg");
+      background-image: url("../../Icons/Download_Icon_Dark.svg");
     }
 
     .tsi-columnSortIcon {
       &.down {
-        background-image: url("../../icons/SortDown_Dark.svg");
+        background-image: url("../../Icons/SortDown_Dark.svg");
       }
       &.up {
-        background-image: url("../../icons/SortUp_Dark.svg");
+        background-image: url("../../Icons/SortUp_Dark.svg");
       }
     }
   }
@@ -98,15 +98,15 @@
     @include chartColors($grays);
     @include tableColors($grays);
     .tsi-downloadEventsIcon {
-      background-image: url("../../icons/Download_Icon_Light.svg");
+      background-image: url("../../Icons/Download_Icon_Light.svg");
     }
 
     .tsi-columnSortIcon {
       &.down {
-        background-image: url("../../icons/SortDown_Light.svg");
+        background-image: url("../../Icons/SortDown_Light.svg");
       }
       &.up {
-        background-image: url("../../icons/SortUp_Light.svg");
+        background-image: url("../../Icons/SortUp_Light.svg");
       }
     }
   }
@@ -121,22 +121,22 @@
     height: 16px;
     pointer-events: none;
     &.String {
-      background-image: url("../../icons/abc.svg");
+      background-image: url("../../Icons/abc.svg");
     }
     &.DateTime {
-      background-image: url("../../icons/date.svg");
+      background-image: url("../../Icons/date.svg");
     }
     &.Double,
     &.Long {
-      background-image: url("../../icons/number.svg");
+      background-image: url("../../Icons/number.svg");
     }
     &.Bool {
-      background-image: url("../../icons/boolean.svg");
+      background-image: url("../../Icons/boolean.svg");
     }
     &.tsid {
       pointer-events: auto;
       margin-right: 8px;
-      background-image: url("../../icons/key.svg");
+      background-image: url("../../Icons/key.svg");
     }
   }
 
@@ -298,7 +298,7 @@
       &.tsi-downloading {
         .tsi-downloadEventsIcon {
           animation: rotating 2s linear infinite;
-          background-image: url("../../icons/Spinner.svg");
+          background-image: url("../../Icons/Spinner.svg");
         }
       }
       .tsi-downloadEventsText {
@@ -375,7 +375,7 @@
           height: 16px;
           left: 4px;
           position: relative;
-          background-image: url("../../icons/checkboxes.svg");
+          background-image: url("../../Icons/checkboxes.svg");
         }
 
         .tsi-columnTypeIcon {

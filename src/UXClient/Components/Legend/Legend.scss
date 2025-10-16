@@ -218,9 +218,9 @@
       .tsi-seriesLabel {
         .tsi-seriesNameLabel .tsi-eyeIcon,
         .tsi-splitByContainer .tsi-splitByLabel .tsi-eyeIcon {
-          background-image: url(../../icons/Eye_light_theme.svg);
+          background-image: url(../../Icons/Eye_light_theme.svg);
           @media screen and (-ms-high-contrast: white-on-black) {
-            background-image: url(../../icons/Eye_dark_theme.svg);
+            background-image: url(../../Icons/Eye_dark_theme.svg);
           }
         }
       }
@@ -230,7 +230,7 @@
       .tsi-seriesLabel {
         .tsi-seriesNameLabel .tsi-eyeIcon,
         .tsi-splitByContainer .tsi-splitByLabel .tsi-eyeIcon {
-          background-image: url(../../icons/Eye_dark_theme.svg);
+          background-image: url(../../Icons/Eye_dark_theme.svg);
         }
       }
     }
@@ -298,7 +298,7 @@
         -moz-appearance: none;
         appearance: none;
         padding: 2px;
-        background-image: url(../../icons/chevron.svg);
+        background-image: url(../../Icons/chevron.svg);
         background-repeat: no-repeat;
         background-position-x: calc(100% - 4px);
         background-position-y: 7px;

@@ -55,14 +55,14 @@
     $grays: grays("dark");
     @include hmColors($grays);
     .tsi-resizeGutter {
-      background-image: url(./../../icons/drag_handle_dark.svg);
+      background-image: url(./../../Icons/drag_handle_dark.svg);
     }
   }
   &.tsi-light {
     $grays: grays("light");
     @include hmColors($grays);
     .tsi-resizeGutter {
-      background-image: url(./../../icons/drag_handle_light.svg);
+      background-image: url(./../../Icons/drag_handle_light.svg);
     }
   }
 

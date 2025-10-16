@@ -41,7 +41,7 @@
         @include colorPickerColors($grays);
 
         .tsi-noColor {
-            background-image: url(../../icons/ColorPicker_Light.svg) !important;
+            background-image: url(../../Icons/ColorPicker_Light.svg) !important;
         }
     }
 
@@ -50,7 +50,7 @@
         @include colorPickerColors($grays);
 
         .tsi-noColor {
-            background-image: url(../../icons/ColorPicker_Dark.svg) !important;
+            background-image: url(../../Icons/ColorPicker_Dark.svg) !important;
         }
     }
 
@@ -104,7 +104,7 @@
                 cursor: pointer;
     
                 &.tsi-selected {
-                    background-image: url(../../icons/Check.svg) !important;
+                    background-image: url(../../Icons/Check.svg) !important;
                     background-size: 70%;
                     background-repeat: no-repeat;
                     background-position: center;
