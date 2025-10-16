@@ -1,5 +1,5 @@
 {
-  "name": "@tsichart/core",
+  "name": "tsichart-core",
   "version": "2.0.0-beta.1",
   "description": "Framework-agnostic time series charting library - Core package",
   "keywords": [

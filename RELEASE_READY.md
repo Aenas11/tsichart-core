@@ -1,6 +1,19 @@
-# 🚀 @tsichart/core v2.0.0 - Ready for Release
+# 🚀 @tsichart/core v2.0.0 - Ready for Rel## 📦 Package Information
 
-## ✅ Release Readiness Checklist
+```json
+{
+  "name": "tsichart-core",
+  "version": "2.0.0-beta.1",
+  "description": "Framework-agnostic time series charting library - Core package",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts"
+}
+```
+
+**Repository**: https://github.com/Aenas11/tsichart-core
+**NPM Registry**: https://www.npmjs.com/package/tsichart-core (after publishing)se Readiness Checklist
 
 ### Build & Tests
 - ✅ **Build successful**: Rollup compilation complete
@@ -11,7 +24,9 @@
 
 ### Package Contents
 - ✅ **Package name**: `@tsichart/core`
-- ✅ **Version**: `2.0.0`
+### Package Contents
+- ✅ **Package name**: `tsichart-core`
+- ✅ **Version**: `2.0.0-beta.1`
 - ✅ **Size**: 395.2 KB (gzipped)
 - ✅ **Unpacked size**: 2.8 MB
 - ✅ **Files included**: 10 total

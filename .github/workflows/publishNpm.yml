@@ -50,7 +50,7 @@ jobs:
           echo "Publishing with tag: $(cat $GITHUB_OUTPUT | grep tag | cut -d= -f2)"
 
       - name: Publish core package
-        run: pnpm --filter @tsichart/core publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
+        run: pnpm --filter tsichart-core publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
