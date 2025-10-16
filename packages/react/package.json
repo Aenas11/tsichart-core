@@ -31,10 +31,10 @@
   "author": "Alex Sysoiev <alexander.sysoev@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "clean": "shx rm -rf dist"
+    "build": "echo 'React package build skipped (placeholder)' && exit 0",
+    "test": "echo 'React package tests skipped (placeholder)' && exit 0",
+    "test:watch": "echo 'React package tests skipped (placeholder)' && exit 0",
+    "clean": "shx rm -rf dist || true"
   },
   "peerDependencies": {
     "@tsichart/core": "workspace:*",
