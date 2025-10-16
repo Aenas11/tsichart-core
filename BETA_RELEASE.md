@@ -25,8 +25,8 @@ git commit -m "chore: prepare v2.0.0-beta.1 release with automated testing"
 
 #### 2. Push Changes to GitHub
 ```bash
-# Push to your branch
-git push origin refactor/monorepo-structure
+# Push to your branch (remote is named 'tsichart-core')
+git push tsichart-core refactor/monorepo-structure
 ```
 
 #### 3. Create and Push Beta Tag
@@ -35,7 +35,7 @@ git push origin refactor/monorepo-structure
 git tag -a v2.0.0-beta.1 -m "Beta release v2.0.0-beta.1 - Testing infrastructure and monorepo restructure"
 
 # Push the tag to trigger GitHub Actions
-git push origin v2.0.0-beta.1
+git push tsichart-core v2.0.0-beta.1
 ```
 
 #### 4. Monitor GitHub Actions
@@ -195,9 +195,9 @@ Make sure you have the NPM_TOKEN secret configured in GitHub:
 cd /workspaces/TSIClient
 git add .
 git commit -m "chore: prepare v2.0.0-beta.1 release"
-git push origin refactor/monorepo-structure
+git push tsichart-core refactor/monorepo-structure
 git tag -a v2.0.0-beta.1 -m "Beta release v2.0.0-beta.1"
-git push origin v2.0.0-beta.1
+git push tsichart-core v2.0.0-beta.1
 ```
 
 Then watch: https://github.com/Aenas11/tsichart-core/actions
