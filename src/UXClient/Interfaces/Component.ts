@@ -1,6 +1,6 @@
-import Utils from "../utils";
-import { TooltipMeasureFormat } from "./../constants/Enums";
-import { ChartOptions } from "../models/ChartOptions";
+import Utils from "../Utils";
+import { TooltipMeasureFormat } from "./../Constants/Enums";
+import { ChartOptions } from "../Models/ChartOptions";
 
 class Component {
 	public renderTarget;

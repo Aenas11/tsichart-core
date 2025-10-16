@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
 import { interpolatePath } from 'd3-interpolate-path';
 import './LinePlot.scss';
-import { Plot } from '../../interfaces/Plot';
-import Utils from '../../utils';
-import { DataTypes, YAxisStates } from "../../constants/Enums";
-import { AxisState } from '../../models/AxisState';
+import { Plot } from '../../Interfaces/Plot';
+import Utils from '../../Utils';
+import { DataTypes, YAxisStates } from "../../Constants/Enums";
+import { AxisState } from '../../Models/AxisState';
 
 class LinePlot extends Plot {
     private defs;

@@ -1,5 +1,5 @@
-import Utils from "../utils";
-import { valueTypes } from "./../constants/Enums";
+import Utils from "../Utils";
+import { valueTypes } from "./../Constants/Enums";
 import { TimeSeriesEvent } from "./TimeSeriesEvent";
 
 class EventsTableData {
@@ -33,8 +33,8 @@ class EventsTableData {
 
     public sortColumnKeys() {
         let columnKeys = Object.keys(this.columns);
-        let existingTsidColumnKeys = Object.values(this.columns).filter(c => c['isTsid']).map(c => c['key']); // detect existing time series id properties in column keys
-        columnKeys = existingTsidColumnKeys.concat(columnKeys.filter(c => !existingTsidColumnKeys.includes(c))); // put these time series id properties to the beginning of the column key list
+        let existingTsidColumnKeys = Object.keys(this.columns).map(k => (this.columns as any)[k]).filter(c => c['isTsid']).map(c => c['key']); // detect existing time series id properties in column keys
+        columnKeys = existingTsidColumnKeys.concat(columnKeys.filter(c => existingTsidColumnKeys.indexOf(c) === -1)); // put these time series id properties to the beginning of the column key list
         let offsetKey = this.offsetName + "_DateTime";
 
         let lessTimestamps = columnKeys.filter((columnKey) => {
@@ -123,14 +123,14 @@ class EventsTableData {
                         name: cell.name,
                         visible: true,
                         type: cell.type,
-                        isTsid: timeSeriesIdPropertyKeys.includes(cell.key)
+                        isTsid: timeSeriesIdPropertyKeys.indexOf(cell.key) !== -1
                     }
                 } else {
                     newColumns[cell.key] = this.columns[cell.key];
                 }
             })
         });
-        var visibleColumnCounter = Object.values(newColumns).filter(c => c['isTsid']).length;
+        var visibleColumnCounter = Object.keys(newColumns).map(k => (newColumns as any)[k]).filter(c => c['isTsid']).length;
         Object.keys(newColumns).forEach(columnKey => {
             if (newColumns[columnKey].isTsid) {
                 newColumns[columnKey].visible = true;

@@ -2,9 +2,9 @@ import * as d3 from "d3";
 import "./AvailabilityChart.scss";
 import LineChart from "../LineChart/LineChart";
 import DateTimePicker from "../DateTimePicker/DateTimePicker";
-import Utils from "../../utils";
-import { ChartComponent } from "../../interfaces/ChartComponent";
-import AggregateExpression from "../../models/AggregateExpression";
+import Utils from "../../Utils";
+import { ChartComponent } from "../../Interfaces/ChartComponent";
+import AggregateExpression from "../../Models/AggregateExpression";
 import DateTimeButtonRange from "../DateTimeButtonRange/DateTimeButtonRange";
 
 class AvailabilityChart extends ChartComponent {

@@ -1,14 +1,14 @@
-import Utils from "../utils";
-import { DataTypes, TooltipMeasureFormat } from "./../constants/Enums";
-import { GRIDCONTAINERCLASS } from "./../constants/Constants";
-import { Component } from "./component";
-import { ChartComponentData } from './../models/ChartComponentData';
-import EllipsisMenu from "../components/EllipsisMenu";
+import Utils from "../Utils";
+import { DataTypes, TooltipMeasureFormat } from "./../Constants/Enums";
+import { GRIDCONTAINERCLASS } from "./../Constants/Constants";
+import { Component } from "./Component";
+import { ChartComponentData } from './../Models/ChartComponentData';
+import EllipsisMenu from "../Components/EllipsisMenu";
 import * as d3 from 'd3';
 import Split from 'split.js';
-import Legend from "../components/Legend";
-import { ShiftTypes } from "../constants/Enums";
-import Grid from "../components/Grid";
+import Legend from "../Components/Legend";
+import { ShiftTypes } from "../Constants/Enums";
+import Grid from "../Components/Grid";
 
 class ChartComponent extends Component {
 	readonly MINWIDTH = 350;

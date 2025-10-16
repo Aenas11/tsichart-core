@@ -1,22 +1,22 @@
 import * as d3 from 'd3';
 import * as d3Voronoi from 'd3-voronoi';
 import './LineChart.scss';
-import Utils from "../../utils";
-import { DataTypes, YAxisStates, TooltipMeasureFormat } from "./../../constants/Enums";
-import { LINECHARTTOPPADDING, LINECHARTCHARTMARGINS, VALUEBARHEIGHT, SERIESLABELWIDTH } from "./../../constants/Constants";
+import Utils from "../../Utils";
+import { DataTypes, YAxisStates, TooltipMeasureFormat } from "./../../Constants/Enums";
+import { LINECHARTTOPPADDING, LINECHARTCHARTMARGINS, VALUEBARHEIGHT, SERIESLABELWIDTH } from "./../../Constants/Constants";
 import Legend from "./../Legend";
-import { TemporalXAxisComponent } from "./../../interfaces/TemporalXAxisComponent";
-import { LineChartData } from "./../../models/LineChartData";
+import { TemporalXAxisComponent } from "./../../Interfaces/TemporalXAxisComponent";
+import { LineChartData } from "./../../Models/LineChartData";
 import ContextMenu from '../ContextMenu';
 import Tooltip from '../Tooltip';
-import { ChartDataOptions } from '../../models/ChartDataOptions';
+import { ChartDataOptions } from '../../Models/ChartDataOptions';
 import LinePlot from '../LinePlot';
 import CategoricalPlot from '../CategoricalPlot';
 import EventsPlot from '../EventsPlot';
-import { AxisState } from '../../models/AxisState';
+import { AxisState } from '../../Models/AxisState';
 import Marker from '../Marker';
-import { swimlaneLabelConstants } from '../../constants/Constants'
-import { HorizontalMarker } from '../../utils/Interfaces';
+import { swimlaneLabelConstants } from '../../Constants/Constants'
+import { HorizontalMarker } from '../../Utils/Interfaces';
 
 class LineChart extends TemporalXAxisComponent {
     private targetElement: any;
@@ -590,7 +590,7 @@ class LineChart extends TemporalXAxisComponent {
                 delete this.markerGuidMap[markerGuid];
 
                 //set focus to first marker if markers exist on delete
-                let visibleMarkers: any = Object.values(this.markerGuidMap).filter((marker: Marker) => {
+                let visibleMarkers: any = Object.keys(this.markerGuidMap).map((k) => this.markerGuidMap[k]).filter((marker: Marker) => {
                     return marker.isMarkerInRange();
                 });
                 if (visibleMarkers.length !== 0) {
@@ -1289,8 +1289,9 @@ class LineChart extends TemporalXAxisComponent {
             // consolidate horizontal markers
             if (this.chartOptions.swimLaneOptions) {
                 const horizontalMarkers = [];
-                Object.values(this.chartOptions.swimLaneOptions).forEach((lane) => {
-                    horizontalMarkers.push(...lane.horizontalMarkers);
+                Object.keys(this.chartOptions.swimLaneOptions).forEach((key) => {
+                    const lane = (this.chartOptions.swimLaneOptions as any)[key];
+                    horizontalMarkers.push(...(lane && lane.horizontalMarkers ? lane.horizontalMarkers : []));
                 });
                 this.chartOptions.swimLaneOptions = { 0: { yAxisType: this.chartOptions.yAxisState, horizontalMarkers: horizontalMarkers } };
             }

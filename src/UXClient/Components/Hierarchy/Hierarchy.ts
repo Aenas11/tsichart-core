@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './Hierarchy.scss';
-import Utils from "../../utils";
-import { Component } from "./../../interfaces/Component";
-import { HierarchyNode } from "./../../models/HierarchyNode";
+import Utils from "../../Utils";
+import { Component } from "./../../Interfaces/Component";
+import { HierarchyNode } from "./../../Models/HierarchyNode";
 
 class Hierarchy extends Component {
     private filterText = '';

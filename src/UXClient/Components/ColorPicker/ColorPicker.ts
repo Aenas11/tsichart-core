@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
-import { Component } from '../../interfaces/Component';
-import Utils from '../../utils';
+import { Component } from '../../Interfaces/Component';
+import Utils from '../../Utils';
 import './ColorPicker.scss';
-import { KeyCodes } from '../../constants/Enums';
+import { KeyCodes } from '../../Constants/Enums';
 
 interface ColorPickerOptions {
     theme?: string,

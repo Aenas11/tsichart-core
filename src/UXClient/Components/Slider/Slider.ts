@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import './Slider.scss';
-import Utils from "../../utils";
-import { Component } from "./../../interfaces/Component";
+import Utils from "../../Utils";
+import { Component } from "./../../Interfaces/Component";
 
 class Slider extends Component {
     private sliderSVG: any = null;

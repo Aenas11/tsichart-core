@@ -1,5 +1,5 @@
-import { Component } from "./component";
-import Utils from '../utils';
+import { Component } from "./Component";
+import Utils from '../Utils';
 
 class Plot extends Component {
     protected chartHeight;

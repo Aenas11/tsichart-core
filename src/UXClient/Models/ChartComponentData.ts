@@ -1,5 +1,5 @@
-import Utils from "../utils";
-import { ShiftTypes, DataTypes, valueTypes } from "../constants/Enums";
+import Utils from "../Utils";
+import { ShiftTypes, DataTypes, valueTypes } from "../Constants/Enums";
 
 class ChartComponentData {
     public data: any = {};

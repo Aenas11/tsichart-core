@@ -1,6 +1,6 @@
-import { Component } from "./component";
+import { Component } from "./Component";
 import * as d3 from 'd3';
-import { ChartOptions } from "../models/ChartOptions";
+import { ChartOptions } from "../Models/ChartOptions";
 
 class TimelineComponent extends Component {
 	readonly TRANSDURATION = (window.navigator.userAgent.indexOf("Edge") > -1) ? 0 : 400;

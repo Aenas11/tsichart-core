@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import './Tooltip.scss';
-import { Component } from "./../../interfaces/Component";
-import { ChartComponentData } from '../../models/ChartComponentData';
+import { Component } from "./../../Interfaces/Component";
+import { ChartComponentData } from '../../Models/ChartComponentData';
 
 class Tooltip extends Component {
 

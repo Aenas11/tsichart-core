@@ -1,30 +1,30 @@
-import LineChart from "./components/LineChart/LineChart";
-import AvailabilityChart from "./components/AvailabilityChart/AvailabilityChart";
-import PieChart from "./components/PieChart/PieChart";
-import ScatterPlot from "./components/ScatterPlot/ScatterPlot";
-import GroupedBarChart from "./components/GroupedBarChart/GroupedBarChart";
-import Grid from "./components/Grid/Grid";
-import Slider from "./components/Slider/Slider";
-import Hierarchy from "./components/Hierarchy/Hierarchy";
+import LineChart from "./Components/LineChart/LineChart";
+import AvailabilityChart from "./Components/AvailabilityChart/AvailabilityChart";
+import PieChart from "./Components/PieChart/PieChart";
+import ScatterPlot from "./Components/ScatterPlot/ScatterPlot";
+import GroupedBarChart from "./Components/GroupedBarChart/GroupedBarChart";
+import Grid from "./Components/Grid/Grid";
+import Slider from "./Components/Slider/Slider";
+import Hierarchy from "./Components/Hierarchy/Hierarchy";
 import AggregateExpression from "./Models/AggregateExpression";
-import Heatmap from "./components/Heatmap/Heatmap";
-import EventsTable from "./components/EventsTable/EventsTable";
-import ModelSearch from "./components/ModelSearch/ModelSearch";
-import DateTimePicker from "./components/DateTimePicker/DateTimePicker";
-import TimezonePicker from "./components/TimezonePicker/TimezonePicker";
+import Heatmap from "./Components/Heatmap/Heatmap";
+import EventsTable from "./Components/EventsTable/EventsTable";
+import ModelSearch from "./Components/ModelSearch/ModelSearch";
+// import DateTimePicker from "./Components/DateTimePicker/DateTimePicker";
+import TimezonePicker from "./Components/TimezonePicker/TimezonePicker";
 import Utils from "./Utils";
 import './styles.scss'
-import EllipsisMenu from "./components/EllipsisMenu/EllipsisMenu";
+import EllipsisMenu from "./Components/EllipsisMenu/EllipsisMenu";
 import TsqExpression from "./Models/TsqExpression";
-import ModelAutocomplete from "./components/ModelAutocomplete/ModelAutocomplete";
-import HierarchyNavigation from "./components/HierarchyNavigation/HierarchyNavigation";
-import SingleDateTimePicker from "./components/SingleDateTimePicker/SingleDateTimePicker";
-import DateTimeButtonSingle from "./components/DateTimeButtonSingle/DateTimeButtonSingle";
-import DateTimeButtonRange from "./components/DateTimeButtonRange/DateTimeButtonRange";
-import ProcessGraphic from './components/ProcessGraphic/ProcessGraphic';
-import PlaybackControls from './components/PlaybackControls/PlaybackControls';
-import ColorPicker from "./components/ColorPicker/ColorPicker";
-import GeoProcessGraphic from "./components/GeoProcessGraphic/GeoProcessGraphic";
+import ModelAutocomplete from "./Components/ModelAutocomplete/ModelAutocomplete";
+import HierarchyNavigation from "./Components/HierarchyNavigation/HierarchyNavigation";
+import SingleDateTimePicker from "./Components/SingleDateTimePicker/SingleDateTimePicker";
+import DateTimeButtonSingle from "./Components/DateTimeButtonSingle/DateTimeButtonSingle";
+import DateTimeButtonRange from "./Components/DateTimeButtonRange/DateTimeButtonRange";
+import ProcessGraphic from './Components/ProcessGraphic/ProcessGraphic';
+import PlaybackControls from './Components/PlaybackControls/PlaybackControls';
+import ColorPicker from "./Components/ColorPicker/ColorPicker";
+import GeoProcessGraphic from "./Components/GeoProcessGraphic/GeoProcessGraphic";
 
 class UXClient {
     UXClient() {
@@ -32,7 +32,7 @@ class UXClient {
 
     // Public facing components have class constructors exposed as public UXClient members.
     // This allows for typings to be bundled while maintaining 'new Component()' syntax
-    public DateTimePicker: typeof DateTimePicker = DateTimePicker;
+    // public DateTimePicker: typeof DateTimePicker = DateTimePicker;
     public PieChart: typeof PieChart = PieChart;
     public ScatterPlot: typeof ScatterPlot = ScatterPlot;
     public BarChart: typeof GroupedBarChart = GroupedBarChart;

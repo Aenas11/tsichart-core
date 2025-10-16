@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import './DateTimeButtonSingle.scss';
-import { DateTimeButton } from '../../interfaces/DateTimeButton';
+import { DateTimeButton } from '../../Interfaces/DateTimeButton';
 import SingleDateTimePicker from '../SingleDateTimePicker/SingleDateTimePicker';
 
 class DateTimeButtonSingle extends DateTimeButton {

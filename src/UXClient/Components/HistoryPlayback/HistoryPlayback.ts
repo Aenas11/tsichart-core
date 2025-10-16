@@ -1,8 +1,8 @@
 import * as d3 from "d3";
-import { Component } from "./../../interfaces/Component";
+import { Component } from "./../../Interfaces/Component";
 import PlaybackControls from "../PlaybackControls";
-import { TsqRange } from "../../models/TsqRange";
-import TsqExpression from "../../models/TsqExpression";
+import { TsqRange } from "../../Models/TsqRange";
+import TsqExpression from "../../Models/TsqExpression";
 
 type d3Selection = d3.Selection<d3.BaseType, unknown, null, undefined>;
 

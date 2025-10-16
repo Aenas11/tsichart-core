@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './DateTimeButtonRange.scss';
-import { DateTimeButton } from '../../interfaces/DateTimeButton';
+import { DateTimeButton } from '../../Interfaces/DateTimeButton';
 import DateTimePicker from '../DateTimePicker/DateTimePicker';
-import Utils from '../../utils';
+import Utils from '../../Utils';
 
 class DateTimeButtonRange extends DateTimeButton {
     private onCancel;

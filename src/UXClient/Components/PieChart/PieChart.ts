@@ -1,13 +1,13 @@
 import * as d3 from 'd3';
 import './PieChart.scss';
-import Utils from "../../utils";
-import { TooltipMeasureFormat } from "./../../constants/Enums";
+import Utils from "../../Utils";
+import { TooltipMeasureFormat } from "./../../Constants/Enums";
 import Legend from './../Legend';
 import ContextMenu from './../ContextMenu';
-import { PieChartData } from '../../models/PieChartData';
+import { PieChartData } from '../../Models/PieChartData';
 import Slider from '../Slider';
 import Tooltip from '../Tooltip';
-import { ChartVisualizationComponent } from '../../interfaces/ChartVisualizationComponent';
+import { ChartVisualizationComponent } from '../../Interfaces/ChartVisualizationComponent';
 
 
 class PieChart extends ChartVisualizationComponent {

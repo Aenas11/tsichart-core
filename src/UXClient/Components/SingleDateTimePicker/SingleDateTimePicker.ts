@@ -3,8 +3,8 @@ import Pikaday from '../../../packages/pikaday/pikaday';
 import '../../../packages/pikaday/css/pikaday.css'
 import moment from 'moment';
 import './SingleDateTimePicker.scss';
-import { ChartComponent } from '../../interfaces/ChartComponent';
-import Utils from "../../utils";
+import { ChartComponent } from '../../Interfaces/ChartComponent';
+import Utils from "../../Utils";
 
 class SingleDateTimePicker extends ChartComponent {
     private calendar: any;

@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import './TimezonePicker.scss';
-import { ChartComponent } from '../../interfaces/ChartComponent';
-import Utils from "../../utils";
+import { ChartComponent } from '../../Interfaces/ChartComponent';
+import Utils from "../../Utils";
 import moment from 'moment-timezone';
 
 class TimezonePicker extends ChartComponent {

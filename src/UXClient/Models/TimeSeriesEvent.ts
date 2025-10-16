@@ -1,4 +1,4 @@
-import Utils from "../utils";
+import Utils from "../Utils";
 import { TimeSeriesEventCell } from "./TimeSeriesEventCell";
 
 class TimeSeriesEvent {

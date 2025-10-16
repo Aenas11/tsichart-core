@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 import './EventsPlot.scss';
-import { Plot } from '../../interfaces/Plot';
-import Utils from '../../utils';
-import { EventElementTypes, DataTypes } from "../../constants/Enums";
-import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../constants/Constants";
+import { Plot } from '../../Interfaces/Plot';
+import Utils from '../../Utils';
+import { EventElementTypes, DataTypes } from "../../Constants/Enums";
+import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../Constants/Constants";
 
 class EventsPlot extends Plot {
     private defs;

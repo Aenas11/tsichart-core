@@ -1,10 +1,10 @@
 import * as d3 from "d3";
 import "./ModelSearch.scss";
-import Utils from "../../utils";
-import { Component } from "./../../interfaces/Component";
+import Utils from "../../Utils";
+import { Component } from "./../../Interfaces/Component";
 import "awesomplete";
 import Hierarchy from "../Hierarchy/Hierarchy";
-import ModelAutocomplete from "../modelAutocomplete/ModelAutocomplete";
+import ModelAutocomplete from "../ModelAutocomplete/ModelAutocomplete";
 
 class ModelSearch extends Component {
   private hierarchies;

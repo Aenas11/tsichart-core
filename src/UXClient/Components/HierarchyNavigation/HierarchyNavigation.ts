@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './HierarchyNavigation.scss';
-import Utils from "../../utils";
-import { Component } from "./../../interfaces/Component";
-import ModelAutocomplete from '../modelAutocomplete';
+import Utils from "../../Utils";
+import { Component } from "./../../Interfaces/Component";
+import ModelAutocomplete from '../ModelAutocomplete';
 
 class HierarchyNavigation extends Component {
 
@@ -78,7 +78,7 @@ class HierarchyNavigation extends Component {
                 li = list.append('li').classed('tsi-leaf', data[el].isLeaf);
 
                 //if the node is already selected, we want to highlight it
-                if (this.selectedIds && this.selectedIds.includes(data[el].id)) {
+                if (this.selectedIds && this.selectedIds.indexOf(data[el].id) !== -1) {
                     li.classed('tsi-selected', true);
                 }
             }
@@ -245,7 +245,7 @@ class HierarchyNavigation extends Component {
                     //we want to store clicked instance and hightlight it in the hierarchy
                     //if the instance is already selected, we want to deselect it
                     if (self.chartOptions.onInstanceClick) {
-                        if (self.selectedIds && self.selectedIds.includes(hORi.id)) {
+                        if (self.selectedIds && self.selectedIds.indexOf(hORi.id) !== -1) {
                             self.selectedIds = self.selectedIds.filter(id => id !== hORi.id);
                             hORi.node.classed('tsi-selected', false);
                         }

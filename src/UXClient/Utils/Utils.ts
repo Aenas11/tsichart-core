@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
 import moment from 'moment-timezone';
-import Grid from "../components/Grid/Grid";
-import { ChartOptions } from '../models/ChartOptions';
-import { ChartComponentData } from '../models/ChartComponentData';
-import { CharactersToEscapeForExactSearchInstance, nullTsidDisplayString, GRIDCONTAINERCLASS, NONNUMERICTOPMARGIN } from '../constants/Constants';
-import { YAxisStates, valueTypes } from '../constants/Enums';
+import Grid from "../Components/Grid/Grid";
+import { ChartOptions } from '../Models/ChartOptions';
+import { ChartComponentData } from '../Models/ChartComponentData';
+import { CharactersToEscapeForExactSearchInstance, nullTsidDisplayString, GRIDCONTAINERCLASS, NONNUMERICTOPMARGIN } from '../Constants/Constants';
+import { YAxisStates, valueTypes } from '../Constants/Enums';
 
 export default class Utils {
     static guidForNullTSID = Utils.guid();

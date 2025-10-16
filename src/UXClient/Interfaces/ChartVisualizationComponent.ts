@@ -1,6 +1,6 @@
-import Utils from "../utils";
+import Utils from "../Utils";
 import { ChartComponent } from "./ChartComponent";
-import { ChartDataOptions } from "../models/ChartDataOptions";
+import { ChartDataOptions } from "../Models/ChartDataOptions";
 
 class ChartVisualizationComponent extends ChartComponent {
 

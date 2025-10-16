@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
 import './EventsTable.scss';
-import Utils from "../../utils";
-import { ChartComponent } from '../../interfaces/ChartComponent';
-import { EventsTableData } from '../../models/EventsTableData';
-import { TimeSeriesEvent } from '../../models/TimeSeriesEvent';
-import { TimeSeriesEventCell } from '../../models/TimeSeriesEventCell';
+import Utils from "../../Utils";
+import { ChartComponent } from '../../Interfaces/ChartComponent';
+import { EventsTableData } from '../../Models/EventsTableData';
+import { TimeSeriesEvent } from '../../Models/TimeSeriesEvent';
+import { TimeSeriesEventCell } from '../../Models/TimeSeriesEventCell';
 
 class EventsTable extends ChartComponent {
 

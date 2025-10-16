@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
 import './Grid.scss';
-import Utils from "../../utils";
-import { Component } from "./../../interfaces/Component";
-import { ChartOptions } from '../../models/ChartOptions';
-import { ChartComponentData } from '../../models/ChartComponentData';
-import { GRIDCONTAINERCLASS } from '../../constants/Constants';
+import Utils from "../../Utils";
+import { Component } from "./../../Interfaces/Component";
+import { ChartOptions } from '../../Models/ChartOptions';
+import { ChartComponentData } from '../../Models/ChartComponentData';
+import { GRIDCONTAINERCLASS } from '../../Constants/Constants';
 
 class Grid extends Component {
     private gridComponent: any;

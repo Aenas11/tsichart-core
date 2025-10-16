@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import Utils from "../utils";
+import Utils from "../Utils";
 import { ChartVisualizationComponent } from './ChartVisualizationComponent';
 
 class TemporalXAxisComponent extends ChartVisualizationComponent {

@@ -1,13 +1,13 @@
 import * as d3 from 'd3';
 import * as d3Voronoi from 'd3-voronoi';
 import './ScatterPlot.scss';
-import { ChartVisualizationComponent } from './../../interfaces/ChartVisualizationComponent';
+import { ChartVisualizationComponent } from './../../Interfaces/ChartVisualizationComponent';
 import Legend from './../Legend';
-import { ScatterPlotData } from '../../models/ScatterPlotData';
+import { ScatterPlotData } from '../../Models/ScatterPlotData';
 import Slider from './../Slider';
 import Tooltip from '../Tooltip';
-import Utils from '../../utils';
-import { TooltipMeasureFormat } from "./../../constants/Enums";
+import Utils from '../../Utils';
+import { TooltipMeasureFormat } from "./../../Constants/Enums";
 
 class ScatterPlot extends ChartVisualizationComponent {
     private activeDot: any = null;

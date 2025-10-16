@@ -1,4 +1,4 @@
-import Utils from '../utils';
+import Utils from '../Utils';
 
 class TsqRange {
     public from: Date;

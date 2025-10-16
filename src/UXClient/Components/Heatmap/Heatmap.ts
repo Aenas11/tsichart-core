@@ -1,11 +1,11 @@
 import * as d3 from 'd3';
 import './Heatmap.scss';
-import Utils from "../../utils";
+import Utils from "../../Utils";
 import Legend from '../Legend';
 import HeatmapCanvas from '../HeatmapCanvas';
-import AggregateExpression from '../../models/AggregateExpression';
+import AggregateExpression from '../../Models/AggregateExpression';
 import EllipsisMenu from '../EllipsisMenu';
-import { TemporalXAxisComponent } from '../../interfaces/TemporalXAxisComponent';
+import { TemporalXAxisComponent } from '../../Interfaces/TemporalXAxisComponent';
 
 class Heatmap extends TemporalXAxisComponent {
     private lineHeight = 12;

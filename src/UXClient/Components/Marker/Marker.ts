@@ -1,12 +1,12 @@
 import * as d3 from 'd3';
 import './Marker.scss';
-import Utils from "../../utils";
-import { MARKERVALUENUMERICHEIGHT, LINECHARTXOFFSET } from "./../../constants/Constants";
-import { Component } from "./../../interfaces/Component";
-import { ChartOptions } from '../../models/ChartOptions';
-import { LineChartData } from '../../models/LineChartData';
+import Utils from "../../Utils";
+import { MARKERVALUENUMERICHEIGHT, LINECHARTXOFFSET } from "./../../Constants/Constants";
+import { Component } from "./../../Interfaces/Component";
+import { ChartOptions } from '../../Models/ChartOptions';
+import { LineChartData } from '../../Models/LineChartData';
 import Tooltip from '../Tooltip';
-import { KeyCodes, ShiftTypes, DataTypes, TooltipMeasureFormat } from '../../constants/Enums';
+import { KeyCodes, ShiftTypes, DataTypes, TooltipMeasureFormat } from '../../Constants/Enums';
 
 const MARKERSTRINGMAXLENGTH = 250;
 const MARKERVALUEMAXWIDTH = 80;

@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './HeatmapCanvas.scss';
-import Utils from "../../utils";
-import { ChartComponent } from "../../interfaces/ChartComponent";
-import { HeatmapData } from "../../models/HeatmapData";
+import Utils from "../../Utils";
+import { ChartComponent } from "../../Interfaces/ChartComponent";
+import { HeatmapData } from "../../Models/HeatmapData";
 
 class HeatmapCanvas extends ChartComponent {
     private heatmapData: HeatmapData;

@@ -1,7 +1,7 @@
 import { ChartComponentData } from "./ChartComponentData";
 import { GroupedBarChartData } from "./GroupedBarChartData";
 import * as d3 from "d3";
-import Utils from "../utils";
+import Utils from "../Utils";
 
 class ScatterPlotData extends GroupedBarChartData {
     public temporalDataArray: any;
@@ -41,7 +41,7 @@ class ScatterPlotData extends GroupedBarChartData {
             if (this.displayState[aggKey].visible == true) {
                 Object.keys(aggregate[aggName]).forEach((splitBy) => {
                     if (this.displayState[aggKey].splitBys[splitBy].visible == true) {
-                        visibleData.push(Object.values(aggregate[aggName][splitBy]));
+                        visibleData.push(Object.keys(aggregate[aggName][splitBy]).map((k) => (aggregate[aggName][splitBy] as any)[k]));
                     }
                 })
             }

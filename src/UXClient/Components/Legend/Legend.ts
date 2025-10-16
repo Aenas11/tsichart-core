@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 import './Legend.scss';
-import Utils from "../../utils";
-import { DataTypes, EventElementTypes } from "./../../constants/Enums";
-import { Component } from "./../../interfaces/Component";
-import { ChartComponentData } from '../../models/ChartComponentData';
+import Utils from "../../Utils";
+import { DataTypes, EventElementTypes } from "./../../Constants/Enums";
+import { Component } from "./../../Interfaces/Component";
+import { ChartComponentData } from '../../Models/ChartComponentData';
 
 const NUMERICSPLITBYHEIGHT = 44;
 const NONNUMERICSPLITBYHEIGHT = 24;

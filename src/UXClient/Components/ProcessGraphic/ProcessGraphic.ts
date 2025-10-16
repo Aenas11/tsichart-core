@@ -2,9 +2,9 @@ import * as d3 from "d3";
 import "./ProcessGraphic.scss";
 import HistoryPlayback, {
   GraphicInfo,
-} from "./../../components/HistoryPlayback";
-import Utils from "../../utils";
-import TsqExpression from "../../models/TsqExpression";
+} from "./../../Components/HistoryPlayback";
+import Utils from "../../Utils";
+import TsqExpression from "../../Models/TsqExpression";
 
 class ProcessGraphic extends HistoryPlayback {
   private graphicSrc: string;
