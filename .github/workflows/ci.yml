@@ -43,9 +43,8 @@ jobs:
       - name: Build all packages
         run: pnpm build
       
-      - name: Run tests (when available)
-        run: pnpm test || echo "No tests yet, skipping"
-        continue-on-error: true
+      - name: Run tests
+        run: pnpm test
       
       - name: Verify build artifacts
         run: |
