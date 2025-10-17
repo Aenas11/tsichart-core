@@ -232,7 +232,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@tsichart-core':
+      tsichart-core:
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -263,7 +263,7 @@ importers:
 
   packages/vue:
     dependencies:
-      '@tsichart-core':
+      tsichart-core:
         specifier: workspace:*
         version: link:../core
     devDependencies:
