@@ -31,3 +31,5 @@ coverage
 tsichart-core-*.tgz
 build_artifacts/*
 .pnpm*
+
+test-apps/

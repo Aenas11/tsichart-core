@@ -42,8 +42,14 @@
       "import": "./dist/utils/index.mjs",
       "require": "./dist/utils/index.js"
     },
-    "./styles": "./dist/styles/index.css",
-    "./styles/*": "./dist/styles/*.css"
+    "./styles": {
+      "types": "./src/styles.d.ts",
+      "default": "./dist/styles/index.css"
+    },
+    "./styles/*": {
+      "types": "./src/styles.d.ts",
+      "default": "./dist/styles/*.css"
+    }
   },
   "sideEffects": [
     "*.css",
@@ -51,6 +57,7 @@
   ],
   "files": [
     "dist",
+    "src/styles.d.ts",
     "README.md",
     "LICENSE"
   ],
