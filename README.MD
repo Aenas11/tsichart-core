@@ -169,3 +169,18 @@ If you're migrating from the original Microsoft `tsiclient` package:
 ## Contributing
 
 This project welcomes contributions and suggestions.
+
+## Development
+
+To set up the development environment and work on components:
+
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+2.  **Start the development server:**
+    ```bash
+    npm start
+    ```
+    This will start a live-reloading server and open the examples page in your browser. You can now make changes to the source code and see them reflected live

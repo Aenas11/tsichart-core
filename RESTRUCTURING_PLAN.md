@@ -745,9 +745,9 @@ jobs:
 - [X] CI/CD workflows updated with test steps
 - [X] CHANGELOG.md updated with v2.0.0 release notes
 - [X] RELEASE_GUIDE.md created with publishing instructions
-- [ ] Publish tsichart-core to npm
-- [ ] Create GitHub release with tag v2.0.0
-- [ ] Update documentation site (if applicable)
+- [X] Publish tsichart-core to npm
+- [X] Create GitHub release with tag v2.0.0
+- [X] Update documentation site (if applicable)
 
 ### React Package (DEFERRED)
 - [ ] Create React package structure (postponed)

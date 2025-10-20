@@ -6,10 +6,18 @@
         "target": "es5",
         "jsx": "react",
         "allowJs": false,
-        "lib" : ["es5", "es2015.promise", "dom", "es6"],
+        "lib": [
+            "es5",
+            "es2015.promise",
+            "dom",
+            "es6"
+        ],
         "moduleResolution": "Node",
         "declaration": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "inlineSourceMap": false,
+        "inlineSources": true
     },
     "include": [
         "src"

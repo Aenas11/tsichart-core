@@ -4,7 +4,7 @@
   "private": true,
   "description": "Monorepo for TSIChart - Time Series Interactive Charts library and framework wrappers",
   "workspaces": [
-    "packages/*"
+    "packages/*"    
   ],
   "scripts": {
     "build": "pnpm -r build",
@@ -17,8 +17,8 @@
     "test:watch": "pnpm -r test:watch",
     "clean": "pnpm -r clean && shx rm -rf build_artifacts",
     "lint": "pnpm -r lint",
-    "start": "pnpm --filter tsichart-core start",
-    "legacy:start": "webpack-dev-server --config webpack.dev.js",
+    "start": "webpack-dev-server --config webpack.dev.js",
+    "start:core": "pnpm --filter tsichart-core start",
     "legacy:build": "npm run clean && npm run rollup && npm run webpack && npm run post-build",
     "rollup": "rollup --c",
     "webpack": "webpack --config webpack.prod.js",

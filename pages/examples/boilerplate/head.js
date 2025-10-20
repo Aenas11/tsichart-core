@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', function(){
     var sdkJs = document.createElement('script');
     // sdkJs.src = 'https://unpkg.com/tsiclient@1.3.0/tsiclient.js';
-    sdkJs.src = '../../../dist/tsiclient.umd.js';  // UMD build for browser usage
+    sdkJs.src = '../../../dist/tsiclient.js';  // UMD build for browser usage
 
     var promiseJs = document.createElement('script');
     promiseJs.src = 'https://cdn.jsdelivr.net/npm/bluebird@3.7.2/js/browser/bluebird.js';
