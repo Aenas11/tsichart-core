@@ -183,14 +183,13 @@ class ProcessGraphic extends HistoryPlayback {
       : null;
   }
 
-  protected sanitizeAttribute(str) {
-    let sanitized = String(str);
-    let illegalChars = ['"', "'", "?", "<", ">", ";"];
-    illegalChars.forEach((c) => {
-      sanitized = sanitized.split(c).join("");
-    });
-
-    return sanitized;
+  protected sanitizeAttribute(str: string | null | undefined): string {
+    if (str === null || str === undefined) {
+      return "";
+    }
+    // Use a single regular expression to replace all illegal characters at once.
+    // The 'g' flag ensures all occurrences are replaced, not just the first.
+    return String(str).replace(/["'<>?;]/g, "");
   }
 }
 
