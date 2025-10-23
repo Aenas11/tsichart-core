@@ -11,6 +11,7 @@ node_modules
 node_modules/.vite/
 .DS_Store
 dist
+dev-dist
 dist-ssr
 coverage
 *.local
