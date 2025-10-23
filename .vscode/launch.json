@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Chrome React Test App",
+            "url": "http://localhost:5173",
+            "request": "launch",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}/test-apps/react/reacttest",
+            "sourceMaps": true,
+        },
+        {
             "name": "Debug Core Package",
             "type": "node",
             "request": "launch",
