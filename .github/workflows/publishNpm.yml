@@ -34,6 +34,22 @@ jobs:
       - name: Build packages
         run: pnpm build
 
+      - name: Verify build output
+        run: |
+          echo "Checking if dist folder exists..."
+          ls -la packages/core/dist/
+          echo "Checking package contents..."
+          cd packages/core && npm pack --dry-run
+
+      - name: Verify npm authentication
+        run: |
+          echo "Checking npm whoami..."
+          npm whoami
+          echo "Checking npm config..."
+          npm config get registry
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Determine npm tag
         id: npm-tag
         run: |
@@ -50,7 +66,12 @@ jobs:
           echo "Publishing with tag: $(cat $GITHUB_OUTPUT | grep tag | cut -d= -f2)"
 
       - name: Publish core package
-        run: pnpm --filter tsichart-core publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
+        working-directory: packages/core
+        run: |
+          echo "Publishing package with tag: ${{ steps.npm-tag.outputs.tag }}"
+          echo "Package name: $(node -p "require('./package.json').name")"
+          echo "Package version: $(node -p "require('./package.json').version")"
+          npm publish --provenance --access public --tag ${{ steps.npm-tag.outputs.tag }} --verbose
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
