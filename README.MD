@@ -18,6 +18,7 @@ A powerful, flexible JavaScript library for visualizing time series data with **
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/Aenas11/tsichart-core)
 [![Live Examples](https://img.shields.io/badge/Examples-Live%20Demo-green)](https://aenas11.github.io/tsichart-core/) 
+[![Storybook](https://img.shields.io/badge/Storybook-Component%20Docs-ff69b4)](https://aenas11.github.io/tsichart-core/storybook/) 
 
 ## Installation
 
@@ -94,6 +95,30 @@ lineChart.render(data, { theme: 'light' });
 - And more...
 
 For detailed usage examples and API documentation, see the [UX Components documentation](docs/UX.md).
+
+## 📚 Documentation & Examples
+
+### Interactive Component Documentation
+Explore all components with live examples, API documentation, and interactive controls:
+
+**[📖 Storybook Documentation](https://aenas11.github.io/tsichart-core/storybook/)** - Interactive component library with:
+- Live component previews with editable properties
+- Complete API documentation with code examples  
+- Accessibility testing and guidelines
+- Real-time property editing and testing
+- Dark/light theme examples
+
+### Live Examples
+**[🚀 Live Demo Site](https://aenas11.github.io/tsichart-core/)** - Working examples and use cases
+
+### Local Development
+```bash
+# Run Storybook locally for development
+pnpm storybook
+
+# Build component documentation  
+pnpm build-storybook
+```
 
 ## Data Format
 

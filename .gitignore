@@ -34,3 +34,5 @@ build_artifacts/*
 .pnpm*
 
 test-apps/
+*storybook.log
+storybook-static
