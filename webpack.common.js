@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
-  entry: "./src/TsiClient.ts",
+  entry: "./packages/core/src/UXClient.ts",
   module: {
     rules: [
       {
@@ -14,6 +14,7 @@ module.exports = {
             options: {
               compilerOptions: {
                 declaration: false,
+                sourceMap: true,
               },
             },
           },

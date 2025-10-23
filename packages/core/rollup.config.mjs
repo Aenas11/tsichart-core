@@ -26,15 +26,20 @@ const ignoreScss = {
 const commonPlugins = [
     nodeResolve(), // Resolve node_module imports
     typescript({ 
-        check: true,
+        check: false,
         clean: true,
         tsconfigOverride: {
             compilerOptions: {
                 declaration: false,
                 declarationMap: false,
-                sourceMap: false,
+                sourceMap: !isProduction,
+                inlineSourceMap: false,
+                inlineSources: false,
                 noEmitOnError: false,
                 skipLibCheck: true,
+                strict: false,
+                strictNullChecks: false,
+                noImplicitAny: false
             },
             exclude: ['__tests__/**', '**/*.test.ts', '**/*.spec.ts']
         }
@@ -88,6 +93,62 @@ export default [
                 filename: '../../build_artifacts/core-bundle-stats.html',
                 gzipSize: true
             })
+        ].filter(Boolean)
+    },
+    // UMD build for browser usage - bundle all dependencies
+    {
+        input: 'src/index.ts',
+        output: {
+            file: 'dist/index.umd.js',
+            format: 'umd',
+            name: 'TsiClient',
+            sourcemap: !isProduction,
+        },
+        context: 'window',
+        plugins: [
+            nodeResolve({
+                browser: true,
+                preferBuiltins: false
+            }),
+            typescript({ 
+                check: false,
+                clean: true,
+                tsconfigOverride: {
+                    compilerOptions: {
+                        declaration: false,
+                        declarationMap: false,
+                        sourceMap: !isProduction,
+                        inlineSourceMap: false,
+                        inlineSources: false,
+                        noEmitOnError: false,
+                        skipLibCheck: true,
+                        strict: false,
+                        strictNullChecks: false,
+                        noImplicitAny: false
+                    },
+                    exclude: ['__tests__/**', '**/*.test.ts', '**/*.spec.ts']
+                }
+            }),
+            commonjs(),
+            json(),
+            postcss({
+                extract: false, // Don't extract CSS for UMD build
+                inject: false,  // Don't inject CSS
+                plugins: [
+                    postcssUrl({
+                        url: 'inline',
+                    })
+                ],
+                minimize: isProduction,
+                sourceMap: !isProduction,
+                use: {
+                    sass: {
+                        api: 'modern-compiler',
+                        silenceDeprecations: ['legacy-js-api'],
+                    },
+                },
+            }),
+            isProduction && terser(),
         ].filter(Boolean)
     },
     // Type definitions

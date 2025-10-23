@@ -60,7 +60,7 @@ class UXClient {
 
     public transformTsxToEventsArray(events, options) {
         var timezoneOffset = options.timezoneOffset ? options.timezoneOffset : 0;
-        var rows = [];
+        var rows: any[] = [];
         var eventSourceProperties = {};
         var nameToStrippedPropName = {};
         var valueToStrippedValueMap = {};
@@ -173,7 +173,7 @@ class UXClient {
     }
 
     public transformAggregatesForVisualization(aggregates: Array<any>, options): Array<any> {
-        var result = [];
+        var result: any[] = [];
         aggregates.forEach((agg, i) => {
             var transformedAggregate = {};
             var aggregatesObject = {};
@@ -221,7 +221,7 @@ class UXClient {
     }
 
     public transformTsqResultsToEventsArray(results) {
-        let flattenedResults = [];
+        let flattenedResults: any[] = [];
         results.forEach(tsqr => {
             tsqr.timestamps.forEach((ts, idx) => {
                 let event = {};

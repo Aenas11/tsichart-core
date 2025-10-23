@@ -136,7 +136,7 @@ import { ChartOptions } from 'tsichart-core/models/ChartOptions';
 
 ---
 
-## [1.0.0] - 2024-10-13
+## [1.0.0] - 2025-10-13
 
 ### Added
 - First release as **Time Series Interactive Charts** (`tsichart-core`)
