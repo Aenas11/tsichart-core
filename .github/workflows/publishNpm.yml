@@ -43,6 +43,8 @@ jobs:
 
       - name: Verify npm authentication
         run: |
+          echo "Setting up npm authentication..."
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           echo "Checking npm whoami..."
           npm whoami
           echo "Checking npm config..."
@@ -71,7 +73,7 @@ jobs:
           echo "Publishing package with tag: ${{ steps.npm-tag.outputs.tag }}"
           echo "Package name: $(node -p "require('./package.json').name")"
           echo "Package version: $(node -p "require('./package.json').version")"
-          pnpm --filter tsichart-core publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
+          npm publish --provenance --access public --tag ${{ steps.npm-tag.outputs.tag }} --verbose
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
