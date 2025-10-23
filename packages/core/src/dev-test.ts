@@ -22,7 +22,7 @@ function updateStatus(message: string, type: string = '') {
 }
 
 function generateSampleData() {
-    // Generate sample time series data using the same structure as basiccharts.html
+    // Generate sample time series data 
     const data = [];
     const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
     let to;
