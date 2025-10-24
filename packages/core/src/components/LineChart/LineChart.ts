@@ -18,6 +18,7 @@ import Marker from '../Marker';
 import { swimlaneLabelConstants } from '../../constants/Constants'
 import { HorizontalMarker } from '../../utils/Interfaces';
 import { ILineChartOptions } from "./ILineChartOptions";
+import { ChartData } from '../../types';
 
 class LineChart extends TemporalXAxisComponent {
     private targetElement: any;
@@ -1525,7 +1526,7 @@ class LineChart extends TemporalXAxisComponent {
         })
     }
 
-    public render(data: any, options: ILineChartOptions, aggregateExpressionOptions: any) {
+    public render(data: ChartData, options: ILineChartOptions, aggregateExpressionOptions: any) {
         super.render(data, options, aggregateExpressionOptions);
 
         this.originalSwimLanes = this.aggregateExpressionOptions.map((aEO) => {

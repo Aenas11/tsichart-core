@@ -2,8 +2,14 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import LineChart from '../packages/core/src/components/LineChart/LineChart';
-
+import { ChartData } from '../packages/core/src/types';
 import { ILineChartOptions } from '../packages/core/src/components/LineChart/ILineChartOptions';
+
+// Define custom metrics for this example
+interface FactoryMetrics extends Record<string, number> {
+    value: number;
+    temperature: number;
+}
 
 const meta: Meta<ILineChartOptions> = {
     title: 'Charts/LineChart',
@@ -64,7 +70,7 @@ chart.render(data, {
 }, {});
 \`\`\`
                 `
-            }
+            },
         }
     },
     argTypes: {
@@ -76,17 +82,28 @@ chart.render(data, {
         yAxisState: {
             control: { type: 'select' },
             options: ['stacked', 'shared', 'overlap'],
-            description: 'How multiple series should be displayed on the Y-axis'
+            description: 'How multiple series should be displayed on the Y-axis',
+            table: { defaultValue: { summary: 'stacked' } }
         },
         legend: {
             control: { type: 'select' },
             options: ['shown', 'hidden', 'compact'],
-            description: 'Legend display mode'
+            description: 'Legend display mode',
+            table: { defaultValue: { summary: 'shown' } }
         },
 
         tooltip: {
             control: 'boolean',
-            description: 'Enable/disable interactive tooltips'
+            description: 'Enable/disable interactive tooltips',
+            table: { defaultValue: { summary: 'true' } }
+        },
+        onClick: {
+            action: 'clicked',
+            description: 'Event handler for click events on the chart',
+        },
+        onInstanceClick: {
+            action: 'instanceClicked',
+            description: 'Event handler for click events on individual data points',
         }
 
     }
@@ -95,20 +112,27 @@ chart.render(data, {
 export default meta;
 type Story = StoryObj<ILineChartOptions>;
 
-// Generate sample time series data for demonstration
-function generateSampleData() {
-    const data: any[] = [];
+/**
+ * Generate sample time series data for demonstration.
+ * Returns strongly-typed ChartData with FactoryMetrics (value + temperature).
+ * 
+ * Data structure:
+ * - 3 Factories (Factory0, Factory1, Factory2)
+ * - 3 Stations per factory (Station0, Station1, Station2)
+ * - 24 hourly data points per station
+ * - Each data point has: value (numeric) and temperature (numeric)
+ */
+function generateSampleData(): ChartData<FactoryMetrics> {
+    const data: ChartData<FactoryMetrics> = [];
     const from = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
 
     for (let i = 0; i < 3; i++) {
-        const lines: any = {};
-        const factoryData: any = {};
-        factoryData[`Factory${i}`] = lines;
-        data.push(factoryData);
+        const factoryName = `Factory${i}`;
+        const splitByData: Record<string, Record<string, FactoryMetrics>> = {};
 
         for (let j = 0; j < 3; j++) {
-            const values: any = {};
-            lines[`Station${j}`] = values;
+            const stationName = `Station${j}`;
+            const timeSeries: Record<string, FactoryMetrics> = {};
 
             // Generate hourly data points for the last 24 hours
             for (let k = 0; k < 24; k++) {
@@ -116,12 +140,16 @@ function generateSampleData() {
                 const baseValue = 50 + i * 20 + j * 10;
                 const value = baseValue + Math.sin(k / 4) * 15 + Math.random() * 10;
 
-                values[timestamp.toISOString()] = {
+                timeSeries[timestamp.toISOString()] = {
                     value: parseFloat(value.toFixed(2)),
                     temperature: 20 + Math.sin(k / 6) * 8 + Math.random() * 3
                 };
             }
+
+            splitByData[stationName] = timeSeries;
         }
+
+        data.push({ [factoryName]: splitByData });
     }
 
     return data;
@@ -191,6 +219,7 @@ function createLineChartStory(containerStyle: string) {
 }
 
 export const Default: Story = {
+    name: 'Light Theme  (Default)',
     args: {
         theme: 'light',
         yAxisState: 'stacked',
