@@ -160,6 +160,18 @@ This section demonstrates advanced features and configurations of the LineChart 
         zeroYAxis: {
             control: 'boolean',
             description: 'Force Y-axis to include zero'
+        },
+        brushHandlesVisible: {
+            control: 'boolean',
+            description: 'Enable/disable brushing for zooming'
+        },
+        color: {
+            control: 'color',
+            description: 'Base color for the selection/highlight'
+        },
+        isArea: {
+            control: 'boolean',
+            description: 'Render lines as filled areas'
         }
     }
 };
@@ -176,7 +188,11 @@ export const SharedYAxis: Story = {
         includeEnvelope: false,
         snapBrush: false,
         minBrushWidth: 10,
-        zeroYAxis: false
+        zeroYAxis: false,
+        tooltip: true,
+        brushHandlesVisible: false,
+        color: 'blue',
+        isArea: false
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
@@ -207,7 +223,11 @@ export const OverlappingAxes: Story = {
         includeEnvelope: false,
         snapBrush: true,
         minBrushWidth: 15,
-        zeroYAxis: false
+        zeroYAxis: false,
+        tooltip: true,
+        brushHandlesVisible: false,
+        color: 'blue',
+        isArea: false
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();

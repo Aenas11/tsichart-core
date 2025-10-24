@@ -81,3 +81,5 @@ export { default as Utils } from './utils';
 
 // Note: Styles are imported separately
 // Users should import 'tsichart-core/styles' to get CSS
+
+export { ILineChartOptions } from './components/LineChart/ILineChartOptions';

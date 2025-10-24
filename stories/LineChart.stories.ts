@@ -3,8 +3,11 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import LineChart from '../packages/core/src/components/LineChart/LineChart';
 
-const meta: Meta = {
+import { ILineChartOptions } from '../packages/core/src/components/LineChart/ILineChartOptions';
+
+const meta: Meta<ILineChartOptions> = {
     title: 'Charts/LineChart',
+    component: 'LineChart',
     tags: ['autodocs'],
     parameters: {
         docs: {
@@ -25,11 +28,12 @@ Interactive line chart for time series data visualization with the following fea
 
 ## Usage Example
 
-\`\`\`typescript
-import LineChart from './components/LineChart/LineChart';
+\`\`\` typescript
+import TsiClient from 'tsichart-core';
 
 // Create chart instance
-const chart = new LineChart(containerElement);
+const tsiClient = new TsiClient();
+const chart = new tsiClient.LineChart(containerElement);
 
 // Prepare your data in the expected format
 const data = [{
@@ -79,19 +83,17 @@ chart.render(data, {
             options: ['shown', 'hidden', 'compact'],
             description: 'Legend display mode'
         },
-        grid: {
-            control: 'boolean',
-            description: 'Show/hide chart grid lines'
-        },
+
         tooltip: {
             control: 'boolean',
             description: 'Enable/disable interactive tooltips'
         }
+
     }
 };
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<ILineChartOptions>;
 
 // Generate sample time series data for demonstration
 function generateSampleData() {
@@ -193,18 +195,19 @@ export const Default: Story = {
         theme: 'light',
         yAxisState: 'stacked',
         legend: 'shown',
-        grid: true,
+
         tooltip: true
     },
     render: createLineChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
 
 export const DarkTheme: Story = {
+    name: 'Dark Theme',
     args: {
         theme: 'dark',
         yAxisState: 'stacked',
         legend: 'shown',
-        grid: true,
+
         tooltip: true
     },
     render: createLineChartStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')

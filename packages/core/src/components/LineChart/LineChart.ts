@@ -17,6 +17,7 @@ import { AxisState } from '../../models/AxisState';
 import Marker from '../Marker';
 import { swimlaneLabelConstants } from '../../constants/Constants'
 import { HorizontalMarker } from '../../utils/Interfaces';
+import { ILineChartOptions } from "./ILineChartOptions";
 
 class LineChart extends TemporalXAxisComponent {
     private targetElement: any;
@@ -1524,8 +1525,7 @@ class LineChart extends TemporalXAxisComponent {
         })
     }
 
-    public render(data: any, options: any, aggregateExpressionOptions: any) {
-        console.log('LineChart render called a');
+    public render(data: any, options: ILineChartOptions, aggregateExpressionOptions: any) {
         super.render(data, options, aggregateExpressionOptions);
 
         this.originalSwimLanes = this.aggregateExpressionOptions.map((aEO) => {
@@ -1533,7 +1533,7 @@ class LineChart extends TemporalXAxisComponent {
         });
         this.originalSwimLaneOptions = options.swimLaneOptions;
 
-        this.hasBrush = options && (options.brushMoveAction || options.brushMoveEndAction || options.brushContextMenuActions);
+        this.hasBrush = !!(options && (options.brushMoveAction || options.brushMoveEndAction || options.brushContextMenuActions));
         this.chartOptions.setOptions(options);
         this.chartMargins.right = this.chartOptions.labelSeriesWithMarker ? (SERIESLABELWIDTH + 8) : LINECHARTCHARTMARGINS.right;
         this.width = this.getWidth();
@@ -1591,7 +1591,8 @@ class LineChart extends TemporalXAxisComponent {
                 .attr("type", "button")
                 .on("click", function () {
                     self.overwriteSwimLanes();
-                    self.render(self.data, { ...self.chartOptions, yAxisState: self.nextStackedState() }, self.aggregateExpressionOptions);
+                    // cast to any to avoid TS incompatibility when spreading chartOptions instance into ILineChartOptions
+                    self.render(self.data, { ...(self.chartOptions as any), yAxisState: self.nextStackedState() }, self.aggregateExpressionOptions);
                     d3.select(this).attr("aria-label", () => self.getString("set axis state to") + ' ' + self.nextStackedState());
                     setTimeout(() => (d3.select(this).node() as any).focus(), 200);
                 });

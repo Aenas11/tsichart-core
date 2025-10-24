@@ -13,6 +13,14 @@
             "sourceMaps": true,
         },
         {
+            "name": "Launch storybooks",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:6006",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true
+        },
+        {
             "name": "Debug Core Package",
             "type": "node",
             "request": "launch",
