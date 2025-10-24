@@ -152,9 +152,9 @@ See the [UX Components documentation](docs/UX.md) for detailed format specificat
 
 ## Resources
 
-* **[Live Examples](https://aenas11.github.io/tsichart-core/)** - Interactive examples hosted on GitHub Pages
+* **[Live Examples](https://aenas11.github.io/tsichart-core)** - Interactive examples hosted on GitHub Pages
 * [Full API Documentation](docs/UX.md)
-* [Example Source Code](pages/examples/) - Check the `pages/examples/` directory for working examples
+
 
 
 ## Contributing
