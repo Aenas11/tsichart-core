@@ -97,14 +97,14 @@ chart.render(data, {
             description: 'Enable/disable interactive tooltips',
             table: { defaultValue: { summary: 'true' } }
         },
-        onClick: {
-            action: 'clicked',
-            description: 'Event handler for click events on the chart',
-        },
-        onInstanceClick: {
-            action: 'instanceClicked',
-            description: 'Event handler for click events on individual data points',
-        }
+        // onClick: {
+        //     action: 'clicked',
+        //     description: 'Event handler for click events on the chart',
+        // },
+        // onInstanceClick: {
+        //     action: 'instanceClicked',
+        //     description: 'Event handler for click events on individual data points',
+        // }        
 
     }
 };
@@ -224,8 +224,7 @@ export const Default: Story = {
         theme: 'light',
         yAxisState: 'stacked',
         legend: 'shown',
-
-        tooltip: true
+        tooltip: true,
     },
     render: createLineChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
@@ -236,8 +235,7 @@ export const DarkTheme: Story = {
         theme: 'dark',
         yAxisState: 'stacked',
         legend: 'shown',
-
-        tooltip: true
+        tooltip: true,
     },
     render: createLineChartStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
 };
