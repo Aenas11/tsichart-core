@@ -16,6 +16,7 @@ const preview: Preview = {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+        expanded: true
       },
     },
 
