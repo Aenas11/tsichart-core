@@ -258,7 +258,11 @@ export const WithEnvelopes: Story = {
         includeEnvelope: true,
         snapBrush: false,
         minBrushWidth: 10,
-        zeroYAxis: true
+        zeroYAxis: true,
+        tooltip: true,
+        brushHandlesVisible: false,
+        color: 'blue',
+        isArea: false
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
@@ -289,7 +293,11 @@ export const DarkThemeAdvanced: Story = {
         includeEnvelope: false,
         snapBrush: true,
         minBrushWidth: 20,
-        zeroYAxis: false
+        zeroYAxis: false,
+        tooltip: true,
+        brushHandlesVisible: false,
+        color: 'blue',
+        isArea: false
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
@@ -320,7 +328,11 @@ export const CompactLayout: Story = {
         includeEnvelope: false,
         snapBrush: false,
         minBrushWidth: 5,
-        zeroYAxis: true
+        zeroYAxis: true,
+        tooltip: true,
+        brushHandlesVisible: false,
+        color: 'blue',
+        isArea: false
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
