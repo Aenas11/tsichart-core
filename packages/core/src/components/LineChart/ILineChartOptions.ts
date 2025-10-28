@@ -32,4 +32,6 @@ import { ChartOptions } from "../../models/ChartOptions";
  * };
  * ```
  */
-export type ILineChartOptions = Partial<ChartOptions>;
+export type ILineChartOptions = Partial<Omit<ChartOptions,
+    'onSelect' | 'onInput' | 'onKeydown' | 'onInstanceClick' | 'hierarchyOptions' | 'withContextMenu' |
+    'timeSeriesIdProperties' | 'isTemporal' | 'spMeasures' | 'scatterPlotRadius' | 'spAxisLabels'>>;

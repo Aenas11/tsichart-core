@@ -172,6 +172,10 @@ This section demonstrates advanced features and configurations of the LineChart 
         isArea: {
             control: 'boolean',
             description: 'Render lines as filled areas'
+        },
+        onSticky: {
+            action: 'stuck',
+            description: 'Event handler for sticky brush events'
         }
     }
 };
@@ -192,7 +196,10 @@ export const SharedYAxis: Story = {
         tooltip: true,
         brushHandlesVisible: false,
         color: 'blue',
-        isArea: false
+        isArea: false,
+        onSticky: (range: any) => {
+            console.log('Brush selected range:', range);
+        }
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
@@ -227,7 +234,10 @@ export const OverlappingAxes: Story = {
         tooltip: true,
         brushHandlesVisible: false,
         color: 'blue',
-        isArea: false
+        isArea: false,
+        onSticky: (range: any) => {
+            console.log('Brush stuck range:', range);
+        }
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
@@ -262,7 +272,11 @@ export const WithEnvelopes: Story = {
         tooltip: true,
         brushHandlesVisible: false,
         color: 'blue',
-        isArea: false
+        isArea: false,
+        onSticky: (range: any) => {
+            console.log('Brush stuck range:', range);
+        }
+
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
@@ -297,7 +311,10 @@ export const DarkThemeAdvanced: Story = {
         tooltip: true,
         brushHandlesVisible: false,
         color: 'blue',
-        isArea: false
+        isArea: false,
+        onSticky: (range: any) => {
+            console.log('Brush stuck range:', range);
+        }
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
@@ -332,7 +349,10 @@ export const CompactLayout: Story = {
         tooltip: true,
         brushHandlesVisible: false,
         color: 'blue',
-        isArea: false
+        isArea: false,
+        onSticky: (range: any) => {
+            console.log('Brush stuck range:', range);
+        }
     },
     render: (args) => {
         const containerRef = createRef<HTMLDivElement>();
