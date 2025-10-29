@@ -33,21 +33,22 @@ const preview: Preview = {
     },
 
     backgrounds: {
-      default: 'light',
-      values: [
-        {
+      options: {
+        light: {
           name: 'light',
           value: '#ffffff',
         },
-        {
+
+        dark: {
           name: 'dark',
           value: '#1a1a1a',
         },
-        {
+
+        gray: {
           name: 'gray',
           value: '#f5f5f5',
-        },
-      ],
+        }
+      }
     },
   },
 
@@ -62,6 +63,12 @@ const preview: Preview = {
       return story();
     },
   ],
+
+  initialGlobals: {
+    backgrounds: {
+      value: 'light'
+    }
+  }
 };
 
 export default preview;

@@ -5,6 +5,10 @@ import LineChart from '../packages/core/src/components/LineChart/LineChart';
 import { ChartData } from '../packages/core/src/types';
 import { ILineChartOptions } from '../packages/core/src/components/LineChart/ILineChartOptions';
 
+import { fireEvent, screen, within, waitFor, waitForElementToBeRemoved } from 'storybook/test';
+
+
+
 // Define custom metrics for this example
 interface FactoryMetrics extends Record<string, number> {
     value: number;
@@ -106,6 +110,11 @@ chart.render(data, {
         //     description: 'Event handler for click events on individual data points',
         // }        
 
+    },
+    play: async ({ args, canvasElement }) => {
+        // You can add interaction tests here if needed
+        // const chartContainer = within(canvasElement).getByTestId('tsi-lineChart');
+        // fireEvent.click(chartContainer);
     }
 };
 

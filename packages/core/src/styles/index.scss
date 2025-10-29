@@ -228,9 +228,8 @@ select::-ms-expand {
 .tsi-select {
   margin: 2px;
   position: relative;
-
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  
+  appearance: none;  
   padding: 6px;
   padding-right: 28px;
   border-width: 1px;
