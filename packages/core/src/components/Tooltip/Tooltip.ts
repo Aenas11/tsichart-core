@@ -63,6 +63,7 @@ class Tooltip extends Component {
 
         this.tooltipDiv = tooltip.enter().append('div')
             .attr('class', 'tsi-tooltip')
+            .attr('role', 'tooltip')
             .merge(tooltip)
             .each(function (d) {
                 d3.select(this).selectAll("*").remove();

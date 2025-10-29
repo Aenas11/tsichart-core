@@ -1,7 +1,7 @@
 // stories/LineChart.stories.ts
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import LineChart from '../packages/core/src/components/LineChart/LineChart';
+import LineChart from '../packages/core/src/components/LineChart';
 import { ChartData } from '../packages/core/src/types';
 import { ILineChartOptions } from '../packages/core/src/components/LineChart/ILineChartOptions';
 
@@ -247,4 +247,58 @@ export const DarkTheme: Story = {
         tooltip: true,
     },
     render: createLineChartStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
+};
+
+export const Interactive: Story = {
+    name: 'Interaction Tests',
+    args: {
+        theme: 'light',
+        yAxisState: 'stacked',
+        legend: 'shown',
+        tooltip: true,
+        brushContextMenuActions: [{
+            name: 'Zoom',
+            action: () => { console.log('Zoom action triggered'); }
+        }],
+    },
+    render: createLineChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;'),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        // Wait for the chart to be fully rendered
+        await waitFor(() => canvas.getByTitle('Line chart'), { timeout: 5000 });
+        const chartSvg = canvas.getByTitle('Line chart');
+
+        // 1. Test Hover and Tooltip
+        // The voronoi overlay captures mouse events. We fire the event on it.
+        const voronoiOverlay = chartSvg.querySelector('.voronoiRect, .brushElem .overlay');
+        if (voronoiOverlay) {
+            // Move mouse to the center of the chart to trigger a tooltip
+            fireEvent.mouseMove(voronoiOverlay, { clientX: 400, clientY: 250 });
+
+            // Wait for tooltip to appear and check its content
+            const tooltip = await screen.findByRole('tooltip', {}, { timeout: 2000 });
+            await waitFor(() => {
+                if (!within(tooltip).queryByText(/Factory/)) {
+                    throw new Error("Tooltip content not found");
+                }
+            });
+        }
+
+        // 2. Test Hiding Series by clicking
+        const seriesToClick = await screen.findByTitle('Factory1');
+        fireEvent.click(seriesToClick);
+
+        // Check if the series becomes "hidden" in the legend
+        // Visible series have shown in tsi-serieslLabel class, hidden ones don't have "shown" class
+        await waitFor(() => {
+            //find legend item for Factory1
+            const legendItem = chartSvg.querySelector(`.tsi-seriesLabel[title="Factory1"]`);
+            if (legendItem && legendItem.classList.contains('shown')) {
+                throw new Error("Series Factory1 should be hidden but is still shown");
+            }
+
+        });
+
+    }
 };
