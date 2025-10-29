@@ -162,6 +162,8 @@ class AvailabilityChart extends ChartComponent {
         }
     }
 
+    //TODO: should have proper types for parameters
+
     public render(transformedAvailability: any, chartOptions: any, rawAvailability: any = {}) {
         this.setChartOptions(chartOptions);
         this.rawAvailability = rawAvailability;

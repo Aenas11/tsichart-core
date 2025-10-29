@@ -478,54 +478,100 @@ export default class Utils {
 
     }
 
-    static createSplitByColors(displayState: any, aggKey: string, ignoreIsOnlyAgg: boolean = false) {
-        if (Object.keys(displayState[aggKey]["splitBys"]).length == 1)
-            return [displayState[aggKey].color];
-        var isOnlyAgg: boolean = Object.keys(displayState).reduce((accum, currAgg): boolean => {
-            if (currAgg == aggKey)
-                return accum;
-            if (displayState[currAgg]["visible"] == false)
-                return accum && true;
-            return false;
-        }, true);
-        if (isOnlyAgg && !ignoreIsOnlyAgg) {
-            return this.generateColors(Object.keys(displayState[aggKey]["splitBys"]).length);
+    private static splitByColorCache = new Map<string, string[]>();
+
+    /**
+     * Creates an array of colors for split-by series
+     * @param displayState - The current display state
+     * @param aggKey - The aggregate key
+     * @param ignoreIsOnlyAgg - Whether to ignore the "only aggregate" optimization
+     * @returns Array of color strings for each split-by
+     */
+    static createSplitByColors(displayState: any, aggKey: string, ignoreIsOnlyAgg: boolean = false): string[] {
+        const splitBys = displayState[aggKey]?.splitBys;
+        if (!splitBys) {
+            return [];
         }
-        var aggColor = displayState[aggKey].color;
-        var interpolateColor = d3.scaleLinear().domain([0, Object.keys(displayState[aggKey]["splitBys"]).length])
-            .range([d3.hcl(aggColor).darker().l, d3.hcl(aggColor).brighter().l]);
-        var colors = [];
-        for (var i = 0; i < Object.keys(displayState[aggKey]["splitBys"]).length; i++) {
-            const newColor = d3.hcl(aggColor);
-            newColor.l = interpolateColor(i);
-            colors.push(newColor.formatHex());
+
+        const splitByCount = Object.keys(splitBys).length;
+
+        // Early return for single split-by
+        if (splitByCount === 1) {
+            return [displayState[aggKey].color];
+        }
+
+        // Create cache key for memoization
+        const cacheKey = `${aggKey}_${splitByCount}_${displayState[aggKey].color}_${ignoreIsOnlyAgg}`;
+        if (this.splitByColorCache.has(cacheKey)) {
+            return this.splitByColorCache.get(cacheKey);
+        }
+
+        const isOnlyVisibleAgg = !ignoreIsOnlyAgg && this.isOnlyVisibleAggregate(displayState, aggKey);
+        let colors: string[];
+
+        if (isOnlyVisibleAgg) {
+            // Generate distinct colors when this is the only visible aggregate
+            colors = this.generateColors(splitByCount);
+        } else {
+            // Generate color variations based on aggregate color
+            colors = this.generateSplitByColorVariations(
+                displayState[aggKey].color,
+                splitByCount
+            );
+        }
+
+        // Cache the result
+        this.splitByColorCache.set(cacheKey, colors);
+
+        // Limit cache size to prevent memory leaks
+        if (this.splitByColorCache.size > 100) {
+            const firstKey = this.splitByColorCache.keys().next().value;
+            this.splitByColorCache.delete(firstKey);
+        }
+
+        return colors;
+    }
+
+    /**
+     * Helper method to check if an aggregate is the only visible one
+     */
+    private static isOnlyVisibleAggregate(displayState: any, aggKey: string): boolean {
+        for (const currAgg in displayState) {
+            if (currAgg !== aggKey && displayState[currAgg]?.visible !== false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Helper method to generate color variations for split-bys
+     */
+    private static generateSplitByColorVariations(baseColor: string, count: number): string[] {
+        const baseHcl = d3.hcl(baseColor);
+        const interpolateColor = d3.scaleLinear()
+            .domain([0, count])
+            .range([baseHcl.darker().l, baseHcl.brighter().l]);
+
+        const colors: string[] = new Array(count);
+        for (let i = 0; i < count; i++) {
+            const newColor = d3.hcl(baseColor);
+            newColor.l = interpolateColor(i) as number;
+            colors[i] = newColor.formatHex();
         }
         return colors;
     }
 
-    static colorSplitBy(displayState: any, splitByIndex: number, aggKey: string, ignoreIsOnlyAgg: boolean = false) {
-        if (Object.keys(displayState[aggKey]["splitBys"]).length == 1)
-            return displayState[aggKey].color;
+    /**
+     * Clears the split-by color cache (useful when display state changes significantly)
+     */
+    static clearSplitByColorCache(): void {
+        this.splitByColorCache.clear();
+    }
 
-        var isOnlyAgg: boolean = Object.keys(displayState).reduce((accum, currAgg): boolean => {
-            if (currAgg == aggKey)
-                return accum;
-            if (displayState[currAgg]["visible"] == false)
-                return accum && true;
-            return false;
-        }, true);
-
-        if (isOnlyAgg && !ignoreIsOnlyAgg) {
-            var splitByColors = this.generateColors(Object.keys(displayState[aggKey]["splitBys"]).length);
-            return splitByColors[splitByIndex];
-        }
-
-        var aggColor = displayState[aggKey].color;
-        var interpolateColor = d3.scaleLinear().domain([0, Object.keys(displayState[aggKey]["splitBys"]).length])
-            .range([d3.hcl(aggColor).darker().l, d3.hcl(aggColor).brighter().l]);
-        const newColor = d3.hcl(aggColor);
-        newColor.l = interpolateColor(splitByIndex);
-        return newColor.formatHex();
+    static colorSplitBy(displayState: any, splitByIndex: number, aggKey: string, ignoreIsOnlyAgg: boolean = false): string {
+        const colors = this.createSplitByColors(displayState, aggKey, ignoreIsOnlyAgg);
+        return colors[splitByIndex] || displayState[aggKey]?.color || '#000000';
     }
 
     static getTheme(theme: any) {
