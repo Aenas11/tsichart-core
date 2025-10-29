@@ -1501,6 +1501,8 @@ class LineChart extends TemporalXAxisComponent {
             label.enter()
                 .append("text")
                 .attr("class", (d) => `tsi-swimLaneLabel-${lane} tsi-swimLaneLabel ${onClickPresentAndValid(d) ? 'tsi-boldOnHover' : ''}`)
+                .attr("role", "heading")
+                .attr("aria-level", "3")
                 .merge(label)
                 .style("text-anchor", "middle")
                 .attr("transform", d => `translate(${(-this.horizontalLabelOffset + swimlaneLabelConstants.labelLeftPadding)},${(d.offset + d.height / 2)}) rotate(-90)`)
@@ -1622,6 +1624,7 @@ class LineChart extends TemporalXAxisComponent {
             this.svgSelection = this.targetElement.append("svg")
                 .attr("class", "tsi-lineChartSVG tsi-chartSVG")
                 .attr('title', this.getString('Line chart'))
+                .attr("role", "img")
                 .attr("height", this.height);
 
             var g = this.svgSelection.append("g")

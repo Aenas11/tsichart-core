@@ -30,6 +30,8 @@ class ContextMenu extends Component {
         this.drawChart = drawChart;
         this.contextMenuElement = d3.select(renderTarget).insert("div", ":first-child")
             .attr("class", "tsi-contextMenu")
+            .attr("aria-label", "Context Menu")
+            .attr("role", "menu")
             .style("left", "0px")
             .style("top", "0px");
     }
@@ -127,6 +129,7 @@ class ContextMenu extends Component {
         var actionElementsEntered = actionElements.enter()
             .append("div")
             .attr("class", `tsi-actionElement`)
+            .attr("role", "menuitem")
             .classed('tsi-hasSubMenu', d => d.isNested)
             .merge(actionElements)
             .text(d => d.name)
