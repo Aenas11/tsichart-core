@@ -18,6 +18,12 @@ import EllipsisMenu from "./components/EllipsisMenu/EllipsisMenu";
 import TsqExpression from "./models/TsqExpression";
 import ModelAutocomplete from "./components/ModelAutocomplete/ModelAutocomplete";
 import HierarchyNavigation from "./components/HierarchyNavigation/HierarchyNavigation";
+import moment from 'moment';
+
+// Ensure moment is available globally for Pikaday and other components
+if (typeof window !== 'undefined') {
+    (window as any).moment = moment;
+}
 import SingleDateTimePicker from "./components/SingleDateTimePicker/SingleDateTimePicker";
 import DateTimeButtonSingle from "./components/DateTimeButtonSingle/DateTimeButtonSingle";
 import DateTimeButtonRange from "./components/DateTimeButtonRange/DateTimeButtonRange";

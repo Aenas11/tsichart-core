@@ -1,11 +1,11 @@
 import * as d3 from 'd3';
-import Pikaday from '../../../packages/pikaday/pikaday';
-import '../../../packages/pikaday/css/pikaday.css'
-import moment from 'moment';
 import './DateTimePicker.scss';
 import { ChartComponent } from '../../interfaces/ChartComponent';
 import TimezonePicker from '../TimezonePicker/TimezonePicker';
 import Utils from "../../utils";
+import { createPikaday, moment } from './pikaday-wrapper';
+
+ 
 
 class DateTimePicker extends ChartComponent {
     private calendar: any;
@@ -344,8 +344,8 @@ class DateTimePicker extends ChartComponent {
             weekdaysShort: moment.localeData().weekdaysMin()
         };
 
-        //@ts-ignore
-        this.calendarPicker = new Pikaday({
+        // Use the safe Pikaday wrapper
+        this.calendarPicker = createPikaday({
             bound: false,
             container: this.calendar.node(),
             field: this.calendar.node(),
@@ -383,6 +383,12 @@ class DateTimePicker extends ChartComponent {
             maxDate: this.convertToCalendarDate(this.maxMillis),
             defaultDate: Utils.adjustDateFromTimezoneOffset(new Date(this.fromMillis))
         });
+
+        // Check if Pikaday was created successfully
+        if (!this.calendarPicker) {
+            console.error('Failed to create Pikaday calendar. Check moment.js availability.');
+            return;
+        }
     }
 
     private setSelectedQuickTimes() {
