@@ -392,22 +392,3 @@ export const CompactMode: Story = {
     },
     render: createAvailabilityChartStory('height: 200px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
-
-export const WithDateTimeButton: Story = {
-    name: 'With DateTime Button',
-    args: {
-        theme: 'light',
-        color: 'orange',
-        maxBuckets: 500,
-        isCompact: false,
-        persistDateTimeButtonRange: true,
-        preserveAvailabilityState: false,
-        warmStoreEnabled: true,
-        warmStoreDays: 7,
-        offset: 'UTC', // UTC timezone
-        is24HourTime: false, // 12-hour format for this demo
-        enableBrushLogging: true,
-        enableBrushEndLogging: true
-    },
-    render: createAvailabilityChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
-};
