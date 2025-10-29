@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import AvailabilityChart from '../../packages/core/src/components/AvailabilityChart/AvailabilityChart';
+import { ChartOptions } from '../../packages/core/src/models/ChartOptions';
 
-const meta: Meta<AvailabilityChart> = {
+//TODO: AvailabilityChart options should be properly typed in the core package, for now it is using ChartOptions
+const meta: Meta<ChartOptions> = {
     title: 'Charts/Availability/AvailabilityChart',
     component: 'AvailabilityChart',
     tags: ['autodocs'],
@@ -12,15 +14,17 @@ const meta: Meta<AvailabilityChart> = {
                 component: `
 # AvailabilityChart Component
 
-Interactive availability chart for visualizing data availability and time range selection with the following features:
+The AvailabilityChart component visualizes the range and density of available time series data, helping users understand data coverage and select meaningful time periods for analysis. It provides an interactive interface for exploring data availability across different time ranges and selecting specific periods for detailed examination.
 
 ## Key Features
-- **Time Range Selection**: Interactive brushing to select specific time periods
-- **Dual-View Display**: Main sparkline chart and detailed time picker chart
-- **Zoom Controls**: Mouse wheel zooming and zoom in/out buttons for detailed exploration
-- **Date/Time Picker**: Integrated date-time picker for precise range selection
+- **Data Availability Visualization**: Visual representation of data density across time ranges
+- **Available Range Indication**: Clear display of the overall data availability period
+- **Time Range Selection**: Interactive brushing to select specific time periods from available data
+- **Dual-View Display**: Main sparkline chart showing data density and detailed time picker chart
+- **Zoom Controls**: Mouse wheel zooming and zoom in/out buttons for detailed exploration of available data
+- **Date/Time Picker**: Integrated date-time picker for precise range selection within available periods
 - **Compact Mode**: Streamlined view for space-constrained layouts
-- **Warm Store Range**: Visual indication of warm storage data availability
+- **Warm Store Range**: Visual indication of warm storage data availability vs. cold storage
 - **Ghost Selection**: Visual feedback showing selected time range
 - **Bucket Aggregation**: Intelligent data bucketing based on time range and resolution
 - **Theming**: Support for light and dark themes
@@ -35,7 +39,7 @@ import TsiClient from 'tsichart-core';
 const tsiClient = new TsiClient();
 const chart = new tsiClient.AvailabilityChart(containerElement);
 
-// Prepare availability data in the expected format
+// Prepare availability data showing data counts across time periods
 const availabilityData = [{
     "availabilityCount": {
         "": {
@@ -46,7 +50,7 @@ const availabilityData = [{
     }
 }];
 
-// Raw availability metadata (optional)
+// Raw availability metadata defining the overall available data range
 const rawAvailability = {
     range: {
         from: "2023-01-01T00:00:00Z",
@@ -55,7 +59,7 @@ const rawAvailability = {
     intervalSize: "PT1H" // 1 hour intervals
 };
 
-// Render the chart
+// Render the chart to show available data range and enable selection
 chart.render(availabilityData, {
     theme: 'light',
     color: 'teal',
@@ -68,7 +72,7 @@ chart.render(availabilityData, {
         to: "2023-01-15T23:59:59Z"
     },
     brushMoveAction: (from, to) => {
-        console.log('Selected range:', from, to);
+        console.log('Selected range from available data:', from, to);
     },
     brushMoveEndAction: (from, to, offset, isRelative, quickTime) => {
         console.log('Selection ended:', from, to);
@@ -87,19 +91,23 @@ chart.render(availabilityData, {
 - **persistDateTimeButtonRange**: Show persistent date/time range button
 - **preserveAvailabilityState**: Maintain zoom and selection state between renders
 - **warmStoreRange**: Define the range of warm storage data availability
-- **brushMoveAction**: Callback for brush movement events
+- **brushMoveAction**: Callback for brush movement events during range selection
 - **brushMoveEndAction**: Callback for brush selection completion
 - **offset**: Timezone offset handling ('Local', 'UTC', or specific offset)
 - **is24HourTime**: Use 24-hour time format in displays
 
 ## Interactive Features
 
-1. **Brush Selection**: Click and drag on the main chart to select time ranges
-2. **Wheel Zoom**: Use mouse wheel to zoom in/out at cursor position
+1. **Brush Selection**: Click and drag on the main chart to select time ranges from available data
+2. **Wheel Zoom**: Use mouse wheel to zoom in/out on the available data range
 3. **Zoom Buttons**: Click zoom in/out buttons for controlled zooming
 4. **Date/Time Picker**: Click the date/time button to open precise range selector
 5. **Ghost Range**: Visual indicator shows the currently selected time range
-6. **Warm Range**: Highlighted area indicates data stored in warm storage
+6. **Warm Range**: Highlighted area indicates data stored in warm storage (recent data)
+
+## Data Format
+
+The availability count data shows the density of available data points across time periods, allowing users to see where data is sparse or dense before selecting a range for analysis.
                 `
             }
         }
@@ -188,7 +196,7 @@ chart.render(availabilityData, {
 };
 export default meta;
 
-type Story = StoryObj<AvailabilityChart>;
+type Story = StoryObj<ChartOptions>;
 
 /**
  * Generate sample availability data for demonstration.
@@ -260,7 +268,7 @@ function renderAvailabilityChart(container: HTMLElement, options: any = {}) {
         ] : null;
 
         // Create brush action callbacks based on logging preferences
-        const brushMoveAction = options.enableBrushLogging !== false 
+        const brushMoveAction = options.enableBrushLogging !== false
             ? (from, to) => {
                 console.log('Brush Move Action:', {
                     from: from.toISOString(),
@@ -296,7 +304,7 @@ function renderAvailabilityChart(container: HTMLElement, options: any = {}) {
             brushMoveAction: brushMoveAction,
             brushMoveEndAction: brushMoveEndAction,
             offset: options.offset || 'Local',
-            is24HourTime:  options.is24HourTime !== false,
+            is24HourTime: options.is24HourTime !== false,
             ...options
         };
 
@@ -353,7 +361,7 @@ export const Default: Story = {
         enableBrushLogging: true,
         enableBrushEndLogging: true
     },
-    render: createAvailabilityChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createAvailabilityChartStory('height: 200px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
 
 export const DarkTheme: Story = {
@@ -372,7 +380,7 @@ export const DarkTheme: Story = {
         enableBrushLogging: true,
         enableBrushEndLogging: true
     },
-    render: createAvailabilityChartStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
+    render: createAvailabilityChartStory('height: 200px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
 };
 
 export const CompactMode: Story = {
@@ -384,7 +392,7 @@ export const CompactMode: Story = {
         isCompact: true,
         persistDateTimeButtonRange: false,
         preserveAvailabilityState: false,
-        warmStoreEnabled: false,  
+        warmStoreEnabled: false,
         offset: 'UTC',
         is24HourTime: true,
         enableBrushLogging: false,
@@ -409,5 +417,5 @@ export const WithDateTimeButton: Story = {
         enableBrushLogging: true,
         enableBrushEndLogging: true
     },
-    render: createAvailabilityChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createAvailabilityChartStory('height: 200px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };

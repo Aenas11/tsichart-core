@@ -1,9 +1,9 @@
 // stories/LineChart.stories.ts
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import LineChart from '../packages/core/src/components/LineChart';
-import { ChartData } from '../packages/core/src/types';
-import { ILineChartOptions } from '../packages/core/src/components/LineChart/ILineChartOptions';
+import LineChart from '../../packages/core/src/components/LineChart';
+import { ChartData } from '../../packages/core/src/types';
+import { ILineChartOptions } from '../../packages/core/src/components/LineChart/ILineChartOptions';
 
 import { fireEvent, screen, within, waitFor, waitForElementToBeRemoved } from 'storybook/test';
 
@@ -16,7 +16,7 @@ interface FactoryMetrics extends Record<string, number> {
 }
 
 const meta: Meta<ILineChartOptions> = {
-    title: 'Charts/LineChart',
+    title: 'Charts/LineChart/LineChart',
     component: 'LineChart',
     tags: ['autodocs'],
     parameters: {

@@ -2,7 +2,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import { ref, createRef } from 'lit/directives/ref.js';
-import LineChart from '../packages/core/src/components/LineChart/LineChart';
+import LineChart from '../../packages/core/src/components/LineChart/LineChart';
 
 // Generate more complex sample data for advanced examples
 function generateAdvancedSampleData() {
@@ -93,7 +93,7 @@ function renderAdvancedLineChart(container: HTMLElement, options: any = {}) {
 }
 
 const meta: Meta = {
-    title: 'Charts/LineChart Advanced',
+    title: 'Charts/LineChart/LineChart Advanced',
     tags: ['autodocs'],
     parameters: {
         docs: {
