@@ -300,5 +300,57 @@ export const Interactive: Story = {
 
         });
 
+        // wait for 1 second
+        await new Promise((r) => setTimeout(r, 1000));
+
+        // Click again to show the series
+        fireEvent.click(seriesToClick);
+
+        // Verify the series is shown again
+        await waitFor(() => {
+            const legendItem = chartSvg.querySelector(`.tsi-seriesLabel[title="Factory1"]`);
+            if (legendItem && !legendItem.classList.contains('shown')) {
+                throw new Error("Series Factory1 should be shown but is still hidden");
+            }
+        });
+
+        // 3. Test Brushing
+        // const brushOverlay = chartSvg.querySelector('.brushElem');
+
+        // if (brushOverlay) {
+        //     // Simulate a brush drag from x=200 to x=400
+        //     await fireEvent.mouseDown(brushOverlay, { clientX: 200, clientY: 150 });
+        //     await fireEvent.mouseMove(brushOverlay, { clientX: 400, clientY: 150, buttons: 1 });
+        //     const tst = await fireEvent.mouseUp(brushOverlay);
+        //     console.log('Brush events simulated:', tst);
+
+        //     // Check if the brush selection element is visible
+        //     await waitFor(() => {
+        //         const brushSelection = brushOverlay.querySelector('.selection');
+        //         if (!brushSelection || brushSelection.getAttribute('width') === '0') {
+        //             throw new Error("Brush selection not created");
+        //         }
+        //     });
+
+        //     // 4. Test Brush Context Menu
+        //     const brushSelection = brushOverlay.querySelector('.selection');
+        //     if (brushSelection) {
+        //         // The context menu should be triggered on the visible selection area
+        //         fireEvent.contextMenu(brushSelection);
+
+        //         // Wait for the context menu to appear, then find the item
+        //         const contextMenu = await screen.findByRole('menu', { name: /Context Menu/i });
+        //         const contextMenuItem = within(contextMenu).getByText('Zoom');
+
+        //         await waitFor(() => {
+        //             if (!contextMenuItem) {
+        //                 throw new Error("Context menu item not found");
+        //             }
+        //         });
+
+        //         // Optionally, you can trigger the context menu action
+        //         fireEvent.click(contextMenuItem);
+        //     }
+        // }
     }
 };

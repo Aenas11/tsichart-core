@@ -1528,7 +1528,7 @@ class LineChart extends TemporalXAxisComponent {
         })
     }
 
-    public render(data: ChartData, options: ILineChartOptions, aggregateExpressionOptions: any) {
+    public render(data: any, options: ILineChartOptions, aggregateExpressionOptions: any) {
         super.render(data, options, aggregateExpressionOptions);
 
         this.originalSwimLanes = this.aggregateExpressionOptions.map((aEO) => {
