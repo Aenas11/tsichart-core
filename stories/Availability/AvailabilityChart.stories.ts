@@ -2,9 +2,10 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import AvailabilityChart from '../../packages/core/src/components/AvailabilityChart/AvailabilityChart';
 import { ChartOptions } from '../../packages/core/src/models/ChartOptions';
+import Legend from '../../packages/core/src/components/Legend';
 
 //TODO: AvailabilityChart options should be properly typed in the core package, for now it is using ChartOptions
-const meta: Meta<ChartOptions> = {
+const meta: Meta<any> = {
     title: 'Charts/Availability/AvailabilityChart',
     component: 'AvailabilityChart',
     tags: ['autodocs'],
@@ -196,7 +197,7 @@ The availability count data shows the density of available data points across ti
 };
 export default meta;
 
-type Story = StoryObj<ChartOptions>;
+type Story = StoryObj<any>;
 
 /**
  * Generate sample availability data for demonstration.
@@ -359,7 +360,8 @@ export const Default: Story = {
         offset: 'Local',
         is24HourTime: true,
         enableBrushLogging: true,
-        enableBrushEndLogging: true
+        enableBrushEndLogging: true,
+        legend: "hidden"
     },
     render: createAvailabilityChartStory('height: 200px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
@@ -378,7 +380,8 @@ export const DarkTheme: Story = {
         offset: 'Local',
         is24HourTime: true,
         enableBrushLogging: true,
-        enableBrushEndLogging: true
+        enableBrushEndLogging: true,
+        legend: "hidden"
     },
     render: createAvailabilityChartStory('height: 200px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
 };
@@ -396,7 +399,8 @@ export const CompactMode: Story = {
         offset: 'UTC',
         is24HourTime: true,
         enableBrushLogging: false,
-        enableBrushEndLogging: false
+        enableBrushEndLogging: false,
+        legend: "hidden"
     },
     render: createAvailabilityChartStory('height: 200px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
@@ -415,7 +419,8 @@ export const WithDateTimeButton: Story = {
         offset: 'UTC', // UTC timezone
         is24HourTime: false, // 12-hour format for this demo
         enableBrushLogging: true,
-        enableBrushEndLogging: true
+        enableBrushEndLogging: true,
+        legend: "hidden"
     },
     render: createAvailabilityChartStory('height: 200px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
