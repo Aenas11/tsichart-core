@@ -118,24 +118,6 @@ The availability count data shows the density of available data points across ti
       options: ["light", "dark"],
       description: "Visual theme for the chart",
     },
-    // yAxisState: {
-    //     control: { type: 'select' },
-    //     options: ['stacked', 'shared', 'overlap'],
-    //     description: 'How multiple series should be displayed on the Y-axis',
-    //     table: { defaultValue: { summary: 'stacked' } }
-    // },
-    // legend: {
-    //     control: { type: 'select' },
-    //     options: ['shown', 'hidden', 'compact'],
-    //     description: 'Legend display mode',
-    //     table: { defaultValue: { summary: 'shown' } }
-    // },
-
-    // tooltip: {
-    //     control: 'boolean',
-    //     description: 'Enable/disable interactive tooltips',
-    //     table: { defaultValue: { summary: 'true' } }
-    // },
     color: {
       control: { type: "color" },
       description: "Primary color for the availability chart",
