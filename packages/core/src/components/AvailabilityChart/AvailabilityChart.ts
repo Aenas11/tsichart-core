@@ -105,6 +105,7 @@ class AvailabilityChart extends ChartComponent {
 
     //transformation of buckets created by the UX client to buckets for the availabilityChart
     private createDisplayBuckets(fromMillis: number, toMillis: number) {
+        //TODO: "" key is confusing, should be "count" or something similar
         var keysInRange = Object.keys(this.transformedAvailability[0].availabilityCount[""]).reduce((inRangeObj: any, timestamp: string, i: number, timestamps: Array<string>) => {
             var currTSMillis = (new Date(timestamp)).valueOf();
             var nextTSMillis = currTSMillis + this.bucketSize;

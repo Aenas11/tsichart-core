@@ -181,7 +181,7 @@ The availability count data shows the density of available data points across ti
 };
 export default meta;
 
-type Story = StoryObj<ChartOptions>;
+type Story = StoryObj<any>;
 
 /**
  * Generate sample availability data for demonstration.
@@ -406,4 +406,3 @@ export const CompactMode: Story = {
     "height: 200px; width: 100%; border: 1px solid #ddd; border-radius: 4px;"
   ),
 };
-
