@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
+import * as d3 from 'd3';
 import CategoricalPlot from '../../packages/core/src/components/CategoricalPlot';
 
 const meta: Meta<CategoricalPlot> = {
@@ -254,25 +255,80 @@ function renderCategoricalPlot(container: HTMLElement, options: any = {}) {
 
     try {
         console.log('Rendering CategoricalPlot with options:', options);
+        
+        // Set up proper dimensions
+        const width = container.clientWidth || 800;
+        const height = options.height || 200;
+        const margin = { top: 20, right: 20, bottom: 40, left: 60 };
 
-        // Create SVG container
+        // Create SVG container with proper styling
         const svg = d3.select(container)
             .append('svg')
-            .attr('width', '100%')
-            .attr('height', options.height || 200)
-            .style('border', '1px solid #ddd');
+            .attr('width', width)
+            .attr('height', height)
+            .style('background', options.theme === 'dark' ? '#1a1a1a' : '#ffffff');
 
-        // Create mock chart infrastructure that CategoricalPlot expects
-        const chartGroup = svg.append('g').attr('class', 'tsi-chartGroup');
-        const aggregateGroup = chartGroup.append('g').attr('class', 'tsi-aggregateGroup');
+        // Create chart group with margins
+        const chartGroup = svg.append('g')
+            .attr('class', 'tsi-chartGroup')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-        // Mock data and options
+        const aggregateGroup = chartGroup.append('g')
+            .attr('class', 'tsi-aggregateGroup');
+
+        // Generate data based on type
         const categoricalData = options.dataType === 'iot' ? generateIoTDeviceData() :
                                options.dataType === 'manufacturing' ? generateManufacturingData() :
                                generateCategoricalData();
 
-        // Create CategoricalPlot instance
+        // Set up proper time scales
+        const aggData = categoricalData[0];
+        const aggKey = Object.keys(aggData)[0];
+        const splitByData = aggData[aggKey];
+
+        // Create proper chartComponentData structure that Plot.getVisibleSeries() expects
+        const chartComponentData = {
+            // timeArrays should be the entire aggregate data structure
+            timeArrays: aggData,
+            // Add required methods that Plot base class uses
+            isSplitByVisible: (aggKey: string, splitBy: string) => true,
+            toMillis: Date.now(),
+            fromMillis: Date.now() - (24 * 60 * 60 * 1000), // 24 hours ago
+            // Add data access methods
+            getVisibleMeasure: (aggKey: string, splitBy: string) => 'Status'
+        };
+
+        const allTimestamps = [];
+        Object.values(splitByData).forEach((timeSeriesData: any) => {
+            Object.keys(timeSeriesData).forEach(timestamp => {
+                allTimestamps.push(new Date(timestamp));
+            });
+        });
+
+        const timeExtent = d3.extent(allTimestamps) as [Date, Date];
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+
+        const xScale = d3.scaleTime()
+            .domain(timeExtent)
+            .range([0, chartWidth]);
+
+        const yScale = d3.scaleLinear()
+            .domain([0, chartHeight])
+            .range([0, chartHeight]);
+
+
+        const defs = svg.append('defs');
         const plot = new CategoricalPlot(svg);
+
+        const agg = {
+            aggKey: aggKey,
+            searchSpan: {
+                bucketSize: options.bucketSize || 'PT1H'
+            },
+            splitBys: Object.keys(splitByData),
+            visible: true
+        };
 
         // Mock the required parameters for the render method
         const mockParams = {
@@ -282,27 +338,29 @@ function renderCategoricalPlot(container: HTMLElement, options: any = {}) {
                 ...options
             },
             visibleAggI: 0,
-            agg: { aggKey: Object.keys(categoricalData[0])[0] },
+            agg: agg,
             aggVisible: true,
             aggregateGroup: aggregateGroup,
-            chartComponentData: {
-                timeArrays: categoricalData[0],
-                isSplitByVisible: () => true,
-                toMillis: Date.now()
-            },
-            yExtent: [0, 100],
-            chartHeight: (options.height || 200) - 50,
+            chartComponentData: chartComponentData,
+            yExtent: [0, chartHeight],
+            chartHeight: chartHeight,
             visibleAggCount: 1,
             colorMap: new Map(),
             previousAggregateData: new Map(),
-            x: d3.scaleTime().range([0, container.clientWidth - 40]),
+            x: xScale,
             areaPath: null,
             strokeOpacity: 1,
-            y: d3.scaleLinear().range([0, options.height || 200]),
-            yMap: new Map(),
-            defs: svg.append('defs'),
+            y: yScale,
+            yMap: new Map([
+                [aggKey, { 
+                    scaleType: 'linear',
+                    yExtent: [0, chartHeight],
+                    splitBys: Object.keys(splitByData)
+                }]
+            ]),
+            defs: defs,
             chartDataOptions: {
-                height: options.height || 200,
+                height: chartHeight,
                 searchSpan: {
                     bucketSize: options.bucketSize || 'PT1H'
                 },
@@ -312,7 +370,7 @@ function renderCategoricalPlot(container: HTMLElement, options: any = {}) {
                     } : null
             },
             previousIncludeDots: false,
-            yTopAndHeight: [20, (options.height || 200) - 40],
+            yTopAndHeight: [0, chartHeight],
             chartGroup: chartGroup,
             categoricalMouseover: (d, x, y, endDate, width) => {
                 console.log('Categorical mouseover:', { d, x, y, endDate, width });
