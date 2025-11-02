@@ -186,19 +186,19 @@ function generateFactoryData() {
 
     const factories = ['Factory A', 'Factory B', 'Factory C'];
     const productionLines = ['', 'Line 1', 'Line 2', 'Line 3'];
-    
+
     return factories.map((factory, factoryIndex) => {
         const factoryData = {};
         factoryData[factory] = {};
-        
+
         productionLines.forEach(line => {
             factoryData[factory][line] = {};
-            
+
             timestamps.forEach(timestamp => {
                 const baseProduction = 100 + factoryIndex * 20;
                 const baseQuality = 85 + factoryIndex * 5;
                 const lineMultiplier = line === '' ? 1 : 0.3 + (parseInt(line.split(' ')[1]) || 1) * 0.2;
-                
+
                 factoryData[factory][line][timestamp] = {
                     'Production': Math.round((baseProduction + Math.random() * 40 - 20) * lineMultiplier * 10) / 10,
                     'Quality': Math.round((baseQuality + Math.random() * 10 - 5) * 10) / 10,
@@ -206,7 +206,7 @@ function generateFactoryData() {
                 };
             });
         });
-        
+
         return factoryData;
     });
 }
@@ -224,39 +224,39 @@ function generateFactoryData() {
 function generateStackedFactoryData() {
     const timestamps = [
         '2023-01-01T00:00:00Z',
-        '2023-01-01T01:00:00Z', 
+        '2023-01-01T01:00:00Z',
         '2023-01-01T02:00:00Z',
         '2023-01-01T03:00:00Z'
     ];
 
     // Create data that stacks well - representing different production categories
     const productionStages = ['Raw Materials', 'Manufacturing', 'Assembly', 'Quality Control', 'Packaging'];
-    
+
     return productionStages.map((stage, stageIndex) => {
         const stageData = {};
         stageData[stage] = {};
-        
+
         // Different production lines as split-by values
         const productionLines = ['', 'Line A', 'Line B', 'Line C'];
-        
+
         productionLines.forEach(line => {
             stageData[stage][line] = {};
-            
+
             timestamps.forEach((timestamp, timeIndex) => {
                 // Create base values that increase through the production pipeline
                 const stageMultiplier = 1 + (stageIndex * 0.3); // Each stage adds value
                 const baseUnits = 40 + (stageIndex * 15); // Progressive increase per stage
                 const timeVariation = 5 + (timeIndex * 2); // Slight increase over time
-                
+
                 const lineMultiplier = line === '' ? 1.5 : // Main line
-                                     line === 'Line A' ? 1.2 :
-                                     line === 'Line B' ? 1.0 : 0.8;
-                
+                    line === 'Line A' ? 1.2 :
+                        line === 'Line B' ? 1.0 : 0.8;
+
                 // Calculate units with good stacking proportions
                 const unitsProduced = Math.round((baseUnits + timeVariation) * lineMultiplier);
                 const efficiency = Math.round(75 + (stageIndex * 3) + Math.random() * 10);
                 const throughput = Math.round(unitsProduced * 0.9 + Math.random() * (unitsProduced * 0.2));
-                
+
                 stageData[stage][line][timestamp] = {
                     'Units': unitsProduced,
                     'Efficiency': efficiency,
@@ -264,7 +264,7 @@ function generateStackedFactoryData() {
                 };
             });
         });
-        
+
         return stageData;
     });
 }
@@ -283,20 +283,20 @@ function generateComparisonData() {
 
     // Performance metrics for different departments
     const departments = ['Production', 'Quality', 'Maintenance', 'Logistics'];
-    
+
     return departments.map((department, deptIndex) => {
         const deptData = {};
         deptData[department] = {};
-        
+
         // Different performance categories
         const categories = ['', 'Target', 'Actual', 'Variance'];
-        
+
         categories.forEach(category => {
             deptData[department][category] = {};
-            
+
             timestamps.forEach((timestamp, timeIndex) => {
                 let baseTarget, actualMultiplier, varianceBase;
-                
+
                 // Department-specific base values
                 switch (department) {
                     case 'Production':
@@ -316,11 +316,11 @@ function generateComparisonData() {
                         actualMultiplier = 0.8 + Math.random() * 0.35; // 80-115% of target
                         break;
                 }
-                
+
                 const targetValue = baseTarget + timeIndex * 5; // Slight increase over time
                 const actualValue = Math.round(targetValue * actualMultiplier);
                 const variance = actualValue - targetValue;
-                
+
                 if (category === '' || category === 'Target') {
                     deptData[department][category][timestamp] = {
                         'Performance': targetValue,
@@ -342,7 +342,7 @@ function generateComparisonData() {
                 }
             });
         });
-        
+
         return deptData;
     });
 }
@@ -350,7 +350,7 @@ function generateComparisonData() {
 // Function to render GroupedBarChart in a container
 function renderBarChart(container: HTMLElement, options: any = {}) {
     container.innerHTML = '';
- try {
+    try {
         console.log('Rendering GroupedBarChart with options:', options);
 
         // Create GroupedBarChart instance
@@ -367,7 +367,6 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             hideChartControlPanel: options.hideChartControlPanel || false,
             scaledToCurrentTime: options.scaledToCurrentTime || false,
             keepSplitByColor: options.keepSplitByColor || false,
-            timestamp: '2023-01-01T00:00:00Z',
             ...options
         };
 
@@ -380,7 +379,7 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
         } else {
             factoryData = generateFactoryData();
         }
-        
+
         chart.render(factoryData, chartOptions, []);
 
         return chart;
