@@ -120,10 +120,20 @@ Data should be provided as an array of aggregate objects, where each aggregate r
             options: ['light', 'dark'],
             description: 'Visual theme for the chart'
         },
+        visibleType: {
+            control: { type: 'select' },
+            options: ['Production', 'Quality', 'Efficiency', 'Performance', 'Output'],
+            description: 'The measure to display (used for stacking/grouping)',
+            table: { defaultValue: { summary: 'Production' } }
+        },
         stacked: {
             control: 'boolean',
             description: 'Display bars in stacked layout instead of grouped',
             table: { defaultValue: { summary: 'false' } }
+        },
+        yAxisState: {
+            control: { type: 'select' },
+            options: ['shared', 'stacked'], 
         },
         legend: {
             control: { type: 'select' },
@@ -211,6 +221,41 @@ function generateFactoryData() {
     });
 }
 
+function generateSampleData() {
+    var data = [];
+    // Use consistent time range following component patterns
+    var baseTime = new Date('2023-01-01T00:00:00Z');
+    
+    for(var i = 0; i < 3; i++){
+        var lines = {};
+        data.push({[`Factory${i}`]: lines});
+        
+        for(var j = 0; j < 5; j++){
+            var values = {};
+            lines[`Station${j}`] = values;
+            
+            // Create consistent timestamps across all factories/stations
+            for(var k = 0; k < 4; k++){ // Reduced to 4 timestamps for consistency
+                var timestamp = new Date(baseTime.valueOf() + 1000*60*60*k); // Hourly intervals
+                var val = Math.random();
+                var val2 = Math.random();
+                var val3 = Math.random();
+                var val4 = Math.random();
+                
+                // Convert to proper measure format for GroupedBarChart compatibility
+                values[timestamp.toISOString()] = {
+                    'Production': Math.max(10, Math.round(val * 100 + 50)), // Ensure positive values
+                    'Quality': Math.max(5, Math.round(val2 * 100)), // Quality percentage
+                    'Efficiency': Math.max(5, Math.round(val3 * 100)), // Efficiency percentage
+                    'Output': Math.max(15, Math.round(val4 * 200 + 100)) // Output units
+                };
+            } 
+        }
+    }
+    
+    return data;
+}
+
 
 /**
  * Generate sample data optimized for stacked bar visualization.
@@ -224,51 +269,42 @@ function generateFactoryData() {
 function generateStackedFactoryData() {
     const timestamps = [
         '2023-01-01T00:00:00Z',
-        '2023-01-01T01:00:00Z', 
+        '2023-01-01T01:00:00Z',
         '2023-01-01T02:00:00Z',
         '2023-01-01T03:00:00Z'
     ];
-
-    // Create data that stacks well - representing different production categories
-    const productionStages = ['Raw Materials', 'Manufacturing', 'Assembly', 'Quality Control', 'Packaging'];
-    
-    return productionStages.map((stage, stageIndex) => {
-        const stageData = {};
-        stageData[stage] = {};
+    const stages = ['Raw Materials', 'Manufacturing', 'Assembly', 'Packaging'];
+    const lines = ['', 'Line A', 'Line B'];
+    return stages.map((stage, stageIndex) => {
+        const aggregateData = {};
+        aggregateData[stage] = {};
         
-        // Different production lines as split-by values
-        const productionLines = ['', 'Line A', 'Line B', 'Line C'];
-        
-        productionLines.forEach(line => {
-            stageData[stage][line] = {};
+        lines.forEach(line => {
+            aggregateData[stage][line] = {};
             
-            timestamps.forEach((timestamp, timeIndex) => {
-                // Create base values that increase through the production pipeline
-                const stageMultiplier = 1 + (stageIndex * 0.3); // Each stage adds value
-                const baseUnits = 40 + (stageIndex * 15); // Progressive increase per stage
-                const timeVariation = 5 + (timeIndex * 2); // Slight increase over time
+            timestamps.forEach(timestamp => {
+                // Progressive values for stacking visualization
+                const baseValue = 30 + (stageIndex * 20); // Each stage builds on previous
+                const variation = Math.floor(Math.random() * 10);
+                const lineMultiplier = line === '' ? 1.0 : 
+                                     line === 'Line A' ? 0.8 : 0.6;
                 
-                const lineMultiplier = line === '' ? 1.5 : // Main line
-                                     line === 'Line A' ? 1.2 :
-                                     line === 'Line B' ? 1.0 : 0.8;
+                // Ensure positive, non-zero values for proper D3.js scale calculations
+                const finalValue = Math.max(15, Math.round((baseValue + variation) * lineMultiplier));
                 
-                // Calculate units with good stacking proportions
-                const unitsProduced = Math.round((baseUnits + timeVariation) * lineMultiplier);
-                const efficiency = Math.round(75 + (stageIndex * 3) + Math.random() * 10);
-                const throughput = Math.round(unitsProduced * 0.9 + Math.random() * (unitsProduced * 0.2));
-                
-                stageData[stage][line][timestamp] = {
-                    'Units': unitsProduced,
-                    'Efficiency': efficiency,
-                    'Throughput': throughput
+                aggregateData[stage][line][timestamp] = {
+                    // Use 'Production' measure name consistently across all data
+                    'Production': finalValue,
+                    // Add additional consistent measures for variety
+                    'Quality': Math.max(70, Math.round(85 + Math.random() * 10)),
+                    'Efficiency': Math.max(60, Math.round(75 + Math.random() * 15))
                 };
             });
         });
         
-        return stageData;
+        return aggregateData;
     });
 }
-
 /**
  * Generate comparison data for grouped bars showing different metrics.
  * Creates data that works well for both grouped and stacked visualization.
@@ -367,7 +403,9 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             hideChartControlPanel: options.hideChartControlPanel || false,
             scaledToCurrentTime: options.scaledToCurrentTime || false,
             keepSplitByColor: options.keepSplitByColor || false,
-            timestamp: '2023-01-01T00:00:00Z',
+            timestamp: options.timestamp || '2023-01-01T00:00:00Z',
+            suppressResizeListener: false,
+            visibleType: options.visibleType || 'Production',
             ...options
         };
 
@@ -377,10 +415,50 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             factoryData = generateComparisonData();
         } else if (options.stacked) {
             factoryData = generateStackedFactoryData();
+            console.log(factoryData, "------")
         } else {
             factoryData = generateFactoryData();
         }
+
+        if (!Array.isArray(factoryData) || factoryData.length === 0) {
+            throw new Error('Invalid data format: Expected non-empty array of aggregates');
+        }
         
+        factoryData.forEach((aggregate, index) => {
+            const aggKey = Object.keys(aggregate)[0];
+            if (!aggKey) {
+                throw new Error(`Invalid aggregate at index ${index}: Missing aggregate key`);
+            }
+            
+            const splitBys = aggregate[aggKey];
+            if (!splitBys || typeof splitBys !== 'object') {
+                throw new Error(`Invalid aggregate ${aggKey}: Missing split-by data`);
+            }
+            
+            // Validate each split-by has timestamp data
+            Object.keys(splitBys).forEach(splitBy => {
+                const timeData = splitBys[splitBy];
+                if (!timeData || typeof timeData !== 'object') {
+                    throw new Error(`Invalid split-by ${splitBy} in ${aggKey}: Missing time data`);
+                }
+                
+                // Validate each timestamp has measure data
+                Object.keys(timeData).forEach(timestamp => {
+                    const measures = timeData[timestamp];
+                    if (!measures || typeof measures !== 'object') {
+                        throw new Error(`Invalid timestamp ${timestamp} in ${aggKey}/${splitBy}: Missing measures`);
+                    }
+                    
+                    // Validate the visibleType measure exists and is a valid positive number
+                    const visibleMeasure = measures[chartOptions.visibleType];
+                    if (typeof visibleMeasure !== 'number' || isNaN(visibleMeasure) || visibleMeasure <= 0) {
+                        console.error(`Fixing invalid measure ${chartOptions.visibleType} in ${aggKey}/${splitBy}/${timestamp}: was ${visibleMeasure}, setting to 1`);
+                        // Fix invalid values to prevent NaN in D3.js calculations
+                        measures[chartOptions.visibleType] = 1;
+                    }
+                });
+            });
+        });
         chart.render(factoryData, chartOptions, []);
 
         return chart;
@@ -390,6 +468,12 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             <h3>Error rendering GroupedBarChart</h3>
             <p><strong>Error:</strong> ${error.message}</p>
             <p><small>Check browser console for more details</small></p>
+            <details style="margin-top: 10px;">
+                <summary>Stack Trace</summary>
+                <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px;">
+${error.stack}
+                </pre>
+            </details>
         </div>`;
     }
 }
@@ -441,7 +525,8 @@ export const StackedBars: Story = {
         grid: true,
         hideChartControlPanel: false,
         scaledToCurrentTime: false,
-        keepSplitByColor: true
+        keepSplitByColor: true,
+        visibleType: 'Production' // Changed from 'Units' to 'Production'
     },
     render: createBarChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
