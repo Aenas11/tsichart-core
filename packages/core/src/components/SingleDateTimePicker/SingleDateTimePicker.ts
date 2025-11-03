@@ -36,7 +36,6 @@ class SingleDateTimePicker extends ChartComponent {
         this.minMillis = minMillis;
         this.maxMillis = maxMillis;
         if (chartOptions.offset && (typeof chartOptions.offset == "string")) {
-            []
             this.offsetName = chartOptions.offset;
         }
 
