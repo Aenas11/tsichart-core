@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
-  entry: "./src/TsiClient.ts",
+  entry: "./packages/core/src/UXClient.ts",
   module: {
     rules: [
       {
@@ -14,6 +14,7 @@ module.exports = {
             options: {
               compilerOptions: {
                 declaration: false,
+                sourceMap: true,
               },
             },
           },
@@ -38,8 +39,8 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jp(e*)g|svg)$/,
-        type: "asset", // Replace url-loader with asset module
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset',
         parser: {
           dataUrlCondition: {
             maxSize: 8 * 1024, // Convert images < 8kb to base64 strings

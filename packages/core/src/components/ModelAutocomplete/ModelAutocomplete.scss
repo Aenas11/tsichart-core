@@ -1,0 +1,141 @@
+@use "sass:list";
+@use "sass:color";
+@use "../../styles" as *;
+
+
+@mixin modelAutocompleteColors($grays){
+	$gray1: list.nth($grays, 1); // text
+    $gray2: list.nth($grays, 2); // hover
+    $gray3: list.nth($grays, 3); // element
+    $gray4: list.nth($grays, 4); // background
+	$gray5: list.nth($grays, 5); // alt element
+    $gray6: list.nth($grays, 6);
+    
+    background: $gray3;
+    color: $gray1;
+    @include baseContextMenuColors($grays);
+
+        .awesomplete > ul {
+            background: $gray4;
+            color: $gray1;
+
+            li[aria-selected="true"], li:hover, li:focus{
+                background: $gray2;
+            }
+        }
+    
+    .tsi-clear{
+        background-color: $gray3;
+        &:hover{
+            background-color: $gray4;
+        }
+    }
+    .tsi-searchInput{
+        color: $gray1;
+    }
+}
+
+.tsi-modelAutocompleteWrapper{
+    height: 32px;
+    position: relative;
+
+    &.tsi-dark{
+        $grays: grays('dark');
+        @include modelAutocompleteColors($grays);
+        .tsi-clear{
+            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);                    
+        }
+        .tsi-search-icon {
+            background-image: url(../../icons/Search_Dark.svg);
+        }
+    }
+    &.tsi-light{
+        $grays: grays('light');
+        @include modelAutocompleteColors($grays);
+        .tsi-clear{
+            background-image: url(../../icons/Close_Icon_Light_Theme.svg);                    
+        }
+        .tsi-search-icon {
+            background-image: url(../../icons/Search_Light.svg);
+        }
+    }
+
+    .tsi-search{
+        .tsi-clear{
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            left: calc(100% - 28px);
+            margin-top: 1px;
+            display: none;
+            z-index: 2;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            &.tsi-shown{
+                display: block;
+            }
+        }
+        .tsi-searchInput::-ms-clear{
+            display: none;
+        }
+        
+        .awesomplete [hidden] {
+            display: none;
+        }
+
+        .awesomplete .visually-hidden {
+            position: absolute;
+            clip: rect(0, 0, 0, 0);
+        }
+
+        .awesomplete {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+
+        .awesomplete > input {
+            padding-right: 28px;
+        }
+
+        .awesomplete > ul {
+            @extend .tsi-baseContextMenu;
+            animation: tsi-slideIn 0.367s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+            position: absolute;
+            z-index: 1;
+            list-style: none;
+            padding: 0;
+            border-radius: 0px;
+            font-size: 13px;
+            width: 100%;
+            margin-top: 30px;
+
+            &:before{
+                display: none;
+            }
+            li {
+                display: block;
+                line-height: 20px;
+                cursor: pointer;
+            }
+        }
+
+        .awesomplete > ul:empty {
+            display: none;
+        }
+
+        .tsi-search-results-info {
+            position: absolute !important;
+            display: block;
+            visibility: visible;
+            overflow: hidden;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            border: 0;
+            padding: 0;
+            white-space: nowrap;
+        }
+    }
+}

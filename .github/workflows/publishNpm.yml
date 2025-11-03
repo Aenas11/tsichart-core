@@ -15,16 +15,75 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
 
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm publish --provenance --access public
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Verify build output
+        run: |
+          echo "Checking if dist folder exists..."
+          ls -la packages/core/dist/
+          echo "Checking package contents..."
+          cd packages/core && npm pack --dry-run
+
+      - name: Verify npm authentication
+        run: |
+          echo "Setting up npm authentication..."
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "Checking npm whoami..."
+          npm whoami
+          echo "Checking npm config..."
+          npm config get registry
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Determine npm tag
+        id: npm-tag
+        run: |
+          VERSION=$(node -p "require('./packages/core/package.json').version")
+          if [[ "$VERSION" == *"beta"* ]]; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+          elif [[ "$VERSION" == *"alpha"* ]]; then
+            echo "tag=alpha" >> $GITHUB_OUTPUT
+          elif [[ "$VERSION" == *"rc"* ]]; then
+            echo "tag=rc" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+          echo "Publishing with tag: $(cat $GITHUB_OUTPUT | grep tag | cut -d= -f2)"
+
+      - name: Publish core package
+        working-directory: packages/core
+        run: |
+          echo "Publishing package with tag: ${{ steps.npm-tag.outputs.tag }}"
+          echo "Package name: $(node -p "require('./package.json').name")"
+          echo "Package version: $(node -p "require('./package.json').version")"
+          npm publish --provenance --access public --tag ${{ steps.npm-tag.outputs.tag }} --verbose
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Future: Publish React and Vue packages when ready
+      # - name: Publish React package
+      #   run: pnpm --filter tsichart-react publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      # - name: Publish Vue package
+      #   run: pnpm --filter tsichart-vue publish --provenance --access public --no-git-checks --tag ${{ steps.npm-tag.outputs.tag }}
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

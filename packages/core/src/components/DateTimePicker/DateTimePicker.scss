@@ -1,0 +1,329 @@
+@use "sass:list";
+@use "sass:color";
+@use "../../styles" as *;
+
+@mixin dateTimePickerColors($grays) {
+  $gray1: list.nth($grays, 1); // text
+  $gray2: list.nth($grays, 2); // hover
+  $gray3: list.nth($grays, 3); // element
+  $gray4: list.nth($grays, 4); // background
+  $gray5: list.nth($grays, 5);
+  $gray6: list.nth($grays, 6);
+
+  // Move declarations above nested rules
+  background-color: $gray3;
+  color: $gray1;
+
+  .tsi-dateTimeGroup {
+    .tsi-dateTimeSelectionPanel {
+      border-left: 1px solid $gray5;
+
+      .tsi-dateTimeInput {
+        background-color: $gray3;
+        color: $gray1;
+        border: 1px solid rgba($gray1, 0.3);
+      }
+    }
+
+    .tsi-quickTimesPanel {
+      .tsi-quickTime {
+        color: $gray1;
+        background-color: $gray3;
+
+        &.tsi-isSelected {
+          background-color: rgba($gray2, 0.6) !important;
+          color: $gray1;
+        }
+      }
+
+      .tsi-quickTime:hover {
+        background-color: $gray4;
+      }
+    }
+  }
+
+  .tsi-select,
+  .tsi-select option {
+    color: $gray1;
+    background-color: $gray3;
+  }
+
+  .pika-table th {
+    color: $gray1;
+    opacity: 0.6;
+  }
+
+  .pika-single {
+
+    color: $gray1;
+    background-color: $gray3;
+
+    .pika-select,
+    .pika-select option,
+    .pika-label,
+    .pika-day,
+    .pika-prev,
+    .pika-next {
+      color: $gray1;
+      background-color: $gray3;
+
+      &:focus {
+        border: 1px solid $gray6;
+      }
+    }
+
+    .pika-prev,
+    .pika-next {
+      color: $gray6;
+      background-color: white;
+    }
+  }
+
+  .tsi-timeControlsContainer {
+
+    .tsi-startContainer,
+    .tsi-endContainer,
+    .tsi-timezoneContainer {
+      .tsi-timeLabel {
+        .tsi-snapToEndRangeButton {
+          color: $gray6;
+        }
+      }
+    }
+  }
+}
+
+.tsi-timeRequired {
+  color: #a80000;
+}
+
+.tsi-dateTimePicker {
+  animation: tsi-slideIn 0.367s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  align-items: stretch;
+  width: 616px;
+
+  &.tsi-dark {
+    $grays: grays("dark");
+
+    // Move declarations above nested rules
+    @include dateTimePickerColors($grays);
+
+    .pika-single {
+      .is-inrange {
+        .pika-day {
+          background-color: rgba(48, 157, 144, 0.4) !important;
+        }
+      }
+
+      .is-selected {
+        .pika-day {
+          box-shadow: unset;
+        }
+      }
+    }
+  }
+
+  &.tsi-light {
+    $grays: grays("light");
+
+    // Move declarations above nested rules
+    @include dateTimePickerColors($grays);
+  }
+
+  .tsi-dateTimeGroup {
+    display: inline-flex;
+
+    .tsi-quickTimesPanel {
+      display: flex;
+      flex-direction: column;
+      width: 152px;
+      float: left;
+      height: auto;
+
+      .tsi-quickTime {
+        text-align: left;
+        border: none;
+        height: 10%;
+        padding-left: 20px;
+        width: 100%;
+        cursor: pointer;
+      }
+    }
+
+    .tsi-dateTimeSelectionPanel {
+      float: right;
+      width: 460px;
+      padding-left: 8px;
+
+      .pika-single {
+        border: none;
+        height: 250px;
+
+        .is-selected {
+          .pika-day {
+            box-shadow: unset;
+          }
+        }
+      }
+
+      .tsi-calendarPicker {
+        width: 100%;
+        margin-top: 8px;
+      }
+
+      .tsi-select {
+        top: 4px;
+        margin: 0px;
+        padding-right: 28px;
+        width: 100px;
+        background: url(../../icons/chevron.svg) 16px / 16px no-repeat;
+        background-position-y: 12px;
+        background-position-x: calc(100% - 4px);
+
+        option {
+          padding: 6px;
+        }
+      }
+
+      .tsi-timeControlsContainer {
+        align-items: stretch;
+        width: calc(100% - 28px);
+        margin-left: 12px;
+        margin-right: 12px;
+
+        .tsi-timeInputContainer {
+          display: inline-flex;
+          width: 100%;
+
+          .tsi-startContainer {
+            padding-right: 10px;
+          }
+
+          .tsi-endContainer {
+            padding-left: 6px;
+          }
+
+          .tsi-startContainer,
+          .tsi-endContainer {
+            padding-top: 12px;
+            width: 50%;
+            position: relative;
+
+            .tsi-dateTimeInput {
+              margin-top: 4px;
+              width: 100%;
+              padding: 0px 8px 0px 8px;
+              height: 30px;
+              box-sizing: border-box;
+            }
+
+            .tsi-startTimeInputContainer,
+            .tsi-endTimeInputContainer {
+              display: flex;
+
+              .tsi-hoursInput,
+              .tsi-minutesInput,
+              .tsi-AMPMInput {
+                display: flex;
+                width: 33%;
+                flex-grow: 1;
+                height: 32px;
+                padding-left: 12px;
+                display: inline-flex;
+                text-align: center;
+              }
+            }
+          }
+        }
+      }
+
+      .tsi-timeControlsContainer,
+      .tsi-timezoneContainer {
+        .tsi-timeLabel {
+          font-weight: 600;
+          font-size: 14px;
+          margin: 0;
+          text-transform: capitalize;
+          height: 20px;
+          line-height: 20px;
+          opacity: 1;
+        }
+
+        .tsi-snapToEndRangeButton {
+          text-decoration: underline;
+          background: transparent;
+          border: none;
+          line-height: 20px;
+          cursor: pointer;
+          margin-left: 8px;
+          padding: 0px;
+          text-transform: capitalize;
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          margin-top: 12px;
+        }
+      }
+
+      .tsi-timezoneContainer {
+        padding-bottom: 12px;
+        width: calc(100% - 32px);
+        margin: 0 16px 16px 16px;
+
+        .tsi-timezonePickerContainer {
+          width: 100%;
+          height: 100%;
+
+          .tsi-timezonePicker {
+            width: 100%;
+            background: url(../../icons/chevron.svg) 16px/16px no-repeat;
+            background-position-y: 12px;
+            background-position-x: calc(100% - 4px);
+          }
+        }
+      }
+
+      .tsi-saveButtonContainer {
+        width: 100%;
+        height: 48px;
+        margin-top: 12px;
+
+        .tsi-saveButton,
+        .tsi-cancelButton {
+          width: 92px;
+          border: none;
+          float: right;
+          margin-right: 16px;
+          height: 32px;
+          padding: 8px;
+          border-radius: 2px;
+          line-height: 14px;
+
+          &.tsi-buttonDisabled {
+            background-color: grey !important;
+          }
+        }
+
+        .tsi-saveButton {
+          background-color: #309d90;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .tsi-errorMessageContainer {
+    background-color: #b36200;
+    color: white;
+
+    @media screen and (-ms-high-contrast: active) {
+      -ms-high-contrast-adjust: none;
+      background-color: #b36200;
+    }
+
+    .tsi-errorMessage {
+      padding: 8px;
+    }
+  }
+}

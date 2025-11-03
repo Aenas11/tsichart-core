@@ -1,4 +1,4 @@
-# @tsichart/core - Time Series Interactive Charts
+# tsichart-core - Time Series Interactive Charts
 
 A powerful, flexible JavaScript library for visualizing time series data with **interactive** charts. Built with TypeScript and D3.js, this library provides a rich set of chart components including line charts, bar charts, pie charts, heatmaps, scatter plots, and more.
 
@@ -18,6 +18,7 @@ A powerful, flexible JavaScript library for visualizing time series data with **
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/Aenas11/tsichart-core)
 [![Live Examples](https://img.shields.io/badge/Examples-Live%20Demo-green)](https://aenas11.github.io/tsichart-core/) 
+[![Storybook](https://img.shields.io/badge/Storybook-Component%20Docs-ff69b4)](https://aenas11.github.io/tsichart-core/storybook/) 
 
 ## Installation
 
@@ -95,6 +96,30 @@ lineChart.render(data, { theme: 'light' });
 
 For detailed usage examples and API documentation, see the [UX Components documentation](docs/UX.md).
 
+## 📚 Documentation & Examples
+
+### Interactive Component Documentation
+Explore all components with live examples, API documentation, and interactive controls:
+
+**[📖 Storybook Documentation](https://aenas11.github.io/tsichart-core/storybook/)** - Interactive component library with:
+- Live component previews with editable properties
+- Complete API documentation with code examples  
+- Accessibility testing and guidelines
+- Real-time property editing and testing
+- Dark/light theme examples
+
+### Live Examples
+**[🚀 Live Demo Site](https://aenas11.github.io/tsichart-core/)** - Working examples and use cases
+
+### Local Development
+```bash
+# Run Storybook locally for development
+pnpm storybook
+
+# Build component documentation  
+pnpm build-storybook
+```
+
 ## Data Format
 
 All components work with a consistent JSON data structure. Here's the basic format:
@@ -127,9 +152,9 @@ See the [UX Components documentation](docs/UX.md) for detailed format specificat
 
 ## Resources
 
-* **[Live Examples](https://aenas11.github.io/tsichart-core/)** - Interactive examples hosted on GitHub Pages
+* **[Live Examples](https://aenas11.github.io/tsichart-core)** - Interactive examples hosted on GitHub Pages
 * [Full API Documentation](docs/UX.md)
-* [Example Source Code](pages/examples/) - Check the `pages/examples/` directory for working examples
+
 
 
 ## Contributing
@@ -169,3 +194,18 @@ If you're migrating from the original Microsoft `tsiclient` package:
 ## Contributing
 
 This project welcomes contributions and suggestions.
+
+## Development
+
+To set up the development environment and work on components:
+
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+2.  **Start the development server:**
+    ```bash
+    npm start
+    ```
+    This will start a live-reloading server and open the examples page in your browser. You can now make changes to the source code and see them reflected live

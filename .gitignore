@@ -11,6 +11,7 @@ node_modules
 node_modules/.vite/
 .DS_Store
 dist
+dev-dist
 dist-ssr
 coverage
 *.local
@@ -30,3 +31,7 @@ coverage
 *.sw?
 tsichart-core-*.tgz
 build_artifacts/*
+.pnpm*
+
+*storybook.log
+storybook-static

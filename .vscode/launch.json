@@ -5,11 +5,111 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Chrome React Test App",
+            "url": "http://localhost:5173",
+            "request": "launch",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}/test-apps/react/reacttest",
+            "sourceMaps": true,
+        },
+        {
+            "name": "Launch storybooks",
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:6006",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true
+        },
+        {
+            "name": "Debug Core Package",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/packages/core/src/index.ts",
+            "cwd": "${workspaceFolder}/packages/core",
+            "outFiles": [
+                "${workspaceFolder}/packages/core/dist/**/*.js"
+            ],
+            "runtimeArgs": [
+                "--loader",
+                "ts-node/esm"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--loader ts-node/esm"
+            },
+            "preLaunchTask": "build:core",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "Debug Core Tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "--runInBand",
+                "--no-cache"
+            ],
+            "cwd": "${workspaceFolder}/packages/core",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug TSIClient Dev Server",
             "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}/packages/core",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack://tsichart-core/./src/*": "${workspaceFolder}/packages/core/src/*",
+                "webpack:///./*": "${workspaceFolder}/packages/core/*",
+                "webpack:///src/*": "${workspaceFolder}/packages/core/src/*",
+                "webpack:///*": "${workspaceFolder}/packages/core/*"
+            },
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**"
+            ],
+            "trace": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
+        },
+        {
+            "name": "Attach to Chrome",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}/packages/core",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack://tsichart-core/./src/*": "${workspaceFolder}/packages/core/src/*",
+                "webpack:///./*": "${workspaceFolder}/packages/core/*",
+                "webpack:///src/*": "${workspaceFolder}/packages/core/src/*",
+                "webpack:///*": "${workspaceFolder}/packages/core/*"
+            }
+        },
+        {
+            "name": "Debug TSIClient Dev Server (No Launch)",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}/packages/core",
+            "url": "http://localhost:8080",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack://tsichart-core/./src/*": "${workspaceFolder}/packages/core/src/*",
+                "webpack:///./*": "${workspaceFolder}/packages/core/*",
+                "webpack:///src/*": "${workspaceFolder}/packages/core/src/*",
+                "webpack:///*": "${workspaceFolder}/packages/core/*"
+            },
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**"
+            ]
         }
     ]
 }

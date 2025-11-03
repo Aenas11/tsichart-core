@@ -1,0 +1,156 @@
+# TSIChart Component Library
+
+Welcome to the TSIChart Storybook! This interactive documentation showcases the time series visualization components available in the TSIChart library.
+
+## 🎯 What is TSIChart?
+
+**tsichart-core** (Time Series Interactive Charts) is a powerful, flexible JavaScript library for visualizing time series data with interactive charts. Built with TypeScript and D3.js, this library provides a rich set of chart components including line charts, bar charts, pie charts, heatmaps, scatter plots, and more.
+
+**Note:** This library is a community-maintained fork of the original Microsoft Time Series Insights Client, rebranded as **Time Series Interactive Charts** and updated for generic time series visualization use cases.
+
+### ✨ Key Features
+
+- **Rich Component Library** - 20+ pre-built, customizable chart components
+- **Interactive Visualizations** - Tooltips, zooming, panning, and dynamic data updates
+- **Themeable** - Built-in light and dark themes with customization options
+- **Responsive** - Charts adapt to different screen sizes
+- **TypeScript Support** - Full type definitions included
+- **Tree-shakeable** - Import only the components you need
+- **Zero Configuration** - Works out of the box with sensible defaults
+
+## 📦 Installation
+
+### NPM
+
+```bash
+npm install tsichart-core
+```
+
+### Yarn
+
+```bash
+yarn add tsichart-core
+```
+
+## 🚀 Quick Start
+
+### Import All Components
+
+```js
+import TsiClient from "tsichart-core";
+import "tsichart-core/tsiclient.css";
+
+// Create a line chart
+let tsiClient = new TsiClient();
+let lineChart = new tsiClient.ux.LineChart(document.getElementById('chart'));
+
+// Prepare your data
+const data = [{
+  "Series1": {
+    "": {
+      "2023-01-01T00:00:00Z": { avg: 10 },
+      "2023-01-01T01:00:00Z": { avg: 15 },
+      "2023-01-01T02:00:00Z": { avg: 13 }
+    }
+  }
+}];
+
+// Render the chart
+lineChart.render(data, { theme: 'light', legend: 'compact' });
+```
+
+### Import Individual Components (Recommended for Tree-shaking)
+
+```js
+import LineChart from 'tsichart-core/LineChart';
+import 'tsichart-core/tsiclient.css';
+
+// Create and render chart
+let lineChart = new LineChart(document.getElementById('chart'));
+lineChart.render(data, { theme: 'light' });
+```
+
+## 📊 Available Components
+
+**tsichart-core** provides 20+ visualization components including:
+
+- **LineChart** - Render time series data as lines with interactive brushing
+- **BarChart** - Display time series data as bars with timestamp slider
+- **PieChart** - Show time series data as pie charts with timestamp slider
+- **Heatmap** - Visualize time series data as a heatmap
+- **ScatterPlot** - Plot time series data points as a scatter plot
+- **AvailabilityChart** - Display data availability over time
+- **Grid** - Render time series data in a tabular format
+- **Hierarchy** - Display hierarchical data structures
+- **EventsTable** - Show events in a table format
+- **DateTimePicker** - UI component for selecting date/time ranges
+- **TimezonePicker** - UI component for timezone selection
+- **Slider** - Time slider component
+- **ModelSearch** - Search component for time series models
+- And more...
+
+### LineChart - Flagship Component
+
+The premier component for displaying time series line charts with multiple series, interactive brushing, markers, and advanced formatting options.
+
+**Key Features:**
+- Multiple Y-axis configurations (stacked, shared, overlapping)
+- Interactive brush selection for time range filtering
+- Sticky series highlighting
+- Custom markers and annotations
+- Rich tooltip system
+- Responsive legend
+
+## � Using This Documentation
+
+Each component story includes:
+- **Canvas**: Interactive preview with live controls
+- **Docs**: Detailed documentation with code examples
+- **Controls**: Real-time property editing
+- **Accessibility**: Built-in a11y testing
+
+## 💡 Usage Tips
+
+1. **Explore Controls**: Use the Controls panel to modify component properties in real-time
+2. **Check Accessibility**: The a11y addon automatically tests for accessibility issues
+3. **Copy Code**: Use the code snippets in the Docs tab as starting points
+4. **Test Responsiveness**: Resize the preview window to see responsive behavior
+
+## 🔗 Related Resources
+
+- [GitHub Repository](https://github.com/Aenas11/tsichart-core)
+- [NPM Package](https://www.npmjs.com/package/tsichart-core)
+- [Live Examples](https://aenas11.github.io/tsichart-core/)
+- [Full API Documentation](https://github.com/Aenas11/tsichart-core/blob/main/docs/UX.md)
+
+## 📄 Data Format
+
+All components work with a consistent JSON data structure:
+
+```js
+const data = [{
+  "SeriesName": {
+    "SplitByValue": {  // Use empty string "" if no split
+      "2023-01-01T00:00:00Z": {
+        avg: 10,    // Your metric values
+        min: 8,
+        max: 12
+      },
+      "2023-01-01T01:00:00Z": {
+        avg: 15,
+        min: 13,
+        max: 17
+      }
+    }
+  }
+}];
+```
+
+**You are responsible for:**
+- Fetching time series data from your data source (API, database, etc.)
+- Transforming your data into the expected format
+- Handling any authentication/authorization
+
+---
+
+*Built with ❤️ using Storybook, TypeScript, and D3.js*

@@ -1,0 +1,106 @@
+@use "sass:list";
+@use "sass:color";
+@use "../../styles" as *;
+
+@mixin hmColors($grays) {
+  $gray1: list.nth($grays, 1); // text
+  $gray2: list.nth($grays, 2); // hover
+  $gray3: list.nth($grays, 3); // element
+  $gray4: list.nth($grays, 4); // background
+  $gray5: list.nth($grays, 5);
+  $gray6: list.nth($grays, 6);
+
+  color: $gray1;
+  background: $gray3;
+  @include chartColors($grays);
+
+  .tsi-heatmapWrapper {
+    .tsi-heatmapTimeLabels {
+      stroke: $gray6;
+      .tsi-heatmapTimeLabelTextBox {
+        text {
+          fill: $gray1 !important;
+          stroke: none;
+          font-size: 12px;
+        }
+        rect {
+          fill: $gray4 !important;
+        }
+      }
+      .tsi-heatmapFocusLine {
+        stroke: $gray2 !important;
+      }
+      .xAxis {
+        fill: $gray1 !important;
+        text {
+          stroke: none;
+        }
+
+        .xAxisBaseline {
+          stroke: $gray1 !important;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}
+.tsi-heatmapComponent {
+  svg {
+    shape-rendering: crispEdges;
+  }
+
+  display: flex;
+
+  &.tsi-dark {
+    $grays: grays("dark");
+    @include hmColors($grays);
+    .tsi-resizeGutter {
+      background-image: url(./../../icons/drag_handle_dark.svg);
+    }
+  }
+  &.tsi-light {
+    $grays: grays("light");
+    @include hmColors($grays);
+    .tsi-resizeGutter {
+      background-image: url(./../../icons/drag_handle_light.svg);
+    }
+  }
+
+  .tsi-heatmapWrapper {
+    position: relative;
+    overflow: hidden;
+
+    .tsi-heatmapSVG {
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+
+      .tick {
+        line {
+          width: 4px;
+        }
+        text {
+          font-size: 12px !important;
+        }
+      }
+
+      .tsi-heatmapFocusLine {
+        stroke-width: 1px;
+      }
+
+      .tsi-heatmapTimeLabelTextBox {
+        text-anchor: middle;
+        text {
+          transform: translateY(1px);
+        }
+      }
+    }
+
+    .tsi-heatmapCanvasWrapper {
+      position: absolute;
+    }
+  }
+}
