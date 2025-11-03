@@ -221,42 +221,6 @@ function generateFactoryData() {
     });
 }
 
-function generateSampleData() {
-    var data = [];
-    // Use consistent time range following component patterns
-    var baseTime = new Date('2023-01-01T00:00:00Z');
-    
-    for(var i = 0; i < 3; i++){
-        var lines = {};
-        data.push({[`Factory${i}`]: lines});
-        
-        for(var j = 0; j < 5; j++){
-            var values = {};
-            lines[`Station${j}`] = values;
-            
-            // Create consistent timestamps across all factories/stations
-            for(var k = 0; k < 4; k++){ // Reduced to 4 timestamps for consistency
-                var timestamp = new Date(baseTime.valueOf() + 1000*60*60*k); // Hourly intervals
-                var val = Math.random();
-                var val2 = Math.random();
-                var val3 = Math.random();
-                var val4 = Math.random();
-                
-                // Convert to proper measure format for GroupedBarChart compatibility
-                values[timestamp.toISOString()] = {
-                    'Production': Math.max(10, Math.round(val * 100 + 50)), // Ensure positive values
-                    'Quality': Math.max(5, Math.round(val2 * 100)), // Quality percentage
-                    'Efficiency': Math.max(5, Math.round(val3 * 100)), // Efficiency percentage
-                    'Output': Math.max(15, Math.round(val4 * 200 + 100)) // Output units
-                };
-            } 
-        }
-    }
-    
-    return data;
-}
-
-
 /**
  * Generate sample data optimized for stacked bar visualization.
  * Creates data with better proportional relationships for stacking.
@@ -403,7 +367,6 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             hideChartControlPanel: options.hideChartControlPanel || false,
             scaledToCurrentTime: options.scaledToCurrentTime || false,
             keepSplitByColor: options.keepSplitByColor || false,
-            timestamp: options.timestamp || '2023-01-01T00:00:00Z',
             suppressResizeListener: false,
             visibleType: options.visibleType || 'Production',
             ...options
