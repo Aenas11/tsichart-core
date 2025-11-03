@@ -4,7 +4,7 @@ import GroupedBarChart from '../../packages/core/src/components/GroupedBarChart'
 import { ChartOptions } from '../../packages/core/src/models/ChartOptions';
 
 
-const meta: Meta<GroupedBarChart> = {
+const meta: Meta<ChartOptions> = {
     title: 'Charts/BarChart/GroupedBarChart',
     component: 'BarChart',
     tags: ['autodocs'],
@@ -119,12 +119,6 @@ Data should be provided as an array of aggregate objects, where each aggregate r
             control: { type: 'select' },
             options: ['light', 'dark'],
             description: 'Visual theme for the chart'
-        },
-        visibleType: {
-            control: { type: 'select' },
-            options: ['Production', 'Quality', 'Efficiency', 'Performance', 'Output'],
-            description: 'The measure to display (used for stacking/grouping)',
-            table: { defaultValue: { summary: 'Production' } }
         },
         stacked: {
             control: 'boolean',
@@ -368,7 +362,6 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             scaledToCurrentTime: options.scaledToCurrentTime || false,
             keepSplitByColor: options.keepSplitByColor || false,
             suppressResizeListener: false,
-            visibleType: options.visibleType || 'Production',
             ...options
         };
 
@@ -412,13 +405,15 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
                         throw new Error(`Invalid timestamp ${timestamp} in ${aggKey}/${splitBy}: Missing measures`);
                     }
                     
-                    // Validate the visibleType measure exists and is a valid positive number
-                    const visibleMeasure = measures[chartOptions.visibleType];
-                    if (typeof visibleMeasure !== 'number' || isNaN(visibleMeasure) || visibleMeasure <= 0) {
-                        console.error(`Fixing invalid measure ${chartOptions.visibleType} in ${aggKey}/${splitBy}/${timestamp}: was ${visibleMeasure}, setting to 1`);
-                        // Fix invalid values to prevent NaN in D3.js calculations
-                        measures[chartOptions.visibleType] = 1;
-                    }
+                    // Validate all measures are valid positive numbers
+                    Object.keys(measures).forEach(measureName => {
+                        const measureValue = measures[measureName];
+                        if (typeof measureValue !== 'number' || isNaN(measureValue) || measureValue <= 0) {
+                            console.error(`Fixing invalid measure ${measureName} in ${aggKey}/${splitBy}/${timestamp}: was ${measureValue}, setting to 1`);
+                            // Fix invalid values to prevent NaN in D3.js calculations
+                            measures[measureName] = 1;
+                        }
+                    });
                 });
             });
         });
@@ -489,7 +484,6 @@ export const StackedBars: Story = {
         hideChartControlPanel: false,
         scaledToCurrentTime: false,
         keepSplitByColor: true,
-        visibleType: 'Production' // Changed from 'Units' to 'Production'
     },
     render: createBarChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
