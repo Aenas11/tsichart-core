@@ -125,11 +125,6 @@ Data should be provided as an array of aggregate objects, where each aggregate r
             description: 'Display bars in stacked layout instead of grouped',
             table: { defaultValue: { summary: 'false' } }
         },
-        withContextMenu: {
-            control: 'boolean',
-            description: 'Display a context menu when you click on a parent of leaf nodes',
-            table: { defaultValue: { summary: 'false' } }
-        },
         yAxisState: {
             control: { type: 'select' },
             options: ['shared', 'stacked'], 
@@ -367,7 +362,6 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             scaledToCurrentTime: options.scaledToCurrentTime || false,
             keepSplitByColor: options.keepSplitByColor || false,
             suppressResizeListener: false,
-            withContextMenu: options.withContextMenu || false,
             ...options
         };
 
@@ -379,9 +373,6 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             factoryData = generateStackedFactoryData();
         } else {
             factoryData = generateFactoryData();
-        }
-        if (options.withContextMenu) {
-            factoryData = addContextMenuToData(factoryData);
         }
 
         if (!Array.isArray(factoryData) || factoryData.length === 0) {
@@ -563,23 +554,6 @@ export const CompactLegend: Story = {
         hideChartControlPanel: false,
         scaledToCurrentTime: false,
         keepSplitByColor: false
-    },
-    render: createBarChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
-};
-
-export const WithContextMenu: Story = {
-    name: 'With Context Menu',
-    args: {
-        theme: 'light',
-        stacked: false,
-        legend: 'shown',
-        tooltip: true,
-        zeroYAxis: false,
-        grid: true,
-        hideChartControlPanel: false,
-        scaledToCurrentTime: false,
-        keepSplitByColor: false,
-        withContextMenu: true // Enable context menu for this story
     },
     render: createBarChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
