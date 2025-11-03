@@ -125,6 +125,11 @@ Data should be provided as an array of aggregate objects, where each aggregate r
             description: 'Display bars in stacked layout instead of grouped',
             table: { defaultValue: { summary: 'false' } }
         },
+        withContextMenu: {
+            control: 'boolean',
+            description: 'Display a context menu when you click on a parent of leaf nodes',
+            table: { defaultValue: { summary: 'false' } }
+        },
         yAxisState: {
             control: { type: 'select' },
             options: ['shared', 'stacked'], 
@@ -362,6 +367,7 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             scaledToCurrentTime: options.scaledToCurrentTime || false,
             keepSplitByColor: options.keepSplitByColor || false,
             suppressResizeListener: false,
+            withContextMenu: options.withContextMenu || false,
             ...options
         };
 
@@ -371,9 +377,11 @@ function renderBarChart(container: HTMLElement, options: any = {}) {
             factoryData = generateComparisonData();
         } else if (options.stacked) {
             factoryData = generateStackedFactoryData();
-            console.log(factoryData, "------")
         } else {
             factoryData = generateFactoryData();
+        }
+        if (options.withContextMenu) {
+            factoryData = addContextMenuToData(factoryData);
         }
 
         if (!Array.isArray(factoryData) || factoryData.length === 0) {
@@ -456,6 +464,44 @@ function createBarChartStory(containerStyle: string) {
     };
 }
 
+function addContextMenuToData(factoryData: any[]): any[] {
+    return factoryData.map(aggregate => {
+        const aggKey = Object.keys(aggregate)[0];
+        
+        // Add context menu actions to the aggregate data structure
+        // Following the component's expected data format
+        const enhancedAggregate = {
+            ...aggregate,
+            // Add contextMenuActions property that the component looks for
+            contextMenuActions: [
+                {
+                    name: 'View Details',
+                    action: (aggKey: string, splitBy: string, timestamp: Date) => {
+                        console.log('View Details clicked:', { aggKey, splitBy, timestamp });
+                        alert(`Viewing details for:\nAggregate: ${aggKey}\nSplit By: ${splitBy || 'None'}\nTime: ${timestamp.toISOString()}`);
+                    }
+                },
+                {
+                    name: 'Export Data',
+                    action: (aggKey: string, splitBy: string, timestamp: Date) => {
+                        console.log('Export Data clicked:', { aggKey, splitBy, timestamp });
+                        alert(`Exporting data for:\nAggregate: ${aggKey}\nSplit By: ${splitBy || 'None'}\nTime: ${timestamp.toISOString()}`);
+                    }
+                },
+                {
+                    name: 'Configure Alert',
+                    action: (aggKey: string, splitBy: string, timestamp: Date) => {
+                        console.log('Configure Alert clicked:', { aggKey, splitBy, timestamp });
+                        alert(`Configuring alert for:\nAggregate: ${aggKey}\nSplit By: ${splitBy || 'None'}\nTime: ${timestamp.toISOString()}`);
+                    }
+                }
+            ]
+        };
+        
+        return enhancedAggregate;
+    });
+}
+
 export const Default: Story = {
     name: 'Grouped Bars (Default)',
     args: {
@@ -517,6 +563,23 @@ export const CompactLegend: Story = {
         hideChartControlPanel: false,
         scaledToCurrentTime: false,
         keepSplitByColor: false
+    },
+    render: createBarChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+};
+
+export const WithContextMenu: Story = {
+    name: 'With Context Menu',
+    args: {
+        theme: 'light',
+        stacked: false,
+        legend: 'shown',
+        tooltip: true,
+        zeroYAxis: false,
+        grid: true,
+        hideChartControlPanel: false,
+        scaledToCurrentTime: false,
+        keepSplitByColor: false,
+        withContextMenu: true // Enable context menu for this story
     },
     render: createBarChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
