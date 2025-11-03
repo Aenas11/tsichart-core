@@ -571,7 +571,15 @@ export default class Utils {
 
     static colorSplitBy(displayState: any, splitByIndex: number, aggKey: string, ignoreIsOnlyAgg: boolean = false): string {
         const colors = this.createSplitByColors(displayState, aggKey, ignoreIsOnlyAgg);
-        return colors[splitByIndex] || displayState[aggKey]?.color || '#000000';
+        if (
+            typeof splitByIndex === 'number' &&
+            Number.isInteger(splitByIndex) &&
+            splitByIndex >= 0 &&
+            splitByIndex < colors.length
+        ) {
+            return colors[splitByIndex];
+        }
+        return displayState[aggKey]?.color || '#000000';
     }
 
     static getTheme(theme: any) {
