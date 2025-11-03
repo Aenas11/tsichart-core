@@ -1,7 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
+import LineChart from '../../packages/core/src/components/LineChart';
+import { ChartData } from '../../packages/core/src/types';
+import { ILineChartOptions } from '../../packages/core/src/components/LineChart/ILineChartOptions';
 import { html } from 'lit';
 import * as d3 from 'd3';
 import CategoricalPlot from '../../packages/core/src/components/CategoricalPlot';
+import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../packages/core/src/constants/Constants";
+
+interface FactoryMetrics extends Record<string, number> {
+    value: number;
+    temperature: number;
+}
+
 
 const meta: Meta<CategoricalPlot> = {
     title: 'Charts/CategoricalPlot/CategoricalPlot',
@@ -130,119 +140,37 @@ export default meta;
 
 type Story = StoryObj<CategoricalPlot>;
 
-/**
- * Generate sample categorical data for demonstration.
- * Returns data in the format expected by CategoricalPlot.
- * 
- * Data structure:
- * - Array of aggregate objects with categorical measurements
- * - Timestamped data points with categorical measures
- * - Multiple series with different split-by values
- */
-function generateCategoricalData() {
-    const timestamps = [
-        '2023-01-01T00:00:00Z',
-        '2023-01-01T01:00:00Z',
-        '2023-01-01T02:00:00Z',
-        '2023-01-01T03:00:00Z',
-        '2023-01-01T04:00:00Z'
-    ];
+function generateSampleData(): ChartData<FactoryMetrics> {
+    const data: ChartData<FactoryMetrics> = [];
+    const from = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
 
-    const statuses = ['Running', 'Warning', 'Error', 'Maintenance', 'Stopped'];
-    const priorities = ['Low', 'Normal', 'High', 'Critical'];
-    const servers = ['', 'Server1', 'Server2', 'Server3'];
+    for (let i = 0; i < 3; i++) {
+        const factoryName = `Factory${i}`;
+        const splitByData: Record<string, Record<string, FactoryMetrics>> = {};
 
-    return [{
-        "SystemStatus": Object.fromEntries(
-            servers.map(server => [
-                server,
-                Object.fromEntries(
-                    timestamps.map((timestamp, i) => [
-                        timestamp,
-                        {
-                            "Status": statuses[Math.floor(Math.random() * statuses.length)],
-                            "Priority": priorities[Math.floor(Math.random() * priorities.length)],
-                            "Alert": Math.random() > 0.7 ? 'Active' : 'None'
-                        }
-                    ])
-                )
-            ])
-        )
-    }];
-}
+        for (let j = 0; j < 3; j++) {
+            const stationName = `Station${j}`;
+            const timeSeries: Record<string, FactoryMetrics> = {};
 
-/**
- * Generate IoT device status data for demonstration.
- * Shows different device states over time periods.
- */
-function generateIoTDeviceData() {
-    const timestamps = [
-        '2023-01-01T00:00:00Z',
-        '2023-01-01T00:30:00Z',
-        '2023-01-01T01:00:00Z',
-        '2023-01-01T01:30:00Z',
-        '2023-01-01T02:00:00Z',
-        '2023-01-01T02:30:00Z'
-    ];
+            // Generate hourly data points for the last 24 hours
+            for (let k = 0; k < 24; k++) {
+                const timestamp = new Date(from.getTime() + k * 60 * 60 * 1000);
+                const baseValue = 50 + i * 20 + j * 10;
+                const value = baseValue + Math.sin(k / 4) * 15 + Math.random() * 10;
 
-    const deviceStates = ['Online', 'Offline', 'Maintenance', 'Error', 'Sleep'];
-    const batteryLevels = ['High', 'Medium', 'Low', 'Critical'];
-    const devices = ['', 'Sensor1', 'Sensor2', 'Sensor3', 'Gateway1'];
+                timeSeries[timestamp.toISOString()] = {
+                    value: parseFloat(value.toFixed(2)),
+                    temperature: 20 + Math.sin(k / 6) * 8 + Math.random() * 3
+                };
+            }
 
-    return [{
-        "DeviceStatus": Object.fromEntries(
-            devices.map(device => [
-                device,
-                Object.fromEntries(
-                    timestamps.map(timestamp => [
-                        timestamp,
-                        {
-                            "DeviceState": deviceStates[Math.floor(Math.random() * deviceStates.length)],
-                            "BatteryLevel": batteryLevels[Math.floor(Math.random() * batteryLevels.length)],
-                            "ConnectionStatus": Math.random() > 0.3 ? 'Connected' : 'Disconnected'
-                        }
-                    ])
-                )
-            ])
-        )
-    }];
-}
+            splitByData[stationName] = timeSeries;
+        }
 
-/**
- * Generate manufacturing process data for demonstration.
- * Shows production line states and quality metrics.
- */
-function generateManufacturingData() {
-    const timestamps = [
-        '2023-01-01T08:00:00Z',
-        '2023-01-01T10:00:00Z',
-        '2023-01-01T12:00:00Z',
-        '2023-01-01T14:00:00Z',
-        '2023-01-01T16:00:00Z',
-        '2023-01-01T18:00:00Z'
-    ];
+        data.push({ [factoryName]: splitByData });
+    }
 
-    const processStates = ['Production', 'Setup', 'Changeover', 'Maintenance', 'Idle'];
-    const qualityStates = ['Pass', 'Warning', 'Fail', 'Review'];
-    const productionLines = ['', 'LineA', 'LineB', 'LineC'];
-
-    return [{
-        "ProductionProcess": Object.fromEntries(
-            productionLines.map(line => [
-                line,
-                Object.fromEntries(
-                    timestamps.map(timestamp => [
-                        timestamp,
-                        {
-                            "ProcessState": processStates[Math.floor(Math.random() * processStates.length)],
-                            "QualityState": qualityStates[Math.floor(Math.random() * qualityStates.length)],
-                            "OperatorPresent": Math.random() > 0.2 ? 'Yes' : 'No'
-                        }
-                    ])
-                )
-            ])
-        )
-    }];
+    return data;
 }
 
 
@@ -255,159 +183,37 @@ function renderCategoricalPlot(container: HTMLElement, options: any = {}) {
 
     try {
         console.log('Rendering CategoricalPlot with options:', options);
-        
-        // Set up proper dimensions
-        const width = container.clientWidth || 800;
-        const height = options.height || 200;
-        const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+        const chart = new LineChart(container);
 
-        // Create SVG container with proper styling
-        const svg = d3.select(container)
-            .append('svg')
-            .attr('width', width)
-            .attr('height', height)
-            .style('background', options.theme === 'dark' ? '#1a1a1a' : '#ffffff');
-
-        // Create chart group with margins
-        const chartGroup = svg.append('g')
-            .attr('class', 'tsi-chartGroup')
-            .attr('transform', `translate(${margin.left}, ${margin.top})`);
-
-        const aggregateGroup = chartGroup.append('g')
-            .attr('class', 'tsi-aggregateGroup');
-
-        // Generate data based on type
-        const categoricalData = options.dataType === 'iot' ? generateIoTDeviceData() :
-                               options.dataType === 'manufacturing' ? generateManufacturingData() :
-                               generateCategoricalData();
-
-        // Set up proper time scales
-        const aggData = categoricalData[0];
-        const aggKey = Object.keys(aggData)[0];
-        const splitByData = aggData[aggKey];
-
-        // Create proper chartComponentData structure that Plot.getVisibleSeries() expects
-        const chartComponentData = {
-            // timeArrays should be the entire aggregate data structure
-            timeArrays: aggData,
-            // Add required methods that Plot base class uses
-            isSplitByVisible: (aggKey: string, splitBy: string) => true,
-            toMillis: Date.now(),
-            fromMillis: Date.now() - (24 * 60 * 60 * 1000), // 24 hours ago
-            // Add data access methods
-            getVisibleMeasure: (aggKey: string, splitBy: string) => 'Status'
+        const chartOptions = {
+            theme: options.theme || 'light',
+            legend: 'shown',
+            grid: true,
+            tooltip: true,
+            ...options
         };
 
-        const allTimestamps = [];
-        Object.values(splitByData).forEach((timeSeriesData: any) => {
-            Object.keys(timeSeriesData).forEach(timestamp => {
-                allTimestamps.push(new Date(timestamp));
-            });
-        });
-
-        const timeExtent = d3.extent(allTimestamps) as [Date, Date];
-        const chartWidth = width - margin.left - margin.right;
-        const chartHeight = height - margin.top - margin.bottom;
-
-        const xScale = d3.scaleTime()
-            .domain(timeExtent)
-            .range([0, chartWidth]);
-
-        const yScale = d3.scaleLinear()
-            .domain([0, chartHeight])
-            .range([0, chartHeight]);
-
-
-        const defs = svg.append('defs');
-        const plot = new CategoricalPlot(svg);
-
-        const agg = {
-            aggKey: aggKey,
-            searchSpan: {
-                bucketSize: options.bucketSize || 'PT1H'
+        let valueMapping = {
+            'ColorColorWhatColor[Blue]': {
+                color: 'blue'
+            }, 
+            'ColorColorWhatColor[Green]': {
+                color: 'green'
             },
-            splitBys: Object.keys(splitByData),
-            visible: true
-        };
-
-        // Mock the required parameters for the render method
-        const mockParams = {
-            chartOptions: {
-                theme: options.theme || 'light',
-                noAnimate: options.noAnimate || false,
-                ...options
+            'ColorColorWhatColor[Yellow]': {
+                color:'yellow'
             },
-            visibleAggI: 0,
-            agg: agg,
-            aggVisible: true,
-            aggregateGroup: aggregateGroup,
-            chartComponentData: chartComponentData,
-            yExtent: [0, chartHeight],
-            chartHeight: chartHeight,
-            visibleAggCount: 1,
-            colorMap: new Map(),
-            previousAggregateData: new Map(),
-            x: xScale,
-            areaPath: null,
-            strokeOpacity: 1,
-            y: yScale,
-            yMap: new Map([
-                [aggKey, { 
-                    scaleType: 'linear',
-                    yExtent: [0, chartHeight],
-                    splitBys: Object.keys(splitByData)
-                }]
-            ]),
-            defs: defs,
-            chartDataOptions: {
-                height: chartHeight,
-                searchSpan: {
-                    bucketSize: options.bucketSize || 'PT1H'
-                },
-                onElementClick: options.enableClickEvents ? 
-                    (aggKey, splitBy, dateTime, measures) => {
-                        console.log('Categorical bucket clicked:', { aggKey, splitBy, dateTime, measures });
-                    } : null
+            'ColorColorWhatColor[Orange]': {
+                color:'orange'
             },
-            previousIncludeDots: false,
-            yTopAndHeight: [0, chartHeight],
-            chartGroup: chartGroup,
-            categoricalMouseover: (d, x, y, endDate, width) => {
-                console.log('Categorical mouseover:', { d, x, y, endDate, width });
-                return true;
-            },
-            categoricalMouseout: () => {
-                console.log('Categorical mouseout');
+            'ColorColorWhatColor[Others]': {
+                color:'gray'
             }
-        };
-        // Render the plot
-        plot.render(
-            mockParams.chartOptions,
-            mockParams.visibleAggI,
-            mockParams.agg,
-            mockParams.aggVisible,
-            mockParams.aggregateGroup,
-            mockParams.chartComponentData,
-            mockParams.yExtent,
-            mockParams.chartHeight,
-            mockParams.visibleAggCount,
-            mockParams.colorMap,
-            mockParams.previousAggregateData,
-            mockParams.x,
-            mockParams.areaPath,
-            mockParams.strokeOpacity,
-            mockParams.y,
-            mockParams.yMap,
-            mockParams.defs,
-            mockParams.chartDataOptions,
-            mockParams.previousIncludeDots,
-            mockParams.yTopAndHeight,
-            mockParams.chartGroup,
-            mockParams.categoricalMouseover,
-            mockParams.categoricalMouseout
-        );
+        }
 
-        return plot;
+        const sampleData = generateSampleData();
+        chart.render(sampleData, chartOptions, [{}, {dataType: 'categorical',valueMapping: valueMapping, height: 100}]);
+        
     } catch (error) {
         console.error('CategoricalPlot rendering error:', error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
