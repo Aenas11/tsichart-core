@@ -1,19 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import LineChart from '../../packages/core/src/components/LineChart';
 import { ChartData } from '../../packages/core/src/types';
-import { ILineChartOptions } from '../../packages/core/src/components/LineChart/ILineChartOptions';
 import { html } from 'lit';
-import * as d3 from 'd3';
-import CategoricalPlot from '../../packages/core/src/components/CategoricalPlot';
-import { NONNUMERICTOPMARGIN, LINECHARTTOPPADDING } from "../../packages/core/src/constants/Constants";
 
 interface FactoryMetrics extends Record<string, number> {
     value: number;
     temperature: number;
 }
 
-
-const meta: Meta<CategoricalPlot> = {
+const meta: Meta<ChartData> = {
     title: 'Charts/CategoricalPlot/CategoricalPlot',
     component: 'CategoricalPlot',
     tags: ['autodocs'],
@@ -49,56 +44,45 @@ const plot = new tsiClient.ux.CategoricalPlot(svgSelection);
 // Prepare categorical data in the expected format
 const categoricalData = [
     {
-        "SystemStatus": {
-            "": {
+        "Factory1": {
+            "Station1": {
                 "2023-01-01T00:00:00Z": {
-                    "Status": "Running",
-                    "Priority": "Normal"
-                },
-                "2023-01-01T01:00:00Z": {
-                    "Status": "Warning",
-                    "Priority": "High"
-                }
-            },
-            "Server1": {
-                "2023-01-01T00:00:00Z": {
-                    "Status": "Running",
-                    "Priority": "Low"
+                    "state1": 1,
+                    "state2": 0,
+                    "state3": 0
                 }
             }
         }
     }
 ];
 
-// Render the plot with categorical options
-plot.render(chartOptions, visibleAggI, agg, aggVisible, aggregateGroup, 
-    chartComponentData, yExtent, chartHeight, visibleAggCount, colorMap, 
-    previousAggregateData, x, areaPath, strokeOpacity, y, yMap, defs,
-    chartDataOptions, previousIncludeDots, yTopAndHeight, chartGroup, 
-    categoricalMouseover, categoricalMouseout);
+// Define value mapping for categorical states
+const valueMapping = {
+    state1: { color: '#F2C80F' },
+    state2: { color: '#FD625E' },
+    state3: { color: '#3599B8' }
+};
+
+// Render with categorical configuration
+lineChart.render(categoricalData, {
+    theme: 'light',
+    legend: 'shown',
+    grid: true,
+    tooltip: true
+}, [
+    {}, // First aggregate expression options
+    {}, // Second aggregate expression options  
+    {   // Third aggregate with categorical configuration
+        dataType: 'categorical',
+        valueMapping: valueMapping,
+        height: 100,
+        onElementClick: onElementClick,
+        rollupCategoricalValues: true
+    }
+]);
 \`\`\`
-                
-## Chart Options
 
-- **theme**: Visual theme ('light' or 'dark')
-- **height**: Height per categorical series for proper vertical spacing
-- **noAnimate**: Disable transition animations for immediate rendering
-- **searchSpan**: Time range and bucket size configuration for temporal alignment
-- **onElementClick**: Callback function for categorical bucket click events
-
-## Interactive Features
-
-1. **Bucket Hover**: Hover over categorical buckets to see detailed measurement information
-2. **Click Events**: Click on buckets to trigger custom actions (if configured)
-3. **Series Navigation**: Multiple categorical series stacked vertically for comparison
-4. **Temporal Alignment**: Buckets automatically sized based on time duration
-5. **Color Coding**: Automatic color assignment based on categorical values
-6. **Gradient Support**: Multiple measures within buckets create color gradients
-
-## Data Format
-
-Categorical data should be provided as timestamped measurements containing discrete categorical values. Each measurement represents a categorical state or status at a specific time period.                         
-                `
+`
             }
         }
     },
@@ -109,66 +93,103 @@ Categorical data should be provided as timestamped measurements containing discr
             description: 'Visual theme for the categorical plot'
         },
         height: {
-            control: { type: 'number', min: 100, max: 800, step: 50 },
+            control: { type: 'number', min: 50, max: 300, step: 25 },
             description: 'Height of the categorical plot area',
-            table: { defaultValue: { summary: '200' } }
-        },
-        noAnimate: {
-            control: 'boolean',
-            description: 'Disable transition animations for immediate rendering',
-            table: { defaultValue: { summary: 'false' } }
+            table: { defaultValue: { summary: '100' } }
         },
         enableClickEvents: {
             control: 'boolean',
             description: 'Enable click events on categorical buckets',
             table: { defaultValue: { summary: 'true' } }
         },
-        bucketSize: {
-            control: { type: 'select' },
-            options: ['PT1H', 'PT30M', 'PT15M', 'PT5M'],
-            description: 'Time bucket size for categorical data aggregation',
-            table: { defaultValue: { summary: 'PT1H' } }
-        },
-        showBackdrop: {
+        rollupCategoricalValues: {
             control: 'boolean',
-            description: 'Show backdrop rectangle for better contrast',
+            description: 'Rollup categorical values for simplified display',
             table: { defaultValue: { summary: 'true' } }
+        },
+        showFactoryData: {
+            control: 'boolean',
+            description: 'Show additional factory data for comparison',
+            table: { defaultValue: { summary: 'false' } }
         }
     }
 }
 export default meta;
+type Story = StoryObj<LineChart>;
 
-type Story = StoryObj<CategoricalPlot>;
-
-function generateSampleData(): ChartData<FactoryMetrics> {
+function generateCategoricalData(includeFactoryData: boolean = false): ChartData<FactoryMetrics> {
     const data: ChartData<FactoryMetrics> = [];
-    const from = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
+    const from = new Date(Date.now() - 60 * 60 * 1000); // 1 hour ago
 
-    for (let i = 0; i < 3; i++) {
-        const factoryName = `Factory${i}`;
-        const splitByData: Record<string, Record<string, FactoryMetrics>> = {};
+    // Generate regular time series data for first two aggregates (if requested)
+    if (includeFactoryData) {
+        for (let i = 0; i < 2; i++) {
+            const factoryName = `Factory${i}`;
+            const splitByData: Record<string, Record<string, FactoryMetrics>> = {};
 
-        for (let j = 0; j < 3; j++) {
-            const stationName = `Station${j}`;
-            const timeSeries: Record<string, FactoryMetrics> = {};
+            splitByData[''] = {}; // Main aggregate
+            
+            // Generate time series data
+            for (let k = 0; k < 60; k++) {
+                const timestamp = new Date(from.valueOf() + 1000 * 60 * k);
+                const baseValue = 50 + i * 20;
+                const value = baseValue + Math.sin(k / 10) * 10 + Math.random() * 5;
 
-            // Generate hourly data points for the last 24 hours
-            for (let k = 0; k < 24; k++) {
-                const timestamp = new Date(from.getTime() + k * 60 * 60 * 1000);
-                const baseValue = 50 + i * 20 + j * 10;
-                const value = baseValue + Math.sin(k / 4) * 15 + Math.random() * 10;
-
-                timeSeries[timestamp.toISOString()] = {
-                    value: parseFloat(value.toFixed(2)),
-                    temperature: 20 + Math.sin(k / 6) * 8 + Math.random() * 3
+                splitByData[''][timestamp.toISOString()] = {
+                    state1: parseFloat(value.toFixed(2)),
+                    state2: 0,
+                    state3: 0
                 };
             }
 
-            splitByData[stationName] = timeSeries;
+            data.push({ [factoryName]: splitByData });
         }
-
-        data.push({ [factoryName]: splitByData });
     }
+
+    // Generate categorical data following the example pattern
+    const states: Record<string, Record<string, FactoryMetrics | null>> = {};
+    data.push({ [`Factory3`]: states });
+// Create stations with categorical state data
+    for (let j = 0; j < 3; j++) {
+        const values: Record<string, FactoryMetrics | null> = {};
+        states[`Station${j}`] = values;
+
+        for (let k = 0; k < 60; k++) {
+            const val1 = Math.random();
+            let state1: number, state2: number, state3: number;
+
+            // Following the example logic for state distribution
+            if (val1 < 0.5) {
+                state1 = 1;
+                state2 = 0;
+                state3 = 0;
+            } else {
+                state1 = 0;
+                state2 = (1 - 0) / 2; // Distribute remaining between state2 and state3
+                state3 = (1 - 0) / 2;
+            }
+
+            const timestamp = new Date(from.valueOf() + 1000 * 60 * k);
+            
+            // Add some sparse data (80% probability following the example)
+            if (Math.random() < 0.8) {
+                values[timestamp.toISOString()] = {
+                    state1: state1,
+                    state2: state2,
+                    state3: state3
+                };
+            } else {
+                values[timestamp.toISOString()] = null;
+            }
+        }
+    }
+    // Add Station3 with constant state1 value following the example
+    const values4: Record<string, FactoryMetrics> = {};
+    for (let k = 0; k < 60; k++) {
+        const timestamp = new Date(from.valueOf() + 1000 * 60 * k);
+        values4[timestamp.toISOString()] = { state1: 0.4, state2: 0, state3: 0 };
+    }
+    states[`Station3`] = values4;
 
     return data;
 }
@@ -183,37 +204,87 @@ function renderCategoricalPlot(container: HTMLElement, options: any = {}) {
 
     try {
         console.log('Rendering CategoricalPlot with options:', options);
-        const chart = new LineChart(container);
+        const lineChart = new LineChart(container);
 
         const chartOptions = {
             theme: options.theme || 'light',
             legend: 'shown',
             grid: true,
             tooltip: true,
+            brushMoveEndAction: () => {
+                console.log('Brush move ended');
+            },
             ...options
         };
 
-        let valueMapping = {
-            'ColorColorWhatColor[Blue]': {
-                color: 'blue'
-            }, 
-            'ColorColorWhatColor[Green]': {
-                color: 'green'
+        const valueMapping = {
+            state1: {
+                color: '#F2C80F' // Yellow for state1
             },
-            'ColorColorWhatColor[Yellow]': {
-                color:'yellow'
+            state2: {
+                color: '#FD625E' // Red for state2
             },
-            'ColorColorWhatColor[Orange]': {
-                color:'orange'
-            },
-            'ColorColorWhatColor[Others]': {
-                color:'gray'
+            state3: {
+                color: '#3599B8' // Blue for state3
             }
-        }
+        };
 
-        const sampleData = generateSampleData();
-        chart.render(sampleData, chartOptions, [{}, {dataType: 'categorical',valueMapping: valueMapping, height: 100}]);
-        
+        // Click handler for categorical elements
+        const onElementClick = (aggKey: string, splitBy: string, timestamp: Date, measures: any) => {
+            console.log('Categorical element clicked:', { aggKey, splitBy, timestamp, measures });
+            if (options.enableClickEvents) {
+                alert(`Clicked categorical bucket:\nAggregate: ${aggKey}\nSplit By: ${splitBy}\nTime: ${timestamp.toISOString()}\nStates: ${JSON.stringify(measures, null, 2)}`);
+            }
+        };
+
+        // Generate categorical data
+        const categoricalData = generateCategoricalData(options.showFactoryData);
+        console.log('Generated categorical data:', categoricalData);
+
+        categoricalData.forEach((aggregate, index) => {
+            const aggKey = Object.keys(aggregate)[0];
+            const splitBys = aggregate[aggKey];
+            
+            Object.keys(splitBys).forEach(splitBy => {
+                const timeData = splitBys[splitBy];
+                Object.keys(timeData).forEach(timestamp => {
+                    const measures = timeData[timestamp];
+                    if (measures) {
+                        // Ensure categorical measures sum to 1 or are valid proportions
+                        const total = measures.state1 + measures.state2 + measures.state3;
+                        if (Math.abs(total - 1) > 0.01) {
+                            console.warn(`Categorical measures don't sum to 1 in ${aggKey}/${splitBy}/${timestamp}: ${total}`);
+                        }
+                    }
+                });
+            });
+        });
+
+        // Render with aggregateExpressionOptions for categorical display
+        const aggregateExpressionOptions = categoricalData.map((aggregate, index) => {
+            if (index < 2 && options.showFactoryData) {
+                // First two aggregates are numeric time series
+                return {
+                    aggKey: Object.keys(aggregate)[0],
+                    dataType: 'numeric'
+                };
+            } else {
+                // Categorical aggregate configuration
+                return {
+                    aggKey: Object.keys(aggregate)[0],
+                    dataType: 'categorical',
+                    valueMapping: valueMapping,
+                    height: options.height || 100,
+                    onElementClick: onElementClick,
+                    rollupCategoricalValues: options.rollupCategoricalValues !== false
+                };
+            }
+        });
+
+        // Render following the monolithic component pattern
+        lineChart.render(categoricalData, chartOptions, aggregateExpressionOptions);
+
+        return lineChart;
     } catch (error) {
         console.error('CategoricalPlot rendering error:', error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
@@ -225,14 +296,14 @@ function renderCategoricalPlot(container: HTMLElement, options: any = {}) {
 }
 
 // Helper function to create a story with plot rendering
-function createCategoricalPlotStory(containerStyle: string, dataType: string = 'system') {
+function createCategoricalPlotStory(containerStyle: string) {
     return (args: any) => {
         const plotId = 'categorical-plot-' + Math.random().toString(36).substring(7);
 
         setTimeout(() => {
             const container = document.getElementById(plotId);
             if (container) {
-                renderCategoricalPlot(container, { ...args, dataType });
+                renderCategoricalPlot(container, args);
             }
         }, 100);
 
@@ -245,53 +316,48 @@ function createCategoricalPlotStory(containerStyle: string, dataType: string = '
 }
 
 export const Default: Story = {
-    name: 'System Status (Default)',
+    name: 'Categorical States (Default)',
     args: {
         theme: 'light',
-        height: 200,
-        noAnimate: false,
+        height: 100,
         enableClickEvents: true,
-        bucketSize: 'PT1H',
-        showBackdrop: true
+        rollupCategoricalValues: true,
+        showFactoryData: false
     },
-    render: createCategoricalPlotStory('height: 250px; width: 100%; border: 1px solid #ddd; border-radius: 4px;', 'system')
+    render: createCategoricalPlotStory('height: 250px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+};
+export const WithTimeSeriesData: Story = {
+    name: 'With Time Series Data',
+    args: {
+        theme: 'light',
+        height: 100,
+        enableClickEvents: true,
+        rollupCategoricalValues: true,
+        showFactoryData: true
+    },
+    render: createCategoricalPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+};
+
+export const TallCategorical: Story = {
+    name: 'Tall Categorical Display',
+    args: {
+        theme: 'light',
+        height: 150,
+        enableClickEvents: true,
+        rollupCategoricalValues: false,
+        showFactoryData: false
+    },
+    render: createCategoricalPlotStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
 
 export const DarkTheme: Story = {
     name: 'Dark Theme',
     args: {
         theme: 'dark',
-        height: 200,
-        noAnimate: false,
+        height: 100,
         enableClickEvents: true,
-        bucketSize: 'PT1H',
-        showBackdrop: true
+        rollupCategoricalValues: true,
+        showFactoryData: false
     },
-    render: createCategoricalPlotStory('height: 250px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;', 'system')
-};
-
-export const IoTDevices: Story = {
-    name: 'IoT Device Status',
-    args: {
-        theme: 'light',
-        height: 300,
-        noAnimate: false,
-        enableClickEvents: true,
-        bucketSize: 'PT30M',
-        showBackdrop: true
-    },
-    render: createCategoricalPlotStory('height: 350px; width: 100%; border: 1px solid #ddd; border-radius: 4px;', 'iot')
-};
-
-export const Manufacturing: Story = {
-    name: 'Manufacturing Process',
-    args: {
-        theme: 'light',
-        height: 250,
-        noAnimate: true,
-        enableClickEvents: true,
-        bucketSize: 'PT2H',
-        showBackdrop: true
-    },
-    render: createCategoricalPlotStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;', 'manufacturing')
+    render: createCategoricalPlotStory('height: 300px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
 };
