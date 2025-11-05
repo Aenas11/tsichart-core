@@ -2,57 +2,63 @@
 @use "sass:color";
 @use "../../styles" as *;
 
-@mixin hierarchyColors($grays){
+@mixin hierarchyColors($grays) {
     $gray1: list.nth($grays, 1); // text
     $gray2: list.nth($grays, 2); // hover
     $gray3: list.nth($grays, 3); // element
     $gray4: list.nth($grays, 4); // background
-	$gray5: list.nth($grays, 5); // alt element
+    $gray5: list.nth($grays, 5); // alt element
     $gray6: list.nth($grays, 6);
     color: $gray1;
     background: $gray3;
 
-    hit{
+    hit {
         background: #fff9a8;
         font-weight: 600;
         color: black;
     }
 
-    .tsi-show-more{
+    .tsi-show-more {
         color: $gray6;
     }
 
     .tsi-hierarchy-or-list-wrapper {
-        li{                     
-            .tsi-hierarchyItem{
-                &:hover{
+        li {
+            .tsi-hierarchyItem {
+                &:hover {
                     cursor: default;
                     background: $gray4;
                 }
+
                 &:focus {
                     outline: none;
                     background: $gray4;
                 }
             }
-            &.tsi-resultSelected{
+
+            &.tsi-resultSelected {
                 background-color: transparent;
-                .tsi-hierarchyItem{
+
+                .tsi-hierarchyItem {
                     background: $gray2;
                 }
             }
         }
     }
 
-    .tsi-nav-tab.tsi-selected{
+    .tsi-nav-tab.tsi-selected {
         border-bottom: 2px solid $gray1 !important;
     }
 
-    .tsi-modelResultWrapper{
+    .tsi-modelResultWrapper {
         border-bottom: 1px solid rgba($gray1, .05);
-        &:hover, &:focus {
+
+        &:hover,
+        &:focus {
             background-color: $gray4;
             outline: none;
-            &::after{
+
+            &::after {
                 content: "";
                 position: absolute;
                 width: 14px;
@@ -63,21 +69,27 @@
                 transform: rotate(-90deg);
             }
         }
+
         &.tsi-selected {
             background-color: $gray2;
         }
     }
-    .tsi-hierarchyNavigationContextMenu{
-        li:hover, li:focus{
+
+    .tsi-hierarchyNavigationContextMenu {
+
+        li:hover,
+        li:focus {
             background: $gray4;
             outline: none;
         }
     }
+
     .tsi-leaf {
         &.tsi-selected {
             background: $gray2;
-            .tsi-hierarchyItem{
-                &:hover{
+
+            .tsi-hierarchyItem {
+                &:hover {
                     background: $gray2;
                 }
             }
@@ -85,7 +97,7 @@
     }
 
     .tsi-filter-clear {
-        &:focus{
+        &:focus {
             outline: 1px solid $gray6;
         }
     }
@@ -95,7 +107,8 @@
             background: $gray3;
             border: 1px solid $gray5;
             color: $gray1;
-            &:hover{
+
+            &:hover {
                 background-color: $gray4;
             }
 
@@ -103,15 +116,19 @@
                 box-shadow: 0px 4px 4px $gray5;
             }
         }
-    
+
         .tsi-hierarchy-list-wrapper {
             background: $gray3;
             box-shadow: 0px 4px 4px $gray5;
+
             li {
                 background: $gray3;
-                &:hover, &:focus{
+
+                &:hover,
+                &:focus {
                     background-color: $gray4 !important;
                 }
+
                 &.selected {
                     background-color: $gray5;
                 }
@@ -121,7 +138,9 @@
 
     .tsi-filter-path {
         .tsi-path {
-            &:hover, &:focus {
+
+            &:hover,
+            &:focus {
                 background-color: $gray5;
             }
         }
@@ -130,9 +149,11 @@
     .tsi-hierarchy-search {
         .tsi-view-type {
             outline: 1px solid $gray5;
+
             &.selected {
                 background-color: $gray2;
             }
+
             &:focus {
                 outline: 1px solid $gray6;
                 z-index: 2;
@@ -142,7 +163,9 @@
 
     a {
         color: $gray6;
-        &:hover, &:focus {
+
+        &:hover,
+        &:focus {
             outline: none;
             text-decoration: underline;
         }
@@ -150,36 +173,42 @@
 
     @include baseContextMenuColors($grays);
 
-    .tsi-hierarchyCheckbox{
-        &.tsi-notSelected{
+    .tsi-hierarchyCheckbox {
+        &.tsi-notSelected {
             background: $gray3 !important;
             border: 1px solid rgba($gray1, .2);
         }
     }
 
-    .tsi-notFound, .tsi-noResults {
+    .tsi-notFound,
+    .tsi-noResults {
         border-bottom: 1px solid $gray5;
+
         &.border-top {
             border-top: 1px solid $gray5;
         }
     }
-}   
+}
 
-.tsi-hierarchy-nav-wrapper{
+.tsi-hierarchy-nav-wrapper {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
 
-    &.tsi-dark{
+    &.tsi-dark {
         $grays: grays('dark');
         @include hierarchyColors($grays);
-        .tsi-caret-icon, .tsi-down-caret-icon {
+
+        .tsi-caret-icon,
+        .tsi-down-caret-icon {
             background-image: url(../../icons/CaretClosed_Dark_Theme.svg);
         }
+
         .tsi-pin-icon {
             background-image: url(../../icons/Pin_Icon_Dark_Theme.svg);
         }
+
         .tsi-close-icon {
             background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
         }
@@ -204,16 +233,20 @@
             background-image: url(../../icons/Search_Dark.svg);
         }
 
-        .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);                    
+        .tsi-clear {
+            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
         }
     }
-    &.tsi-light{
+
+    &.tsi-light {
         $grays: grays('light');
         @include hierarchyColors($grays);
-        .tsi-caret-icon, .tsi-down-caret-icon{
+
+        .tsi-caret-icon,
+        .tsi-down-caret-icon {
             background-image: url(../../icons/CaretClosed_Light_Theme.svg);
         }
+
         .tsi-pin-icon {
             background-image: url(../../icons/Pin_Icon_Light_Theme.svg);
         }
@@ -237,13 +270,13 @@
         .tsi-spinner-icon {
             background-image: url(../../icons/Spinner.svg);
         }
-        
+
         .tsi-search-icon {
             background-image: url(../../icons/Search_Light.svg);
         }
 
-        .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Light_Theme.svg);                    
+        .tsi-clear {
+            background-image: url(../../icons/Close_Icon_Light_Theme.svg);
         }
     }
 
@@ -258,7 +291,8 @@
             display: flex;
             align-items: center;
             width: 100%;
-            padding: 0 8px;;
+            padding: 0 8px;
+            ;
             box-sizing: border-box;
             border-radius: 2px;
             height: 32px;
@@ -288,9 +322,11 @@
                 li {
                     padding: 8px;
                     outline: none;
+
                     &:hover {
                         cursor: pointer;
                     }
+
                     &:focus {
                         z-index: 2;
                     }
@@ -301,14 +337,26 @@
 
     .tsi-hierarchy-search {
         display: flex;
-        align-items: center;        
-        padding: 0px 20px;
+        align-items: center;
+        padding: 0px 10px;
         margin-top: 8px;
         flex-direction: row;
         height: 32px;
 
         ul {
             z-index: 2 !important;
+        }
+
+        .tsi-search {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+
+            .tsi-searchInput {
+                width: 100%;
+                box-sizing: border-box;
+                padding-right: 8px;
+            }
         }
 
         .tsi-view-types {
@@ -327,13 +375,13 @@
                 .tsi-tree-icon {
                     display: inline-block;
                 }
-    
+
                 .tsi-list-icon {
                     display: inline-block;
                 }
             }
         }
-        
+
         .tsi-modelAutocompleteWrapper {
             position: relative;
             display: inline-flex;
@@ -375,7 +423,7 @@
                 cursor: auto;
                 margin-right: 4px;
             }
-    
+
             .tsi-path-list {
                 display: flex;
                 align-items: center;
@@ -391,7 +439,8 @@
                     cursor: pointer;
                     outline: none;
 
-                    &:first-child, &:last-child {
+                    &:first-child,
+                    &:last-child {
                         min-width: 32px;
                     }
 
@@ -400,7 +449,7 @@
                     }
                 }
             }
-    
+
             .tsi-filter-clear {
                 width: 12px !important;
                 height: 12px !important;
@@ -408,7 +457,7 @@
                 display: none;
                 cursor: pointer;
             }
-        }  
+        }
     }
 
     .tsi-instance-lookup-loading {
@@ -462,32 +511,38 @@
                 overflow: hidden;
                 animation: fade-in .2s ease-in-out;
 
-                .tsi-modelResult{
+                .tsi-modelResult {
                     pointer-events: none;
                     padding: 8px 20px;
-                    .tsi-modelPK{
-                        font-weight: 600;   
+
+                    .tsi-modelPK {
+                        font-weight: 600;
                         font-size: 14px;
                         text-overflow: ellipsis;
                         overflow: hidden;
                         white-space: nowrap;
                     }
-                    .tsi-modelHighlights{
+
+                    .tsi-modelHighlights {
                         font-size: 12px;
                         padding-top: 2px;
                         padding-left: 8px;
                         padding-bottom: 2px;
-                        table{
+
+                        table {
                             border-spacing: 0;
                             margin-top: 2px;
-                            tr{
+
+                            tr {
                                 td {
                                     padding: 0;
                                     vertical-align: top;
-                                    &:first-of-type{
+
+                                    &:first-of-type {
                                         opacity: .6;
                                     }
-                                    &:nth-of-type(2){
+
+                                    &:nth-of-type(2) {
                                         padding-left: 8px;
                                     }
                                 }
@@ -496,20 +551,24 @@
                     }
                 }
             }
-            .tsi-show-more{
+
+            .tsi-show-more {
                 text-align: center !important;
                 padding: 8px;
             }
         }
-        .tsi-show-more{
+
+        .tsi-show-more {
             font-size: 14px;
+
             span {
                 cursor: pointer !important;
             }
         }
     }
 
-    .tsi-notFound, .tsi-noResults {
+    .tsi-notFound,
+    .tsi-noResults {
         display: flex;
         align-items: center;
         margin: 4px 20px;
@@ -560,7 +619,9 @@
         transform: rotate(90deg);
     }
 
-    .tsi-close-icon, .tsi-list-icon, .tsi-tree-icon {
+    .tsi-close-icon,
+    .tsi-list-icon,
+    .tsi-tree-icon {
         cursor: pointer;
         height: 16px;
         width: 16px;
@@ -568,13 +629,13 @@
         background-size: contain;
     }
 
-    ul{
+    ul {
         list-style: none;
         padding: 0;
         margin: 0;
         width: 100%;
-        
-        &.tsi-noPad{
+
+        &.tsi-noPad {
             padding: 8px 20px;
             margin: 0;
             overflow: auto;
@@ -586,7 +647,7 @@
         position: relative;
         animation: fade-in .2s ease-in-out;
 
-        .tsi-caret-icon{
+        .tsi-caret-icon {
             position: absolute;
             display: block;
             height: 10px;
@@ -601,7 +662,8 @@
             pointer-events: none;
             transform: rotate(0deg);
         }
-        .tsi-hierarchyItem{
+
+        .tsi-hierarchyItem {
             display: flex;
             flex-wrap: wrap;
             position: relative;
@@ -635,7 +697,7 @@
                 padding-bottom: 2px;
                 display: none;
                 width: 100%;
-            
+
                 table {
                     margin: 2px;
                     table-layout: fixed;
@@ -649,10 +711,11 @@
                             text-overflow: ellipsis;
                             overflow: hidden;
 
-                            &:first-of-type{
+                            &:first-of-type {
                                 opacity: .6;
                             }
-                            &:nth-of-type(2){
+
+                            &:nth-of-type(2) {
                                 padding-left: 8px;
                             }
                         }
@@ -660,23 +723,25 @@
                 }
             }
         }
-        &.tsi-expanded{
-            > .tsi-hierarchyItem > .tsi-caret-icon{
+
+        &.tsi-expanded {
+            >.tsi-hierarchyItem>.tsi-caret-icon {
                 content: '';
                 cursor: pointer;
                 transform: rotate(90deg);
             }
         }
+
         &.tsi-leaf {
             font-weight: 600;
         }
     }
 
-    .tsi-noBefore .tsi-caret-icon{
+    .tsi-noBefore .tsi-caret-icon {
         content: '' !important;
     }
 
-    .tsi-hierarchyNavigationContextMenu{
+    .tsi-hierarchyNavigationContextMenu {
         @extend .tsi-baseContextMenu;
         border: none;
         position: absolute;
@@ -694,7 +759,8 @@
             margin: 4px 8px 8px;
             width: calc(100% - 16px);
 
-            &:focus, &:hover {
+            &:focus,
+            &:hover {
                 background-color: unset !important;
             }
         }
@@ -746,12 +812,15 @@
                 background-size: contain;
                 background-repeat: no-repeat;
                 flex-shrink: 0;
+
                 &.categorical {
                     background-image: url('../../icons/categorical.svg');
                 }
+
                 &.aggregate {
                     background-image: url('../../icons/aggregate.svg');
                 }
+
                 &.numeric {
                     background-image: url('../../icons/numeric.svg');
                 }
@@ -768,21 +837,27 @@
         }
     }
 
-    .tsi-hitCount { 
+    .tsi-hitCount {
         display: none;
     }
 
     @keyframes fade-in {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
     }
 
     @keyframes rotating {
         from {
-          transform: rotate(0deg);
+            transform: rotate(0deg);
         }
+
         to {
-          transform: rotate(360deg);
+            transform: rotate(360deg);
         }
     }
 }

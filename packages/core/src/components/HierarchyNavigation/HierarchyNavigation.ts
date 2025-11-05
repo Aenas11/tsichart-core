@@ -31,7 +31,7 @@ class HierarchyNavigation extends Component {
         this.selectedIds = preselectedIds;
 
         //render search wrapper
-        //this.renderSearchBox()
+        this.renderSearchBox()
 
 
 
@@ -109,7 +109,7 @@ class HierarchyNavigation extends Component {
         let input = inputWrapper
             .append("input")
             .attr("class", "tsi-searchInput")
-            .attr("aria-label", this.getString("Search Time Series Instances"))
+            .attr("aria-label", this.getString("Search"))
             .attr("aria-describedby", "tsi-search-desc")
             .attr("role", "combobox")
             .attr("aria-owns", "tsi-search-results")
@@ -117,7 +117,7 @@ class HierarchyNavigation extends Component {
             .attr("aria-haspopup", "listbox")
             .attr(
                 "placeholder",
-                this.getString("Search Time Series Instances") + "..."
+                this.getString("Search") + "..."
             );
 
         let self = this;
