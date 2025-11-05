@@ -128,7 +128,7 @@ export default meta;
 type Story = StoryObj<IHeatMapOptions>;
 
 function generateSampleHeatmapData(): ChartData<SensorMetrics> {
-    const data = [];
+    const data: ChartData<SensorMetrics> = [];
     const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
     let to: Date;
 
@@ -159,7 +159,7 @@ function generateSampleHeatmapData(): ChartData<SensorMetrics> {
 }
 
 function generateSimpleHeatmapData(): ChartData<SensorMetrics> {
-    const data = [];
+    const data: ChartData<SensorMetrics> = [];
     const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
     let to: Date;
 
@@ -286,7 +286,7 @@ export const Default: Story = {
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
 
 export const DarkTheme: Story = {
@@ -297,7 +297,7 @@ export const DarkTheme: Story = {
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
+    render: createHeatMapStory('height: 300px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
 };
 
 export const CompactLegend: Story = {
@@ -308,7 +308,7 @@ export const CompactLegend: Story = {
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
 
 export const HiddenXAxis: Story = {
@@ -319,7 +319,7 @@ export const HiddenXAxis: Story = {
         tooltip: true,
         xAxisHidden: true,
     },
-    render: createHeatMapStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
 
 export const MultiSensor: Story = {
@@ -341,7 +341,7 @@ export const NoControlPanel: Story = {
         tooltip: true,
         hideChartControlPanel: true,
     },
-    render: createHeatMapStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
 
 export const Interactive: Story = {
@@ -352,7 +352,7 @@ export const Interactive: Story = {
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;'),
+    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;'),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
         await waitFor(() => canvas.getByTitle('Heatmap'), { timeout: 5000 });
@@ -422,5 +422,5 @@ export const TwentyFourHourFormat: Story = {
         tooltip: true,
         is24HourTime: false,
     },
-    render: createHeatMapStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
