@@ -1,0 +1,47 @@
+// Design tokens for Legend component
+// Centralizes all magic numbers and spacing values for better maintainability
+
+// Spacing tokens
+$legend-spacing-xs: 2px;
+$legend-spacing-sm: 4px;
+$legend-spacing-md: 8px;
+$legend-spacing-lg: 16px;
+$legend-spacing-xl: 20px;
+
+// Sizing tokens
+$legend-icon-size-sm: 10px;
+$legend-icon-size-md: 12px;
+$legend-icon-size-lg: 16px;
+$legend-icon-size-xl: 17px;
+$legend-icon-size-xxl: 20px;
+
+// Height tokens
+$legend-compact-height: 48px;
+$legend-padding: 16px;
+$legend-split-by-label-height: 40px;
+$legend-split-by-label-compact-height: 24px;
+$legend-series-name-height: 20px;
+$legend-min-split-by-container-height: 42px;
+
+// Width tokens
+$legend-eye-icon-width: 17px;
+$legend-series-name-max-width: 100px;
+
+// Border radius tokens
+$legend-border-radius-sm: 3px;
+$legend-border-radius-md: 6px;
+
+// Font size tokens
+$legend-font-size-sm: 12px;
+$legend-font-size-md: 14px;
+$legend-font-size-lg: 15px;
+$legend-font-size-xl: 16px;
+
+// Opacity tokens
+$legend-opacity-hidden: 0.3;
+$legend-opacity-select: 0.6;
+$legend-opacity-visible: 1;
+$legend-opacity-stickied: 0.4;
+
+// Z-index tokens
+$legend-z-index-base: 1;
