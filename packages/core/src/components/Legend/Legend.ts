@@ -410,7 +410,7 @@ class Legend extends Component {
 
         var self = this;
 
-        const heightPerNameLabel: number = 25;
+        const heightPerNameLabel: number = 24;
         const verticalPaddingPerSeriesLabel: number = 16;
         const usableLegendHeight: number = legend.node().clientHeight;
         var prospectiveAggregateHeight = Math.ceil(Math.max(201, (usableLegendHeight / seriesLabelsEntered.size())));
