@@ -263,6 +263,14 @@ class HierarchyNavigation extends Component {
         let self = this;
 
         input.on("keydown", (event) => {
+            // Handle ESC key to clear the search box
+            if (event.key === 'Escape') {
+                const inputElement = event.target as HTMLInputElement;
+                inputElement.value = '';
+                // Trigger input event to clear search results
+                self.exitSearchMode();
+                return;
+            }
             this.chartOptions.onKeydown(event, this.ap);
         });
 
