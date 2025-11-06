@@ -4,10 +4,18 @@ import HeatMap from '../../packages/core/src/components/Heatmap';
 import { ChartData } from '../../packages/core/src/types';
 import { fireEvent, screen, within, waitFor } from 'storybook/test';
 
-interface SensorMetrics extends Record<string, number> {
+// Heatmaps visualize a SINGLE metric across time and categories
+// Each interface represents one type of metric that can be displayed
+interface TemperatureMetric extends Record<string, number> {
     temperature: number;
-    humidity: number;
-    pressure: number;
+}
+
+interface CpuMetric extends Record<string, number> {
+    cpu: number;
+}
+
+interface TrafficMetric extends Record<string, number> {
+    requests: number;
 }
 
 interface IHeatMapOptions {
@@ -34,7 +42,7 @@ const meta: Meta<IHeatMapOptions> = {
                 component: `
  # HeatMap Component
  
-Interactive heatmap visualization for time series data with color-coded intensity mapping:
+Interactive heatmap visualization for time series data with color-coded intensity mapping. Perfect for visualizing patterns and anomalies across time and categories.
 
 ## Key Features
 - **Time-based Heatmap**: Display data intensity over time using color gradients
@@ -45,6 +53,14 @@ Interactive heatmap visualization for time series data with color-coded intensit
 - **Theming**: Support for light and dark themes
 - **Responsive**: Automatically adjusts to container size
  
+## Common Use Cases
+
+- **Infrastructure Monitoring**: CPU/Memory usage across servers
+- **IoT & Sensors**: Temperature, humidity across zones/devices
+- **Manufacturing**: Machine efficiency, output rates across production lines
+- **Web Analytics**: Traffic patterns, response times across regions/endpoints
+- **Network Monitoring**: Bandwidth, latency across network nodes
+
 ## Usage Example
 
 \`\`\` typescript
@@ -54,17 +70,17 @@ import TsiClient from 'tsichart-core';
 const tsiClient = new TsiClient();
 const chart = new tsiClient.HeatMap(containerElement);
 
-// Prepare your data in the expected format
+// Prepare your data - ONE metric per heatmap
 const data = [{
-    "SensorData": {
-        "Zone1": {
-            "2023-01-01T00:00:00Z": { temperature: 22, humidity: 45, pressure: 1013 },
-            "2023-01-01T01:00:00Z": { temperature: 23, humidity: 47, pressure: 1012 },
+    "Server Monitoring": {
+        "Server-1": {
+            "2023-01-01T00:00:00Z": { cpu: 45.2 },
+            "2023-01-01T01:00:00Z": { cpu: 52.8 },
             // More timestamped data points...
         },
-        "Zone2": {
-            "2023-01-01T00:00:00Z": { temperature: 20, humidity: 50, pressure: 1015 },
-            "2023-01-01T01:00:00Z": { temperature: 21, humidity: 52, pressure: 1014 },
+        "Server-2": {
+            "2023-01-01T00:00:00Z": { cpu: 67.5 },
+            "2023-01-01T01:00:00Z": { cpu: 71.3 },
             // More timestamped data points...
         }
     }
@@ -78,10 +94,11 @@ chart.render(data, {
     xAxisHidden: false,
     hideChartControlPanel: false,
     is24HourTime: true,
-    offset: 'Local',
-    onMouseover: (aggKey, splitBy) => console.log('Hovered:', aggKey, splitBy),
-    onMouseout: () => console.log('Mouse out')
-}, []);
+    offset: 'Local'
+}, [{
+    measureTypes: ['cpu'],  // Specify which metric to visualize
+    searchSpan: { from: '...', to: '...', bucketSize: '1m' }
+}]);
 \`\`\`          
                 
                 `
@@ -127,59 +144,40 @@ chart.render(data, {
 export default meta;
 type Story = StoryObj<IHeatMapOptions>;
 
-function generateSampleHeatmapData(): ChartData<SensorMetrics> {
-    const data: ChartData<SensorMetrics> = [];
+// Generate realistic server CPU usage data
+function generateServerCpuData(): ChartData<CpuMetric> {
+    const data: ChartData<CpuMetric> = [];
     const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
     let to: Date;
 
-    for (let i = 0; i < 2; i++) {
-        const lines = {};
-        data.push({ [`Factory${i}`]: lines });
-        for (let j = 0; j < 3; j++) {
-            const values = {};
-            lines[`Station${j}`] = values;
-            for (let k = 0; k < 60; k++) {
-                if (!(k % 2 && k % 3)) {  // Create some sparseness in the data
-                    to = new Date(from.valueOf() + 1000 * 60 * k);
-                    const temp = 20 + Math.random() * 15; // 20-35°C
-                    const humidity = 40 + Math.random() * 30; // 40-70%
-                    const pressure = 1000 + Math.random() * 50; // 1000-1050 hPa
+    const servers = {};
+    data.push({ 'Data Center Monitoring': servers });
 
-                    values[to.toISOString()] = {
-                        temperature: parseFloat(temp.toFixed(1)),
-                        humidity: parseFloat(humidity.toFixed(1)),
-                        pressure: parseFloat(pressure.toFixed(1))
-                    };
-                }
-            }
-        }
-    }
+    // Simulate 5 servers with realistic CPU patterns
+    for (let serverNum = 1; serverNum <= 5; serverNum++) {
+        const values = {};
+        servers[`Server-${serverNum}`] = values;
 
-    return data;
-}
+        // Each server has a different baseline load
+        const baselineLoad = 30 + (serverNum * 8); // 38%, 46%, 54%, 62%, 70%
 
-function generateSimpleHeatmapData(): ChartData<SensorMetrics> {
-    const data: ChartData<SensorMetrics> = [];
-    const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
-    let to: Date;
+        for (let minute = 0; minute < 60; minute++) {
+            to = new Date(from.valueOf() + 1000 * 60 * minute);
 
-    const lines = {};
-    data.push({ ['SensorData']: lines });
+            // Create realistic patterns:
+            // - Slight increase during "business hours" (simulated)
+            const hourlyVariation = Math.sin(minute / 10) * 10;
+            // - Random spikes
+            const spike = (Math.random() > 0.85) ? Math.random() * 20 : 0;
+            // - Some noise
+            const noise = (Math.random() - 0.5) * 5;
 
-    const values = {};
-    lines['Zone1'] = values;
-
-    for (let k = 0; k < 60; k++) {
-        if (!(k % 2 && k % 3)) {  // Create some sparseness in the data
-            to = new Date(from.valueOf() + 1000 * 60 * k);
-            const temp = 22 + Math.random() * 8; // 22-30°C
-            const humidity = 45 + Math.random() * 20; // 45-65%
-            const pressure = 1010 + Math.random() * 20; // 1010-1030 hPa
+            const cpu = Math.min(95, Math.max(10,
+                baselineLoad + hourlyVariation + spike + noise
+            ));
 
             values[to.toISOString()] = {
-                temperature: parseFloat(temp.toFixed(1)),
-                humidity: parseFloat(humidity.toFixed(1)),
-                pressure: parseFloat(pressure.toFixed(1))
+                cpu: parseFloat(cpu.toFixed(1))
             };
         }
     }
@@ -187,7 +185,126 @@ function generateSimpleHeatmapData(): ChartData<SensorMetrics> {
     return data;
 }
 
-function renderHeatMap(container: HTMLElement, options: IHeatMapOptions = {}, useComplexData: boolean = false) {
+// Generate realistic temperature monitoring data across zones
+function generateTemperatureData(): ChartData<TemperatureMetric> {
+    const data: ChartData<TemperatureMetric> = [];
+    const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
+    let to: Date;
+
+    const zones = {};
+    data.push({ 'Building Temperature Monitor': zones });
+
+    const zoneConfigs = [
+        { name: 'Server Room', baseline: 18, variance: 2, cooling: true },
+        { name: 'Office Area', baseline: 22, variance: 3, cooling: false },
+        { name: 'Storage', baseline: 20, variance: 1.5, cooling: false },
+        { name: 'Laboratory', baseline: 21, variance: 2.5, cooling: true }
+    ];
+
+    zoneConfigs.forEach(zone => {
+        const values = {};
+        zones[zone.name] = values;
+
+        for (let minute = 0; minute < 60; minute++) {
+            to = new Date(from.valueOf() + 1000 * 60 * minute);
+
+            // Realistic temperature patterns
+            const dailyCycle = Math.sin(minute / 20) * zone.variance;
+            const coolingCycle = zone.cooling ? Math.sin(minute / 5) * 0.5 : 0;
+            const noise = (Math.random() - 0.5) * 0.3;
+
+            const temperature = zone.baseline + dailyCycle + coolingCycle + noise;
+
+            values[to.toISOString()] = {
+                temperature: parseFloat(temperature.toFixed(1))
+            };
+        }
+    });
+
+    return data;
+}
+
+// Generate realistic web traffic data
+function generateWebTrafficData(): ChartData<TrafficMetric> {
+    const data: ChartData<TrafficMetric> = [];
+    const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
+    let to: Date;
+
+    const endpoints = {};
+    data.push({ 'API Endpoint Traffic': endpoints });
+
+    const endpointConfigs = [
+        { name: '/api/users', baseline: 150, volatility: 0.4 },
+        { name: '/api/products', baseline: 320, volatility: 0.6 },
+        { name: '/api/orders', baseline: 95, volatility: 0.3 },
+        { name: '/api/search', baseline: 420, volatility: 0.8 },
+        { name: '/api/analytics', baseline: 60, volatility: 0.2 }
+    ];
+
+    endpointConfigs.forEach(endpoint => {
+        const values = {};
+        endpoints[endpoint.name] = values;
+
+        for (let minute = 0; minute < 60; minute++) {
+            to = new Date(from.valueOf() + 1000 * 60 * minute);
+
+            // Traffic patterns: peaks and valleys
+            const trafficWave = Math.sin(minute / 15) * endpoint.baseline * 0.3;
+            const burst = (Math.random() > 0.9) ? Math.random() * endpoint.baseline * 0.5 : 0;
+            const noise = (Math.random() - 0.5) * endpoint.baseline * endpoint.volatility;
+
+            const requests = Math.max(0,
+                endpoint.baseline + trafficWave + burst + noise
+            );
+
+            values[to.toISOString()] = {
+                requests: parseFloat(requests.toFixed(0))
+            };
+        }
+    });
+
+    return data;
+}
+
+// Generate sparse data with clear patterns
+function generateSparsePatternData(): ChartData<CpuMetric> {
+    const data: ChartData<CpuMetric> = [];
+    const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
+    let to: Date;
+
+    const services = {};
+    data.push({ 'Batch Job Monitor': services });
+
+    const serviceNames = ['Data-Processing', 'Report-Generation', 'Backup-Service'];
+
+    serviceNames.forEach((serviceName, idx) => {
+        const values = {};
+        services[serviceName] = values;
+
+        for (let minute = 0; minute < 60; minute++) {
+            // Create sparseness - services only active at certain times
+            const isActive = minute >= (idx * 15) && minute < (idx * 15 + 20);
+
+            if (isActive || Math.random() > 0.7) {
+                to = new Date(from.valueOf() + 1000 * 60 * minute);
+                const cpu = isActive ? 60 + Math.random() * 30 : Math.random() * 20;
+
+                values[to.toISOString()] = {
+                    cpu: parseFloat(cpu.toFixed(1))
+                };
+            }
+        }
+    });
+
+    return data;
+}
+
+function renderHeatMap(
+    container: HTMLElement,
+    options: IHeatMapOptions = {},
+    dataGenerator: () => ChartData<any> = generateTemperatureData,
+    measureType: string = 'temperature'
+) {
     container.innerHTML = '';
 
     try {
@@ -195,7 +312,7 @@ function renderHeatMap(container: HTMLElement, options: IHeatMapOptions = {}, us
 
         const chart = new HeatMap(container);
 
-        const sampleData = useComplexData ? generateSampleHeatmapData() : generateSimpleHeatmapData();
+        const sampleData = dataGenerator();
 
         const from = new Date(Math.floor((new Date()).valueOf() / (1000 * 60 * 60)) * (1000 * 60 * 60));
         const to = new Date(from.valueOf() + 1000 * 60 * 60);
@@ -204,7 +321,7 @@ function renderHeatMap(container: HTMLElement, options: IHeatMapOptions = {}, us
             const aggregateKey = Object.keys(dataObj)[0];
 
             return {
-                measureTypes: ['temperature'],
+                measureTypes: [measureType],
                 searchSpan: {
                     from: from.toISOString(),
                     to: to.toISOString(),
@@ -216,6 +333,7 @@ function renderHeatMap(container: HTMLElement, options: IHeatMapOptions = {}, us
                 alias: aggregateKey
             };
         });
+
         const chartOptions = {
             theme: 'light',
             legend: 'shown',
@@ -259,14 +377,18 @@ function renderHeatMap(container: HTMLElement, options: IHeatMapOptions = {}, us
     }
 }
 
-function createHeatMapStory(containerStyle: string, useComplexData: boolean = false) {
+function createHeatMapStory(
+    containerStyle: string,
+    dataGenerator: () => ChartData<any> = generateTemperatureData,
+    measureType: string = 'temperature'
+) {
     return (args: IHeatMapOptions) => {
         const chartId = 'heatmap-' + Math.random().toString(36).substring(7);
 
         setTimeout(() => {
             const container = document.getElementById(chartId);
             if (container) {
-                renderHeatMap(container, args, useComplexData);
+                renderHeatMap(container, args, dataGenerator, measureType);
             }
         }, 100);
 
@@ -279,14 +401,63 @@ function createHeatMapStory(containerStyle: string, useComplexData: boolean = fa
 }
 
 export const Default: Story = {
-    name: 'Light Theme (Default)',
+    name: 'Temperature Monitoring',
     args: {
         theme: 'light',
         legend: 'shown',
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory(
+        'height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateTemperatureData,
+        'temperature'
+    )
+};
+
+export const ServerMonitoring: Story = {
+    name: 'Server CPU Usage',
+    args: {
+        theme: 'dark',
+        legend: 'shown',
+        tooltip: true,
+        xAxisHidden: false,
+    },
+    render: createHeatMapStory(
+        'height: 450px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;',
+        generateServerCpuData,
+        'cpu'
+    )
+};
+
+export const WebTraffic: Story = {
+    name: 'API Endpoint Traffic',
+    args: {
+        theme: 'light',
+        legend: 'shown',
+        tooltip: true,
+        xAxisHidden: false,
+    },
+    render: createHeatMapStory(
+        'height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateWebTrafficData,
+        'requests'
+    )
+};
+
+export const SparseData: Story = {
+    name: 'Batch Job Activity (Sparse Data)',
+    args: {
+        theme: 'light',
+        legend: 'shown',
+        tooltip: true,
+        xAxisHidden: false,
+    },
+    render: createHeatMapStory(
+        'height: 350px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateSparsePatternData,
+        'cpu'
+    )
 };
 
 export const DarkTheme: Story = {
@@ -297,7 +468,11 @@ export const DarkTheme: Story = {
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 300px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
+    render: createHeatMapStory(
+        'height: 400px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;',
+        generateTemperatureData,
+        'temperature'
+    )
 };
 
 export const CompactLegend: Story = {
@@ -308,7 +483,11 @@ export const CompactLegend: Story = {
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory(
+        'height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateServerCpuData,
+        'cpu'
+    )
 };
 
 export const HiddenXAxis: Story = {
@@ -319,18 +498,11 @@ export const HiddenXAxis: Story = {
         tooltip: true,
         xAxisHidden: true,
     },
-    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
-};
-
-export const MultiSensor: Story = {
-    name: 'Multiple Sensor Types',
-    args: {
-        theme: 'light',
-        legend: 'shown',
-        tooltip: true,
-        xAxisHidden: false,
-    },
-    render: createHeatMapStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 4px;', true)
+    render: createHeatMapStory(
+        'height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateTemperatureData,
+        'temperature'
+    )
 };
 
 export const NoControlPanel: Story = {
@@ -341,7 +513,11 @@ export const NoControlPanel: Story = {
         tooltip: true,
         hideChartControlPanel: true,
     },
-    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory(
+        'height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateWebTrafficData,
+        'requests'
+    )
 };
 
 export const Interactive: Story = {
@@ -352,7 +528,11 @@ export const Interactive: Story = {
         tooltip: true,
         xAxisHidden: false,
     },
-    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;'),
+    render: createHeatMapStory(
+        'height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateServerCpuData,
+        'cpu'
+    ),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
         await waitFor(() => canvas.getByTitle('Heatmap'), { timeout: 5000 });
@@ -422,5 +602,9 @@ export const TwentyFourHourFormat: Story = {
         tooltip: true,
         is24HourTime: false,
     },
-    render: createHeatMapStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createHeatMapStory(
+        'height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateTemperatureData,
+        'temperature'
+    )
 };
