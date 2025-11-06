@@ -59,6 +59,8 @@ class HierarchyNavigation extends Component {
     public searchEnabled: boolean = true;
     private searchWrapperElem;
     private hierarchyNavWrapper;
+    // Search mode state
+    private isSearchMode: boolean = false;
 
     public ap: any; // awesomplete object
 
@@ -274,16 +276,14 @@ class HierarchyNavigation extends Component {
             }
 
             if (!val || val.length === 0) {
-                // clear the tree and re-run base search immediately
-                self.hierarchyElem.selectAll('ul').remove();
-                // cancel any in-flight logic by bumping counters and then run a new request
-                self.pathSearchAndRenderResult({ search: { payload: self.requestPayload() }, render: { target: self.hierarchyElem } });
+                // Exit search mode and restore navigation view
+                self.exitSearchMode();
                 return;
             }
 
-            // debounce client-side filtering to avoid excessive DOM operations
+            // Use deep search for comprehensive results
             self.debounceTimer = setTimeout(() => {
-                self.filterTree(val);
+                self.performDeepSearch(val);
             }, self.debounceDelay);
         });
 
@@ -354,7 +354,209 @@ class HierarchyNavigation extends Component {
                 (li as HTMLElement).style.display = 'none';
             }
         });
+    }
 
+    // Perform deep search across entire hierarchy using server-side search
+    private async performDeepSearch(searchText: string) {
+        if (!searchText || searchText.length < 2) {
+            this.exitSearchMode();
+            return;
+        }
+
+        this.isSearchMode = true;
+        const requestId = ++this.requestCounter;
+        this.latestRequestId = requestId;
+
+        try {
+            // Call server search with recursive flag
+            const payload = {
+                path: this.path,
+                searchTerm: searchText,
+                recursive: true,  // Search entire subtree
+                includeInstances: true
+            };
+
+            const results = await this.searchFunction(payload);
+
+            if (requestId !== this.latestRequestId) return; // Stale request
+
+            if (results.error) {
+                throw results.error;
+            }
+
+            // Render search results in flat list view
+            this.renderSearchResults(results, searchText);
+
+        } catch (err) {
+            if (requestId !== this.latestRequestId) return;
+            this.chartOptions.onError(
+                "Search failed",
+                "Unable to search hierarchy",
+                err instanceof XMLHttpRequest ? err : null
+            );
+        }
+    }
+
+    // Render search results with breadcrumb paths
+    private renderSearchResults(results: any, searchText: string) {
+        this.hierarchyElem.selectAll('*').remove();
+
+        const flatResults: Array<any> = [];
+
+        // Flatten hierarchy results with full paths
+        if (results.hierarchyNodes?.hits) {
+            results.hierarchyNodes.hits.forEach((h: any) => {
+                flatResults.push({
+                    type: 'hierarchy',
+                    name: h.name,
+                    path: h.path || [],
+                    id: h.id,
+                    cumulativeInstanceCount: h.cumulativeInstanceCount,
+                    highlightedName: this.highlightMatch(h.name, searchText),
+                    node: h
+                });
+            });
+        }
+
+        // Flatten instance results with full paths
+        if (results.instances?.hits) {
+            results.instances.hits.forEach((i: any) => {
+                const displayName = this.instanceNodeStringToDisplay(i);
+                flatResults.push({
+                    type: 'instance',
+                    name: i.name,
+                    path: i.hierarchyPath || [],
+                    id: i.id,
+                    timeSeriesId: i.timeSeriesId,
+                    description: i.description,
+                    highlightedName: this.highlightMatch(displayName, searchText),
+                    node: i
+                });
+            });
+        }
+
+        // Render flat list with breadcrumbs
+        const searchList = this.hierarchyElem
+            .append('div')
+            .classed('tsi-search-results', true);
+
+        if (flatResults.length === 0) {
+            searchList.append('div')
+                .classed('tsi-noResults', true)
+                .text(this.getString('No results'));
+            return;
+        }
+
+        searchList.append('div')
+            .classed('tsi-search-results-header', true)
+            .html(`<strong>${flatResults.length}</strong> ${this.getString('results found') || 'results found'}`);
+
+        const resultItems = searchList.selectAll('.tsi-search-result-item')
+            .data(flatResults)
+            .enter()
+            .append('div')
+            .classed('tsi-search-result-item', true)
+            .attr('tabindex', '0')
+            .attr('role', 'option')
+            .attr('aria-label', (d: any) => {
+                const pathStr = d.path.length > 0 ? d.path.join(' > ') + ' > ' : '';
+                return pathStr + d.name;
+            });
+
+        const self = this;
+        resultItems.each(function (d: any) {
+            const item = d3.select(this);
+
+            // Breadcrumb path
+            if (d.path.length > 0) {
+                item.append('div')
+                    .classed('tsi-search-breadcrumb', true)
+                    .text(d.path.join(' > '));
+            }
+
+            // Highlighted name
+            item.append('div')
+                .classed('tsi-search-result-name', true)
+                .html(d.highlightedName);
+
+            // Instance description or count
+            if (d.type === 'instance' && d.description) {
+                item.append('div')
+                    .classed('tsi-search-result-description', true)
+                    .text(d.description);
+            } else if (d.type === 'hierarchy') {
+                item.append('div')
+                    .classed('tsi-search-result-count', true)
+                    .text(`${d.cumulativeInstanceCount || 0} instances`);
+            }
+        });
+
+        // Click handlers
+        resultItems.on('click keydown', function (event, d: any) {
+            if (Utils.isKeyDownAndNotEnter(event)) return;
+
+            if (d.type === 'instance') {
+                // Handle instance selection
+                if (self.chartOptions.onInstanceClick) {
+                    const inst = new InstanceNode(
+                        d.timeSeriesId,
+                        d.name,
+                        d.path.length,
+                        d.id,
+                        d.description
+                    );
+
+                    // Update selection state
+                    if (self.selectedIds && self.selectedIds.includes(d.id)) {
+                        self.selectedIds = self.selectedIds.filter(id => id !== d.id);
+                        d3.select(this).classed('tsi-selected', false);
+                    } else {
+                        self.selectedIds.push(d.id);
+                        d3.select(this).classed('tsi-selected', true);
+                    }
+
+                    self.chartOptions.onInstanceClick(inst);
+                }
+            } else {
+                // Navigate to hierarchy node - exit search and expand to that path
+                self.navigateToPath(d.path);
+            }
+        });
+
+        // Apply selection state to already-selected instances
+        resultItems.each(function (d: any) {
+            if (d.type === 'instance' && self.selectedIds && self.selectedIds.includes(d.id)) {
+                d3.select(this).classed('tsi-selected', true);
+            }
+        });
+    }
+
+    // Exit search mode and restore tree
+    private exitSearchMode() {
+        this.isSearchMode = false;
+        this.hierarchyElem.selectAll('*').remove();
+        this.pathSearchAndRenderResult({
+            search: { payload: this.requestPayload() },
+            render: { target: this.hierarchyElem }
+        });
+    }
+
+    // Navigate to a specific path in the hierarchy
+    private async navigateToPath(targetPath: string[]) {
+        this.exitSearchMode();
+
+        // For now, just exit search mode and return to root
+        // In a more advanced implementation, this would progressively
+        // expand nodes along the path to reveal the target
+        // This would require waiting for each level to load before expanding the next
+    }
+
+    // Highlight search term in text
+    private highlightMatch(text: string, searchTerm: string): string {
+        if (!text) return '';
+        const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
     }
 
     // creates in-depth data object using the server response for hierarchyNodes to show in the tree all expanded, considering UntilChildren
