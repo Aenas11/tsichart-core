@@ -415,6 +415,10 @@ await hierarchyNav.render(searchFunction, {
     }
 }, []); // empty array for preselected IDs
 \`\`\`
+
+## Accessibility & Interaction
+- Keyboard: Use Arrow Up / Down to move, Arrow Right to expand or move into children, Arrow Left to collapse or move to parent. Enter or Space toggles expand/select depending on focused item.
+- Search: The search box uses a 250ms debounce to reduce work while typing. Server requests are protected from race conditions (stale responses are ignored) and display names are cached for fast client-side filtering.
                 `
             }
         }
@@ -439,7 +443,7 @@ export default meta;
 type Story = StoryObj;
 
 // Helper function to render HierarchyNavigation
-function renderHierarchyNavigation(container: HTMLElement, options: any = {}) {
+async function renderHierarchyNavigation(container: HTMLElement, options: any = {}) {
     container.innerHTML = '';
     container.style.width = '400px';
     container.style.height = '600px';
@@ -468,11 +472,13 @@ function renderHierarchyNavigation(container: HTMLElement, options: any = {}) {
         // Preselected instance IDs (empty by default)
         const preselectedIds: string[] = options.preselectedIds || [];
 
-        // Render the component
-        hierarchyNav.render(mockSearchFunction, hierarchyOptions, preselectedIds);
+        // Render the component and wait for initial render to complete
+        await hierarchyNav.render(mockSearchFunction, hierarchyOptions, preselectedIds);
+
+        // NOTE: instruction overlay removed — instructions are now in the story documentation
 
         return hierarchyNav;
-    } catch (error) {
+    } catch (error: any) {
         console.error('HierarchyNavigation rendering error:', error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
             <h3>Error rendering HierarchyNavigation</h3>
@@ -487,12 +493,15 @@ function createHierarchyNavigationStory(containerStyle: string = '') {
     return (args: any) => {
         const chartId = 'hierarchy-' + Math.random().toString(36).substring(7);
 
+        // Wait a tick for Storybook to attach the element, then render the component
         setTimeout(() => {
             const container = document.getElementById(chartId);
             if (container) {
+                // fire and forget (renderHierarchyNavigation is async)
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 renderHierarchyNavigation(container, args);
             }
-        }, 100);
+        }, 50);
 
         return html`
             <div style="${containerStyle}">
@@ -507,7 +516,7 @@ export const Default: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'Default hierarchy navigation. Click hierarchy nodes (with caret icons) to expand/collapse. Click sensor instances to select them (shows alert).'
+                story: 'Default hierarchy navigation. Click hierarchy nodes (with caret icons) to expand/collapse. Click sensor instances to select them (shows alert). Includes debounced search, keyboard navigation (Arrow keys + Enter), and improved ARIA attributes for accessibility.'
             }
         }
     },
