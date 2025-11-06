@@ -5,10 +5,14 @@ import { Component } from "./../../interfaces/Component";
 import ModelAutocomplete from '../ModelAutocomplete';
 
 class HierarchyNavigation extends Component {
-
     private searchFunction;
     private hierarchyElem;
     private path: Array<string> = [];
+    // debounce + request cancellation fields
+    private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    private debounceDelay: number = 250; // ms
+    private requestCounter: number = 0; // increments for each outgoing request
+    private latestRequestId: number = 0; // id of the most recent request
     //selectedIds
     public selectedIds: Array<string> = [];
     public searchEnabled: boolean = true;
@@ -88,6 +92,9 @@ class HierarchyNavigation extends Component {
             li.attr("role", "none");
             let newListElem = this.createHierarchyItemElem(data[el], el);
             li.node().appendChild(newListElem.node());
+            // attach cached display name on the li for faster client-side filtering
+            const displayName = (data[el] && (data[el].displayName || nodeNameToCheckIfExists)) || nodeNameToCheckIfExists;
+            li.attr('data-display-name', displayName);
 
             data[el].node = li;
             if (data[el].children) {
@@ -127,32 +134,50 @@ class HierarchyNavigation extends Component {
         });
 
         var searchText;
-
+        // Debounced input handler to reduce work while typing
         input.on("input", function (event) {
-            searchText = (event.target as any).value;
-            if (searchText.length === 0) {
-                //clear the tree
-                self.hierarchyElem.selectAll('ul').remove();
-                self.pathSearchAndRenderResult({ search: { payload: self.requestPayload() }, render: { target: self.hierarchyElem } });
-
-
-            } else {
-                //filter the tree
-                self.filterTree(searchText);
-
+            const val = (event.target as any).value;
+            // always clear existing timer
+            if (self.debounceTimer) {
+                clearTimeout(self.debounceTimer);
+                self.debounceTimer = null;
             }
+
+            if (!val || val.length === 0) {
+                // clear the tree and re-run base search immediately
+                self.hierarchyElem.selectAll('ul').remove();
+                // cancel any in-flight logic by bumping counters and then run a new request
+                self.pathSearchAndRenderResult({ search: { payload: self.requestPayload() }, render: { target: self.hierarchyElem } });
+                return;
+            }
+
+            // debounce client-side filtering to avoid excessive DOM operations
+            self.debounceTimer = setTimeout(() => {
+                self.filterTree(val);
+            }, self.debounceDelay);
         });
 
     }
 
     private async pathSearchAndRenderResult({ search: { payload, bubbleUpReject = false }, render: { target, locInTarget = null } }) {
+        // Use requestCounter to ignore out-of-order (stale) responses
+        const requestId = ++this.requestCounter;
+        this.latestRequestId = requestId;
         try {
             const result = await this.searchFunction(payload);
+            // If a newer request was started after this one, ignore this result
+            if (requestId !== this.latestRequestId) {
+                return;
+            }
             if (result.error) {
                 throw result.error;
             }
             this.renderSearchResult(result, payload, target);
         } catch (err) {
+            // If this request is no longer the latest, suppress error handling
+            if (requestId !== this.latestRequestId) {
+                return;
+            }
             this.chartOptions.onError("Error in hierarchy navigation", "Failed to complete search", err instanceof XMLHttpRequest ? err : null);
             if (bubbleUpReject) {
                 throw err;
@@ -168,7 +193,10 @@ class HierarchyNavigation extends Component {
 
         const instancesData = r.instances?.hits?.length
             ? r.instances.hits.reduce((acc, i) => {
-                acc[this.instanceNodeIdentifier(i)] = new InstanceNode(i.timeSeriesId, i.name, payload.path.length - this.path.length, i.id, i.description);
+                const inst = new InstanceNode(i.timeSeriesId, i.name, payload.path.length - this.path.length, i.id, i.description);
+                // cache display name for client-side filtering
+                inst.displayName = this.instanceNodeStringToDisplay(i) || '';
+                acc[this.instanceNodeIdentifier(i)] = inst;
                 return acc;
             }, {})
             : {};
@@ -185,18 +213,20 @@ class HierarchyNavigation extends Component {
     }
 
     private filterTree(searchText) {
-        let tree = this.hierarchyElem.selectAll('ul').nodes()[0];
-        let list = tree.querySelectorAll('li');
+        // Use cached display name stored on each li via data-display-name attribute when available
+        const tree = this.hierarchyElem.selectAll('ul').nodes()[0];
+        if (!tree) return;
+        const list = tree.querySelectorAll('li');
+        const needle = searchText.toLowerCase();
         list.forEach((li) => {
-            let name = li.querySelector('.tsi-name').innerText;
-            if (name.toLowerCase().includes(searchText.toLowerCase())) {
-                li.style.display = 'block';
+            const attrName = li.getAttribute('data-display-name');
+            let name = attrName && attrName.length ? attrName : (li.querySelector('.tsi-name')?.textContent || '');
+            if (name.toLowerCase().includes(needle)) {
+                (li as HTMLElement).style.display = 'block';
             } else {
-                li.style.display = 'none';
+                (li as HTMLElement).style.display = 'none';
             }
-        }
-        );
-
+        });
 
     }
 
@@ -206,6 +236,9 @@ class HierarchyNavigation extends Component {
 
         hierarchyNodes.hits.forEach((h) => {
             let hierarchy = new HierarchyNode(h.name, payload.path, payload.path.length - this.path.length, h.cumulativeInstanceCount, h.id);
+
+            // cache display name on node for client-side filtering
+            hierarchy.displayName = h.name || '';
 
             hierarchy.expand = () => {
                 hierarchy.isExpanded = true;
@@ -234,7 +267,7 @@ class HierarchyNavigation extends Component {
             .attr('style', `padding-left: ${hORi.isLeaf ? hORi.level * 18 + 20 : (hORi.level + 1) * 18 + 20}px`)
             .attr('tabindex', 0)
             //.attr('arialabel', isHierarchyNode ? key : Utils.getTimeSeriesIdString(hORi))
-            .attr('arialabel', isHierarchyNode ? key : self.getAriaLabel(hORi))
+            .attr('aria-label', isHierarchyNode ? key : self.getAriaLabel(hORi))
             .attr('title', isHierarchyNode ? key : self.getAriaLabel(hORi))
             .attr("role", "treeitem").attr('aria-expanded', hORi.isExpanded)
             .on('click keydown', async function (event) {
@@ -316,6 +349,7 @@ class HierarchyNode {
     node: any;
     children: any;
     isExpanded: boolean;
+    displayName?: string;
 
     constructor(name: string, parentPath: string[], level: number, cumulativeInstanceCount: number | null = null, id: string | null = null) {
         this.name = name;
@@ -346,6 +380,7 @@ class InstanceNode {
     node: any;
     id: string | null;
     description: string | null;
+    displayName?: string;
 
     constructor(tsId: any, name: string | null = null, level: any, id: string | null = null, description: string | null = null) {
         this.timeSeriesId = tsId;
