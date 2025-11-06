@@ -1,10 +1,12 @@
 import * as d3 from 'd3';
-import Pikaday from '../../../packages/pikaday/pikaday';
+import '../../../packages/pikaday/pikaday.js';
 import '../../../packages/pikaday/css/pikaday.css'
 import moment from 'moment';
 import './SingleDateTimePicker.scss';
 import { ChartComponent } from '../../interfaces/ChartComponent';
 import Utils from "../../utils";
+
+declare const Pikaday: any;
 
 class SingleDateTimePicker extends ChartComponent {
     private calendar: any;
