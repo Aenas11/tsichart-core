@@ -14,6 +14,7 @@ interface IDateTimeButtonSingleOptions {
     currentMillis?: number;
     onSet?: (millis: number) => void;
     onCancel?: () => void;
+    showFeedback?: boolean;
 }
 
 
@@ -102,7 +103,13 @@ now.getTime(),        // currentMillis
             control: 'boolean',
             description: 'Whether the date-time picker should be modal',
             table: { defaultValue: { summary: 'true' } }
+        },
+        showFeedback: {
+            control: 'boolean',
+            description: 'Show locale feedback information below the button',
+            table: { defaultValue: { summary: 'true' } }
         }
+
     }
 }
 
@@ -162,6 +169,7 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             is24HourTime: true,
             dateLocale: 'en-US',
             dTPIsModal: true,
+            showFeedback: true,
             ...options
         };
 
@@ -213,34 +221,34 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             onSet
         );
 
-        // Add locale feedback element for testing
-        const feedbackDiv = document.createElement('div');
-        feedbackDiv.className = 'locale-feedback';
-        feedbackDiv.style.cssText = `
-            margin-top: 16px;
-            padding: 12px;
-            background: ${componentOptions.theme === 'dark' ? '#2d2d2d' : '#f8f9fa'};
-            color: ${componentOptions.theme === 'dark' ? '#fff' : '#333'};
-            border: 1px solid ${componentOptions.theme === 'dark' ? '#444' : '#dee2e6'};
-            border-radius: 6px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
-            position: absolute;
-            bottom: 10px;
-            width: 90%;
+        if (componentOptions.showFeedback) {
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'locale-feedback';
+            feedbackDiv.style.cssText = `
+                margin-top: 16px;
+                padding: 12px;
+                background: ${componentOptions.theme === 'dark' ? '#2d2d2d' : '#f8f9fa'};
+                color: ${componentOptions.theme === 'dark' ? '#fff' : '#333'};
+                border: 1px solid ${componentOptions.theme === 'dark' ? '#444' : '#dee2e6'};
+                border-radius: 6px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+                font-size: 12px;
+                line-height: 1.4;
+                position: absolute;
+                bottom: 10px;
+                width: 90%;
+            `;
 
-        `;
-
-        // Show initial time in selected locale
-        const initialDate = new Date(timeBounds.currentMillis);
-        feedbackDiv.innerHTML = `
-            <strong>Current Locale (${componentOptions.dateLocale}):</strong><br>
-            Browser: ${initialDate.toLocaleString(componentOptions.dateLocale)}<br>
-            Moment.js: ${moment(initialDate).format('LLL')}<br>
-            <em>Click the button to test locale formatting</em>
-        `;
-        container.appendChild(feedbackDiv);
+            // Show initial time in selected locale
+            const initialDate = new Date(timeBounds.currentMillis);
+            feedbackDiv.innerHTML = `
+                <strong>Current Locale (${componentOptions.dateLocale}):</strong><br>
+                Browser: ${initialDate.toLocaleString(componentOptions.dateLocale)}<br>
+                Moment.js: ${moment(initialDate).format('LLL')}<br>
+                <em>Click the button to test locale formatting</em>
+            `;
+            container.appendChild(feedbackDiv);
+        }
 
         return dateTimeButton;
     } catch (error) {
@@ -387,6 +395,7 @@ export const LocaleComparison: Story = {
             const container = document.getElementById(containerId);
             if (container) {
                 const locales = ['en-US', 'de-DE', 'fr-FR', 'ja-JP'];
+                const currentTime = new Date();
                 container.innerHTML = '';
 
                 locales.forEach((locale, index) => {
@@ -397,21 +406,92 @@ export const LocaleComparison: Story = {
                         border: 1px solid #ddd;
                         border-radius: 6px;
                         background: #fafafa;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        max-width: 600px;
+                        margin-left: auto;
+                        margin-right: auto;
                     `;
 
                     const localeTitle = document.createElement('h4');
                     localeTitle.textContent = `${locale} Locale`;
-                    localeTitle.style.margin = '0 0 10px 0';
+                    localeTitle.style.cssText = `
+                        margin: 0 0 15px 0;
+                        text-align: center;
+                        color: #333;
+                        font-weight: 600;
+                        font-size: 16px;
+                    `;
                     localeContainer.appendChild(localeTitle);
 
                     const buttonContainer = document.createElement('div');
                     buttonContainer.id = `button-${locale}-${index}`;
+                    buttonContainer.style.cssText = `
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-bottom: 15px;
+                    `;
                     localeContainer.appendChild(buttonContainer);
 
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.className = 'locale-feedback';
+                    feedbackDiv.style.cssText = `
+                        padding: 12px;
+                        background: ${args.theme === 'dark' ? '#2d2d2d' : '#f8f9fa'};
+                        color: ${args.theme === 'dark' ? '#fff' : '#333'};
+                        border: 1px solid ${args.theme === 'dark' ? '#444' : '#dee2e6'};
+                        border-radius: 6px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+                        font-size: 12px;
+                        line-height: 1.4;
+                        text-align: center;
+                        width: 100%;
+                        margin-top: auto;
+                    `;
+                    let momentFormatted: string;
+                    let momentShort: string;
+
+                    try {
+                        // Save current locale
+                        const previousLocale = moment.locale();
+
+                        // Set to specific locale for this formatting
+                        moment.locale(locale);
+                        momentFormatted = moment(currentTime).format('LLL');
+                        momentShort = moment(currentTime).format('L LT');
+
+                        // Restore previous locale
+                        moment.locale(previousLocale);
+                    } catch (error) {
+                        console.warn(`Failed to set moment locale to ${locale}:`, error);
+                        momentFormatted = `Error: ${error.message}`;
+                        momentShort = `Error: ${error.message}`;
+                    }
+
+                    // Create the feedback content with locale-specific formatting
+                    feedbackDiv.innerHTML = `
+                        <div style="border-left: 3px solid #6c757d; padding-left: 12px; text-align: left;">
+                            <strong style="color: #6c757d;">Current Time (${locale}):</strong><br>
+                            <div style="margin: 8px 0; font-size: 11px; line-height: 1.5;">
+                                <div><strong>Full format:</strong> ${currentTime.toLocaleString(locale)}</div>
+                                <div><strong>Date only:</strong> ${currentTime.toLocaleDateString(locale)}</div>
+                                <div><strong>Time only:</strong> ${currentTime.toLocaleTimeString(locale)}</div>
+                                <div><strong>Moment.js:</strong> ${momentFormatted}</div>
+                                <div><strong>Moment short:</strong> ${momentShort}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    localeContainer.appendChild(feedbackDiv);
                     container.appendChild(localeContainer);
+
+                    // Render the DateTimeButtonSingle for this specific locale
                     renderDateTimeButtonSingle(buttonContainer, {
                         ...args,
-                        dateLocale: locale
+                        dateLocale: locale,
+                        showFeedback: false
                     });
                 });
             }
