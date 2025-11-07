@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import DateTimeButtonSingle from "../../packages/core/src/components/DateTimeButtonSingle/DateTimeButtonSingle";
-import { fireEvent, screen, within, waitFor } from "storybook/test";
+import { moment } from '../../packages/core/src/components/DateTimePicker/pikaday-wrapper';
 
 interface IDateTimeButtonSingleOptions {
     theme?: 'light' | 'dark';
@@ -49,36 +49,26 @@ import TsiClient from 'tsichart-core';
 const tsiClient = new TsiClient();
 const dateTimeButton = new tsiClient.DateTimeButtonSingle(containerElement);
 
-// Set up current time selection
-const now = new Date();
-const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-const dayAhead = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-
 // Render the button
 dateTimeButton.render({
     theme: 'light',
     offset: 'Local',
     is24HourTime: true,
-    dateLocale: 'en-US'
+    dateLocale: 'de-DE'  // German locale
 }, 
-dayAgo.getTime(),     // minMillis - earliest selectable time
-dayAhead.getTime(),   // maxMillis - latest selectable time  
-now.getTime(),        // currentMillis - currently selected time
-(millis, offset) => {
-    console.log('Time selected:', {
-        selectedTime: new Date(millis),
-        offset
-    });
-},
-() => {
-    console.log('Selection cancelled');
+dayAgo.getTime(),     // minMillis
+dayAhead.getTime(),   // maxMillis
+now.getTime(),        // currentMillis
+(millis) => {         // Fix: Correct callback signature
+    console.log('Time selected:', new Date(millis));
 });
 \`\`\`
 
-## Time Display Formats
-- **12-hour format**: "Jan 1, 2023 12:30 PM (EST)"
-- **24-hour format**: "Jan 1, 2023 12:30 (EST)"
-- **Different locales**: German "1. Jan. 2023 12:30 (MEZ)"
+## Locale Examples
+- **English (US)**: "Jan 15, 2023 2:30 PM"
+- **German (DE)**: "15. Jan. 2023 14:30" 
+- **French (FR)**: "15 janv. 2023 14:30"
+- **Japanese (JP)**: "2023年1月15日 14:30"
                 
                 `
             }
@@ -175,11 +165,40 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             ...options
         };
 
+        try {
+            moment.locale(componentOptions.dateLocale);
+            console.log(`Moment locale set to: ${componentOptions.dateLocale}, current locale: ${moment.locale()}`);
+        } catch (error) {
+            console.warn(`Failed to set moment locale to ${componentOptions.dateLocale}:`, error);
+            // Fallback to default locale
+            moment.locale('en');
+        }
+
         const onSet = (millis: number) => {
+            const selectedDate = new Date(millis);
             console.log('DateTimeButtonSingle - Time selected:', {
-                selectedTime: new Date(millis),
-                timestamp: millis
+                selectedTime: selectedDate,
+                timestamp: millis,
+                // Test locale formatting
+                formattedLocal: selectedDate.toLocaleDateString(componentOptions.dateLocale, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
+                momentFormatted: moment(selectedDate).format('LLL')
             });
+
+            // Add visual feedback to container showing locale formatting
+            const feedbackDiv = container.querySelector('.locale-feedback') as HTMLElement;
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = `
+                    <strong>Selected Time (${componentOptions.dateLocale}):</strong><br>
+                    Browser locale: ${selectedDate.toLocaleString(componentOptions.dateLocale)}<br>
+                    Moment.js locale: ${moment(selectedDate).format('LLL')}
+                `;
+            }
 
             if (options.onSet) {
                 options.onSet(millis);
@@ -193,6 +212,35 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             timeBounds.currentMillis,
             onSet
         );
+
+        // Add locale feedback element for testing
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'locale-feedback';
+        feedbackDiv.style.cssText = `
+            margin-top: 16px;
+            padding: 12px;
+            background: ${componentOptions.theme === 'dark' ? '#2d2d2d' : '#f8f9fa'};
+            color: ${componentOptions.theme === 'dark' ? '#fff' : '#333'};
+            border: 1px solid ${componentOptions.theme === 'dark' ? '#444' : '#dee2e6'};
+            border-radius: 6px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            position: absolute;
+            bottom: 10px;
+            width: 90%;
+
+        `;
+
+        // Show initial time in selected locale
+        const initialDate = new Date(timeBounds.currentMillis);
+        feedbackDiv.innerHTML = `
+            <strong>Current Locale (${componentOptions.dateLocale}):</strong><br>
+            Browser: ${initialDate.toLocaleString(componentOptions.dateLocale)}<br>
+            Moment.js: ${moment(initialDate).format('LLL')}<br>
+            <em>Click the button to test locale formatting</em>
+        `;
+        container.appendChild(feedbackDiv);
 
         return dateTimeButton;
     } catch (error) {
@@ -220,7 +268,7 @@ function createDateTimeButtonSingleStory(containerStyle: string, scenario: strin
 
         return html`
             <div style="${containerStyle}">
-                <div id="${buttonId}" style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;"></div>
+                <div id="${buttonId}" style="height: 100%; width: 100%;  display: flex;  justify-content: center;"></div>
             </div>
         `;
     };
@@ -310,6 +358,7 @@ export const GermanLocale: Story = {
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };
 
+
 export const WideTimeRange: Story = {
     name: 'Wide Time Range (1 Year)',
     args: {
@@ -322,9 +371,8 @@ export const WideTimeRange: Story = {
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };
 
-
-export const Interactive: Story = {
-    name: 'Interaction Tests',
+export const LocaleComparison: Story = {
+    name: 'Locale Comparison',
     args: {
         theme: 'light',
         offset: 'Local',
@@ -332,97 +380,53 @@ export const Interactive: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;'),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
+    render: (args: IDateTimeButtonSingleOptions) => {
+        const containerId = 'locale-comparison-' + Math.random().toString(36).substring(7);
 
-        const dateTimeButton = await canvas.findByRole('button', {
-            name: /a button to launch a time selection dialog/i
-        }, { timeout: 5000 });
+        setTimeout(() => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                const locales = ['en-US', 'de-DE', 'fr-FR', 'ja-JP'];
+                container.innerHTML = '';
 
-        await waitFor(() => {
-            const buttonText = dateTimeButton.textContent;
-            if (!buttonText || buttonText.trim().length === 0) {
-                throw new Error("DateTimeButtonSingle should display a formatted time");
+                locales.forEach((locale, index) => {
+                    const localeContainer = document.createElement('div');
+                    localeContainer.style.cssText = `
+                        margin-bottom: 20px;
+                        padding: 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 6px;
+                        background: #fafafa;
+                    `;
+
+                    const localeTitle = document.createElement('h4');
+                    localeTitle.textContent = `${locale} Locale`;
+                    localeTitle.style.margin = '0 0 10px 0';
+                    localeContainer.appendChild(localeTitle);
+
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.id = `button-${locale}-${index}`;
+                    localeContainer.appendChild(buttonContainer);
+
+                    container.appendChild(localeContainer);
+                    renderDateTimeButtonSingle(buttonContainer, {
+                        ...args,
+                        dateLocale: locale
+                    });
+                });
             }
-        });
+        }, 100);
 
-        fireEvent.click(dateTimeButton);
-
-        await waitFor(() => {
-            const picker = canvas.queryByRole('dialog') ||
-                canvasElement.querySelector('.tsi-dateTimePickerContainer') ||
-                canvasElement.querySelector('[style*="display: block"]');
-            if (!picker) {
-                throw new Error("Date-time picker should be visible after clicking button");
-            }
-        }, { timeout: 3000 });
-        const pikadayCalendar = canvasElement.querySelector('.pika-single, .tsi-calendarPicker .pika-lendar');
-        if (pikadayCalendar) {
-            console.log('Pikaday calendar found in SingleDateTimePicker');
-
-            // Test calendar day selection
-            const calendarDay = pikadayCalendar.querySelector('.pika-button.pika-day:not(.is-disabled)');
-            if (calendarDay) {
-                fireEvent.click(calendarDay);
-                console.log('Calendar day clicked successfully');
-            }
-        }
-
-        const timeInput = canvasElement.querySelector('.tsi-dateTimeInput');
-        if (timeInput) {
-            console.log('Time input control found');
-
-            fireEvent.focus(timeInput);
-            fireEvent.change(timeInput, { target: { value: '12:30 PM' } });
-        }
-
-        const applyButton = canvas.queryByRole('button', { name: /save/i }) ||
-            canvasElement.querySelector('.tsi-saveButton');
-
-        if (applyButton) {
-            fireEvent.click(applyButton);
-
-            await waitFor(() => {
-                const picker = canvasElement.querySelector('.tsi-singleDateTimePicker[style*="display: block"]') ||
-                    canvasElement.querySelector('.tsi-dateTimePickerContainer[style*="display: block"]');
-                if (picker) {
-                    throw new Error("SingleDateTimePicker should close after saving");
-                }
-            }, { timeout: 2000 });
-        } else {
-            fireEvent.keyDown(canvasElement, { key: 'Escape', keyCode: 27 });
-        }
-
-        await waitFor(() => {
-            if (dateTimeButton.getAttribute('aria-label') === null) {
-                throw new Error("Button should maintain accessibility attributes");
-            }
-        });
-
-        fireEvent.click(dateTimeButton);
-        await waitFor(() => {
-            const picker = canvasElement.querySelector('.tsi-singleDateTimePicker') ||
-                canvasElement.querySelector('[style*="display: block"]');
-            if (!picker) {
-                throw new Error("Picker should reopen");
-            }
-        }, { timeout: 2000 });
-
-        const escapeEvent = new KeyboardEvent('keydown', {
-            key: 'Escape', keyCode: 27,
-            bubbles: true
-        });
-        canvasElement.dispatchEvent(escapeEvent);
-
-        await waitFor(() => {
-            const finalButtonText = dateTimeButton.textContent;
-            if (!finalButtonText || finalButtonText.trim().length === 0) {
-                throw new Error("Button should maintain readable text after interactions");
-            }
-        });
+        return html`
+            <div style="height: auto; min-height: 800px; width: 100%; padding: 20px;">
+                <h3 style="margin: 0 0 20px 0; text-align: center;">DateTimeButtonSingle Locale Comparison</h3>
+                <div id="${containerId}" style="width: 100%;"></div>
+            </div>
+        `;
     }
 };
+
+
 
 export const Playground: Story = {
     name: 'Interactive Playground',

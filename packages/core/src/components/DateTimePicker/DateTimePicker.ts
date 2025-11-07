@@ -5,7 +5,7 @@ import TimezonePicker from '../TimezonePicker/TimezonePicker';
 import Utils from "../../utils";
 import { createPikaday, moment } from './pikaday-wrapper';
 
- 
+
 
 class DateTimePicker extends ChartComponent {
     private calendar: any;
