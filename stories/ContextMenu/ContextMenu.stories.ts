@@ -14,7 +14,7 @@ interface ContextMenuOptions {
 }
 
 const meta: Meta<ContextMenuOptions> = {
-    title: 'Charts/ContextMenu/ContextMenu',
+    title: 'Components/ContextMenu',
     component: "ContextMenu",
     tags: ['autodocs'],
     parameters: {
@@ -130,7 +130,7 @@ contextMenu.draw(
         enableBrushActions: {
             control: 'boolean',
             description: 'Show brush-specific context menu actions',
-            table: { defaultValue: { summary: 'false' } }
+            table: { defaultValue: { summary: 'true' } }
         },
         autoHide: {
             control: 'boolean',
@@ -180,15 +180,15 @@ function generateBrushContextMenuActions() {
 function generateMockTimeSeriesData(factoryCount: number = 5, stationCount: number = 1, dataPointCount: number = 400): ChartData {
     const data = [];
     const from = new Date(1569669120723);
-    
+
     for (let i = 0; i < factoryCount; i++) {
         const lines = {};
         data.push({ [`Factory${i}`]: lines });
-        
+
         for (let j = 0; j < stationCount; j++) {
             const values = {};
             lines[`Station${j}`] = values;
-            
+
             for (let k = 0; k < dataPointCount; k++) {
                 const to = new Date(from.valueOf() + 1000 * 60 * k);
                 const val = Math.random();
@@ -197,7 +197,7 @@ function generateMockTimeSeriesData(factoryCount: number = 5, stationCount: numb
             }
         }
     }
-    
+
     return data;
 }
 
@@ -217,9 +217,9 @@ function renderContextMenu(container: HTMLElement, options: any = {}) {
             ...options
         };
 
-        chart.render(mockData,  chartOptions,[] )
+        chart.render(mockData, chartOptions, [])
 
-        return  chart
+        return chart
     } catch (error) {
         console.error('ContextMenu rendering error:', error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
@@ -249,7 +249,7 @@ function createContextMenuStory(containerStyle: string) {
 
         return html`
             <div style="${containerStyle}">
-                <div id="${menuId}" style="height: 100%; width: 100%;"></div>
+                <div id="${menuId}" style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;"></div>
             </div>
         `;
     };
@@ -261,10 +261,10 @@ export const Default: Story = {
         theme: 'light',
         position: 'auto',
         showNestedMenus: true,
-        enableBrushActions: false,
+        enableBrushActions: true,
         autoHide: true
     },
-    render: createContextMenuStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 20px;')
+    render: createContextMenuStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };
 
 export const DarkTheme: Story = {
@@ -273,10 +273,10 @@ export const DarkTheme: Story = {
         theme: 'dark',
         position: 'auto',
         showNestedMenus: true,
-        enableBrushActions: false,
+        enableBrushActions: true,
         autoHide: true
     },
-    render: createContextMenuStory('height: 300px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; padding: 20px;')
+    render: createContextMenuStory('height: 400px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };
 
 export const SimpleMenu: Story = {
@@ -285,10 +285,10 @@ export const SimpleMenu: Story = {
         theme: 'light',
         position: 'auto',
         showNestedMenus: false,
-        enableBrushActions: false,
+        enableBrushActions: true,
         autoHide: true
     },
-    render: createContextMenuStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 20px;')
+    render: createContextMenuStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };
 
 export const BrushContextMenu: Story = {
@@ -300,7 +300,7 @@ export const BrushContextMenu: Story = {
         enableBrushActions: true,
         autoHide: true
     },
-    render: createContextMenuStory('height: 300px; width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 20px;')
+    render: createContextMenuStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };
 
 export const NestedMenus: Story = {
@@ -309,10 +309,10 @@ export const NestedMenus: Story = {
         theme: 'light',
         position: 'auto',
         showNestedMenus: true,
-        enableBrushActions: false,
+        enableBrushActions: true,
         autoHide: true
     },
-    render: createContextMenuStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 20px;')
+    render: createContextMenuStory('height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };
 
 export const Playground: Story = {
@@ -321,8 +321,8 @@ export const Playground: Story = {
         theme: 'light',
         position: 'auto',
         showNestedMenus: true,
-        enableBrushActions: false,
+        enableBrushActions: true,
         autoHide: true
     },
-    render: createContextMenuStory('height: 350px; width: 100%; border: 2px solid #ddd; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);')
+    render: createContextMenuStory('height: 400px; width: 100%; border: 2px solid #ddd; border-radius: 8px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); display: flex; align-items: center; justify-content: center;')
 };

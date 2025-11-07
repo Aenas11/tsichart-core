@@ -348,14 +348,17 @@ const MOCK_HIERARCHY_DATA = {
 
 // Mock search function that returns hardcoded data based on path
 function createMockSearchFunction() {
-    return async (payload: { path: string[], hierarchy: any }): Promise<any> => {
+    return async (payload: { path: string[], hierarchy: any, searchTerm?: string, recursive?: boolean, includeInstances?: boolean }): Promise<any> => {
         // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        // Build the path key from the payload
-        const pathKey = payload.path.join('/');
+        // DEEP SEARCH MODE: If searchTerm and recursive are provided
+        if (payload.searchTerm && payload.recursive) {
+            return performDeepSearch(payload.searchTerm, payload.path);
+        }
 
-        // Return the corresponding data or empty result
+        // NAVIGATION MODE: Regular path-based navigation
+        const pathKey = payload.path.join('/');
         const data = MOCK_HIERARCHY_DATA[pathKey];
 
         if (data) {
@@ -367,6 +370,60 @@ function createMockSearchFunction() {
             hierarchyNodes: { hitCount: 0, hits: [] },
             instances: { hitCount: 0, hits: [] }
         };
+    };
+}
+
+// Deep search implementation - searches across entire hierarchy
+function performDeepSearch(searchTerm: string, basePath: string[] = []): any {
+    const term = searchTerm.toLowerCase();
+    const hierarchyResults: any[] = [];
+    const instanceResults: any[] = [];
+
+    // Search through all hierarchy data
+    for (const [pathKey, data] of Object.entries(MOCK_HIERARCHY_DATA)) {
+        const path = pathKey ? pathKey.split('/') : [];
+
+        // Only search in the current context (basePath) and below
+        if (basePath.length > 0) {
+            const matchesBasePath = basePath.every((segment, idx) => path[idx] === segment);
+            if (!matchesBasePath) continue;
+        }
+
+        // Search hierarchy nodes
+        if (data.hierarchyNodes?.hits) {
+            for (const node of data.hierarchyNodes.hits) {
+                if (node.name.toLowerCase().includes(term)) {
+                    hierarchyResults.push({
+                        ...node,
+                        path: [...path, node.name], // Full path from root
+                    });
+                }
+            }
+        }
+
+        // Search instances
+        if (data.instances?.hits) {
+            for (const instance of data.instances.hits) {
+                const searchableText = `${instance.name} ${instance.description || ''}`.toLowerCase();
+                if (searchableText.includes(term)) {
+                    instanceResults.push({
+                        ...instance,
+                        hierarchyPath: path, // Path to parent hierarchy
+                    });
+                }
+            }
+        }
+    }
+
+    return {
+        hierarchyNodes: {
+            hitCount: hierarchyResults.length,
+            hits: hierarchyResults
+        },
+        instances: {
+            hitCount: instanceResults.length,
+            hits: instanceResults
+        }
     };
 }
 
@@ -386,9 +443,21 @@ A hierarchical tree navigation component for browsing time series instances orga
 - **Hierarchical Tree View**: Navigate through nested hierarchy levels
 - **Instance Selection**: Click on instances to select them
 - **Expandable/Collapsible Nodes**: Expand hierarchy nodes to see children
-- **Search Functionality**: Search and filter through the hierarchy
+- **Deep Search Functionality**: Search across the entire hierarchy tree (NEW ✨)
 - **Multi-selection**: Select multiple instances
 - **Theming**: Support for light and dark themes
+- **Keyboard Navigation**: Full accessibility support with arrow keys
+
+## New: Deep Search 🔍
+
+The component now supports **deep search** that searches across the entire hierarchy tree:
+- Type 2+ characters to trigger search
+- View results in flat list with breadcrumb paths
+- Search terms are highlighted in yellow
+- Server-side search pattern for large datasets
+- Automatic debouncing (250ms) and request cancellation
+
+Try the "Deep Search Functionality" story to see it in action!
 
 ## Usage Example
 
@@ -398,9 +467,27 @@ import TsiClient from 'tsichart-core';
 const tsiClient = new TsiClient();
 const hierarchyNav = new tsiClient.HierarchyNavigation(containerElement);
 
-// Mock search function that fetches hierarchy data
+// Mock search function that supports deep search
 const searchFunction = async (payload) => {
-    // Fetch data from your API
+    // Deep search mode
+    if (payload.searchTerm && payload.recursive) {
+        return {
+            hierarchyNodes: { 
+                hitCount: 5, 
+                hits: [
+                    { name: 'Temperature Sensors', path: ['Factory', 'Building A'], cumulativeInstanceCount: 12 }
+                ] 
+            },
+            instances: { 
+                hitCount: 10, 
+                hits: [
+                    { name: 'Temp Sensor 01', hierarchyPath: ['Factory', 'Building A', 'Floor 1'], id: 'ts1' }
+                ]
+            }
+        };
+    }
+    
+    // Navigation mode
     return {
         hierarchyNodes: { hitCount: 5, hits: [...] },
         instances: { hitCount: 10, hits: [...] }
@@ -417,8 +504,9 @@ await hierarchyNav.render(searchFunction, {
 \`\`\`
 
 ## Accessibility & Interaction
-- Keyboard: Use Arrow Up / Down to move, Arrow Right to expand or move into children, Arrow Left to collapse or move to parent. Enter or Space toggles expand/select depending on focused item.
-- Search: The search box uses a 250ms debounce to reduce work while typing. Server requests are protected from race conditions (stale responses are ignored) and display names are cached for fast client-side filtering.
+- **Keyboard Navigation**: Use Arrow Up/Down to move, Arrow Right to expand or move into children, Arrow Left to collapse or move to parent. Enter or Space toggles expand/select depending on focused item.
+- **Search**: The search box uses a 250ms debounce to reduce work while typing. Server requests are protected from race conditions (stale responses are ignored).
+- **ARIA Support**: Proper ARIA labels, roles, and focus management for screen readers.
                 `
             }
         }
@@ -561,4 +649,110 @@ export const WithPreselection: Story = {
         ]
     },
     render: createHierarchyNavigationStory('height: 700px; width: 450px; padding: 20px;')
+};
+
+export const DeepSearch: Story = {
+    name: '4. Deep Search Functionality 🔍',
+    parameters: {
+        docs: {
+            description: {
+                story: `
+## Deep Search - Search Entire Hierarchy
+
+This story demonstrates the **new deep search functionality** that searches across the entire hierarchy tree, not just currently visible nodes.
+
+### How to Use Deep Search
+
+1. **Type in the search box** - Start typing to search (minimum 2 characters)
+2. **Automatic debouncing** - Search triggers after 250ms of no typing
+3. **View results** - Results appear in a flat list with breadcrumb paths
+4. **Click results** - Click instances to select them, or hierarchy nodes to navigate
+
+### Try These Example Searches
+
+- \`"temperature"\` - Find all temperature sensors across all factories (12+ results)
+- \`"pressure"\` - Find all pressure monitoring sensors (8+ results)
+- \`"motor"\` - Find motor-related sensors in different production lines
+- \`"energy"\` - Find energy meters across facilities
+- \`"quality"\` - Find quality control sensors
+- \`"vibration"\` - Find vibration sensors
+- \`"flow"\` - Find flow meters
+- \`"production"\` - Find hierarchy nodes containing "production"
+- \`"warehouse"\` - Find warehouse-related items
+- \`"lab"\` - Find laboratory equipment
+
+### Key Features
+
+✅ **Breadcrumb Paths** - Each result shows its full location in the hierarchy  
+✅ **Highlighted Matches** - Search terms are highlighted in yellow  
+✅ **Instance Context** - Shows descriptions and hierarchy location  
+✅ **Selection Persistence** - Selected items remain selected when switching between search/navigation  
+✅ **Keyboard Navigation** - Use Tab/Arrow keys to navigate, Enter/Space to select  
+✅ **Performance Optimized** - Debounced input, request cancellation for stale queries  
+
+### Search Behavior
+
+- **Empty input**: Returns to normal navigation view
+- **1 character**: No search (too short)
+- **2+ characters**: Triggers deep search across entire tree
+- **Fast typing**: Only the last search query is processed (older requests ignored)
+
+### Result Types
+
+**Hierarchy Nodes** show:
+- Full breadcrumb path (e.g., "Factory North > Building A")
+- Node name with highlighted search term
+- Total instance count in that branch
+
+**Instance Results** show:
+- Full breadcrumb path to parent
+- Instance name with highlighted search term  
+- Description (if available)
+- Selection state (visual indicator if selected)
+
+### Clear Search
+
+- **Clear the input**: Automatically returns to navigation mode
+- **Press ESC**: Clears the search box (standard browser behavior)
+
+### Technical Details
+
+This implementation uses:
+- **Server-side search** pattern (simulated with mock data)
+- **Request payload**: \`{ path, searchTerm, recursive: true, includeInstances: true }\`
+- **Response format**: Flattened results with full path arrays
+- **Stale request cancellation**: Uses request IDs to ignore outdated responses
+
+See the [SEARCH_API.md](https://github.com/Aenas11/tsichart-core/blob/feature/components/packages/core/src/components/HierarchyNavigation/SEARCH_API.md) documentation for implementation details.
+                `
+            }
+        }
+    },
+    args: {
+        theme: 'light'
+    },
+    render: createHierarchyNavigationStory('height: 700px; width: 500px; padding: 20px;')
+};
+
+export const DeepSearchDark: Story = {
+    name: '5. Deep Search - Dark Theme 🌙',
+    parameters: {
+        docs: {
+            description: {
+                story: `
+Same deep search functionality with dark theme. Try searching for:
+- \`"sensor"\` - Find all sensor types
+- \`"monitor"\` - Find all monitoring devices
+- \`"meter"\` - Find all meters (energy, flow, etc.)
+- \`"line"\` - Find production line hierarchy nodes
+
+The search results inherit the dark theme styling with appropriate colors for backgrounds, text, and highlights.
+                `
+            }
+        }
+    },
+    args: {
+        theme: 'dark'
+    },
+    render: createHierarchyNavigationStory('height: 700px; width: 500px; padding: 20px; background: #1a1a1a;')
 };

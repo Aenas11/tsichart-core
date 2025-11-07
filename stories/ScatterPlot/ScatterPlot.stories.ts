@@ -4,14 +4,31 @@ import ScatterPlot from '../../packages/core/src/components/ScatterPlot';
 import { ChartData } from '../../packages/core/src/types';
 import { fireEvent, screen, within, waitFor } from 'storybook/test';
 
-interface SensorMetrics extends Record<string, number> {
-    'Sensor_57 Value': number;
-    'Sensor_57 Value (1)': number;
-    'Sensor_58 Value': number;
-    temperature?: number;
-    humidity?: number;
-    pressure?: number;
-    efficiency?: number;
+// Scatter plots are ideal for showing correlations between metrics over time
+// Each interface represents a different correlation analysis scenario
+
+interface PerformanceMetrics extends Record<string, number> {
+    cpu: number;
+    memory: number;
+    responseTime: number;
+}
+
+interface EnvironmentalMetrics extends Record<string, number> {
+    temperature: number;
+    humidity: number;
+    pressure: number;
+}
+
+interface ProductionMetrics extends Record<string, number> {
+    outputRate: number;
+    defectRate: number;
+    efficiency: number;
+}
+
+interface EnergyMetrics extends Record<string, number> {
+    powerConsumption: number;
+    productionOutput: number;
+    efficiency: number;
 }
 
 interface IScatterPlotOptions {
@@ -48,53 +65,64 @@ const meta: Meta<IScatterPlotOptions> = {
                 component: `
 # ScatterPlot Component
 
-Interactive scatter plot visualization for multi-dimensional data analysis with the following features:
+Interactive scatter plot visualization for analyzing correlations and relationships between multiple metrics in time series data.
 
 ## Key Features
-- **Multi-dimensional Visualization**: Display relationships between 2-3 measures (X, Y, and optional radius)
-- **Interactive Tooltips**: Hover over data points to see detailed information
-- **Temporal Mode**: Navigate through time series data with temporal slider
-- **Static Mode**: View all data points across different timestamps simultaneously
-- **Point Connections**: Connect related data points with lines using \`pointConnectionMeasure\`
-- **Focus and Sticky**: Click to focus on specific data series
+- **Correlation Analysis**: Visualize relationships between 2-3 metrics (X, Y, and optional radius for bubble charts)
+- **Interactive Tooltips**: Hover over data points to see detailed metric values
+- **Temporal Mode**: Navigate through time slices with a temporal slider to see how correlations evolve
+- **Static Mode**: View all data points across all timestamps simultaneously for pattern recognition
+- **Point Connections**: Connect sequential time points with lines to show temporal progression
+- **Focus and Sticky**: Click to highlight specific series for detailed analysis
 - **Voronoi Interaction**: Efficient hover detection using Voronoi diagrams
 - **Theming**: Support for light and dark themes
 - **Responsive**: Automatically adjusts to container size
+
+## Common Use Cases
+
+- **System Performance Analysis**: CPU vs Memory usage, Response Time vs Load
+- **Environmental Monitoring**: Temperature vs Humidity, correlations between weather metrics
+- **Quality Control**: Production Rate vs Defect Rate, Speed vs Quality
+- **Energy Efficiency**: Power Consumption vs Output, identifying optimal operating points
+- **Financial Analysis**: Risk vs Return, Volume vs Volatility
+- **Resource Optimization**: Finding sweet spots and identifying outliers
 
 ## Usage Example
 
 \`\`\` typescript
 import TsiClient from 'tsichart-core';
 
-// Create chart instance
 const tsiClient = new TsiClient();
 const chart = new tsiClient.ScatterPlot(containerElement);
 
-// Prepare your data in the expected format
-
+// Scatter plot data: each timestamp has multiple metric values
 const data = [{
-    "Value vs Value vs Value": {
-        "": {  // Empty string splitBy for single series
-            "2019-03-12T23:08:00.000Z": {
-                "Sensor_57 Value": 29.98,
-                "Sensor_57 Value (1)": 29.98,
-                "Sensor_58 Value": 6.76
+    "Server Performance": {
+        "Server-1": {
+            "2024-01-01T00:00:00Z": {
+                cpu: 45.2,
+                memory: 62.8,
+                responseTime: 125
             },
-            // More timestamped data...
-        }
+            "2024-01-01T01:00:00Z": {
+                cpu: 52.3,
+                memory: 68.1,
+                responseTime: 142
+            }
+            // More timestamps...
+        },
+        "Server-2": { /* ... */ }
     }
 }];
 
-// Render the chart
-scatterPlot.render(data, {
+// Render with X, Y, and optional radius (for bubble chart)
+chart.render(data, {
     legend: 'shown',
-    spAxisLabels: ['Sensor_57 Value', 'Sensor_57 Value (1)'],
-    noAnimate: false,
-    isTemporal: true,
-    grid: true,
     tooltip: true,
     theme: 'light',
-    spMeasures: ['Sensor_57 Value', 'Sensor_57 Value (1)', 'Sensor_58 Value']
+    isTemporal: true,  // Enable time slider
+    spMeasures: ['cpu', 'memory', 'responseTime'],  // X, Y, Radius
+    spAxisLabels: ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)']
 });
 \`\`\`             
                 `
@@ -150,85 +178,235 @@ scatterPlot.render(data, {
 export default meta;
 type Story = StoryObj<IScatterPlotOptions>;
 
-function generateSampleScatterData(): ChartData<SensorMetrics> {
-    const data: ChartData<SensorMetrics> = [];
+// Generate server performance data showing CPU vs Memory correlation
+function generatePerformanceData(): ChartData<PerformanceMetrics> {
+    const data: ChartData<PerformanceMetrics> = [];
     const from = new Date(Date.now() - 12 * 60 * 60 * 1000); // 12 hours ago
 
-    const splitByData: Record<string, Record<string, SensorMetrics>> = {};
+    const splitByData: Record<string, Record<string, PerformanceMetrics>> = {};
 
-    // Create 3 zones with different characteristics
-    for (let zone = 1; zone <= 3; zone++) {
-        const zoneName = `Zone${zone}`;
-        const timeSeries: Record<string, SensorMetrics> = {};
+    // Create 3 servers with different performance profiles
+    const serverProfiles = [
+        { name: 'Web-Server-1', baseCpu: 35, baseMemory: 45, correlation: 0.8 },
+        { name: 'API-Server-1', baseCpu: 50, baseMemory: 60, correlation: 0.9 },
+        { name: 'DB-Server-1', baseCpu: 65, baseMemory: 75, correlation: 0.7 }
+    ];
 
-        // Generate hourly data points for the last 12 hours
+    serverProfiles.forEach(profile => {
+        const timeSeries: Record<string, PerformanceMetrics> = {};
+
+        // Generate hourly data points showing correlation between CPU and Memory
         for (let hour = 0; hour < 12; hour++) {
             const timestamp = new Date(from.getTime() + hour * 60 * 60 * 1000);
 
-            // Create realistic sensor patterns with variations per zone
-            const baseTemp = 18 + zone * 3 + Math.sin(hour / 12 * Math.PI * 2) * 4;
-            const baseHumidity = 40 + zone * 5 + Math.cos(hour / 12 * Math.PI * 2) * 12;
-            const basePressure = 1010 + zone * 2 + Math.sin(hour / 6 * Math.PI) * 5;
-            const baseEfficiency = 75 + zone * 5 + Math.sin((hour + zone) / 8 * Math.PI) * 10;
+            // Simulate daily load pattern
+            const loadPattern = Math.sin(hour / 12 * Math.PI * 2) * 15 + 15; // 0-30 range
 
-            // Add some random variation
-            const tempVariation = (Math.random() - 0.5) * 3;
-            const humidityVariation = (Math.random() - 0.5) * 6;
-            const pressureVariation = (Math.random() - 0.5) * 4;
-            const efficiencyVariation = (Math.random() - 0.5) * 8;
+            // CPU with load pattern and noise
+            const cpu = profile.baseCpu + loadPattern + (Math.random() - 0.5) * 8;
+
+            // Memory correlates with CPU based on profile
+            const memory = profile.baseMemory + loadPattern * profile.correlation + (Math.random() - 0.5) * 6;
+
+            // Response time increases with resource usage
+            const responseTime = 50 + (cpu + memory) / 2 * 2 + (Math.random() - 0.5) * 30;
 
             timeSeries[timestamp.toISOString()] = {
-                temperature: parseFloat((baseTemp + tempVariation).toFixed(1)),
-                humidity: parseFloat((baseHumidity + humidityVariation).toFixed(1)),
-                pressure: parseFloat((basePressure + pressureVariation).toFixed(1)),
-                efficiency: parseFloat((baseEfficiency + efficiencyVariation).toFixed(1))
+                cpu: parseFloat(Math.max(10, Math.min(95, cpu)).toFixed(1)),
+                memory: parseFloat(Math.max(20, Math.min(95, memory)).toFixed(1)),
+                responseTime: parseFloat(Math.max(50, Math.min(500, responseTime)).toFixed(0))
             };
         }
 
-        splitByData[zoneName] = timeSeries;
-    }
+        splitByData[profile.name] = timeSeries;
+    });
 
-    data.push({ 'SensorData': splitByData });
+    data.push({ 'Server Performance Analysis': splitByData });
     return data;
 }
 
-function generateStaticScatterData(): ChartData<SensorMetrics> {
-    const data: ChartData<SensorMetrics> = [];
+// Generate environmental data showing temperature-humidity correlation
+function generateEnvironmentalData(): ChartData<EnvironmentalMetrics> {
+    const data: ChartData<EnvironmentalMetrics> = [];
+    const from = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
 
-    // Generate multiple sensor readings at different timestamps (shown simultaneously)
-    const splitByData: Record<string, Record<string, SensorMetrics>> = {};
+    const splitByData: Record<string, Record<string, EnvironmentalMetrics>> = {};
 
-    // Create 4 zones with 3 readings each
-    for (let zone = 1; zone <= 4; zone++) {
-        const zoneName = `Zone${zone}`;
-        const timeSeries: Record<string, SensorMetrics> = {};
+    const locations = [
+        { name: 'Indoor-Zone-A', baseTemp: 22, baseHumidity: 45, tempRange: 3 },
+        { name: 'Indoor-Zone-B', baseTemp: 21, baseHumidity: 50, tempRange: 2 },
+        { name: 'Outdoor', baseTemp: 18, baseHumidity: 65, tempRange: 8 }
+    ];
 
-        // Generate 3 readings per zone at different times
-        for (let reading = 0; reading < 3; reading++) {
-            const timestamp = new Date(Date.now() - reading * 4 * 60 * 60 * 1000).toISOString(); // 4 hours apart
+    locations.forEach(location => {
+        const timeSeries: Record<string, EnvironmentalMetrics> = {};
 
-            // Create data clusters with some correlation
-            const baseTemp = 15 + zone * 4 + reading * 2 + Math.random() * 4;
-            const baseHumidity = 35 + zone * 6 + reading * 3 + Math.random() * 8;
-            const basePressure = 1005 + zone * 3 + reading + Math.random() * 6;
-            const baseEfficiency = 70 + zone * 4 + reading * 2 + Math.random() * 10;
+        // Generate hourly readings over 24 hours
+        for (let hour = 0; hour < 24; hour++) {
+            const timestamp = new Date(from.getTime() + hour * 60 * 60 * 1000);
+
+            // Temperature follows daily cycle
+            const tempCycle = Math.sin((hour - 6) / 24 * Math.PI * 2) * location.tempRange;
+            const temperature = location.baseTemp + tempCycle + (Math.random() - 0.5) * 1;
+
+            // Humidity inversely correlates with temperature (higher temp = lower humidity)
+            const humidityShift = -tempCycle * 2;
+            const humidity = location.baseHumidity + humidityShift + (Math.random() - 0.5) * 4;
+
+            // Pressure varies slightly
+            const pressure = 1013 + Math.sin(hour / 12 * Math.PI) * 3 + (Math.random() - 0.5) * 2;
+
+            timeSeries[timestamp.toISOString()] = {
+                temperature: parseFloat(temperature.toFixed(1)),
+                humidity: parseFloat(Math.max(20, Math.min(90, humidity)).toFixed(1)),
+                pressure: parseFloat(pressure.toFixed(1))
+            };
+        }
+
+        splitByData[location.name] = timeSeries;
+    });
+
+    data.push({ 'Environmental Monitoring': splitByData });
+    return data;
+}
+
+// Generate production data showing quality vs speed trade-off
+function generateProductionData(): ChartData<ProductionMetrics> {
+    const data: ChartData<ProductionMetrics> = [];
+    const from = new Date(Date.now() - 8 * 60 * 60 * 1000); // 8 hours (work shift)
+
+    const splitByData: Record<string, Record<string, ProductionMetrics>> = {};
+
+    const productionLines = [
+        { name: 'Line-A', targetRate: 100, qualityFocus: 0.9 },
+        { name: 'Line-B', targetRate: 120, qualityFocus: 0.7 },
+        { name: 'Line-C', targetRate: 90, qualityFocus: 0.95 }
+    ];
+
+    productionLines.forEach(line => {
+        const timeSeries: Record<string, ProductionMetrics> = {};
+
+        // Generate hourly production metrics
+        for (let hour = 0; hour < 8; hour++) {
+            const timestamp = new Date(from.getTime() + hour * 60 * 60 * 1000);
+
+            // Output rate varies with worker fatigue (decreases over shift)
+            const fatigueEffect = 1 - (hour / 20); // 0% to 40% decrease
+            const outputRate = line.targetRate * fatigueEffect * (0.9 + Math.random() * 0.2);
+
+            // Defect rate inversely correlates with quality focus and increases with speed
+            const speedPenalty = (outputRate / line.targetRate - 0.8) * 2;
+            const baseDefectRate = (1 - line.qualityFocus) * 5;
+            const defectRate = Math.max(0, baseDefectRate + speedPenalty + (Math.random() - 0.5) * 1);
+
+            // Efficiency based on output and quality
+            const efficiency = (outputRate / line.targetRate) * (1 - defectRate / 10) * 100;
+
+            timeSeries[timestamp.toISOString()] = {
+                outputRate: parseFloat(outputRate.toFixed(1)),
+                defectRate: parseFloat(Math.max(0, Math.min(15, defectRate)).toFixed(2)),
+                efficiency: parseFloat(Math.max(50, Math.min(100, efficiency)).toFixed(1))
+            };
+        }
+
+        splitByData[line.name] = timeSeries;
+    });
+
+    data.push({ 'Production Quality Analysis': splitByData });
+    return data;
+}
+
+// Generate energy efficiency data
+function generateEnergyData(): ChartData<EnergyMetrics> {
+    const data: ChartData<EnergyMetrics> = [];
+    const from = new Date(Date.now() - 12 * 60 * 60 * 1000);
+
+    const splitByData: Record<string, Record<string, EnergyMetrics>> = {};
+
+    const machines = [
+        { name: 'Machine-A', maxPower: 150, baseEfficiency: 0.85 },
+        { name: 'Machine-B', maxPower: 200, baseEfficiency: 0.78 },
+        { name: 'Machine-C', maxPower: 120, baseEfficiency: 0.90 }
+    ];
+
+    machines.forEach(machine => {
+        const timeSeries: Record<string, EnergyMetrics> = {};
+
+        for (let hour = 0; hour < 12; hour++) {
+            const timestamp = new Date(from.getTime() + hour * 60 * 60 * 1000);
+
+            // Production output varies
+            const targetOutput = 50 + Math.sin(hour / 6 * Math.PI) * 30;
+            const productionOutput = targetOutput + (Math.random() - 0.5) * 10;
+
+            // Power consumption correlates with output but not linearly (efficiency curve)
+            const loadFactor = productionOutput / 80; // 0-1 range
+            const efficiencyCurve = machine.baseEfficiency * (0.6 + 0.4 * Math.sin(loadFactor * Math.PI));
+            const powerConsumption = (productionOutput / efficiencyCurve) * (machine.maxPower / 100);
+
+            // Efficiency metric
+            const efficiency = (productionOutput / powerConsumption) * 100;
+
+            timeSeries[timestamp.toISOString()] = {
+                powerConsumption: parseFloat(Math.max(20, powerConsumption).toFixed(1)),
+                productionOutput: parseFloat(Math.max(0, productionOutput).toFixed(1)),
+                efficiency: parseFloat(Math.max(50, Math.min(150, efficiency)).toFixed(1))
+            };
+        }
+
+        splitByData[machine.name] = timeSeries;
+    });
+
+    data.push({ 'Energy Efficiency Analysis': splitByData });
+    return data;
+}
+
+// Generate static scatter data for pattern recognition (all timestamps visible)
+function generateStaticCorrelationData(): ChartData<PerformanceMetrics> {
+    const data: ChartData<PerformanceMetrics> = [];
+
+    const splitByData: Record<string, Record<string, PerformanceMetrics>> = {};
+
+    // Create clusters showing different operating regimes
+    const operatingRegimes = [
+        { name: 'Low-Load', cpuCenter: 30, memCenter: 40, spread: 8 },
+        { name: 'Normal-Load', cpuCenter: 55, memCenter: 60, spread: 10 },
+        { name: 'High-Load', cpuCenter: 75, memCenter: 80, spread: 8 },
+        { name: 'Stressed', cpuCenter: 85, memCenter: 90, spread: 5 }
+    ];
+
+    operatingRegimes.forEach(regime => {
+        const timeSeries: Record<string, PerformanceMetrics> = {};
+
+        // Generate 6 data points per regime
+        for (let i = 0; i < 6; i++) {
+            const timestamp = new Date(Date.now() - (i * 2 + Math.random()) * 60 * 60 * 1000).toISOString();
+
+            const cpu = regime.cpuCenter + (Math.random() - 0.5) * regime.spread * 2;
+            const memory = regime.memCenter + (Math.random() - 0.5) * regime.spread * 2;
+            const responseTime = 50 + (cpu + memory) / 2 * 3;
 
             timeSeries[timestamp] = {
-                temperature: parseFloat(baseTemp.toFixed(1)),
-                humidity: parseFloat(baseHumidity.toFixed(1)),
-                pressure: parseFloat(basePressure.toFixed(1)),
-                efficiency: parseFloat(baseEfficiency.toFixed(1))
+                cpu: parseFloat(Math.max(5, Math.min(98, cpu)).toFixed(1)),
+                memory: parseFloat(Math.max(10, Math.min(98, memory)).toFixed(1)),
+                responseTime: parseFloat(Math.max(30, Math.min(600, responseTime)).toFixed(0))
             };
         }
 
-        splitByData[zoneName] = timeSeries;
-    }
+        splitByData[regime.name] = timeSeries;
+    });
 
-    data.push({ 'SensorReadings': splitByData });
+    data.push({ 'Performance Patterns': splitByData });
     return data;
 }
 
-function renderScatterPlot(container: HTMLElement, options: IScatterPlotOptions = {}, useStaticData: boolean = false) {
+function renderScatterPlot(
+    container: HTMLElement,
+    options: IScatterPlotOptions = {},
+    dataGenerator: () => ChartData<any> = generatePerformanceData,
+    defaultMeasures: string[] = ['cpu', 'memory', 'responseTime'],
+    defaultAxisLabels: string[] = ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)']
+) {
     container.innerHTML = '';
 
     try {
@@ -238,10 +416,10 @@ function renderScatterPlot(container: HTMLElement, options: IScatterPlotOptions 
             theme: 'light',
             legend: 'shown',
             tooltip: true,
-            spMeasures: ['temperature', 'humidity', 'efficiency'], // X, Y, radius
-            spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Efficiency (%)'],
+            spMeasures: defaultMeasures,
+            spAxisLabels: defaultAxisLabels,
             scatterPlotRadius: [3, 15],
-            isTemporal: !useStaticData,
+            isTemporal: true,
             keepSplitByColor: true,
             hideChartControlPanel: false,
             is24HourTime: true,
@@ -266,7 +444,7 @@ function renderScatterPlot(container: HTMLElement, options: IScatterPlotOptions 
         };
 
 
-        const sampleData = useStaticData ? generateStaticScatterData() : generateSampleScatterData();
+        const sampleData = dataGenerator();
         if (chartOptions.isTemporal && !chartOptions.timestamp && sampleData.length > 0) {
             const firstAgg = Object.keys(sampleData[0])[0];
             const firstSplitBy = Object.keys(sampleData[0][firstAgg])[0];
@@ -274,13 +452,10 @@ function renderScatterPlot(container: HTMLElement, options: IScatterPlotOptions 
             chartOptions.timestamp = firstTimestamp;
         }
 
-        const zoneColors = {
-            'Zone1': '#FF6B6B',
-            'Zone2': '#4ECDC4',
-            'Zone3': '#45B7D1',
-            'Zone4': '#96CEB4',
-            'SensorReadings': '#FECA57'
-        };
+        const predefinedColors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+            '#FECA57', '#48C9B0', '#5F27CD', '#FF9FF3'
+        ];
 
         const aggregateExpressionOptions = sampleData.map((dataObj, index) => {
             const aggregateKey = Object.keys(dataObj)[0];
@@ -288,17 +463,17 @@ function renderScatterPlot(container: HTMLElement, options: IScatterPlotOptions 
 
             return {
                 aggKey: aggregateKey,
-                connectPoints: !useStaticData,
-                pointConnectionMeasure: 'temperature',
+                connectPoints: chartOptions.isTemporal,
+                pointConnectionMeasure: defaultMeasures[0],
                 searchSpan: {
                     from: new Date(Date.now() - 24 * 60 * 60 * 1000),
                     to: new Date()
                 },
                 splitBy: splitByKeys,
                 measureTypes: chartOptions.spMeasures,
-                // Assign colors to each zone/splitBy
-                splitByColors: splitByKeys.reduce((colors, splitByKey) => {
-                    colors[splitByKey] = zoneColors[splitByKey] || `hsl(${Math.random() * 360}, 70%, 50%)`;
+                // Assign colors to each series
+                splitByColors: splitByKeys.reduce((colors, splitByKey, idx) => {
+                    colors[splitByKey] = predefinedColors[idx % predefinedColors.length];
                     return colors;
                 }, {} as Record<string, string>),
                 color: null,
@@ -322,14 +497,19 @@ function renderScatterPlot(container: HTMLElement, options: IScatterPlotOptions 
 }
 
 
-function createScatterPlotStory(containerStyle: string, useStaticData: boolean = false) {
+function createScatterPlotStory(
+    containerStyle: string,
+    dataGenerator: () => ChartData<any> = generatePerformanceData,
+    defaultMeasures: string[] = ['cpu', 'memory', 'responseTime'],
+    defaultAxisLabels: string[] = ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)']
+) {
     return (args: IScatterPlotOptions) => {
         const chartId = 'scatterplot-' + Math.random().toString(36).substring(7);
 
         setTimeout(() => {
             const container = document.getElementById(chartId);
             if (container) {
-                renderScatterPlot(container, args, useStaticData);
+                renderScatterPlot(container, args, dataGenerator, defaultMeasures, defaultAxisLabels);
             }
         }, 100);
 
@@ -342,49 +522,102 @@ function createScatterPlotStory(containerStyle: string, useStaticData: boolean =
 }
 
 export const Default: Story = {
-    name: 'Temporal Mode (Default)',
+    name: 'Server Performance (CPU vs Memory)',
     args: {
         theme: 'light',
         legend: 'shown',
         tooltip: true,
         isTemporal: true,
-        spMeasures: ['temperature', 'humidity', 'efficiency'],
-        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Efficiency (%)'],
+        spMeasures: ['cpu', 'memory', 'responseTime'],
+        spAxisLabels: ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)'],
         scatterPlotRadius: [3, 15],
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generatePerformanceData,
+        ['cpu', 'memory', 'responseTime'],
+        ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)']
+    )
 };
 
-export const DarkTheme: Story = {
-    name: 'Dark Theme',
+export const EnvironmentalCorrelation: Story = {
+    name: 'Temperature vs Humidity',
+    args: {
+        theme: 'light',
+        legend: 'shown',
+        tooltip: true,
+        isTemporal: true,
+        spMeasures: ['temperature', 'humidity', 'pressure'],
+        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Pressure (hPa)'],
+        scatterPlotRadius: [4, 16],
+    },
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateEnvironmentalData,
+        ['temperature', 'humidity', 'pressure'],
+        ['Temperature (°C)', 'Humidity (%)', 'Pressure (hPa)']
+    )
+};
+
+export const ProductionQuality: Story = {
+    name: 'Production Speed vs Quality',
+    args: {
+        theme: 'light',
+        legend: 'shown',
+        tooltip: true,
+        isTemporal: true,
+        spMeasures: ['outputRate', 'defectRate', 'efficiency'],
+        spAxisLabels: ['Output Rate (units/hr)', 'Defect Rate (%)', 'Efficiency (%)'],
+        scatterPlotRadius: [4, 18],
+    },
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateProductionData,
+        ['outputRate', 'defectRate', 'efficiency'],
+        ['Output Rate (units/hr)', 'Defect Rate (%)', 'Efficiency (%)']
+    )
+};
+
+export const EnergyEfficiency: Story = {
+    name: 'Power vs Output Efficiency',
     args: {
         theme: 'dark',
         legend: 'shown',
         tooltip: true,
         isTemporal: true,
-        spMeasures: ['temperature', 'humidity', 'efficiency'],
-        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Efficiency (%)'],
-        scatterPlotRadius: [4, 18],
+        spMeasures: ['powerConsumption', 'productionOutput', 'efficiency'],
+        spAxisLabels: ['Power (kW)', 'Output (units)', 'Efficiency (%)'],
+        scatterPlotRadius: [4, 16],
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;',
+        generateEnergyData,
+        ['powerConsumption', 'productionOutput', 'efficiency'],
+        ['Power Consumption (kW)', 'Production Output (units)', 'Efficiency (%)']
+    )
 };
 
-export const StaticMode: Story = {
-    name: 'Static Mode (All Timestamps)',
+export const StaticPatternRecognition: Story = {
+    name: 'Pattern Recognition (All Times Visible)',
     args: {
         theme: 'light',
         legend: 'shown',
         tooltip: true,
         isTemporal: false,
-        spMeasures: ['temperature', 'humidity', 'pressure'],
-        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Pressure (hPa)'],
-        scatterPlotRadius: [4, 12],
+        spMeasures: ['cpu', 'memory', 'responseTime'],
+        spAxisLabels: ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)'],
+        scatterPlotRadius: [5, 14],
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;', true)
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateStaticCorrelationData,
+        ['cpu', 'memory', 'responseTime'],
+        ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)']
+    )
 };
 
 export const TwoMeasures: Story = {
-    name: 'Two Measures (No Radius)',
+    name: 'Two Measures Only (No Radius)',
     args: {
         theme: 'light',
         legend: 'shown',
@@ -394,7 +627,12 @@ export const TwoMeasures: Story = {
         spAxisLabels: ['Temperature (°C)', 'Humidity (%)'],
         scatterPlotRadius: [6, 6], // Fixed radius when no third measure
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateEnvironmentalData,
+        ['temperature', 'humidity'],
+        ['Temperature (°C)', 'Humidity (%)']
+    )
 };
 
 export const CompactLegend: Story = {
@@ -404,11 +642,16 @@ export const CompactLegend: Story = {
         legend: 'compact',
         tooltip: true,
         isTemporal: true,
-        spMeasures: ['temperature', 'humidity', 'efficiency'],
-        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Efficiency (%)'],
+        spMeasures: ['outputRate', 'defectRate', 'efficiency'],
+        spAxisLabels: ['Output Rate', 'Defect Rate', 'Efficiency'],
         scatterPlotRadius: [3, 15],
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateProductionData,
+        ['outputRate', 'defectRate', 'efficiency'],
+        ['Output Rate (units/hr)', 'Defect Rate (%)', 'Efficiency (%)']
+    )
 };
 
 export const NoAnimations: Story = {
@@ -419,11 +662,16 @@ export const NoAnimations: Story = {
         tooltip: true,
         isTemporal: true,
         noAnimate: true,
-        spMeasures: ['temperature', 'humidity', 'efficiency'],
-        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Efficiency (%)'],
+        spMeasures: ['cpu', 'memory', 'responseTime'],
+        spAxisLabels: ['CPU (%)', 'Memory (%)', 'Response (ms)'],
         scatterPlotRadius: [3, 15],
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generatePerformanceData,
+        ['cpu', 'memory', 'responseTime'],
+        ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)']
+    )
 };
 
 export const Interactive: Story = {
@@ -433,11 +681,16 @@ export const Interactive: Story = {
         legend: 'shown',
         tooltip: true,
         isTemporal: true,
-        spMeasures: ['temperature', 'humidity', 'efficiency'],
-        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Efficiency (%)'],
+        spMeasures: ['cpu', 'memory', 'responseTime'],
+        spAxisLabels: ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)'],
         scatterPlotRadius: [3, 15],
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;'),
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generatePerformanceData,
+        ['cpu', 'memory', 'responseTime'],
+        ['CPU Usage (%)', 'Memory Usage (%)', 'Response Time (ms)']
+    ),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
 
@@ -452,8 +705,8 @@ export const Interactive: Story = {
             try {
                 const tooltip = await screen.findByRole('tooltip', {}, { timeout: 2000 });
                 await waitFor(() => {
-                    if (!within(tooltip).queryByText(/Zone/)) {
-                        console.log("Tooltip found but Zone text not visible - this is acceptable");
+                    if (!within(tooltip).queryByText(/Server|Web|API|DB/)) {
+                        console.log("Tooltip found but server text not visible - this is acceptable");
                     }
                 }, { timeout: 1000 });
             } catch (error) {
@@ -559,18 +812,23 @@ export const Interactive: Story = {
     }
 };
 
-export const LargeRadius: Story = {
-    name: 'Large Point Radius',
+export const LargeBubbles: Story = {
+    name: 'Large Bubble Visualization',
     args: {
         theme: 'light',
         legend: 'shown',
         tooltip: true,
         isTemporal: true,
-        spMeasures: ['temperature', 'humidity', 'efficiency'],
-        spAxisLabels: ['Temperature (°C)', 'Humidity (%)', 'Efficiency (%)'],
-        scatterPlotRadius: [8, 25], // Larger radius range
+        spMeasures: ['powerConsumption', 'productionOutput', 'efficiency'],
+        spAxisLabels: ['Power (kW)', 'Output', 'Efficiency'],
+        scatterPlotRadius: [8, 25], // Larger radius range for bubble effect
     },
-    render: createScatterPlotStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createScatterPlotStory(
+        'height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;',
+        generateEnergyData,
+        ['powerConsumption', 'productionOutput', 'efficiency'],
+        ['Power Consumption (kW)', 'Production Output (units)', 'Efficiency (%)']
+    )
 };
 
 
