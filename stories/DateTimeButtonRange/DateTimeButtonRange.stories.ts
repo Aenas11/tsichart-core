@@ -210,8 +210,8 @@ function renderDateTimeButtonRange(container: HTMLElement, options: IDateTimeBut
             timeBounds.maxMillis,
             timeBounds.fromMillis,
             timeBounds.toMillis,
-            onSet,
-            onCancel
+            onSet as any,
+            onCancel as any
         );
 
         return dateTimeButton;
@@ -228,7 +228,7 @@ function renderDateTimeButtonRange(container: HTMLElement, options: IDateTimeBut
 }
 
 
-function createDateTimeButtonRangeStory(containerStyle: string, scenario: string = 'recent') {
+function createDateTimeButtonRangeStory(scenario: string = 'recent') {
     return (args: IDateTimeButtonRangeOptions) => {
         const buttonId = 'datetime-button-' + Math.random().toString(36).substring(7);
 
@@ -240,8 +240,8 @@ function createDateTimeButtonRangeStory(containerStyle: string, scenario: string
         }, 100);
 
         return html`
-            <div style="${containerStyle}">
-                <div id="${buttonId}" style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;"></div>
+            <div style="min-height: 500px; position: relative; padding: 20px;">
+                <div id="${buttonId}" style="position: relative;"></div>
             </div>
         `;
     };
@@ -256,7 +256,7 @@ export const Default: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;', 'recent')
+    render: createDateTimeButtonRangeStory('recent')
 };
 
 export const DarkTheme: Story = {
@@ -268,7 +268,7 @@ export const DarkTheme: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 400px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
+    render: createDateTimeButtonRangeStory()
 };
 
 export const TwelveHourFormat: Story = {
@@ -280,7 +280,7 @@ export const TwelveHourFormat: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
+    render: createDateTimeButtonRangeStory()
 };
 
 export const DifferentTimezones: Story = {
@@ -292,7 +292,7 @@ export const DifferentTimezones: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
+    render: createDateTimeButtonRangeStory()
 };
 
 export const HistoricalData: Story = {
@@ -304,7 +304,7 @@ export const HistoricalData: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;', 'historical')
+    render: createDateTimeButtonRangeStory('historical')
 };
 
 export const FutureRange: Story = {
@@ -316,7 +316,7 @@ export const FutureRange: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;', 'future')
+    render: createDateTimeButtonRangeStory('future')
 };
 
 export const DifferentLocales: Story = {
@@ -328,7 +328,7 @@ export const DifferentLocales: Story = {
         dateLocale: 'de-DE',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
+    render: createDateTimeButtonRangeStory()
 };
 
 export const WideRange: Story = {
@@ -340,7 +340,7 @@ export const WideRange: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;', 'wide')
+    render: createDateTimeButtonRangeStory('wide')
 };
 
 export const Interactive: Story = {
@@ -352,7 +352,7 @@ export const Interactive: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;'),
+    render: createDateTimeButtonRangeStory(),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
 
@@ -459,7 +459,7 @@ export const Playground: Story = {
         dateLocale: 'en-US',
         dTPIsModal: true
     },
-    render: createDateTimeButtonRangeStory('height: 450px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
+    render: createDateTimeButtonRangeStory('recent')
 };
 
 

@@ -37,7 +37,9 @@ class DateTimeButtonRange extends DateTimeButton {
     public render(chartOptions: any = {}, minMillis: number, maxMillis: number,
         fromMillis: number = null, toMillis: number = null, onSet = null, onCancel = null) {
         super.render(chartOptions, minMillis, maxMillis, onSet);
-        d3.select(this.renderTarget).classed('tsi-dateTimeContainerRange', true);
+        let container = d3.select(this.renderTarget);
+        container.classed('tsi-dateTimeContainerRange', true);
+        container.style('position', 'relative');
         this.fromMillis = fromMillis;
         this.toMillis = toMillis;
 
