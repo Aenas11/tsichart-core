@@ -9,6 +9,7 @@ interface IDateTimeButtonRangeOptions {
     is24HourTime?: boolean;
     dateLocale?: string;
     dTPIsModal?: boolean;
+    minutesForTimeLabels?: boolean;
     minMillis?: number;
     maxMillis?: number;
     fromMillis?: number;
@@ -40,6 +41,7 @@ Interactive date-time range selection button with dropdown picker for time serie
 - **Modal Picker**: Dropdown date-time picker interface
 - **Accessibility**: Full keyboard navigation and screen reader support
 - **Theming**: Support for light and dark themes
+- **Time Precision**: Control whether to show seconds and milliseconds in time labels
 
 ## Usage Example
 
@@ -59,7 +61,8 @@ dateTimeButton.render({
     theme: 'light',
     offset: 'Local',
     is24HourTime: true,
-    dateLocale: 'en-US'
+    dateLocale: 'en-US',
+    minutesForTimeLabels: false  // Show seconds and milliseconds
 },
 dayAgo.getTime(),     // minMillis - earliest selectable time
 now.getTime(),        // maxMillis - latest selectable time  
@@ -114,6 +117,11 @@ now.getTime(),        // toMillis - current end time
         dTPIsModal: {
             control: 'boolean',
             description: 'Whether the date-time picker should be modal',
+            table: { defaultValue: { summary: 'true' } }
+        },
+        minutesForTimeLabels: {
+            control: 'boolean',
+            description: 'When true, shows only hours and minutes in time labels. When false, includes seconds and milliseconds for higher precision.',
             table: { defaultValue: { summary: 'true' } }
         }
     }
@@ -178,6 +186,7 @@ function renderDateTimeButtonRange(container: HTMLElement, options: IDateTimeBut
             is24HourTime: true,
             dateLocale: 'en-US',
             dTPIsModal: true,
+            minutesForTimeLabels: true,
             ...options
         };
 
@@ -254,7 +263,8 @@ export const Default: Story = {
         offset: 'Local',
         is24HourTime: true,
         dateLocale: 'en-US',
-        dTPIsModal: true
+        dTPIsModal: true,
+        minutesForTimeLabels: true
     },
     render: createDateTimeButtonRangeStory('recent')
 };
@@ -341,6 +351,19 @@ export const WideRange: Story = {
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory('wide')
+};
+
+export const HighPrecisionTime: Story = {
+    name: 'High Precision (Seconds & Milliseconds)',
+    args: {
+        theme: 'light',
+        offset: 'Local',
+        is24HourTime: true,
+        dateLocale: 'en-US',
+        dTPIsModal: true,
+        minutesForTimeLabels: false  // Show seconds and milliseconds
+    },
+    render: createDateTimeButtonRangeStory('recent')
 };
 
 export const Interactive: Story = {
