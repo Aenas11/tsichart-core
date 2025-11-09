@@ -182,29 +182,28 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             moment.locale('en');
         }
 
+        const localeSpecificOptions = {
+            ...componentOptions,
+            is24HourTime: getLocaleTimeFormat(componentOptions.dateLocale),
+            dateLocale: componentOptions.dateLocale
+        };
+
         const onSet = (millis: number) => {
             const selectedDate = new Date(millis);
             console.log('DateTimeButtonSingle - Time selected:', {
                 selectedTime: selectedDate,
                 timestamp: millis,
-                // Test locale formatting
-                formattedLocal: selectedDate.toLocaleDateString(componentOptions.dateLocale, {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }),
+                locale: componentOptions.dateLocale,
+                localeFormatted: formatDateForLocale(selectedDate, componentOptions.dateLocale, localeSpecificOptions.is24HourTime),
                 momentFormatted: moment(selectedDate).format('LLL')
             });
 
-            // Add visual feedback to container showing locale formatting
             const feedbackDiv = container.querySelector('.locale-feedback') as HTMLElement;
             if (feedbackDiv) {
                 feedbackDiv.innerHTML = `
                     <strong>Selected Time (${componentOptions.dateLocale}):</strong><br>
-                    Browser locale: ${selectedDate.toLocaleString(componentOptions.dateLocale)}<br>
-                    Moment.js locale: ${moment(selectedDate).format('LLL')}
+                    Locale format: ${formatDateForLocale(selectedDate, componentOptions.dateLocale, localeSpecificOptions.is24HourTime)}<br>
+                    Moment.js format: ${moment(selectedDate).format('LLL')}
                 `;
             }
 
@@ -212,15 +211,16 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
                 options.onSet(millis);
             }
         };
-
+        console.log("-----", localeSpecificOptions)
         dateTimeButton.render(
-            componentOptions,
+            localeSpecificOptions,
             timeBounds.minMillis,
             timeBounds.maxMillis,
             timeBounds.currentMillis,
             onSet
         );
 
+        // Create feedback element only if showFeedback is enabled
         if (componentOptions.showFeedback) {
             const feedbackDiv = document.createElement('div');
             feedbackDiv.className = 'locale-feedback';
@@ -231,20 +231,20 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
                 color: ${componentOptions.theme === 'dark' ? '#fff' : '#333'};
                 border: 1px solid ${componentOptions.theme === 'dark' ? '#444' : '#dee2e6'};
                 border-radius: 6px;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
                 font-size: 12px;
                 line-height: 1.4;
                 position: absolute;
-                bottom: 10px;
-                width: 90%;
+                width: 90%;              
             `;
 
-            // Show initial time in selected locale
+            // Show initial time with proper locale formatting
             const initialDate = new Date(timeBounds.currentMillis);
+            const initialLocaleFormat = formatDateForLocale(initialDate, componentOptions.dateLocale, localeSpecificOptions.is24HourTime);
+
             feedbackDiv.innerHTML = `
                 <strong>Current Locale (${componentOptions.dateLocale}):</strong><br>
-                Browser: ${initialDate.toLocaleString(componentOptions.dateLocale)}<br>
-                Moment.js: ${moment(initialDate).format('LLL')}<br>
+                Locale format: ${initialLocaleFormat}<br>
+                Moment.js format: ${moment(initialDate).format('LLL')}<br>
                 <em>Click the button to test locale formatting</em>
             `;
             container.appendChild(feedbackDiv);
@@ -253,13 +253,69 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
         return dateTimeButton;
     } catch (error) {
         console.error('DateTimeButtonSingle rendering error:', error);
-        container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
+        container.innerHTML = `<div style="color: red; padding: 20px;">
             <h3>Error rendering DateTimeButtonSingle</h3>
             <p><strong>Error:</strong> ${error.message}</p>
             <p><strong>Stack:</strong></p>
             <pre style="white-space: pre-wrap; font-size: 12px;">${error.stack}</pre>
             <p><small>Check browser console for more details</small></p>
         </div>`;
+    }
+}
+
+function getLocaleTimeFormat(dateLocale: string): boolean {
+    // Define locale-specific time format preferences based on cultural conventions
+    const locale24HourFormats = [
+        'de-DE',    // Germany uses 24-hour format
+        'fr-FR',    // France uses 24-hour format
+        'ja-JP',    // Japan uses 24-hour format
+        'zh-CN',    // China uses 24-hour format
+        'en-GB',    // UK often uses 24-hour format
+        'es-ES',    // Spain uses 24-hour format
+        'it-IT',    // Italy uses 24-hour format
+        'pt-PT',    // Portugal uses 24-hour format
+        'ru-RU',    // Russia uses 24-hour format
+        'ko-KR'     // Korea uses 24-hour format
+    ];
+
+    const locale12HourFormats = [
+        'en-US',    // US uses 12-hour format (AM/PM)
+        'en-CA',    // Canada often uses 12-hour format
+        'en-AU',    // Australia uses 12-hour format
+        'hi-IN'     // India uses 12-hour format
+    ];
+
+    // Check for 24-hour locales first
+    if (locale24HourFormats.includes(dateLocale)) {
+        return true;
+    }
+
+    // Check for 12-hour locales
+    if (locale12HourFormats.includes(dateLocale)) {
+        return false;
+    }
+
+    // Default to 24-hour for unknown locales (most world regions use 24-hour)
+    return true;
+}
+
+function formatDateForLocale(date: Date, dateLocale: string, is24HourTime: boolean): string {
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: !is24HourTime
+    };
+
+    try {
+        return date.toLocaleDateString(dateLocale, options);
+    } catch (error) {
+        console.warn(`Failed to format date for locale ${dateLocale}:`, error);
+        // Fallback to standard format
+        return date.toLocaleString(dateLocale);
     }
 }
 
@@ -276,7 +332,7 @@ function createDateTimeButtonSingleStory(containerStyle: string, scenario: strin
 
         return html`
             <div style="${containerStyle}">
-                <div id="${buttonId}" style="height: 100%; width: 100%;  display: flex;  justify-content: center;"></div>
+                <div id="${buttonId}" style="height: 100%;   width: 100%;"></div>
             </div>
         `;
     };
@@ -288,7 +344,6 @@ export const Default: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
@@ -300,7 +355,6 @@ export const DarkTheme: Story = {
         theme: 'dark',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
@@ -312,7 +366,6 @@ export const TwelveHourFormat: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: false,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
@@ -324,7 +377,6 @@ export const UTCTimezone: Story = {
         theme: 'light',
         offset: 'UTC',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
@@ -336,7 +388,6 @@ export const HistoricalTime: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
@@ -348,7 +399,6 @@ export const FutureTime: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
@@ -373,7 +423,6 @@ export const WideTimeRange: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
@@ -385,7 +434,6 @@ export const LocaleComparison: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: (args: IDateTimeButtonSingleOptions) => {
@@ -414,8 +462,9 @@ export const LocaleComparison: Story = {
                         margin-right: auto;
                     `;
 
+                    const timeFormat = '24-hour'
                     const localeTitle = document.createElement('h4');
-                    localeTitle.textContent = `${locale} Locale`;
+                    localeTitle.textContent = `${locale} Locale (${timeFormat})`;
                     localeTitle.style.cssText = `
                         margin: 0 0 15px 0;
                         text-align: center;
@@ -443,13 +492,15 @@ export const LocaleComparison: Story = {
                         color: ${args.theme === 'dark' ? '#fff' : '#333'};
                         border: 1px solid ${args.theme === 'dark' ? '#444' : '#dee2e6'};
                         border-radius: 6px;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
                         font-size: 12px;
                         line-height: 1.4;
-                        text-align: center;
-                        width: 100%;
-                        margin-top: auto;
+                        position: absolute;
+                        bottom: 10px;
+                        width: 90%;
+                       
                     `;
+
+                    const is24Hour = getLocaleTimeFormat(locale);
                     let momentFormatted: string;
                     let momentShort: string;
 
@@ -461,7 +512,7 @@ export const LocaleComparison: Story = {
                         moment.locale(locale);
                         momentFormatted = moment(currentTime).format('LLL');
                         momentShort = moment(currentTime).format('L LT');
-
+                        moment.locale(previousLocale);
                         // Restore previous locale
                         moment.locale(previousLocale);
                     } catch (error) {
@@ -470,27 +521,15 @@ export const LocaleComparison: Story = {
                         momentShort = `Error: ${error.message}`;
                     }
 
-                    // Create the feedback content with locale-specific formatting
-                    feedbackDiv.innerHTML = `
-                        <div style="border-left: 3px solid #6c757d; padding-left: 12px; text-align: left;">
-                            <strong style="color: #6c757d;">Current Time (${locale}):</strong><br>
-                            <div style="margin: 8px 0; font-size: 11px; line-height: 1.5;">
-                                <div><strong>Full format:</strong> ${currentTime.toLocaleString(locale)}</div>
-                                <div><strong>Date only:</strong> ${currentTime.toLocaleDateString(locale)}</div>
-                                <div><strong>Time only:</strong> ${currentTime.toLocaleTimeString(locale)}</div>
-                                <div><strong>Moment.js:</strong> ${momentFormatted}</div>
-                                <div><strong>Moment short:</strong> ${momentShort}</div>
-                            </div>
-                        </div>
-                    `;
-
-                    localeContainer.appendChild(feedbackDiv);
                     container.appendChild(localeContainer);
 
                     // Render the DateTimeButtonSingle for this specific locale
                     renderDateTimeButtonSingle(buttonContainer, {
                         ...args,
+                        offset: args.offset || 'Local',
                         dateLocale: locale,
+                        is24HourTime: getLocaleTimeFormat(locale),
+                        dTPIsModal: args.dTPIsModal !== false,
                         showFeedback: false
                     });
                 });
@@ -507,14 +546,12 @@ export const LocaleComparison: Story = {
 };
 
 
-
 export const Playground: Story = {
     name: 'Interactive Playground',
     args: {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')

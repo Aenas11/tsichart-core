@@ -17,8 +17,33 @@ class DateTimeButton extends ChartComponent {
     }
 
     protected buttonDateTimeFormat(millis) {
-        return Utils.timeFormat(!this.chartOptions.minutesForTimeLabels, !this.chartOptions.minutesForTimeLabels,
-            this.chartOptions.offset, this.chartOptions.is24HourTime, 0, null, this.chartOptions.dateLocale)(millis);
+        const date = new Date(millis);
+        const locale = this.chartOptions.dateLocale || 'en-US';
+        const is24Hour = this.chartOptions.is24HourTime !== false;
+
+        const formatOptions: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: !is24Hour
+        };
+
+        try {
+            if (this.chartOptions.offset && this.chartOptions.offset !== 'Local') {
+                formatOptions.timeZone = this.getTimezoneFromOffset(this.chartOptions.offset);
+            }
+            const baseFormat = date.toLocaleString(locale, formatOptions);
+            const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+            return `${baseFormat}.${milliseconds}`;
+        } catch (error) {
+            console.warn(`Failed to format date for locale ${locale}:`, error);
+
+            return Utils.timeFormat(!this.chartOptions.minutesForTimeLabels, !this.chartOptions.minutesForTimeLabels,
+                this.chartOptions.offset, this.chartOptions.is24HourTime, 0, null, this.chartOptions.dateLocale)(millis);
+        }
     }
 
     public render(chartOptions, minMillis, maxMillis, onSet = null) {
@@ -39,6 +64,19 @@ class DateTimeButton extends ChartComponent {
             this.dateTimePickerContainer.style('display', 'none');
         }
         super.themify(d3.select(this.renderTarget), this.chartOptions.theme);
+    }
+
+    private getTimezoneFromOffset(offset: string): string {
+
+        const timezoneMap = {
+            'UTC': 'UTC',
+            'EST': 'America/New_York',
+            'PST': 'America/Los_Angeles',
+            'CST': 'America/Chicago',
+            'MST': 'America/Denver'
+        };
+
+        return timezoneMap[offset] || 'UTC';
     }
 }
 export { DateTimeButton }
