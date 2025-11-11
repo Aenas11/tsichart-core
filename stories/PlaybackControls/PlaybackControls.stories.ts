@@ -136,108 +136,6 @@ PlaybackControls is designed to work seamlessly with LineChart and other tempora
 export default meta;
 type Story = StoryObj<IPlaybackControlsOptions>;
 
-function generateTimeRange(scenario: 'hourly' | 'daily' | 'weekly' | 'monthly') {
-    const now = new Date();
-
-    switch (scenario) {
-        case 'hourly':
-            return {
-                start: new Date(now.getTime() - 4 * 60 * 60 * 1000), // 4 hours ago
-                end: now,
-                stepSizeMillis: 5 * 60 * 1000
-            };
-        case 'daily':
-            return {
-                start: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-                end: now,
-                stepSizeMillis: 60 * 60 * 1000
-            };
-        case 'weekly':
-            return {
-                start: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-                end: now,
-                stepSizeMillis: 6 * 60 * 60 * 1000
-            };
-        case 'monthly':
-            return {
-                start: new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000), // 1 year ago
-                end: now,
-                stepSizeMillis: 24 * 60 * 60 * 1000
-            };
-        default:
-            return generateTimeRange('daily');
-    }
-}
-
-function renderPlaybackControls(container: HTMLElement, options: IPlaybackControlsOptions = {}, scenario: string = 'daily') {
-    container.innerHTML = '';
-
-    try {
-        const timeRange = generateTimeRange(scenario as any);
-        const playbackControls = new PlaybackControls(container, timeRange.start);
-        const controlOptions = {
-            theme: 'light',
-            offset: 'Local',
-            is24HourTime: true,
-            dateLocale: 'en-US',
-            xAxisHidden: false,
-            ...options
-        };
-        const playbackSettings = {
-            intervalMillis: Math.max(options.intervalMillis || 2000, 1000), // Enforce minimum 1000ms
-            stepSizeMillis: options.stepSizeMillis || timeRange.stepSizeMillis
-        };
-        const onSelectTimeStamp = (timestamp: Date) => {
-
-            const feedbackDiv = container.querySelector('.tsi-feedback') as HTMLElement;
-            if (feedbackDiv) {
-                feedbackDiv.textContent = `Selected: ${timestamp.toLocaleString()}`;
-                feedbackDiv.style.opacity = '1';
-                setTimeout(() => {
-                    if (feedbackDiv) feedbackDiv.style.opacity = '0.7';
-                }, 200);
-            }
-
-            if (options.onSelectTimeStamp) {
-                options.onSelectTimeStamp(timestamp);
-            }
-        };
-        playbackControls.render(
-            timeRange.start,
-            timeRange.end,
-            onSelectTimeStamp,
-            controlOptions,
-            playbackSettings
-        );
-        const feedbackDiv = document.createElement('div');
-        feedbackDiv.className = 'tsi-feedback';
-        feedbackDiv.style.cssText = `
-            margin-top: 16px;
-            padding: 8px 12px;
-            background: ${controlOptions.theme === 'dark' ? '#2d2d2d' : '#f0f0f0'};
-            color: ${controlOptions.theme === 'dark' ? '#fff' : '#333'};
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
-        `;
-        feedbackDiv.textContent = `Initial time: ${timeRange.start.toLocaleString()}`;
-        container.appendChild(feedbackDiv);
-
-        return playbackControls;
-    } catch (error) {
-        console.error('PlaybackControls rendering error:', error);
-        container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
-            <h3>Error rendering PlaybackControls</h3>
-            <p><strong>Error:</strong> ${error.message}</p>
-            <p><strong>Stack:</strong></p>
-            <pre style="white-space: pre-wrap; font-size: 12px;">${error.stack}</pre>
-            <p><small>Check browser console for more details</small></p>
-        </div>`;
-    }
-}
-
 
 export const Default: Story = {
     name: 'Daily Range (Default)',
@@ -270,14 +168,11 @@ export const Default: Story = {
 function generateTimeSeriesData() {
     const data = [];
     const now = new Date();
-    const startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+    const startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    // Create 3 series with hourly data points
     for (let seriesIndex = 0; seriesIndex < 3; seriesIndex++) {
         const seriesName = `Sensor${seriesIndex + 1}`;
         const splitByData = {};
-
-        // Generate data for each location
         ['LocationA', 'LocationB'].forEach(location => {
             const timeSeries = {};
 
@@ -309,17 +204,12 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
 
     try {
 
-
-
-        // Generate sample time series data for the last 24 hours
         const chartData = generateTimeSeriesData();
         const timeRange = {
             start: new Date(Date.now() - 24 * 60 * 60 * 1000),
             end: new Date(),
             stepSizeMillis: options.stepSizeMillis || 60000
         };
-
-        // Create containers for chart and controls
         const chartContainer = document.createElement('div');
         chartContainer.style.cssText = 'height: 70%; width: 100%; margin-bottom: 20px;';
 
@@ -343,8 +233,6 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
         container.appendChild(controlsContainer);
         container.appendChild(statusContainer);
         const lineChart = new LineChart(chartContainer);
-
-        // Chart options with brush enabled for additional interaction
         const chartOptions = {
             theme: options.theme || 'light',
             legend: 'shown',
@@ -358,16 +246,13 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
             onMouseover: (aggKey, splitBy) => {
                 console.log('Chart hover:', { aggKey, splitBy });
             },
-            markers: [], // Will be updated by playback controls
+            markers: [],
             onMarkersChange: (markers) => {
                 console.log('Markers updated:', markers);
             }
         };
 
-        // Initial chart render
         lineChart.render(chartData, chartOptions, {});
-
-        // Create PlaybackControls instance
         const playbackControls = new PlaybackControls(controlsContainer, timeRange.start);
 
         const controlOptions = {
@@ -387,33 +272,25 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
             statusContainer.textContent = message;
         };
 
-        // Callback for time selection - this is where the integration happens
         const onSelectTimeStamp = (selectedTime: Date) => {
 
-            // Update chart with a marker at the selected time
             const updatedChartOptions = {
                 ...chartOptions,
                 markers: [[selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`]],
-                // Optional: Set brush to focus around the selected time
-                brushStartTime: new Date(selectedTime.getTime() - 30 * 60 * 1000), // 30 min before
-                brushEndTime: new Date(selectedTime.getTime() + 30 * 60 * 1000)    // 30 min after
+                brushStartTime: new Date(selectedTime.getTime() - 30 * 60 * 1000),
+                brushEndTime: new Date(selectedTime.getTime() + 30 * 60 * 1000)
             };
 
-            // Re-render chart with updated options
             lineChart.render(chartData, updatedChartOptions, {});
 
-            // Update status
             updateStatus(`Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
-
-            // Call user callback if provided
             if (options.onSelectTimeStamp) {
                 options.onSelectTimeStamp(selectedTime);
             }
 
-            return {}; // Required by PlaybackControls interface
+            return {};
         };
 
-        // Render playback controls
         playbackControls.render(
             timeRange.start,
             timeRange.end,
@@ -469,12 +346,10 @@ export const WithBarChart: Story = {
 };
 
 function generateBarChartTimeSeriesData() {
-    // Generate data for the last 24 hours with 4-hour intervals
     const timestamps = [];
     const now = new Date();
-    const startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+    const startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    // Create 6 timestamps (every 4 hours)
     for (let i = 0; i <= 6; i++) {
         const timestamp = new Date(startTime.getTime() + i * 4 * 60 * 60 * 1000);
         timestamps.push(timestamp.toISOString());
@@ -493,10 +368,8 @@ function generateBarChartTimeSeriesData() {
             timestamps.forEach((timestamp) => {
                 const baseProduction = 80 + factoryIndex * 25;
                 const lineMultiplier = line === '' ? 1 : 0.4 + (parseInt(line.split(' ')[1]) || 1) * 0.3;
-
-                // Add some time-based variation to show progression
                 const timeIndex = timestamps.indexOf(timestamp);
-                const timeProgression = 1 + Math.sin(timeIndex / 3) * 0.2; // Cyclical variation
+                const timeProgression = 1 + Math.sin(timeIndex / 3) * 0.2;
 
                 factoryData[factory][line][timestamp] = {
                     Production: Math.round(
@@ -725,13 +598,9 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
         const chartData = dataGenerator();
         const allTimestamps: string[] = [];
         const aggregateData = chartData[0]['Data Center Monitoring'];
-
-        // Ensure we have data before proceeding
         if (!aggregateData || Object.keys(aggregateData).length === 0) {
             throw new Error('No server data generated');
         }
-
-        // Extract timestamps more reliably
         const serverNames = Object.keys(aggregateData);
 
         serverNames.forEach(server => {
@@ -785,7 +654,6 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
 
         const heatmap = new Heatmap(chartContainer);
 
-        // FIXED: Improved data filtering with better validation
         const getDataForTimeRange = (endTime: Date, windowMinutes: number = 30) => {
             const startTime = new Date(endTime.getTime() - windowMinutes * 60 * 1000);
             const filteredData: any[] = [];
@@ -830,8 +698,6 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
             }
 
         }
-
-        // Chart options - ensure proper configuration
         const chartOptions = {
             theme: options.theme || 'light',
             legend: 'shown',
@@ -893,8 +759,6 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
         setTimeout(() => {
             heatmap.render(finalInitialData, chartOptions, initialAggOptions);
         }, 50);
-
-        // Create PlaybackControls instance
         const playbackControls = new PlaybackControls(controlsContainer, timeRange.start);
 
         const controlOptions = {
@@ -910,7 +774,6 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
             stepSizeMillis: options.stepSizeMillis || 60000
         };
 
-        // Status update function
         const updateStatus = (message: string, isHighlight: boolean = false) => {
             statusContainer.textContent = message;
             statusContainer.style.background = isHighlight
@@ -923,8 +786,6 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
                 }, 1200);
             }
         };
-
-        // Callback for time selection
         const onSelectTimeStamp = (selectedTime: Date) => {
 
             const windowData = getDataForTimeRange(selectedTime, 30);
