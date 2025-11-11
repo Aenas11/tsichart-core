@@ -389,7 +389,6 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
 
         // Callback for time selection - this is where the integration happens
         const onSelectTimeStamp = (selectedTime: Date) => {
-            console.log('Time selected from playback controls:', selectedTime);
 
             // Update chart with a marker at the selected time
             const updatedChartOptions = {
@@ -518,7 +517,6 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
     container.innerHTML = '';
 
     try {
-        console.log('Rendering PlaybackControls with BarChart integration');
         const chartData = generateBarChartTimeSeriesData();
         const allTimestamps = [];
         chartData.forEach(aggregate => {
@@ -630,8 +628,6 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
         };
 
         const onSelectTimeStamp = (selectedTime: Date) => {
-            console.log('Time selected from playback controls:', selectedTime);
-
             const selectedTimestamp = selectedTime.toISOString();
             const closestTimestamp = allTimestamps.reduce((closest, current) => {
                 const currentDiff = Math.abs(new Date(current).getTime() - selectedTime.getTime());
@@ -687,206 +683,6 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
     }
 }
 
-// function generateSamplePieData() {
-//     const data: any[] = [];
-//     const regions = ['North', 'South', 'East', 'West'];
-//     const timestamps = [
-//         new Date('2023-01-01T00:00:00Z'),
-//         new Date('2023-04-01T00:00:00Z'),
-//         new Date('2023-07-01T00:00:00Z'),
-//         new Date('2023-10-01T00:00:00Z')
-//     ];
-
-//     const salesData: Record<string, Record<string, any>> = {};
-
-//     regions.forEach((region, regionIndex) => {
-//         const regionData: Record<string, any> = {};
-//         timestamps.forEach((timestamp, timestampIndex) => {
-//             const seasonalMultiplier = 1 + Math.sin(timestampIndex * Math.PI / 2) * 0.3;
-//             const regionMultiplier = 1 + (regionIndex * 0.2);
-
-//             const baseRevenue = 20000 + (regionIndex * 5000);
-//             const revenue = baseRevenue * seasonalMultiplier * (0.8 + Math.random() * 0.4);
-//             const quantity = Math.floor(revenue / 200);
-//             const profit = revenue * (0.15 + regionIndex * 0.05);
-
-//             regionData[timestamp.toISOString()] = {
-//                 revenue: Math.round(revenue),
-//                 quantity: quantity,
-//                 profit: Math.round(profit)
-//             };
-//         });
-//         salesData[region] = regionData;
-//     });
-
-//     data.push({ 'Sales': salesData });
-//     console.log(data, "pie data")
-//     return data;
-// }
-
-// export const WithPieChart: Story = {
-//     name: 'With PieChart Integration',
-//     args: {
-//         theme: 'light',
-//         offset: 'Local',
-//         is24HourTime: true,
-//         dateLocale: 'en-US',
-//         xAxisHidden: false,
-//         intervalMillis: 2500,
-//         stepSizeMillis: 3 * 30 * 24 * 60 * 60 * 1000 // Fixed: 3 months (not 3 * 3 which was 9 days)
-//     },
-//     render: (args: IPlaybackControlsOptions) => {
-//         const containerId = 'playback-with-piechart-' + Math.random().toString(36).substring(7);
-
-//         setTimeout(() => {
-//             const container = document.getElementById(containerId);
-//             if (container) {
-//                 renderPlaybackControlsWithPieChart(container, args, generateSamplePieData);
-//             }
-//         }, 100);
-
-//         return html`
-//             <div style="height: 700px; width: 100%; border: 1px solid #ddd; border-radius: 4px; background: ${args.theme === 'dark' ? '#1a1a1a' : '#fff'};">
-//                 <div id="${containerId}" style="height: 100%; width: 100%; padding: 20px; box-sizing: border-box;"></div>
-//             </div>
-//         `;
-//     }
-// };
-
-// function renderPlaybackControlsWithPieChart(container: HTMLElement, options: IPlaybackControlsOptions = {}, dataGenerator: () => any[] = generateSamplePieData) {
-//     container.innerHTML = '';
-
-//     try {
-//         console.log('Rendering PlaybackControls with PieChart integration');
-
-//         // Generate temporal pie chart data
-//         const chartData = dataGenerator();
-//         const allTimestamps: string[] = [];
-//         const aggregateData = chartData[0]['Sales'];
-//         Object.keys(aggregateData).forEach(region => {
-//             Object.keys((aggregateData as any)[region]).forEach((timestamp: string) => {
-//                 if (!allTimestamps.includes(timestamp)) {
-//                     allTimestamps.push(timestamp);
-//                 }
-//             });
-//         });
-
-//         allTimestamps.sort();
-
-//         const chartContainer = document.createElement('div');
-//         chartContainer.style.cssText = 'height: 65%; width: 100%; margin-bottom: 20px; position: relative;';
-//         const controlsContainer = document.createElement('div');
-//         controlsContainer.style.cssText = 'height: 25%; width: 100%; min-height: 120px;';
-//         const statusContainer = document.createElement('div');
-//         statusContainer.className = 'tsi-status-feedback';
-//         statusContainer.style.cssText = `
-//             height: 10%; 
-//             padding: 12px; 
-//             font-family: monospace; 
-//             font-size: 13px;
-//             background: ${options.theme === 'dark' ? '#2d2d2d' : '#f8f9fa'};
-//             color: ${options.theme === 'dark' ? '#fff' : '#333'};
-//             border-radius: 4px;
-//             border: 1px solid ${options.theme === 'dark' ? '#444' : '#e9ecef'};
-//             opacity: 0.9;
-//         `;
-
-//         container.appendChild(chartContainer);
-//         container.appendChild(controlsContainer);
-//         container.appendChild(statusContainer);
-
-//         const pieChart = new PieChart(chartContainer);
-
-
-//         const getDataForTimestamp = (targetTimestamp: string) => {
-//             const salesData: any = {};
-//             Object.keys(aggregateData).forEach(region => {
-//                 const value = aggregateData[region][targetTimestamp];
-//                 if (value) {
-//                     salesData[region] = value;
-//                 }
-//             });
-//             return Object.keys(salesData).length > 0 ? [{ 'Sales': salesData }] : [];
-//         };
-
-//         const getAggregateExpressionOptions = (data: any[], timestamp: string) => {
-//             if (data.length === 0) return [];
-//             const aggregateKey = Object.keys(data[0])[0];
-//             const regions = Object.keys(data[0][aggregateKey] || {});
-//             return [{
-//                 measureTypes: ['revenue'], // The metric to display in the pie chart
-//                 searchSpan: { from: timestamp, to: timestamp, bucketSize: '1d' },
-//                 aggregateKey: aggregateKey,
-//                 splitBy: regions,
-//                 visibleSplitByCap: regions.length
-//             }];
-//         };
-
-//         const chartOptions = {
-//             theme: options.theme || 'light',
-//             legend: 'shown',
-//             tooltip: true,
-//             timestamp: '2023-01-01T00:00:00.000Z',
-//             arcWidthRatio: 0.4,
-//             keepSplitByColor: true,
-//             hideChartControlPanel: true,
-//             is24HourTime: options.is24HourTime !== false,
-//             offset: options.offset || 'Local',
-//             dateLocale: options.dateLocale || 'en-US',
-//         };
-
-//         const onSelectTimeStamp = (selectedTime: Date) => {
-//             // Find the closest available timestamp in our data to the one selected by the controls.
-//             const closestTimestamp = allTimestamps.reduce((closest, current) => {
-//                 const currentDiff = Math.abs(new Date(current).getTime() - selectedTime.getTime());
-//                 const closestDiff = Math.abs(new Date(closest).getTime() - selectedTime.getTime());
-//                 return currentDiff < closestDiff ? current : closest;
-//             });
-
-//             // Get the snapshot data for the closest timestamp.
-//             const timestampData = getDataForTimestamp(closestTimestamp);
-
-//             if (timestampData.length > 0) {
-//                 const updatedChartOptions = { ...chartOptions, timestamp: closestTimestamp };
-//                 const updatedAggOptions = getAggregateExpressionOptions(timestampData, closestTimestamp);
-
-//                 // Re-render the pie chart with the new data and options.
-//                 pieChart.render(timestampData, updatedChartOptions, updatedAggOptions);
-//                 // Update the status panel.
-//                 const date = new Date(closestTimestamp);
-//                 const quarter = Math.ceil((date.getMonth() + 1) / 3);
-//                 const totalRevenue = Object.values(timestampData[0]['Sales']).reduce((sum: number, region: any) => sum + (region.revenue || 0), 0);
-//                 statusContainer.textContent = `Q${quarter} ${date.getFullYear()} Sales: $${totalRevenue.toLocaleString()} | Date: ${date.toLocaleDateString(options.dateLocale || 'en-US')}`;
-//             } else {
-//                 statusContainer.textContent = `No data available for: ${selectedTime.toLocaleDateString(options.dateLocale || 'en-US')}`;
-//             }
-//         };
-
-//         onSelectTimeStamp(new Date(allTimestamps[0]));
-
-//         // Render the playback controls.
-//         const playbackControls = new PlaybackControls(controlsContainer, new Date(allTimestamps[0]));
-//         playbackControls.render(
-//             new Date(allTimestamps[0]),
-//             new Date(allTimestamps[allTimestamps.length - 1]),
-//             onSelectTimeStamp,
-//             { theme: options.theme, offset: options.offset, is24HourTime: options.is24HourTime, dateLocale: options.dateLocale, xAxisHidden: options.xAxisHidden },
-//             { intervalMillis: options.intervalMillis, stepSizeMillis: options.stepSizeMillis }
-//         );
-
-//     } catch (error: any) {
-//         console.error('Error rendering PlaybackControls with PieChart:', error);
-//         container.innerHTML = `
-//             <div style="color: red; padding: 20px; font-family: monospace;">
-//                 <h3>Error rendering PlaybackControls with PieChart</h3>
-//                 <p><strong>Error:</strong> ${error?.message || 'Unknown error'}</p>
-//                 <pre style="white-space: pre-wrap; font-size: 12px;">${error?.stack || 'No stack trace'}</pre>
-//                 <p><small>Check browser console for detailed error information</small></p>
-//             </div>
-//         `;
-//         return null;
-//     }
-// }
 
 
 function generateHeatmapTimeSeriesData() {
