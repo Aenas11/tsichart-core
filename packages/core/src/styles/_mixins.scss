@@ -27,19 +27,81 @@
     @return map.get($z-index, $key);
 }
 
+// Helper function to get theme color
+@function theme-color($theme, $key) {
+    @if $theme =="dark" {
+        @return map.get($theme-dark, $key);
+    }
+
+    @else if $theme =="light" {
+        @return map.get($theme-light, $key);
+    }
+}
+
+// Helper function to get chart color
+@function chart-color($key) {
+    @return map.get($chart-colors, $key);
+}
+
+// Helper function to get gray value
+@function gray($level) {
+    @if $level ==50 {
+        @return $gray-50;
+    }
+
+    @if $level ==100 {
+        @return $gray-100;
+    }
+
+    @if $level ==200 {
+        @return $gray-200;
+    }
+
+    @if $level ==300 {
+        @return $gray-300;
+    }
+
+    @if $level ==400 {
+        @return $gray-400;
+    }
+
+    @if $level ==500 {
+        @return $gray-500;
+    }
+
+    @if $level ==600 {
+        @return $gray-600;
+    }
+
+    @if $level ==700 {
+        @return $gray-700;
+    }
+
+    @if $level ==800 {
+        @return $gray-800;
+    }
+
+    @if $level ==900 {
+        @return $gray-900;
+    }
+}
+
 // Mixin for theme colors
 @mixin theme-colors($theme-map) {
     $text: map.get($theme-map, text);
+    $text-secondary: if(map.has-key($theme-map, text-secondary), map.get($theme-map, text-secondary), $text);
     $hover: map.get($theme-map, hover);
     $element: map.get($theme-map, element);
     $background: map.get($theme-map, background);
     $alt-element: map.get($theme-map, alt-element);
     $hover-text: map.get($theme-map, hover-text);
     $scrollbar: map.get($theme-map, scrollbar);
+    $border: if(map.has-key($theme-map, border), map.get($theme-map, border), $alt-element);
+    $focus: if(map.has-key($theme-map, focus), map.get($theme-map, focus), $hover-text);
 
     // Base context menu colors
     .tsi-baseContextMenu {
-        border-color: $hover-text;
+        border-color: $border;
         background-color: $element;
         box-shadow: $shadow-sm;
 
@@ -52,7 +114,7 @@
         }
 
         .tsi-break {
-            border-top: 1px solid rgba($hover-text, 0.2);
+            border-top: 1px solid $border;
 
             &:hover,
             &:focus {
@@ -62,10 +124,18 @@
     }
 
     .tsi-searchInput {
-        border: 1px solid $alt-element;
+        border: 1px solid $border;
 
         &:focus {
-            border: 1px solid $hover-text;
+            @if $focus and $focus !=null {
+                border: 1px solid $focus;
+                outline: 2px solid rgba($focus, 0.2);
+                outline-offset: 1px;
+            }
+
+            @else {
+                border: 1px solid $hover-text;
+            }
         }
     }
 
@@ -211,18 +281,31 @@
     // Buttons
     .tsi-primaryButton {
         color: $text;
-        border-color: rgba($text, 0.8);
-        background-color: $background;
+        border-color: $border;
+        background-color: $element;
 
         &:hover {
             background-color: $hover;
+            border-color: $hover-text;
+        }
+
+        &:focus {
+            @if $focus and $focus !=null {
+                outline: 2px solid $focus;
+                outline-offset: 2px;
+            }
+
+            @else {
+                outline: 2px solid $hover-text;
+                outline-offset: 2px;
+            }
         }
     }
 
     // Chart value text box
     .tsi-chartValueTextBox {
         background-color: $element;
-        border-color: $hover;
+        border-color: $border;
     }
 }
 

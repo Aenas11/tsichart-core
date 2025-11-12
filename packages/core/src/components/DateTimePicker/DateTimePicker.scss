@@ -112,7 +112,17 @@
     .pika-single {
       .is-inrange {
         .pika-day {
-          background-color: rgba(48, 157, 144, 0.4) !important;
+          // Using primary teal color: #309d90
+          background-color: rgba(#309d90, 0.15) !important;
+        }
+      }
+
+      .is-startrange,
+      .is-endrange {
+        .pika-day {
+          // Start and end range: full teal with white text
+          background-color: #309d90 !important;
+          color: #fff !important;
         }
       }
 
@@ -129,6 +139,30 @@
 
     // Move declarations above nested rules
     @include dateTimePickerColors($grays);
+
+    .pika-single {
+      .is-inrange {
+        .pika-day {
+          // Using primary teal color: #309d90
+          background-color: rgba(#309d90, 0.15) !important;
+        }
+      }
+
+      .is-startrange,
+      .is-endrange {
+        .pika-day {
+          // Start and end range: full teal with white text
+          background-color: #309d90 !important;
+          color: #fff !important;
+        }
+      }
+
+      .is-selected {
+        .pika-day {
+          box-shadow: unset;
+        }
+      }
+    }
   }
 
   .tsi-dateTimeGroup {
