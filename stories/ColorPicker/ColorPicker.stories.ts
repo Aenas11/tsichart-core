@@ -15,7 +15,7 @@ interface ColorPickerOptions {
 }
 
 const meta: Meta<ColorPickerOptions> = {
-    title: "Charts/ColorPicker/ColorPicker",
+    title: "Components/ColorPicker",
     component: "ColorPicker",
     tags: ["autodocs"],
     parameters: {
