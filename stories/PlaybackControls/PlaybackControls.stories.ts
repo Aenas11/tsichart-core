@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/web-component-vite';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import LineChart from '../../packages/core/src/components/LineChart';
 import GroupedBarChart from '../../packages/core/src/components/GroupedBarChart';
@@ -166,7 +166,7 @@ export const Default: Story = {
 }
 
 function generateTimeSeriesData() {
-    const data = [];
+    const data: any[] = [];
     const now = new Date();
     const startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -346,7 +346,7 @@ export const WithBarChart: Story = {
 };
 
 function generateBarChartTimeSeriesData() {
-    const timestamps = [];
+    const timestamps: string[] = [];
     const now = new Date();
     const startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -391,7 +391,7 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
 
     try {
         const chartData = generateBarChartTimeSeriesData();
-        const allTimestamps = [];
+        const allTimestamps: string[] = [];
         chartData.forEach(aggregate => {
             const aggKey = Object.keys(aggregate)[0];
             const splitBys = aggregate[aggKey];
@@ -528,6 +528,7 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
             if (options.onSelectTimeStamp) {
                 options.onSelectTimeStamp(selectedTime);
             }
+            return {};
         };
         playbackControls.render(
             timeRange.start,
@@ -786,6 +787,7 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
                 }, 1200);
             }
         };
+
         const onSelectTimeStamp = (selectedTime: Date) => {
 
             const windowData = getDataForTimeRange(selectedTime, 30);
@@ -822,6 +824,7 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
             if (options.onSelectTimeStamp) {
                 options.onSelectTimeStamp(selectedTime);
             }
+            return {};
         };
 
         playbackControls.render(
