@@ -71,6 +71,7 @@
     "@types/awesomplete": "^1.1.16",
     "@types/d3": "^7.4.3",
     "awesomplete": "^1.1.7",
+    "azure-maps-control": "^3.7.1",
     "d3": "^7.9.0",
     "d3-interpolate-path": "^2.3.0",
     "d3-voronoi": "^1.1.4",
