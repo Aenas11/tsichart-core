@@ -201,7 +201,6 @@ function renderPieChart(container: HTMLElement, options: IPieChartOptions = {}, 
     container.innerHTML = '';
 
     try {
-        console.log('Rendering PieChart with options:', options);
 
         // Create PieChart instance
         const chart = new PieChart(container);
