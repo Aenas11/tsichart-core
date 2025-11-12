@@ -76,6 +76,12 @@ class PlaybackControls extends Component {
       throw new TypeError('onSelectTimeStamp must be a function');
     }
 
+    // Clean up any pending animation frames before re-rendering
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+
     this.end = end;
     this.selectTimeStampCallback = onSelectTimeStamp;
     this.chartOptions.setOptions(options);
@@ -214,6 +220,31 @@ class PlaybackControls extends Component {
     this.selectTimeStampCallback(this.selectedTimeStamp);
   }
 
+  /**
+   * Cleanup resources to prevent memory leaks
+   */
+  destroy(): void {
+    this.pause();
+
+    // Cancel any pending animation frames
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+
+    // Remove event listeners
+    if (this.controlsContainer) {
+      this.controlsContainer.selectAll('*').on('.', null);
+    }
+
+    // Clear DOM references
+    this.playButton = null;
+    this.handleElement = null;
+    this.controlsContainer = null;
+    this.track = null;
+    this.selectTimeStampCallback = null;
+  }
+
   private clamp(number: number, min: number, max: number) {
     let clamped = Math.max(number, min);
     return Math.min(clamped, max);
@@ -224,10 +255,18 @@ class PlaybackControls extends Component {
       (this.playbackInterval !== null);
     this.pause();
 
-    let handlePosition = this.clamp(positionX, 0, this.trackWidth);
-    this.selectedTimeStamp = this.timeStampToPosition.invert(handlePosition);
+    // Use requestAnimationFrame to batch DOM updates for better performance
+    // Cancel any pending animation frame to prevent stacking updates
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+    }
 
-    this.updateSelection(handlePosition, this.selectedTimeStamp);
+    this.rafId = requestAnimationFrame(() => {
+      const handlePosition = this.clamp(positionX, 0, this.trackWidth);
+      this.selectedTimeStamp = this.timeStampToPosition.invert(handlePosition);
+      this.updateSelection(handlePosition, this.selectedTimeStamp);
+      this.rafId = null;
+    });
   }
 
   private onDragEnd() {
