@@ -250,7 +250,6 @@ class HierarchyNavigation extends Component {
             .append("input")
             .attr("class", "tsi-searchInput")
             .attr("aria-label", this.getString("Search"))
-            .attr("aria-describedby", "tsi-search-desc")
             .attr("role", "combobox")
             .attr("aria-owns", "tsi-search-results")
             .attr("aria-expanded", "false")
