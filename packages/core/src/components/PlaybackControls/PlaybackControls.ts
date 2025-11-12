@@ -160,6 +160,9 @@ class PlaybackControls extends Component {
     this.playButton = this.controlsContainer.append('button')
       .classed('tsi-play-button', this.playbackInterval === null)
       .classed('tsi-pause-button', this.playbackInterval !== null)
+      // Accessibility attributes
+      .attr('aria-label', 'Play/Pause playback')
+      .attr('title', 'Play/Pause playback')
       .on('click', () => {
         if (this.playbackInterval === null) {
           this.play();
