@@ -2,21 +2,58 @@
 @use "sass:color";
 @use "../../styles" as *;
 
+// ============================================================================
+// Configuration Variables
+// ============================================================================
+$playback-timeline-height: 32px;
+$playback-button-size: 36px;
+$playback-button-margin-top: 16px;
+$playback-button-margin-bottom: 8px;
+$playback-track-stroke-width: 5px;
+$playback-handle-stroke-width: 2px;
+$playback-timestamp-offset: -8px;
+$playback-container-padding: 20px;
+$playback-button-padding: 4px;
+$playback-button-gap: 6px;
+
+// ============================================================================
+// CSS Custom Properties (Runtime Theming)
+// ============================================================================
+:root {
+    // Light theme colors (default)
+    --tsi-playback-track-active: #605E5C;
+    --tsi-playback-track-inactive: #C8C6C4;
+    --tsi-playback-handle-stroke: #323130;
+    --tsi-playback-handle-fill: #fff;
+    --tsi-playback-focus-color: #136bfb;
+}
+
+.tsi-dark {
+    // Dark theme color overrides
+    --tsi-playback-track-active: #8a8886;
+    --tsi-playback-track-inactive: #3b3a39;
+    --tsi-playback-handle-stroke: #d2d0ce;
+    --tsi-playback-handle-fill: #1e2223;
+}
+
+// ============================================================================
+// Component Styles
+// ============================================================================
+
 .tsi-playback-controls-container {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-inline: $playback-container-padding;
 }
 
 .tsi-playback-timeline {
     width: 100%;
-    height: 32px;
+    height: $playback-timeline-height;
     position: relative;
-}
 
-.tsi-playback-timeline svg {
-    width: 100%;
-    height: 100%;
-    position: absolute;
+    svg {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
 }
 
 .tsi-playback-input {
@@ -25,27 +62,37 @@
     height: 100%;
 }
 
-.tsi-playback-track, .tsi-playback-handle {
+.tsi-playback-track,
+.tsi-playback-handle {
     cursor: pointer;
 }
 
 .tsi-playback-track {
-    stroke-width: 5px;
+    stroke-width: $playback-track-stroke-width;
     stroke-linecap: round;
 
     .tsi-left-of-handle {
-        stroke: #605E5C;
+        stroke: var(--tsi-playback-track-active);
     }
 
     .tsi-right-of-handle {
-        stroke: #C8C6C4;
+        stroke: var(--tsi-playback-track-inactive);
     }
 }
 
 .tsi-playback-handle {
-    stroke-width: 2px;
-    stroke: #323130;
-    fill: #fff;
+    stroke-width: $playback-handle-stroke-width;
+    stroke: var(--tsi-playback-handle-stroke);
+    fill: var(--tsi-playback-handle-fill);
+    transition: transform 0.1s ease-out;
+
+    &:hover {
+        transform: "scale(1.1)";
+    }
+
+    &:active {
+        transform: "scale(0.95)";
+    }
 }
 
 .tsi-playback-axis {
@@ -56,48 +103,72 @@
         width: 100%;
         height: 100%;
         overflow: visible;
+    }
+}
 
-        g:first-of-type {
-            text-anchor: start;
-        }
+.tsi-playback-axis svg g {
+    &:first-of-type {
+        text-anchor: start;
+    }
 
-        g:last-of-type {
-            text-anchor: end;
-        }
+    &:last-of-type {
+        text-anchor: end;
     }
 }
 
 .tsi-playback-buttons {
+    display: flex;
+    align-items: center;
+    gap: $playback-button-gap;
     width: 100%;
-    height: 36px;
-    margin-top: 16px;
-    margin-bottom: 8px;
+    height: $playback-button-size;
+    margin-top: $playback-button-margin-top;
+    margin-bottom: $playback-button-margin-bottom;
 
-    .tsi-play-button, .tsi-pause-button {
-        padding: 4px;
+    button {
+        padding: $playback-button-padding;
         background: none;
         border: none;
         background-repeat: no-repeat;
         background-position: center;
+        cursor: pointer;
+        width: $playback-button-size;
+        height: $playback-button-size;
+        border-radius: 2px;
+        transition: background-color 0.2s ease;
+
+        // Improved accessibility: custom focus indicator
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--tsi-playback-focus-color);
+        }
+
+        // Remove focus ring for mouse users
+        &:focus:not(:focus-visible) {
+            box-shadow: none;
+        }
+
+        // Keyboard focus should always show
+        &:focus-visible {
+            box-shadow: 0 0 0 2px var(--tsi-playback-focus-color);
+        }
     }
 }
 
-.tsi-dark {
-    .tsi-playback-buttons {
-        .tsi-play-button {
-            background-image: url(../../icons/Play_Icon_Dark_Theme.svg);
-        }
-
-        .tsi-pause-button {
-            background-image: url(../../icons/Pause_Icon_Dark_Theme.svg);
-        }
-    }
-}
+// ============================================================================
+// Theme-Specific Styles
+// ============================================================================
 
 .tsi-light {
     .tsi-playback-buttons {
-        .tsi-play-button, .tsi-pause-button {
-            margin-left: 6px;
+        button {
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+
+            &:active {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
         }
 
         .tsi-play-button {
@@ -110,18 +181,30 @@
     }
 }
 
+.tsi-dark {
+    .tsi-playback-buttons {
+        button {
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.08);
+            }
+
+            &:active {
+                background-color: rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        .tsi-play-button {
+            background-image: url(../../icons/Play_Icon_Dark_Theme.svg);
+        }
+
+        .tsi-pause-button {
+            background-image: url(../../icons/Pause_Icon_Dark_Theme.svg);
+        }
+    }
+}
+
 .tsi-playback-timestamp {
     height: 100%;
     position: relative;
-    top: -8px;
-}
-
-.tsi-playback-buttons button {
-    cursor: pointer;
-    width: 36px;
-    height: 36px;
-}
-
-.tsi-playback-buttons button:focus {
-    outline: none;
+    top: $playback-timestamp-offset;
 }
