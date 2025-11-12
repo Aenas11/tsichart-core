@@ -356,7 +356,7 @@ function generateBarChartTimeSeriesData() {
     }
 
     const factories = ['Factory A', 'Factory B', 'Factory C'];
-    const productionLines = ['', 'Line 1', 'Line 2'];
+    const productionLines = ['Line 1', 'Line 2', 'Line 3'];
 
     return factories.map((factory, factoryIndex) => {
         const factoryData = {};
