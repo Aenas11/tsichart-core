@@ -1,0 +1,72 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+// Pikaday datepicker overrides
+.pika-single {
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+}
+
+.pika-lendar {
+    text-decoration: none;
+    width: size(datepicker-width);
+    margin: 0 spacing(xl);
+
+    abbr {
+        text-decoration: none;
+    }
+}
+
+.pika-table .pika-row {
+    height: size(menu-item-height);
+    margin: 0;
+
+    td {
+        padding: 0;
+    }
+}
+
+.pika-button {
+    border-radius: 0;
+    text-align: center;
+}
+
+.pika-day {
+    width: size(menu-item-height);
+    height: size(menu-item-height);
+    margin: 0;
+
+    &:hover {
+        background-color: $color-primary;
+        color: $color-white;
+    }
+}
+
+// Date range states
+.pika-table td {
+    &.is-inrange .pika-day {
+        background-color: $color-primary-light;
+    }
+
+    &.is-endrange .pika-day,
+    &.is-startrange .pika-day {
+        background-color: $color-primary;
+        color: $color-white;
+
+        &:hover {
+            background-color: $color-primary;
+            color: $color-white;
+        }
+    }
+
+    &.is-startrange button {
+        border-bottom-left-radius: radius(xl);
+        border-top-left-radius: radius(xl);
+    }
+
+    &.is-endrange button {
+        border-bottom-right-radius: radius(xl);
+        border-top-right-radius: radius(xl);
+    }
+}

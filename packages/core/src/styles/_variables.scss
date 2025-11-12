@@ -1,0 +1,87 @@
+// Design Tokens - Spacing System
+$spacing: (
+    xxs: 1px,
+    xs: 2px,
+    sm: 4px,
+    md: 6px,
+    lg: 8px,
+    xl: 12px,
+    xxl: 20px,
+    xxxl: 28px,
+);
+
+// Design Tokens - Sizing
+$sizes: (
+    icon-sm: 14px,
+    icon-md: 17px,
+    icon-lg: 20px,
+    icon-xl: 21px,
+    button-height: 36px,
+    select-height: 32px,
+    menu-item-height: 28px,
+    control-panel-height: 20px,
+    datepicker-width: 196px,
+);
+
+// Design Tokens - Typography
+$font-family-primary: "Segoe UI", sans-serif;
+$font-family-mono: "Lucida Console", Monaco, monospace;
+
+$font-sizes: (
+    xs: 11px,
+    sm: 12px,
+    md: 13px,
+    lg: 85%,
+    // relative for mono
+);
+
+// Design Tokens - Border Radius
+$border-radius: (
+    sm: 2px,
+    md: 3px,
+    lg: 4px,
+    xl: 8px,
+);
+
+// Design Tokens - Z-Index Scale
+$z-index: (
+    base: 1,
+    elevated: 2,
+    overlay: 3,
+);
+
+// Theme Colors - Using Maps Instead of List
+$theme-dark: (
+    text: #fff,
+    hover: #62666c,
+    element: #0d0f0e,
+    background: #1e2223,
+    alt-element: #31373e,
+    hover-text: #60aaff,
+    scrollbar: #666666,
+);
+
+$theme-light: (
+    text: #000,
+    hover: #b3d6f2,
+    element: #ffffff,
+    background: #f2f2f2,
+    alt-element: #dcdcdc,
+    hover-text: #136bfb,
+    scrollbar: #a6a6a6,
+);
+
+// Brand Colors
+$color-warm: #ffa800;
+$color-primary: #309d90;
+$color-primary-light: #d5ebe9;
+$color-white: #fff;
+$color-black: #000;
+
+// Animation Timing
+$easing-smooth: cubic-bezier(0.1, 0.9, 0.2, 1);
+$duration-fast: 0.367s;
+
+// Shadow Tokens
+$shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+$shadow-md: 0 0 2px 0 rgba(0, 0, 0, 0.3);

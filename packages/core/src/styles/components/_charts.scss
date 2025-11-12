@@ -1,0 +1,50 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.tsi-chartControlsPanel {
+    height: size(control-panel-height);
+    right: 0;
+    width: 100px;
+    position: absolute;
+    z-index: z(elevated);
+    pointer-events: none;
+
+    .tsi-ellipsisContainerDiv {
+        pointer-events: all;
+        left: auto;
+        right: size(icon-lg);
+        top: 0;
+        position: absolute;
+
+        .tsi-ellipsisMenuContainer {
+            pointer-events: all;
+
+            .tsi-ellipsisMenu {
+                z-index: z(elevated);
+            }
+        }
+    }
+}
+
+.tsi-chartValueTextBox {
+    position: absolute;
+    white-space: nowrap;
+    font-size: font-size(xs);
+    padding: spacing(xxs) spacing(sm);
+    border: 1px solid;
+    box-shadow: $shadow-md;
+    line-height: 16px;
+}
+
+.tsi-resizeGutter {
+    width: spacing(md);
+    cursor: e-resize;
+    padding: spacing(xs);
+    background-position: 0 50%;
+    background-repeat: no-repeat;
+}
+
+.tsi-warmRect {
+    fill: $color-warm;
+    stroke: $color-warm;
+}
