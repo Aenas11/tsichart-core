@@ -8,6 +8,7 @@ class DateTimeButtonRange extends DateTimeButton {
     private onCancel;
     private fromMillis: number;
     private toMillis: number;
+    private clickOutsideHandler: ((event: MouseEvent) => void) | null = null;
 
     constructor(renderTarget: Element) {
         super(renderTarget);
@@ -32,6 +33,36 @@ class DateTimeButtonRange extends DateTimeButton {
     private onClose() {
         this.dateTimePickerContainer.style("display", "none");
         this.dateTimeButton.node().focus();
+        this.removeClickOutsideHandler();
+    }
+
+    private removeClickOutsideHandler() {
+        if (this.clickOutsideHandler) {
+            document.removeEventListener('click', this.clickOutsideHandler);
+            this.clickOutsideHandler = null;
+        }
+    }
+
+    private setupClickOutsideHandler() {
+        // Remove any existing handler first
+        this.removeClickOutsideHandler();
+
+        // Add handler after a small delay to prevent the opening click from immediately closing the picker
+        setTimeout(() => {
+            this.clickOutsideHandler = (event: MouseEvent) => {
+                const pickerElement = this.dateTimePickerContainer.node();
+                const buttonElement = this.dateTimeButton.node();
+                const target = event.target as Node;
+
+                // Check if click is outside both the picker and the button
+                if (pickerElement && buttonElement &&
+                    !pickerElement.contains(target) &&
+                    !buttonElement.contains(target)) {
+                    this.onClose();
+                }
+            };
+            document.addEventListener('click', this.clickOutsideHandler);
+        }, 0);
     }
 
     public render(chartOptions: any = {}, minMillis: number, maxMillis: number,
@@ -74,6 +105,7 @@ class DateTimeButtonRange extends DateTimeButton {
                         this.onCancel();
                     }
                 );
+                this.setupClickOutsideHandler();
             }
         });
     }
