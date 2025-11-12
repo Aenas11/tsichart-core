@@ -4,32 +4,48 @@ import { Component } from "./../../interfaces/Component";
 import Utils from '../../utils';
 import { TemporalXAxisComponent } from '../../interfaces/TemporalXAxisComponent';
 
-type d3Selection = d3.Selection<d3.BaseType, unknown, null, undefined>;
+type D3Selection<T extends d3.BaseType = d3.BaseType> = d3.Selection<T, unknown, null, undefined>;
 
 interface IPlaybackSettings {
   intervalMillis: number;
   stepSizeMillis: number;
 }
 
+interface IPlaybackOptions {
+  theme?: string;
+  offset?: string;
+  is24HourTime?: boolean;
+  dateLocale?: string;
+  xAxisHidden?: boolean;
+}
+
 class PlaybackControls extends Component {
-  private playbackInterval: number;
-  private playButton: d3Selection;
-  private handleElement: d3Selection;
-  private controlsContainer: d3Selection;
-  private track: d3Selection;
+  private static readonly CONSTANTS = {
+    HANDLE_RADIUS: 7,
+    MINIMUM_PLAYBACK_INTERVAL_MS: 1000,
+    HANDLE_PADDING: 8,
+    AXIS_OFFSET: 6,
+  } as const;
+
+  private playbackInterval: number | null = null;
+  private playButton: D3Selection<HTMLButtonElement> | null = null;
+  private handleElement: D3Selection<SVGCircleElement> | null = null;
+  private controlsContainer: D3Selection<HTMLDivElement> | null = null;
+  private track: D3Selection<SVGGElement> | null = null;
   private trackXOffset: number;
   private trackYOffset: number;
   private trackWidth: number;
-  private timeFormatter: Function;
+  private timeFormatter: (date: Date) => string;
   private selectedTimeStamp: Date;
-  private selectTimeStampCallback: (d: Date) => {};
+  private selectTimeStampCallback: ((timestamp: Date) => void) | null = null;
   private timeStampToPosition: d3.ScaleTime<number, number>;
   private playbackSettings: IPlaybackSettings;
   private end: Date;
-  private wasPlayingWhenDragStarted: boolean;
+  private wasPlayingWhenDragStarted: boolean = false;
+  private rafId: number | null = null;
 
-  readonly handleRadius: number = 7;
-  readonly minimumPlaybackInterval: number = 1000; // 1 second
+  readonly handleRadius: number = PlaybackControls.CONSTANTS.HANDLE_RADIUS;
+  readonly minimumPlaybackInterval: number = PlaybackControls.CONSTANTS.MINIMUM_PLAYBACK_INTERVAL_MS;
 
   constructor(renderTarget: Element, initialTimeStamp: Date = null) {
     super(renderTarget);
@@ -44,9 +60,22 @@ class PlaybackControls extends Component {
   render(
     start: Date,
     end: Date,
-    onSelectTimeStamp: (d: Date) => {},
-    options,
-    playbackSettings: IPlaybackSettings) {
+    onSelectTimeStamp: (timestamp: Date) => void,
+    options: IPlaybackOptions,
+    playbackSettings: IPlaybackSettings): void {
+    // Validate inputs
+    if (!(start instanceof Date) || !(end instanceof Date)) {
+      throw new TypeError('start and end must be Date objects');
+    }
+
+    if (start >= end) {
+      throw new RangeError('start must be before end');
+    }
+
+    if (!onSelectTimeStamp || typeof onSelectTimeStamp !== 'function') {
+      throw new TypeError('onSelectTimeStamp must be a function');
+    }
+
     this.end = end;
     this.selectTimeStampCallback = onSelectTimeStamp;
     this.chartOptions.setOptions(options);
@@ -73,7 +102,7 @@ class PlaybackControls extends Component {
 
     let timeAxisContainer = sliderContainer.append('div')
       .classed('tsi-playback-axis', true)
-      .style('top', `${this.trackYOffset + 6}px`)
+      .style('top', `${this.trackYOffset + PlaybackControls.CONSTANTS.AXIS_OFFSET}px`)
       .style('left', `${this.trackXOffset}px`)
       .style('width', `${this.trackWidth}px`);
 
@@ -89,59 +118,17 @@ class PlaybackControls extends Component {
       .style('left', `${this.trackXOffset}px`)
       .style('width', `${this.trackWidth}px`);
 
-    this.track = gWrapper
-      .append('g')
-      .classed('tsi-playback-track', true);
-
-    gWrapper.call(d3.drag()
-      .container(<any>sliderContainer.select('.tsi-playback-input').node())
-      .on('start.interrupt', () => { gWrapper.interrupt(); })
-      .on('start drag', (event) => {
-        this.onDrag(event.x);
-      })
-      .on('end', () => {
-        this.onDragEnd();
-      })
-    );
-
-    this.track.append('line')
-      .classed('tsi-left-of-handle', true)
-      .attr('y1', this.trackYOffset)
-      .attr('y2', this.trackYOffset);
-
-    this.track.append('line')
-      .classed('tsi-right-of-handle', true)
-      .attr('y1', this.trackYOffset)
-      .attr('y2', this.trackYOffset);
-
-    this.handleElement = gWrapper.append('circle')
-      .classed('tsi-playback-handle', true)
-      .attr('r', this.handleRadius)
-      .attr('cy', this.trackYOffset);
-
-    this.controlsContainer = targetElement.append('div')
-      .classed('tsi-playback-buttons', true);
-
-    this.playButton = this.controlsContainer.append('button')
-      .classed('tsi-play-button', this.playbackInterval === null)
-      .classed('tsi-pause-button', this.playbackInterval !== null)
-      .on('click', () => {
-        if (this.playbackInterval === null) {
-          this.play();
-        } else {
-          this.pause();
-        }
-      });
-
-    this.controlsContainer.append('span')
-      .classed('tsi-playback-timestamp', true)
-      .style('margin', `0 ${this.trackXOffset}px`);
+    this.initializeTrack(gWrapper);
+    this.initializeDragBehavior(gWrapper, sliderContainer);
+    this.initializeHandle(gWrapper);
+    this.initializeControls(targetElement);
 
     this.selectedTimeStamp = this.selectedTimeStamp || start;
     let handlePosition = this.timeStampToPosition(this.selectedTimeStamp);
     this.updateSelection(handlePosition, this.selectedTimeStamp);
   }
 
+  // PUBLIC API
   play() {
     if (this.playbackInterval === null) {
       // Default to an interval if one is not provided. Also, the interval should
@@ -171,6 +158,11 @@ class PlaybackControls extends Component {
   next() {
     // If we've reached the end of the available time stamps, do nothing until 
     // the end moves forward.
+    if (!this.end || !this.selectedTimeStamp) {
+      console.warn('PlaybackControls: Cannot advance, missing required state');
+      return;
+    }
+
     if (this.selectedTimeStamp.valueOf() === this.end.valueOf()) {
       return;
     }
@@ -185,6 +177,92 @@ class PlaybackControls extends Component {
     this.selectTimeStampCallback(this.selectedTimeStamp);
   }
 
+  /**
+   * Cleanup resources to prevent memory leaks
+   */
+  destroy(): void {
+    this.pause();
+
+    // Cancel any pending animation frames
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+
+    // Remove event listeners
+    if (this.controlsContainer) {
+      this.controlsContainer.selectAll('*').on('.', null);
+    }
+
+    // Clear DOM references
+    this.playButton = null;
+    this.handleElement = null;
+    this.controlsContainer = null;
+    this.track = null;
+    this.selectTimeStampCallback = null;
+  }
+
+  // PRIVATE - DOM SETUP
+  private initializeTrack(gWrapper: D3Selection<SVGGElement>): void {
+    this.track = gWrapper.append('g').classed('tsi-playback-track', true);
+
+    this.track.append('line')
+      .classed('tsi-left-of-handle', true)
+      .attr('y1', this.trackYOffset)
+      .attr('y2', this.trackYOffset);
+
+    this.track.append('line')
+      .classed('tsi-right-of-handle', true)
+      .attr('y1', this.trackYOffset)
+      .attr('y2', this.trackYOffset);
+  }
+
+  private initializeDragBehavior(
+    gWrapper: D3Selection<SVGGElement>,
+    sliderContainer: D3Selection<HTMLDivElement>
+  ): void {
+    gWrapper.call(d3.drag()
+      .container(<any>sliderContainer.select('.tsi-playback-input').node())
+      .on('start.interrupt', () => { gWrapper.interrupt(); })
+      .on('start drag', (event) => {
+        this.onDrag(event.x);
+      })
+      .on('end', () => {
+        this.onDragEnd();
+      })
+    );
+  }
+
+  private initializeHandle(gWrapper: D3Selection<SVGGElement>): void {
+    this.handleElement = gWrapper.append('circle')
+      .classed('tsi-playback-handle', true)
+      .attr('r', this.handleRadius)
+      .attr('cy', this.trackYOffset);
+  }
+
+  private initializeControls(targetElement: D3Selection<HTMLDivElement>): void {
+    this.controlsContainer = targetElement.append('div')
+      .classed('tsi-playback-buttons', true);
+
+    this.playButton = this.controlsContainer.append('button')
+      .classed('tsi-play-button', this.playbackInterval === null)
+      .classed('tsi-pause-button', this.playbackInterval !== null)
+      .on('click', () => this.togglePlayPause());
+
+    this.controlsContainer.append('span')
+      .classed('tsi-playback-timestamp', true)
+      .style('margin', `0 ${this.trackXOffset}px`);
+  }
+
+  private togglePlayPause(): void {
+    if (this.playbackInterval === null) {
+      this.play();
+    } else {
+      this.pause();
+    }
+  }
+
+  // PRIVATE - EVENT HANDLERS
   private clamp(number: number, min: number, max: number) {
     let clamped = Math.max(number, min);
     return Math.min(clamped, max);
@@ -195,10 +273,17 @@ class PlaybackControls extends Component {
       (this.playbackInterval !== null);
     this.pause();
 
-    let handlePosition = this.clamp(positionX, 0, this.trackWidth);
-    this.selectedTimeStamp = this.timeStampToPosition.invert(handlePosition);
+    // Use requestAnimationFrame to batch DOM updates
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+    }
 
-    this.updateSelection(handlePosition, this.selectedTimeStamp);
+    this.rafId = requestAnimationFrame(() => {
+      const handlePosition = this.clamp(positionX, 0, this.trackWidth);
+      this.selectedTimeStamp = this.timeStampToPosition.invert(handlePosition);
+      this.updateSelection(handlePosition, this.selectedTimeStamp);
+      this.rafId = null;
+    });
   }
 
   private onDragEnd() {
