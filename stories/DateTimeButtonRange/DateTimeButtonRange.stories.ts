@@ -484,9 +484,3 @@ export const Playground: Story = {
     },
     render: createDateTimeButtonRangeStory('recent')
 };
-
-
-
-
-
-

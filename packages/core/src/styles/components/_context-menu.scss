@@ -1,0 +1,35 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.tsi-baseContextMenu {
+    white-space: nowrap;
+    padding: spacing(sm) 0;
+    animation: tsi-slideRight $duration-fast $easing-smooth forwards;
+    border: 1px solid;
+    border-radius: radius(sm);
+    box-shadow: $shadow-md;
+    text-align: left;
+
+    >div,
+    >li,
+    >button {
+        padding: spacing(sm) spacing(lg);
+        font-size: font-size(sm);
+        cursor: pointer;
+        height: size(menu-item-height);
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .tsi-break {
+        height: spacing(sm);
+        margin-top: spacing(sm);
+        padding: 0 0 spacing(sm) 0;
+        cursor: default;
+
+        &:last-of-type {
+            display: none;
+        }
+    }
+}

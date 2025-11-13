@@ -60,6 +60,10 @@
         .tsi-clear {
             background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
         }
+
+        .tsi-searchInput {
+            color: var(--tsi-hierarchy-text);
+        }
     }
 
     &.tsi-light {
