@@ -1,6 +1,6 @@
 {
   "name": "tsichart-core",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Framework-agnostic time series charting library - Core package",
   "keywords": [
     "timeseries",
