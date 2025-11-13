@@ -1,185 +1,44 @@
 @use "sass:list";
 @use "sass:color";
 @use "../../styles" as *;
+@use "./hierarchy-tokens" as tokens;
+@use "./hierarchy-theme" as theme;
+@use "./hierarchy-animations" as animations;
 
-@mixin hierarchyColors($grays){
-    $gray1: list.nth($grays, 1); // text
-    $gray2: list.nth($grays, 2); // hover
-    $gray3: list.nth($grays, 3); // element
-    $gray4: list.nth($grays, 4); // background
-	$gray5: list.nth($grays, 5); // alt element
-    $gray6: list.nth($grays, 6);
-    color: $gray1;
-    background: $gray3;
-
-    hit{
-        background: #fff9a8;
-        font-weight: 600;
-        color: black;
-    }
-
-    .tsi-show-more{
-        color: $gray6;
-    }
-
-    .tsi-hierarchy-or-list-wrapper {
-        li{                     
-            .tsi-hierarchyItem{
-                &:hover{
-                    cursor: default;
-                    background: $gray4;
-                }
-                &:focus {
-                    outline: none;
-                    background: $gray4;
-                }
-            }
-            &.tsi-resultSelected{
-                background-color: transparent;
-                .tsi-hierarchyItem{
-                    background: $gray2;
-                }
-            }
-        }
-    }
-
-    .tsi-nav-tab.tsi-selected{
-        border-bottom: 2px solid $gray1 !important;
-    }
-
-    .tsi-modelResultWrapper{
-        border-bottom: 1px solid rgba($gray1, .05);
-        &:hover, &:focus {
-            background-color: $gray4;
-            outline: none;
-            &::after{
-                content: "";
-                position: absolute;
-                width: 14px;
-                height: 14px;
-                top: 8px;
-                left: calc(100% - 20px);
-                background: url(../../icons/chevron.svg) no-repeat;
-                transform: rotate(-90deg);
-            }
-        }
-        &.tsi-selected {
-            background-color: $gray2;
-        }
-    }
-    .tsi-hierarchyNavigationContextMenu{
-        li:hover, li:focus{
-            background: $gray4;
-            outline: none;
-        }
-    }
-    .tsi-leaf {
-        &.tsi-selected {
-            background: $gray2;
-            .tsi-hierarchyItem{
-                &:hover{
-                    background: $gray2;
-                }
-            }
-        }
-    }
-
-    .tsi-filter-clear {
-        &:focus{
-            outline: 1px solid $gray6;
-        }
-    }
-
-    .tsi-hierarchy-selection-wrapper {
-        .tsi-hierarchy-select {
-            background: $gray3;
-            border: 1px solid $gray5;
-            color: $gray1;
-            &:hover{
-                background-color: $gray4;
-            }
-
-            &:focus {
-                box-shadow: 0px 4px 4px $gray5;
-            }
-        }
-    
-        .tsi-hierarchy-list-wrapper {
-            background: $gray3;
-            box-shadow: 0px 4px 4px $gray5;
-            li {
-                background: $gray3;
-                &:hover, &:focus{
-                    background-color: $gray4 !important;
-                }
-                &.selected {
-                    background-color: $gray5;
-                }
-            }
-        }
-    }
-
-    .tsi-filter-path {
-        .tsi-path {
-            &:hover, &:focus {
-                background-color: $gray5;
-            }
-        }
-    }
-
-    .tsi-hierarchy-search {
-        .tsi-view-type {
-            outline: 1px solid $gray5;
-            &.selected {
-                background-color: $gray2;
-            }
-            &:focus {
-                outline: 1px solid $gray6;
-                z-index: 2;
-            }
-        }
-    }
-
-    a {
-        color: $gray6;
-        &:hover, &:focus {
-            outline: none;
-            text-decoration: underline;
-        }
-    }
-
-    @include baseContextMenuColors($grays);
-
-    .tsi-hierarchyCheckbox{
-        &.tsi-notSelected{
-            background: $gray3 !important;
-            border: 1px solid rgba($gray1, .2);
-        }
-    }
-
-    .tsi-notFound, .tsi-noResults {
-        border-bottom: 1px solid $gray5;
-        &.border-top {
-            border-top: 1px solid $gray5;
-        }
-    }
-}   
-
-.tsi-hierarchy-nav-wrapper{
+.tsi-hierarchy-nav-wrapper {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
 
-    &.tsi-dark{
+    // Performance: isolate component for better browser optimization
+    contain: layout style paint;
+
+    // Accessibility: reduced motion support
+    @include animations.reducedMotion;
+
+    // High contrast mode support
+    @include theme.hierarchyHighContrast;
+
+    &.tsi-dark {
         $grays: grays('dark');
-        @include hierarchyColors($grays);
-        .tsi-caret-icon, .tsi-down-caret-icon {
+        @include theme.hierarchyColors($grays);
+
+        // Extract individual gray values for nested styles
+        $gray1: list.nth($grays, 1);
+        $gray2: list.nth($grays, 2);
+        $gray3: list.nth($grays, 3);
+        $gray4: list.nth($grays, 4);
+
+        .tsi-caret-icon,
+        .tsi-down-caret-icon {
             background-image: url(../../icons/CaretClosed_Dark_Theme.svg);
         }
+
         .tsi-pin-icon {
             background-image: url(../../icons/Pin_Icon_Dark_Theme.svg);
         }
+
         .tsi-close-icon {
             background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
         }
@@ -204,16 +63,40 @@
             background-image: url(../../icons/Search_Dark.svg);
         }
 
-        .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);                    
+        .tsi-clear {
+            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
+        }
+
+        .tsi-searchInput {
+            color: var(--tsi-hierarchy-text);
+        }
+
+        .awesomplete>ul {
+            background: color.adjust($gray3, $lightness: -5%);
+            color: $gray1;
+
+            li[aria-selected="true"],
+            li:hover,
+            li:focus {
+                background: $gray2;
+            }
         }
     }
-    &.tsi-light{
+
+    &.tsi-light {
         $grays: grays('light');
-        @include hierarchyColors($grays);
-        .tsi-caret-icon, .tsi-down-caret-icon{
+        @include theme.hierarchyColors($grays);
+
+        // Extract individual gray values for nested styles
+        $gray1: list.nth($grays, 1);
+        $gray2: list.nth($grays, 2);
+        $gray4: list.nth($grays, 4);
+
+        .tsi-caret-icon,
+        .tsi-down-caret-icon {
             background-image: url(../../icons/CaretClosed_Light_Theme.svg);
         }
+
         .tsi-pin-icon {
             background-image: url(../../icons/Pin_Icon_Light_Theme.svg);
         }
@@ -237,62 +120,78 @@
         .tsi-spinner-icon {
             background-image: url(../../icons/Spinner.svg);
         }
-        
+
         .tsi-search-icon {
             background-image: url(../../icons/Search_Light.svg);
         }
 
-        .tsi-clear{
-            background-image: url(../../icons/Close_Icon_Light_Theme.svg);                    
+        .tsi-clear {
+            background-image: url(../../icons/Close_Icon_Light_Theme.svg);
+        }
+
+        .awesomplete>ul {
+            background: $gray4;
+            color: $gray1;
+
+            li[aria-selected="true"],
+            li:hover,
+            li:focus {
+                background: $gray2;
+            }
         }
     }
 
     .tsi-hierarchy-selection-wrapper {
-        padding: 20px 20px 8px;
+        padding: tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-sm;
         flex-direction: column;
         display: flex;
-        z-index: 3;
+        z-index: tokens.$tsi-hierarchy-z-dropdown;
         position: relative;
+        flex-shrink: 0; // Prevent shrinking when content expands
 
         .tsi-hierarchy-select {
             display: flex;
             align-items: center;
             width: 100%;
-            padding: 0 8px;;
+            padding: 0 tokens.$tsi-hierarchy-padding-sm;
             box-sizing: border-box;
-            border-radius: 2px;
+            border-radius: tokens.$tsi-hierarchy-border-radius;
             height: 32px;
             cursor: pointer;
 
             .tsi-hierarchy-name {
-                font-size: 14px;
+                font-size: tokens.$tsi-hierarchy-font-size-base;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 width: calc(100% - 10px);
-                padding-right: 8px;
-                text-align: left;
+                padding-inline-end: tokens.$tsi-hierarchy-padding-sm;
+                text-align: start;
             }
         }
 
         .tsi-hierarchy-list-wrapper {
             display: none;
-            z-index: 3;
+            z-index: tokens.$tsi-hierarchy-z-dropdown;
             position: absolute;
             width: calc(100% - 40px);
             top: 53px;
 
             ul {
-                font-size: 14px;
+                font-size: tokens.$tsi-hierarchy-font-size-base;
 
                 li {
-                    padding: 8px;
+                    padding: tokens.$tsi-hierarchy-padding-sm;
                     outline: none;
+
                     &:hover {
                         cursor: pointer;
                     }
-                    &:focus {
+
+                    &:focus-visible {
                         z-index: 2;
+                        outline: 2px solid var(--tsi-hierarchy-accent);
+                        outline-offset: -2px;
                     }
                 }
             }
@@ -301,65 +200,178 @@
 
     .tsi-hierarchy-search {
         display: flex;
-        align-items: center;        
-        padding: 0px 20px;
-        margin-top: 8px;
+        align-items: center;
+        padding: 0 10px;
+        margin-top: tokens.$tsi-hierarchy-padding-sm;
         flex-direction: row;
         height: 32px;
+        flex-shrink: 0; // Prevent shrinking when content expands
 
         ul {
-            z-index: 2 !important;
+            z-index: tokens.$tsi-hierarchy-z-view-type-focus !important;
+        }
+
+        .tsi-search {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            height: 32px;
+
+            .tsi-searchInput {
+                width: 100%;
+                box-sizing: border-box;
+                padding-inline-end: 28px;
+            }
+
+            .tsi-clear {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                position: absolute;
+                inset-inline-end: 8px;
+                top: 6px;
+                display: none;
+                z-index: 2;
+                background-repeat: no-repeat;
+                background-position: 50%;
+                background-size: contain;
+
+                &.tsi-shown {
+                    display: block;
+                }
+            }
+
+            .tsi-searchInput::-ms-clear {
+                display: none;
+            }
+
+            // Awesomplete autocomplete styles
+            .awesomplete [hidden] {
+                display: none;
+            }
+
+            .awesomplete .visually-hidden {
+                position: absolute;
+                clip: rect(0, 0, 0, 0);
+            }
+
+            .awesomplete {
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+            .awesomplete>input {
+                padding-right: 28px;
+            }
+
+            .awesomplete>ul {
+                @extend .tsi-baseContextMenu;
+                animation: tsi-slideIn 0.367s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+                position: absolute;
+                z-index: 100;
+                list-style: none;
+                padding: 0;
+                border-radius: 0px;
+                font-size: 13px;
+                width: 100%;
+                margin-top: 34px;
+                max-height: 300px;
+                overflow-y: auto;
+
+                &:before {
+                    display: none;
+                }
+
+                li {
+                    display: block;
+                    line-height: 20px;
+                    cursor: pointer;
+                    padding: 8px 12px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    &[aria-selected="true"],
+                    &:hover,
+                    &:focus {
+                        background: var(--tsi-hierarchy-hover);
+                    }
+                }
+            }
+
+            .awesomplete>ul:empty {
+                display: none;
+            }
+
+            .tsi-search-results-info {
+                position: absolute !important;
+                display: block;
+                visibility: visible;
+                overflow: hidden;
+                width: 1px;
+                height: 1px;
+                margin: -1px;
+                border: 0;
+                padding: 0;
+                white-space: nowrap;
+            }
         }
 
         .tsi-view-types {
             display: none;
             flex-direction: row;
-            animation: fade-in .2s ease-in-out;
+            @include animations.fadeInAnimation;
 
             .tsi-view-type {
                 width: 32px;
                 height: 32px;
-                padding: 8px;
-                margin-left: 1px;
+                padding: tokens.$tsi-hierarchy-padding-sm;
+                margin-inline-start: 1px;
                 align-items: center;
                 cursor: pointer;
 
                 .tsi-tree-icon {
                     display: inline-block;
                 }
-    
+
                 .tsi-list-icon {
                     display: inline-block;
                 }
             }
         }
-        
+
         .tsi-modelAutocompleteWrapper {
             position: relative;
             display: inline-flex;
             flex-grow: 1;
 
             .tsi-clear {
-                right: 4px !important;
-                left: unset !important;
-                margin-top: 0px !important;
+                inset-inline-end: tokens.$tsi-hierarchy-padding-xs !important;
+                inset-inline-start: unset !important;
+                margin-top: 0 !important;
             }
         }
     }
 
     .tsi-filter-path-wrapper {
         display: flex;
-        height: 0px;
+        height: 0;
         transform: scaleY(0);
         transform-origin: top;
-        transition: transform 0.2s ease-out;
+        transition: transform tokens.$tsi-hierarchy-transition-speed ease-out;
         opacity: 0.5;
+        will-change: transform, opacity;
+        flex-shrink: 0; // Prevent shrinking when content expands
 
         &.visible {
-            height: 24px;
+            height: tokens.$tsi-hierarchy-filter-path-height;
             transform: scaleY(1);
-            padding: 0px 20px;
-            margin-top: 4px;
+            padding: 0 tokens.$tsi-hierarchy-padding-base;
+            margin-top: tokens.$tsi-hierarchy-padding-xs;
         }
 
         .tsi-filter-path {
@@ -370,67 +382,69 @@
             padding: 0;
 
             .tsi-filter-icon {
-                width: 12px;
-                height: 10px;
+                width: tokens.$tsi-hierarchy-icon-size-sm;
+                height: tokens.$tsi-hierarchy-icon-size-xs;
                 cursor: auto;
-                margin-right: 4px;
+                margin-inline-end: tokens.$tsi-hierarchy-padding-xs;
             }
-    
+
             .tsi-path-list {
                 display: flex;
                 align-items: center;
                 max-width: calc(100% - 36px);
 
                 .tsi-path {
-                    font-size: 12px;
+                    font-size: tokens.$tsi-hierarchy-font-size-sm;
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     overflow: hidden;
-                    padding: 4px;
-                    border-radius: 4px;
+                    padding: tokens.$tsi-hierarchy-padding-xs;
+                    border-radius: tokens.$tsi-hierarchy-border-radius-lg;
                     cursor: pointer;
                     outline: none;
 
-                    &:first-child, &:last-child {
+                    &:first-child,
+                    &:last-child {
                         min-width: 32px;
                     }
 
                     &:first-child {
-                        padding-left: 0;
+                        padding-inline-start: 0;
                     }
                 }
             }
-    
+
             .tsi-filter-clear {
-                width: 12px !important;
-                height: 12px !important;
-                margin-left: auto;
+                width: tokens.$tsi-hierarchy-icon-size-sm !important;
+                height: tokens.$tsi-hierarchy-icon-size-sm !important;
+                margin-inline-start: auto;
                 display: none;
                 cursor: pointer;
             }
-        }  
+        }
     }
 
     .tsi-instance-lookup-loading {
         display: none;
-        animation: fade-in .2s ease-in-out;
-        padding: 8px 18px 0px;
+        @include animations.fadeInAnimation;
+        padding: tokens.$tsi-hierarchy-padding-sm 18px 0;
         align-items: center;
         width: 100%;
+        flex-shrink: 0; // Prevent shrinking when content expands
 
         .tsi-spinner-icon {
-            width: 12px;
-            height: 12px;
+            width: tokens.$tsi-hierarchy-icon-size-sm;
+            height: tokens.$tsi-hierarchy-icon-size-sm;
             display: inline-block;
-            margin-right: 8px;
-            animation: rotating 2s linear infinite;
+            margin-inline-end: tokens.$tsi-hierarchy-padding-sm;
+            @include animations.rotatingAnimation;
         }
 
         .tsi-lookup-instance {
             width: 100%;
             text-overflow: ellipsis;
             overflow: hidden;
-            font-size: 13px;
+            font-size: tokens.$tsi-hierarchy-font-size-md;
             white-space: nowrap;
         }
     }
@@ -440,14 +454,14 @@
         display: flex;
         flex-grow: 1;
         flex-direction: column;
-        min-height: 0px;
-        padding-top: 8px;
+        min-height: 0;
+        padding-top: tokens.$tsi-hierarchy-padding-sm;
         position: relative;
 
         .tsi-hierarchy {
             width: 100%;
             overflow-y: auto;
-            padding-bottom: 20px;
+            padding-bottom: tokens.$tsi-hierarchy-padding-base;
         }
 
         .tsi-list {
@@ -458,37 +472,43 @@
             .tsi-modelResultWrapper {
                 cursor: pointer;
                 position: relative;
-                max-height: 206px;
+                max-height: tokens.$tsi-hierarchy-max-result-height;
                 overflow: hidden;
-                animation: fade-in .2s ease-in-out;
+                @include animations.fadeInAnimation;
 
-                .tsi-modelResult{
+                .tsi-modelResult {
                     pointer-events: none;
-                    padding: 8px 20px;
-                    .tsi-modelPK{
-                        font-weight: 600;   
-                        font-size: 14px;
+                    padding: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-base;
+
+                    .tsi-modelPK {
+                        font-weight: 600;
+                        font-size: tokens.$tsi-hierarchy-font-size-base;
                         text-overflow: ellipsis;
                         overflow: hidden;
                         white-space: nowrap;
                     }
-                    .tsi-modelHighlights{
-                        font-size: 12px;
+
+                    .tsi-modelHighlights {
+                        font-size: tokens.$tsi-hierarchy-font-size-sm;
                         padding-top: 2px;
-                        padding-left: 8px;
+                        padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
                         padding-bottom: 2px;
-                        table{
+
+                        table {
                             border-spacing: 0;
                             margin-top: 2px;
-                            tr{
+
+                            tr {
                                 td {
                                     padding: 0;
                                     vertical-align: top;
-                                    &:first-of-type{
-                                        opacity: .6;
+
+                                    &:first-of-type {
+                                        opacity: 0.6;
                                     }
-                                    &:nth-of-type(2){
-                                        padding-left: 8px;
+
+                                    &:nth-of-type(2) {
+                                        padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
                                     }
                                 }
                             }
@@ -496,41 +516,45 @@
                     }
                 }
             }
-            .tsi-show-more{
+
+            .tsi-show-more {
                 text-align: center !important;
-                padding: 8px;
+                padding: tokens.$tsi-hierarchy-padding-sm;
             }
         }
-        .tsi-show-more{
-            font-size: 14px;
+
+        .tsi-show-more {
+            font-size: tokens.$tsi-hierarchy-font-size-base;
+
             span {
                 cursor: pointer !important;
             }
         }
     }
 
-    .tsi-notFound, .tsi-noResults {
+    .tsi-notFound,
+    .tsi-noResults {
         display: flex;
         align-items: center;
-        margin: 4px 20px;
-        padding: 4px 0px;
-        animation: fade-in .2s ease-in-out;
+        margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-base;
+        padding: tokens.$tsi-hierarchy-padding-xs 0;
+        @include animations.fadeInAnimation;
 
         .tsi-not-found-message {
-            width: calc(100% - 12px);
-            padding-right: 4px;
-            font-size: 12px;
+            width: calc(100% - tokens.$tsi-hierarchy-icon-size-sm);
+            padding-inline-end: tokens.$tsi-hierarchy-padding-xs;
+            font-size: tokens.$tsi-hierarchy-font-size-sm;
             line-height: 17px;
 
             .tsi-search-globally-link {
-                padding-left: 4px;
+                padding-inline-start: tokens.$tsi-hierarchy-padding-xs;
                 cursor: pointer;
             }
         }
 
         .tsi-clear {
-            width: 12px;
-            height: 12px;
+            width: tokens.$tsi-hierarchy-icon-size-sm;
+            height: tokens.$tsi-hierarchy-icon-size-sm;
             cursor: pointer;
             display: inline-block;
             background-size: contain;
@@ -539,12 +563,12 @@
     }
 
     .tsi-filter-icon {
-        z-index: 3 !important;
-        right: 20px;
+        z-index: tokens.$tsi-hierarchy-z-filter-icon !important;
+        inset-inline-end: tokens.$tsi-hierarchy-padding-base;
         position: absolute;
         visibility: hidden;
-        height: 16px;
-        width: 16px;
+        height: tokens.$tsi-hierarchy-icon-size;
+        width: tokens.$tsi-hierarchy-icon-size;
         cursor: pointer;
         background-repeat: no-repeat;
         background-size: 11px;
@@ -558,23 +582,26 @@
         background-repeat: no-repeat;
         background-size: contain;
         transform: rotate(90deg);
+        @include animations.smoothTransform;
     }
 
-    .tsi-close-icon, .tsi-list-icon, .tsi-tree-icon {
+    .tsi-close-icon,
+    .tsi-list-icon,
+    .tsi-tree-icon {
         cursor: pointer;
-        height: 16px;
-        width: 16px;
+        height: tokens.$tsi-hierarchy-icon-size;
+        width: tokens.$tsi-hierarchy-icon-size;
         background-repeat: no-repeat;
         background-size: contain;
     }
 
-    ul{
+    ul {
         list-style: none;
         padding: 0;
         margin: 0;
         width: 100%;
-        
-        &.tsi-noPad{
+
+        &.tsi-noPad {
             padding: 8px 20px;
             margin: 0;
             overflow: auto;
@@ -584,33 +611,41 @@
 
     li {
         position: relative;
-        animation: fade-in .2s ease-in-out;
+        @include animations.fadeInAnimation;
 
-        .tsi-caret-icon{
+        // Performance: enable content-visibility for off-screen items
+        content-visibility: auto;
+        contain-intrinsic-size: auto tokens.$tsi-hierarchy-item-height;
+
+        .tsi-caret-icon {
             position: absolute;
             display: block;
-            height: 10px;
-            width: 10px;
+            height: tokens.$tsi-hierarchy-icon-size-xs;
+            width: tokens.$tsi-hierarchy-icon-size-xs;
             cursor: pointer;
-            z-index: 1;
-            background-size: 10px;
+            z-index: tokens.$tsi-hierarchy-z-caret;
+            background-size: tokens.$tsi-hierarchy-icon-size-xs;
             background-repeat: no-repeat;
             top: 11px;
             background-position: 50%;
-            transition: all .2s ease;
+            @include animations.smoothTransform;
             pointer-events: none;
             transform: rotate(0deg);
         }
-        .tsi-hierarchyItem{
+
+        .tsi-hierarchyItem {
             display: flex;
             flex-wrap: wrap;
             position: relative;
             margin: 0;
-            min-height: 28px;
-            font-size: 14px;
+            min-height: tokens.$tsi-hierarchy-item-min-height;
+            font-size: tokens.$tsi-hierarchy-font-size-base;
             align-items: center;
-            padding-right: 40px;
+            padding-inline-end: 40px;
             cursor: pointer !important;
+
+            // Performance: containment for better rendering
+            contain: layout paint;
 
             .tsi-name {
                 text-overflow: ellipsis;
@@ -620,22 +655,22 @@
             }
 
             .tsi-instanceCount {
-                opacity: .6;
-                padding-left: 8px;
-                font-size: 11px;
+                opacity: 0.6;
+                padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
+                font-size: tokens.$tsi-hierarchy-font-size-xs;
                 position: relative;
                 top: 1px;
             }
 
             .tsi-highlights-detail {
                 font-weight: 400;
-                font-size: 12px;
+                font-size: tokens.$tsi-hierarchy-font-size-sm;
                 padding-top: 2px;
-                padding-left: 8px;
+                padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
                 padding-bottom: 2px;
                 display: none;
                 width: 100%;
-            
+
                 table {
                     margin: 2px;
                     table-layout: fixed;
@@ -649,53 +684,58 @@
                             text-overflow: ellipsis;
                             overflow: hidden;
 
-                            &:first-of-type{
-                                opacity: .6;
+                            &:first-of-type {
+                                opacity: 0.6;
                             }
-                            &:nth-of-type(2){
-                                padding-left: 8px;
+
+                            &:nth-of-type(2) {
+                                padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
                             }
                         }
                     }
                 }
             }
         }
-        &.tsi-expanded{
-            > .tsi-hierarchyItem > .tsi-caret-icon{
+
+        &.tsi-expanded {
+            >.tsi-hierarchyItem>.tsi-caret-icon {
                 content: '';
                 cursor: pointer;
                 transform: rotate(90deg);
             }
         }
+
         &.tsi-leaf {
             font-weight: 600;
         }
     }
 
-    .tsi-noBefore .tsi-caret-icon{
+    .tsi-noBefore .tsi-caret-icon {
         content: '' !important;
     }
 
-    .tsi-hierarchyNavigationContextMenu{
+    .tsi-hierarchyNavigationContextMenu {
         @extend .tsi-baseContextMenu;
         border: none;
         position: absolute;
-        width: 172px;
-        left: calc(100% - 32px);
-        top: 0px;
-        z-index: 4;
-        transition: top .2s ease-in-out;
+        width: tokens.$tsi-hierarchy-context-menu-width;
+        inset-inline-start: calc(100% - 32px);
+        top: 0;
+        z-index: tokens.$tsi-hierarchy-z-context-menu;
+        transition: top tokens.$tsi-hierarchy-transition-speed tokens.$tsi-hierarchy-transition-easing;
         display: flex;
         flex-direction: column;
 
         .tsi-search {
             height: 32px;
             padding: 0;
-            margin: 4px 8px 8px;
+            margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm;
             width: calc(100% - 16px);
 
-            &:focus, &:hover {
+            &:focus-visible,
+            &:hover {
                 background-color: unset !important;
+                outline: 2px solid var(--tsi-hierarchy-accent);
             }
         }
 
@@ -704,13 +744,13 @@
             margin: 0;
             overflow-y: auto;
             max-width: 200px;
-            max-height: 240px;
+            max-height: tokens.$tsi-hierarchy-context-menu-max-height;
         }
 
         li {
-            font-size: 12px;
+            font-size: tokens.$tsi-hierarchy-font-size-sm;
             cursor: pointer;
-            height: 28px;
+            height: tokens.$tsi-hierarchy-item-height;
             display: flex;
             align-items: center;
             overflow: hidden;
@@ -718,22 +758,22 @@
 
         button {
             text-align: center;
-            margin: 12px 8px 4px;
+            margin: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-xs;
             display: block;
-            min-height: 28px;
+            min-height: tokens.$tsi-hierarchy-item-height;
         }
 
         .tsi-selectionItemWrapper {
             display: flex;
             align-items: center;
             width: 100%;
-            padding: 4px 8px;
+            padding: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm;
             cursor: pointer;
 
             .tsi-hierarchyCheckbox {
                 display: inline-block;
-                width: 16px;
-                height: 16px;
+                width: tokens.$tsi-hierarchy-checkbox-size;
+                height: tokens.$tsi-hierarchy-checkbox-size;
                 margin: 0;
                 background-image: url('../../icons/checkboxes.svg');
                 background-size: contain;
@@ -741,17 +781,20 @@
             }
 
             .tsi-selectionItemKind {
-                width: 16px;
-                height: 16px;
+                width: tokens.$tsi-hierarchy-icon-size;
+                height: tokens.$tsi-hierarchy-icon-size;
                 background-size: contain;
                 background-repeat: no-repeat;
                 flex-shrink: 0;
+
                 &.categorical {
                     background-image: url('../../icons/categorical.svg');
                 }
+
                 &.aggregate {
                     background-image: url('../../icons/aggregate.svg');
                 }
+
                 &.numeric {
                     background-image: url('../../icons/numeric.svg');
                 }
@@ -762,27 +805,68 @@
                 overflow: hidden;
                 white-space: nowrap;
                 width: calc(100% - 40px);
-                margin: 0 8px;
-                padding-left: 2px;
+                margin: 0 tokens.$tsi-hierarchy-padding-sm;
+                padding-inline-start: 2px;
             }
         }
     }
 
-    .tsi-hitCount { 
+    .tsi-hitCount {
         display: none;
     }
 
-    @keyframes fade-in {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    }
+    .tsi-search-results {
+        padding: 8px;
 
-    @keyframes rotating {
-        from {
-          transform: rotate(0deg);
+        .tsi-search-results-header {
+            padding: 8px;
+            font-size: 14px;
+            color: var(--tsi-hierarchy-text-secondary);
         }
-        to {
-          transform: rotate(360deg);
+
+        .tsi-search-result-item {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--tsi-hierarchy-border);
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--tsi-hierarchy-hover);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--tsi-hierarchy-accent);
+                outline-offset: -2px;
+            }
+
+            &.tsi-selected {
+                background-color: var(--tsi-hierarchy-selected, rgba(0, 120, 212, 0.1));
+                border-left: 3px solid var(--tsi-hierarchy-accent);
+                padding-left: 5px;
+            }
+
+            .tsi-search-breadcrumb {
+                font-size: 11px;
+                color: var(--tsi-hierarchy-text-secondary);
+                margin-bottom: 4px;
+            }
+
+            .tsi-search-result-name {
+                font-size: 13px;
+                font-weight: 600;
+
+                mark {
+                    background-color: #fff9a8;
+                    color: black;
+                    font-weight: 700;
+                }
+            }
+
+            .tsi-search-result-description,
+            .tsi-search-result-count {
+                font-size: 12px;
+                color: var(--tsi-hierarchy-text-secondary);
+                margin-top: 4px;
+            }
         }
     }
 }

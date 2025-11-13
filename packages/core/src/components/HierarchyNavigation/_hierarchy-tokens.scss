@@ -1,0 +1,44 @@
+// Design tokens for HierarchyNavigation component
+// Centralized values for better maintainability
+
+// Spacing
+$tsi-hierarchy-spacing-unit: 8px;
+$tsi-hierarchy-indent: 18px;
+$tsi-hierarchy-item-height: 28px;
+$tsi-hierarchy-item-min-height: 28px;
+$tsi-hierarchy-icon-size: 16px;
+$tsi-hierarchy-icon-size-sm: 12px;
+$tsi-hierarchy-icon-size-xs: 10px;
+$tsi-hierarchy-checkbox-size: 16px;
+
+// Typography
+$tsi-hierarchy-font-size-base: 14px;
+$tsi-hierarchy-font-size-sm: 12px;
+$tsi-hierarchy-font-size-xs: 11px;
+$tsi-hierarchy-font-size-md: 13px;
+
+// Layout
+$tsi-hierarchy-padding-base: 20px;
+$tsi-hierarchy-padding-sm: 8px;
+$tsi-hierarchy-padding-xs: 4px;
+$tsi-hierarchy-border-radius: 2px;
+$tsi-hierarchy-border-radius-lg: 4px;
+
+// Transitions & Animations
+$tsi-hierarchy-transition-speed: 0.2s;
+$tsi-hierarchy-transition-easing: ease-in-out;
+$tsi-hierarchy-animation-duration: 0.2s;
+$tsi-hierarchy-spinner-duration: 2s;
+
+// Z-index layers
+$tsi-hierarchy-z-dropdown: 3;
+$tsi-hierarchy-z-context-menu: 4;
+$tsi-hierarchy-z-filter-icon: 3;
+$tsi-hierarchy-z-view-type-focus: 2;
+$tsi-hierarchy-z-caret: 1;
+
+// Dimensions
+$tsi-hierarchy-max-result-height: 206px;
+$tsi-hierarchy-context-menu-width: 172px;
+$tsi-hierarchy-context-menu-max-height: 240px;
+$tsi-hierarchy-filter-path-height: 24px;

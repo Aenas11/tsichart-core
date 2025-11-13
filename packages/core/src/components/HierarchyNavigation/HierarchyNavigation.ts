@@ -1,19 +1,69 @@
 import * as d3 from 'd3';
 import './HierarchyNavigation.scss';
+import 'awesomplete';
 import Utils from "../../utils";
 import { Component } from "./../../interfaces/Component";
-import ModelAutocomplete from '../ModelAutocomplete';
+import TreeRenderer from './TreeRenderer';
+// ensure runtime fallback for environments where TS extensions aren't resolved by bundler
+try { /* noop, allows static import for bundlers */ } catch (e) { /* noop */ }
+
+// Lightweight interfaces to describe the tree data model used by the component
+export interface ITreeItem {
+    node?: any;
+    children?: Record<string, ITreeItem> | null;
+    isLeaf?: boolean;
+    id?: string | null;
+    displayName?: string;
+    level?: number;
+    cumulativeInstanceCount?: number | null;
+    path?: string[];
+    name?: string;
+    isExpanded?: boolean;
+}
+
+export interface IHierarchyNode extends ITreeItem {
+    name: string;
+    id?: string | null;
+    path: string[];
+    level: number;
+    cumulativeInstanceCount?: number | null;
+    node?: any;
+    children?: Record<string, IHierarchyNode> | null;
+    isExpanded?: boolean;
+    expand?: () => Promise<any> | any;
+    collapse?: () => void;
+}
+
+export interface IInstanceNode extends ITreeItem {
+    timeSeriesId: any;
+    name?: string | null;
+    description?: string | null;
+    suppressDrawContextMenu?: boolean;
+    isLeaf?: boolean;
+    level?: number;
+    node?: any;
+    id?: string | null;
+}
 
 class HierarchyNavigation extends Component {
-
-    private searchFunction;
-    private hierarchyElem;
+    private searchFunction: (payload: any) => Promise<any>;
+    private hierarchyElem: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
     private path: Array<string> = [];
+    // debounce + request cancellation fields
+    private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    private debounceDelay: number = 250; // ms
+    private requestCounter: number = 0; // increments for each outgoing request
+    private latestRequestId: number = 0; // id of the most recent request
     //selectedIds
     public selectedIds: Array<string> = [];
     public searchEnabled: boolean = true;
+    public autocompleteEnabled: boolean = true; // Enable/disable autocomplete suggestions
     private searchWrapperElem;
     private hierarchyNavWrapper;
+    // Search mode state
+    private isSearchMode: boolean = false;
+    // Paths that should be auto-expanded (Set of path strings like "Factory North/Building A")
+    private pathsToAutoExpand: Set<string> = new Set();
 
     public ap: any; // awesomplete object
 
@@ -21,7 +71,7 @@ class HierarchyNavigation extends Component {
         super(renderTarget);
     }
 
-    public async render(searchF: Function, hierarchyNavOptions: any = {}, preselectedIds: Array<string>): Promise<void> {
+    public async render(searchF: (payload: any) => Promise<any>, hierarchyNavOptions: any = {}, preselectedIds: Array<string>): Promise<void> {
         this.chartOptions.setOptions(hierarchyNavOptions);
         this.searchFunction = searchF;
 
@@ -30,8 +80,18 @@ class HierarchyNavigation extends Component {
 
         this.selectedIds = preselectedIds;
 
+        // Allow disabling autocomplete via options
+        if (hierarchyNavOptions.autocompleteEnabled !== undefined) {
+            this.autocompleteEnabled = hierarchyNavOptions.autocompleteEnabled;
+        }
+
+        // Pre-compute paths that need to be auto-expanded for preselected instances
+        if (preselectedIds && preselectedIds.length > 0) {
+            await this.computePathsToAutoExpand(preselectedIds);
+        }
+
         //render search wrapper
-        //this.renderSearchBox()
+        this.renderSearchBox();
 
 
 
@@ -40,8 +100,7 @@ class HierarchyNavigation extends Component {
         const results = this.createResultsWrapper(this.hierarchyNavWrapper);
         this.hierarchyElem = this.createHierarchyElem(results);
 
-        this.pathSearchAndRenderResult({ search: { payload: this.requestPayload() }, render: { target: this.hierarchyElem } });
-
+        await this.pathSearchAndRenderResult({ search: { payload: this.requestPayload() }, render: { target: this.hierarchyElem } });
 
     }
 
@@ -53,8 +112,132 @@ class HierarchyNavigation extends Component {
         return hierarchyNavWrapper.append('div').classed('tsi-hierarchy-or-list-wrapper', true);
     }
 
+    // create hierarchy container and attach keyboard handler
     private createHierarchyElem(results: d3.Selection<d3.BaseType, unknown, HTMLElement, any>): d3.Selection<d3.BaseType, unknown, HTMLElement, any> {
-        return results.append('div').classed('tsi-hierarchy', true).attr("role", "navigation").on('scroll', () => { });
+        const sel = results.append('div').classed('tsi-hierarchy', true).attr("role", "navigation").on('scroll', () => { });
+        // attach keydown listener for keyboard navigation (delegated)
+        // use native event to preserve focus handling
+        const node = sel.node();
+        if (node) {
+            node.addEventListener('keydown', (ev: KeyboardEvent) => this.onKeyDown(ev));
+        }
+        return sel;
+    }
+
+    // Keyboard navigation handlers and helpers
+    private onKeyDown(ev: KeyboardEvent) {
+        const key = ev.key;
+        const active = document.activeElement as HTMLElement | null;
+        const container = this.hierarchyElem?.node() as HTMLElement | null;
+        if (!container) return;
+
+        const isInside = active && container.contains(active);
+        if (!isInside && (key === 'ArrowDown' || key === 'ArrowUp')) {
+            // focus first visible item on navigation keys
+            const visible = this.getVisibleItemElems();
+            if (visible.length) {
+                this.focusItem(visible[0]);
+                ev.preventDefault();
+            }
+            return;
+        }
+
+        if (!active) return;
+        const current = active.classList && active.classList.contains('tsi-hierarchyItem') ? active : active.closest('.tsi-hierarchyItem') as HTMLElement;
+        if (!current) return;
+
+        switch (key) {
+            case 'ArrowDown':
+                this.focusNext(current);
+                ev.preventDefault();
+                break;
+            case 'ArrowUp':
+                this.focusPrev(current);
+                ev.preventDefault();
+                break;
+            case 'ArrowRight':
+                this.handleArrowRight(current);
+                ev.preventDefault();
+                break;
+            case 'ArrowLeft':
+                this.handleArrowLeft(current);
+                ev.preventDefault();
+                break;
+            case 'Enter':
+            case ' ':
+                // activate (toggle expand or select)
+                (current as HTMLElement).click();
+                ev.preventDefault();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private getVisibleItemElems(): HTMLElement[] {
+        if (!this.hierarchyElem) return [];
+        const root = this.hierarchyElem.node() as unknown as HTMLElement;
+        if (!root) return [];
+        const items = Array.from(root.querySelectorAll('.tsi-hierarchyItem')) as HTMLElement[];
+        return items.filter(i => i.offsetParent !== null && getComputedStyle(i).display !== 'none');
+    }
+
+    private focusItem(elem: HTMLElement) {
+        if (!this.hierarchyElem) return;
+        const root = this.hierarchyElem.node() as unknown as HTMLElement;
+        if (!root) return;
+        const items = Array.from(root.querySelectorAll('.tsi-hierarchyItem')) as HTMLElement[];
+        items.forEach(i => i.setAttribute('tabindex', '-1'));
+        elem.setAttribute('tabindex', '0');
+        elem.focus();
+    }
+
+    private focusNext(current: HTMLElement) {
+        const visible = this.getVisibleItemElems();
+        const idx = visible.indexOf(current);
+        if (idx >= 0 && idx < visible.length - 1) {
+            this.focusItem(visible[idx + 1]);
+        }
+    }
+
+    private focusPrev(current: HTMLElement) {
+        const visible = this.getVisibleItemElems();
+        const idx = visible.indexOf(current);
+        if (idx > 0) {
+            this.focusItem(visible[idx - 1]);
+        }
+    }
+
+    private handleArrowRight(current: HTMLElement) {
+        const caret = current.querySelector('.tsi-caret-icon');
+        const expanded = current.getAttribute('aria-expanded') === 'true';
+        if (caret && !expanded) {
+            // expand
+            current.click();
+            return;
+        }
+        // if already expanded, move to first child
+        if (caret && expanded) {
+            const li = current.closest('li');
+            const childLi = li?.querySelector('ul > li');
+            const childItem = childLi?.querySelector('.tsi-hierarchyItem') as HTMLElement | null;
+            if (childItem) this.focusItem(childItem);
+        }
+    }
+
+    private handleArrowLeft(current: HTMLElement) {
+        const caret = current.querySelector('.tsi-caret-icon');
+        const expanded = current.getAttribute('aria-expanded') === 'true';
+        if (caret && expanded) {
+            // collapse
+            current.click();
+            return;
+        }
+        // move focus to parent
+        const li = current.closest('li');
+        const parentLi = li?.parentElement?.closest('li');
+        const parentItem = parentLi?.querySelector('.tsi-hierarchyItem') as HTMLElement | null;
+        if (parentItem) this.focusItem(parentItem);
     }
 
     // prepares the parameters for search request
@@ -65,43 +248,12 @@ class HierarchyNavigation extends Component {
 
 
     // renders tree for both 'Navigate' and 'Filter' mode (with Hierarchy View option selected), locInTarget refers to the 'show more' element -either hierarchy or instance- within the target
-    private renderTree(data: any, target: any): void {
-
-        let list = target.append('ul').attr("role", target === this.hierarchyElem ? "tree" : "group");
-
-        Object.keys(data).forEach(el => {
-            let nodeNameToCheckIfExists = data[el] instanceof InstanceNode ? this.instanceNodeString(data[el]) : el;
-            let li;
-            if (list.selectAll(".tsi-name").nodes().find(e => e.innerText === nodeNameToCheckIfExists)) {
-                li = null;
-            } else {
-                li = list.append('li').classed('tsi-leaf', data[el].isLeaf);
-
-                //if the node is already selected, we want to highlight it
-                if (this.selectedIds && this.selectedIds.includes(data[el].id)) {
-                    li.classed('tsi-selected', true);
-                }
-            }
-
-            if (!li) return;
-
-            li.attr("role", "none");
-            let newListElem = this.createHierarchyItemElem(data[el], el);
-            li.node().appendChild(newListElem.node());
-
-            data[el].node = li;
-            if (data[el].children) {
-                data[el].isExpanded = true;
-                data[el].node.classed('tsi-expanded', true);
-                this.renderTree(data[el].children, data[el].node);
-            }
-        });
-
+    private renderTree(data: Record<string, IHierarchyNode | IInstanceNode>, target: d3.Selection<any, any, any, any>): void {
+        TreeRenderer.render(this, data, target);
     }
 
     private renderSearchBox() {
         this.searchWrapperElem = this.hierarchyNavWrapper.append('div').classed('tsi-hierarchy-search', true);
-
 
         let inputWrapper = this.searchWrapperElem.append("div").attr("class", "tsi-search");
         inputWrapper.append("i").classed("tsi-search-icon", true);
@@ -109,50 +261,156 @@ class HierarchyNavigation extends Component {
         let input = inputWrapper
             .append("input")
             .attr("class", "tsi-searchInput")
-            .attr("aria-label", this.getString("Search Time Series Instances"))
-            .attr("aria-describedby", "tsi-search-desc")
+            .attr("aria-label", this.getString("Search"))
+            .attr("aria-describedby", "tsi-hierarchy-search-desc")
             .attr("role", "combobox")
             .attr("aria-owns", "tsi-search-results")
             .attr("aria-expanded", "false")
             .attr("aria-haspopup", "listbox")
             .attr(
                 "placeholder",
-                this.getString("Search Time Series Instances") + "..."
+                this.getString("Search") + "..."
             );
 
+        // Add ARIA description for screen readers
+        inputWrapper
+            .append("span")
+            .attr("id", "tsi-hierarchy-search-desc")
+            .style("display", "none")
+            .text(this.getString("Search suggestion instruction") || "Use arrow keys to navigate suggestions");
+
+        // Add live region for search results info
+        inputWrapper
+            .append("div")
+            .attr("class", "tsi-search-results-info")
+            .attr("aria-live", "assertive");
+
+        // Add clear button
+        let clear = inputWrapper
+            .append("div")
+            .attr("class", "tsi-clear")
+            .attr("tabindex", "0")
+            .attr("role", "button")
+            .attr("aria-label", "Clear Search")
+            .on("click keydown", function (event) {
+                if (Utils.isKeyDownAndNotEnter(event)) {
+                    return;
+                }
+                (input.node() as any).value = "";
+                self.exitSearchMode();
+                self.ap.close();
+                d3.select(this).classed("tsi-shown", false);
+            });
+
+        // Initialize Awesomplete for autocomplete (only if enabled)
+        let Awesomplete = (window as any).Awesomplete;
+        if (this.autocompleteEnabled && Awesomplete) {
+            this.ap = new Awesomplete(input.node(), {
+                minChars: 1,
+                maxItems: 10,
+                autoFirst: true
+            });
+        } else {
+            // Create a dummy object if autocomplete is disabled
+            this.ap = {
+                list: [],
+                close: () => { },
+                evaluate: () => { }
+            };
+        }
+
         let self = this;
+        let noSuggest = false;
+        let justAwesompleted = false;
+
+        // Handle autocomplete selection (only if enabled)
+        if (this.autocompleteEnabled) {
+            (input.node() as any).addEventListener("awesomplete-selectcomplete", (event) => {
+                noSuggest = true;
+                const selectedValue = event.text.value;
+                // Trigger search with selected value
+                self.performDeepSearch(selectedValue);
+                justAwesompleted = true;
+            });
+        }
 
         input.on("keydown", (event) => {
+            // Handle ESC key to clear the search box
+            if (event.key === 'Escape') {
+                const inputElement = event.target as HTMLInputElement;
+                inputElement.value = '';
+                // Trigger input event to clear search results
+                self.exitSearchMode();
+                self.ap.close();
+                clear.classed("tsi-shown", false);
+                return;
+            }
             this.chartOptions.onKeydown(event, this.ap);
         });
 
-        var searchText;
-
-        input.on("input", function (event) {
-            searchText = (event.target as any).value;
-            if (searchText.length === 0) {
-                //clear the tree
-                self.hierarchyElem.selectAll('ul').remove();
-                self.pathSearchAndRenderResult({ search: { payload: self.requestPayload() }, render: { target: self.hierarchyElem } });
-
-
-            } else {
-                //filter the tree
-                self.filterTree(searchText);
-
+        (input.node() as any).addEventListener("keyup", function (event) {
+            if (justAwesompleted) {
+                justAwesompleted = false;
+                return;
             }
+            let key = event.which || event.keyCode;
+            if (key === 13) {
+                noSuggest = true;
+            }
+        });
+
+        // Debounced input handler to reduce work while typing
+        input.on("input", function (event) {
+            const val = (event.target as any).value;
+            // always clear existing timer
+            if (self.debounceTimer) {
+                clearTimeout(self.debounceTimer);
+                self.debounceTimer = null;
+            }
+
+            // Show/hide clear button
+            clear.classed("tsi-shown", val.length > 0);
+
+            if (!val || val.length === 0) {
+                // Exit search mode and restore navigation view
+                self.exitSearchMode();
+                self.ap.close();
+                return;
+            }
+
+            // Populate autocomplete suggestions with instance leaves (only if enabled)
+            if (self.autocompleteEnabled && !noSuggest && val.length >= 1) {
+                self.fetchAutocompleteSuggestions(val);
+            } else {
+                self.ap.close();
+            }
+
+            // Use deep search for comprehensive results
+            self.debounceTimer = setTimeout(() => {
+                self.performDeepSearch(val);
+            }, self.debounceDelay);
+
+            noSuggest = false;
         });
 
     }
 
-    private async pathSearchAndRenderResult({ search: { payload, bubbleUpReject = false }, render: { target, locInTarget = null } }) {
+    private async pathSearchAndRenderResult({ search: { payload, bubbleUpReject = false }, render: { target, locInTarget = null } }: any) {
+        const requestId = ++this.requestCounter;
+        this.latestRequestId = requestId;
         try {
             const result = await this.searchFunction(payload);
+            if (requestId !== this.latestRequestId) {
+                return;
+            }
             if (result.error) {
                 throw result.error;
             }
-            this.renderSearchResult(result, payload, target);
+            await this.renderSearchResult(result, payload, target);
         } catch (err) {
+            if (requestId !== this.latestRequestId) {
+                return;
+            }
             this.chartOptions.onError("Error in hierarchy navigation", "Failed to complete search", err instanceof XMLHttpRequest ? err : null);
             if (bubbleUpReject) {
                 throw err;
@@ -160,15 +418,16 @@ class HierarchyNavigation extends Component {
         }
     }
 
-    private renderSearchResult = (r, payload, target: any) => {
-
-        const hierarchyData = r.hierarchyNodes?.hits?.length
+    private renderSearchResult = async (r: any, payload: any, target: d3.Selection<any, any, any, any>) => {
+        const hierarchyData: Record<string, IHierarchyNode> = r.hierarchyNodes?.hits?.length
             ? this.fillDataRecursively(r.hierarchyNodes, payload, payload)
-            : {};
+            : {} as Record<string, IHierarchyNode>;
 
-        const instancesData = r.instances?.hits?.length
-            ? r.instances.hits.reduce((acc, i) => {
-                acc[this.instanceNodeIdentifier(i)] = new InstanceNode(i.timeSeriesId, i.name, payload.path.length - this.path.length, i.id, i.description);
+        const instancesData: Record<string, InstanceNode> = r.instances?.hits?.length
+            ? r.instances.hits.reduce((acc: Record<string, InstanceNode>, i: any) => {
+                const inst = new InstanceNode(i.timeSeriesId, i.name, payload.path.length - this.path.length, i.id, i.description);
+                inst.displayName = this.instanceNodeStringToDisplay(i) || '';
+                acc[this.instanceNodeIdentifier(i)] = inst;
                 return acc;
             }, {})
             : {};
@@ -181,31 +440,386 @@ class HierarchyNavigation extends Component {
             hitCountElem.text(r.hierarchyNodes.hitCount);
         }
 
-        this.renderTree({ ...hierarchyData, ...instancesData }, target);
-    }
+        const merged: Record<string, IHierarchyNode | IInstanceNode> = { ...hierarchyData, ...(instancesData as any) };
+        this.renderTree(merged, target);
 
-    private filterTree(searchText) {
-        let tree = this.hierarchyElem.selectAll('ul').nodes()[0];
-        let list = tree.querySelectorAll('li');
-        list.forEach((li) => {
-            let name = li.querySelector('.tsi-name').innerText;
-            if (name.toLowerCase().includes(searchText.toLowerCase())) {
-                li.style.display = 'block';
-            } else {
-                li.style.display = 'none';
+        // Auto-expand nodes that should be expanded and load their children
+        for (const key in hierarchyData) {
+            const node = hierarchyData[key];
+            if (node.isExpanded && !node.children) {
+                // This node should be expanded but doesn't have children loaded yet
+                // We need to trigger expansion after the node is rendered
+                await this.autoExpandNode(node);
             }
         }
-        );
+    }
 
+    private filterTree(searchText: string) {
+        const nodes = this.hierarchyElem.selectAll('ul').nodes();
+        if (!nodes || !nodes.length) return;
+        const tree = nodes[0] as unknown as HTMLElement;
+        if (!tree) return;
+        const list = tree.querySelectorAll('li');
+        const needle = searchText.toLowerCase();
+        list.forEach((li) => {
+            const attrName = li.getAttribute('data-display-name');
+            let name = attrName && attrName.length ? attrName : (li.querySelector('.tsi-name')?.textContent || '');
+            if (name.toLowerCase().includes(needle)) {
+                (li as HTMLElement).style.display = 'block';
+            } else {
+                (li as HTMLElement).style.display = 'none';
+            }
+        });
+    }
 
+    // Fetch autocomplete suggestions for instances (leaves)
+    private async fetchAutocompleteSuggestions(searchText: string) {
+        if (!searchText || searchText.length < 1) {
+            this.ap.list = [];
+            return;
+        }
+
+        try {
+            // Call server search to get instance suggestions
+            const payload = {
+                path: this.path,
+                searchTerm: searchText,
+                recursive: true,
+                includeInstances: true,
+                // Limit results for autocomplete
+                maxResults: 10
+            };
+
+            const results = await this.searchFunction(payload);
+
+            if (results.error) {
+                this.ap.list = [];
+                return;
+            }
+
+            // Extract instance names for autocomplete suggestions
+            const suggestions: Array<{ label: string, value: string }> = [];
+
+            if (results.instances?.hits) {
+                results.instances.hits.forEach((i: any) => {
+                    const displayName = this.instanceNodeStringToDisplay(i);
+                    const pathStr = i.hierarchyPath && i.hierarchyPath.length > 0
+                        ? i.hierarchyPath.join(' > ') + ' > '
+                        : '';
+
+                    suggestions.push({
+                        label: pathStr + displayName,
+                        value: displayName
+                    });
+                });
+            }
+
+            // Update Awesomplete list
+            this.ap.list = suggestions;
+
+        } catch (err) {
+            // Silently fail for autocomplete - don't interrupt user experience
+            this.ap.list = [];
+        }
+    }
+
+    // Perform deep search across entire hierarchy using server-side search
+    private async performDeepSearch(searchText: string) {
+        if (!searchText || searchText.length < 2) {
+            this.exitSearchMode();
+            return;
+        }
+
+        this.isSearchMode = true;
+        const requestId = ++this.requestCounter;
+        this.latestRequestId = requestId;
+
+        try {
+            // Call server search with recursive flag
+            const payload = {
+                path: this.path,
+                searchTerm: searchText,
+                recursive: true,  // Search entire subtree
+                includeInstances: true
+            };
+
+            const results = await this.searchFunction(payload);
+
+            if (requestId !== this.latestRequestId) return; // Stale request
+
+            if (results.error) {
+                throw results.error;
+            }
+
+            // Render search results in flat list view
+            this.renderSearchResults(results, searchText);
+
+        } catch (err) {
+            if (requestId !== this.latestRequestId) return;
+            this.chartOptions.onError(
+                "Search failed",
+                "Unable to search hierarchy",
+                err instanceof XMLHttpRequest ? err : null
+            );
+        }
+    }
+
+    // Render search results with breadcrumb paths
+    private renderSearchResults(results: any, searchText: string) {
+        this.hierarchyElem.selectAll('*').remove();
+
+        const flatResults: Array<any> = [];
+
+        // Flatten hierarchy results with full paths
+        if (results.hierarchyNodes?.hits) {
+            results.hierarchyNodes.hits.forEach((h: any) => {
+                flatResults.push({
+                    type: 'hierarchy',
+                    name: h.name,
+                    path: h.path || [],
+                    id: h.id,
+                    cumulativeInstanceCount: h.cumulativeInstanceCount,
+                    highlightedName: this.highlightMatch(h.name, searchText),
+                    node: h
+                });
+            });
+        }
+
+        // Flatten instance results with full paths
+        if (results.instances?.hits) {
+            results.instances.hits.forEach((i: any) => {
+                const displayName = this.instanceNodeStringToDisplay(i);
+                flatResults.push({
+                    type: 'instance',
+                    name: i.name,
+                    path: i.hierarchyPath || [],
+                    id: i.id,
+                    timeSeriesId: i.timeSeriesId,
+                    description: i.description,
+                    highlightedName: this.highlightMatch(displayName, searchText),
+                    node: i
+                });
+            });
+        }
+
+        // Render flat list with breadcrumbs
+        const searchList = this.hierarchyElem
+            .append('div')
+            .classed('tsi-search-results', true);
+
+        if (flatResults.length === 0) {
+            searchList.append('div')
+                .classed('tsi-noResults', true)
+                .text(this.getString('No results'));
+            return;
+        }
+
+        searchList.append('div')
+            .classed('tsi-search-results-header', true)
+            .html(`<strong>${flatResults.length}</strong> ${this.getString('results found') || 'results found'}`);
+
+        const resultItems = searchList.selectAll('.tsi-search-result-item')
+            .data(flatResults)
+            .enter()
+            .append('div')
+            .classed('tsi-search-result-item', true)
+            .attr('tabindex', '0')
+            .attr('role', 'option')
+            .attr('aria-label', (d: any) => {
+                const pathStr = d.path.length > 0 ? d.path.join(' > ') + ' > ' : '';
+                return pathStr + d.name;
+            });
+
+        const self = this;
+        resultItems.each(function (d: any) {
+            const item = d3.select(this);
+
+            // Breadcrumb path
+            if (d.path.length > 0) {
+                item.append('div')
+                    .classed('tsi-search-breadcrumb', true)
+                    .text(d.path.join(' > '));
+            }
+
+            // Highlighted name
+            item.append('div')
+                .classed('tsi-search-result-name', true)
+                .html(d.highlightedName);
+
+            // Instance description or count
+            if (d.type === 'instance' && d.description) {
+                item.append('div')
+                    .classed('tsi-search-result-description', true)
+                    .text(d.description);
+            } else if (d.type === 'hierarchy') {
+                item.append('div')
+                    .classed('tsi-search-result-count', true)
+                    .text(`${d.cumulativeInstanceCount || 0} instances`);
+            }
+        });
+
+        // Click handlers
+        resultItems.on('click keydown', function (event, d: any) {
+            if (Utils.isKeyDownAndNotEnter(event)) return;
+
+            if (d.type === 'instance') {
+                // Handle instance selection
+                if (self.chartOptions.onInstanceClick) {
+                    const inst = new InstanceNode(
+                        d.timeSeriesId,
+                        d.name,
+                        d.path.length,
+                        d.id,
+                        d.description
+                    );
+
+                    // Update selection state
+                    if (self.selectedIds && self.selectedIds.includes(d.id)) {
+                        self.selectedIds = self.selectedIds.filter(id => id !== d.id);
+                        d3.select(this).classed('tsi-selected', false);
+                    } else {
+                        self.selectedIds.push(d.id);
+                        d3.select(this).classed('tsi-selected', true);
+                    }
+
+                    self.chartOptions.onInstanceClick(inst);
+                }
+            } else {
+                // Navigate to hierarchy node - exit search and expand to that path
+                self.navigateToPath(d.path);
+            }
+        });
+
+        // Apply selection state to already-selected instances
+        resultItems.each(function (d: any) {
+            if (d.type === 'instance' && self.selectedIds && self.selectedIds.includes(d.id)) {
+                d3.select(this).classed('tsi-selected', true);
+            }
+        });
+    }
+
+    // Exit search mode and restore tree
+    private exitSearchMode() {
+        this.isSearchMode = false;
+        this.hierarchyElem.selectAll('*').remove();
+        this.pathSearchAndRenderResult({
+            search: { payload: this.requestPayload() },
+            render: { target: this.hierarchyElem }
+        });
+    }
+
+    // Navigate to a specific path in the hierarchy
+    private async navigateToPath(targetPath: string[]) {
+        this.exitSearchMode();
+
+        // For now, just exit search mode and return to root
+        // In a more advanced implementation, this would progressively
+        // expand nodes along the path to reveal the target
+        // This would require waiting for each level to load before expanding the next
+    }
+
+    // Pre-compute which paths need to be auto-expanded for preselected instances
+    private async computePathsToAutoExpand(instanceIds: string[]) {
+        if (!instanceIds || instanceIds.length === 0) {
+            return;
+        }
+
+        //        console.log('[HierarchyNavigation] Computing paths to auto-expand for:', instanceIds);
+
+        try {
+            this.pathsToAutoExpand.clear();
+
+            for (const instanceId of instanceIds) {
+                // Search for this specific instance
+                const result = await this.searchFunction({
+                    path: this.path,
+                    searchTerm: instanceId,
+                    recursive: true,
+                    includeInstances: true
+                });
+
+                if (result?.instances?.hits) {
+                    for (const instance of result.instances.hits) {
+                        // Match by ID
+                        if (instance.id === instanceId ||
+                            (instance.id && instance.id.includes(instanceId))) {
+
+                            if (instance.hierarchyPath && instance.hierarchyPath.length > 0) {
+                                // Add all parent paths that need to be expanded
+                                const hierarchyPath = instance.hierarchyPath;
+                                for (let i = 1; i <= hierarchyPath.length; i++) {
+                                    const pathArray = hierarchyPath.slice(0, i);
+                                    const pathKey = pathArray.join('/');
+                                    this.pathsToAutoExpand.add(pathKey);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // console.log('[HierarchyNavigation] Paths to auto-expand:', Array.from(this.pathsToAutoExpand));
+
+        } catch (err) {
+            console.warn('Failed to compute paths to auto-expand:', err);
+        }
+    }
+
+    // Check if a path should be auto-expanded
+    private shouldAutoExpand(pathArray: string[]): boolean {
+        if (this.pathsToAutoExpand.size === 0) {
+            return false;
+        }
+        const pathKey = pathArray.join('/');
+        return this.pathsToAutoExpand.has(pathKey);
+    }
+
+    // Auto-expand a node by triggering its expand function
+    private async autoExpandNode(node: IHierarchyNode) {
+        if (!node || !node.expand || !node.node) {
+            return;
+        }
+
+        try {
+            // Wait for the DOM node to be available
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // Mark as expanded visually
+            node.node.classed('tsi-expanded', true);
+
+            // Call the expand function to load children
+            await node.expand();
+
+            // console.log(`[HierarchyNavigation] Auto-expanded node: ${node.path.join('/')}`);
+        } catch (err) {
+            console.warn(`Failed to auto-expand node ${node.path.join('/')}:`, err);
+        }
+    }
+
+    // Highlight search term in text
+    private highlightMatch(text: string, searchTerm: string): string {
+        if (!text) return '';
+        const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
     }
 
     // creates in-depth data object using the server response for hierarchyNodes to show in the tree all expanded, considering UntilChildren
-    private fillDataRecursively(hierarchyNodes, payload, payloadForContinuation = null) {
-        let data = {};
+    private fillDataRecursively(hierarchyNodes: any, payload: any, payloadForContinuation: any = null): Record<string, IHierarchyNode> {
+        let data: Record<string, IHierarchyNode> = {};
 
         hierarchyNodes.hits.forEach((h) => {
             let hierarchy = new HierarchyNode(h.name, payload.path, payload.path.length - this.path.length, h.cumulativeInstanceCount, h.id);
+
+            // cache display name on node for client-side filtering
+            hierarchy.displayName = h.name || '';
+
+            // Check if this path should be auto-expanded
+            const shouldExpand = this.shouldAutoExpand(hierarchy.path);
+            if (shouldExpand) {
+                hierarchy.isExpanded = true;
+                //console.log(`[HierarchyNavigation] Auto-expanding node: ${hierarchy.path.join('/')}`);
+            }
 
             hierarchy.expand = () => {
                 hierarchy.isExpanded = true;
@@ -234,7 +848,7 @@ class HierarchyNavigation extends Component {
             .attr('style', `padding-left: ${hORi.isLeaf ? hORi.level * 18 + 20 : (hORi.level + 1) * 18 + 20}px`)
             .attr('tabindex', 0)
             //.attr('arialabel', isHierarchyNode ? key : Utils.getTimeSeriesIdString(hORi))
-            .attr('arialabel', isHierarchyNode ? key : self.getAriaLabel(hORi))
+            .attr('aria-label', isHierarchyNode ? key : self.getAriaLabel(hORi))
             .attr('title', isHierarchyNode ? key : self.getAriaLabel(hORi))
             .attr("role", "treeitem").attr('aria-expanded', hORi.isExpanded)
             .on('click keydown', async function (event) {
@@ -307,7 +921,10 @@ class HierarchyNavigation extends Component {
     }
 }
 
-class HierarchyNode {
+// TreeRenderer has been moved to its own module: ./TreeRenderer
+// The rendering logic was extracted to reduce file size and improve testability.
+
+export class HierarchyNode implements IHierarchyNode {
     name: string;
     id: string | null;
     path: string[];
@@ -316,6 +933,7 @@ class HierarchyNode {
     node: any;
     children: any;
     isExpanded: boolean;
+    displayName?: string;
 
     constructor(name: string, parentPath: string[], level: number, cumulativeInstanceCount: number | null = null, id: string | null = null) {
         this.name = name;
@@ -337,7 +955,7 @@ class HierarchyNode {
     }
 }
 
-class InstanceNode {
+export class InstanceNode implements IInstanceNode {
     timeSeriesId: any;
     name: string | null;
     suppressDrawContextMenu: boolean;
@@ -346,6 +964,7 @@ class InstanceNode {
     node: any;
     id: string | null;
     description: string | null;
+    displayName?: string;
 
     constructor(tsId: any, name: string | null = null, level: any, id: string | null = null, description: string | null = null) {
         this.timeSeriesId = tsId;

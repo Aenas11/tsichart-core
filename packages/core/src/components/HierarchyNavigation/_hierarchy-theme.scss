@@ -1,0 +1,231 @@
+@use "sass:list";
+@use "../../styles" as *;
+@use "./hierarchy-tokens" as tokens;
+
+// Theme mixin with CSS custom properties for runtime theming
+@mixin hierarchyColors($grays) {
+    $gray1: list.nth($grays, 1); // text
+    $gray2: list.nth($grays, 2); // hover
+    $gray3: list.nth($grays, 3); // element
+    $gray4: list.nth($grays, 4); // background
+    $gray5: list.nth($grays, 5); // alt element
+    $gray6: list.nth($grays, 6); // accent
+
+    // Define CSS custom properties for runtime theming
+    --tsi-hierarchy-text: #{$gray1};
+    --tsi-hierarchy-hover: #{$gray2};
+    --tsi-hierarchy-element: #{$gray3};
+    --tsi-hierarchy-bg: #{$gray4};
+    --tsi-hierarchy-alt-element: #{$gray5};
+    --tsi-hierarchy-accent: #{$gray6};
+    --tsi-hierarchy-text-opacity-06: #{rgba($gray1, 0.6)};
+    --tsi-hierarchy-text-opacity-02: #{rgba($gray1, 0.2)};
+    --tsi-hierarchy-text-opacity-005: #{rgba($gray1, 0.05)};
+
+    color: var(--tsi-hierarchy-text);
+    background: var(--tsi-hierarchy-element);
+
+    hit {
+        background: #fff9a8;
+        font-weight: 600;
+        color: black;
+    }
+
+    .tsi-show-more {
+        color: var(--tsi-hierarchy-accent);
+    }
+
+    .tsi-hierarchy-or-list-wrapper {
+        li {
+            .tsi-hierarchyItem {
+                &:hover {
+                    cursor: default;
+                    background: var(--tsi-hierarchy-bg);
+                }
+
+                // Better focus styles for accessibility
+                &:focus-visible {
+                    outline: 2px solid var(--tsi-hierarchy-accent);
+                    outline-offset: -2px;
+                    background: var(--tsi-hierarchy-bg);
+                }
+
+                &:focus:not(:focus-visible) {
+                    outline: none;
+                    background: var(--tsi-hierarchy-bg);
+                }
+            }
+
+            &.tsi-resultSelected {
+                background-color: transparent;
+
+                .tsi-hierarchyItem {
+                    background: var(--tsi-hierarchy-hover);
+                }
+            }
+        }
+    }
+
+    .tsi-nav-tab.tsi-selected {
+        border-bottom: 2px solid var(--tsi-hierarchy-text) !important;
+    }
+
+    .tsi-modelResultWrapper {
+        border-bottom: 1px solid var(--tsi-hierarchy-text-opacity-005);
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--tsi-hierarchy-bg);
+            outline: none;
+
+            &::after {
+                content: "";
+                position: absolute;
+                width: 14px;
+                height: 14px;
+                top: 8px;
+                left: calc(100% - 20px);
+                background: url(../../icons/chevron.svg) no-repeat;
+                transform: rotate(-90deg);
+                will-change: transform;
+            }
+        }
+
+        &.tsi-selected {
+            background-color: var(--tsi-hierarchy-hover);
+        }
+    }
+
+    .tsi-hierarchyNavigationContextMenu {
+
+        li:hover,
+        li:focus-visible {
+            background: var(--tsi-hierarchy-bg);
+            outline: none;
+        }
+    }
+
+    .tsi-leaf {
+        &.tsi-selected {
+            background: var(--tsi-hierarchy-hover);
+
+            .tsi-hierarchyItem {
+                &:hover {
+                    background: var(--tsi-hierarchy-hover);
+                }
+            }
+        }
+    }
+
+    .tsi-filter-clear {
+        &:focus-visible {
+            outline: 2px solid var(--tsi-hierarchy-accent);
+            outline-offset: 2px;
+        }
+    }
+
+    .tsi-hierarchy-selection-wrapper {
+        .tsi-hierarchy-select {
+            background: var(--tsi-hierarchy-element);
+            border: 1px solid var(--tsi-hierarchy-alt-element);
+            color: var(--tsi-hierarchy-text);
+
+            &:hover {
+                background-color: var(--tsi-hierarchy-bg);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--tsi-hierarchy-accent);
+                outline-offset: -1px;
+                box-shadow: 0px 4px 4px var(--tsi-hierarchy-alt-element);
+            }
+        }
+
+        .tsi-hierarchy-list-wrapper {
+            background: var(--tsi-hierarchy-element);
+            box-shadow: 0px 4px 4px var(--tsi-hierarchy-alt-element);
+
+            li {
+                background: var(--tsi-hierarchy-element);
+
+                &:hover,
+                &:focus-visible {
+                    background-color: var(--tsi-hierarchy-bg) !important;
+                    outline: none;
+                }
+
+                &.selected {
+                    background-color: var(--tsi-hierarchy-alt-element);
+                }
+            }
+        }
+    }
+
+    .tsi-filter-path {
+        .tsi-path {
+
+            &:hover,
+            &:focus-visible {
+                background-color: var(--tsi-hierarchy-alt-element);
+                outline: none;
+            }
+        }
+    }
+
+    .tsi-hierarchy-search {
+        .tsi-view-type {
+            outline: 1px solid var(--tsi-hierarchy-alt-element);
+
+            &.selected {
+                background-color: var(--tsi-hierarchy-hover);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--tsi-hierarchy-accent);
+                z-index: tokens.$tsi-hierarchy-z-view-type-focus;
+            }
+        }
+    }
+
+    a {
+        color: var(--tsi-hierarchy-accent);
+
+        &:hover,
+        &:focus-visible {
+            outline: none;
+            text-decoration: underline;
+        }
+    }
+
+    @include baseContextMenuColors($grays);
+
+    .tsi-hierarchyCheckbox {
+        &.tsi-notSelected {
+            background: var(--tsi-hierarchy-element) !important;
+            border: 1px solid var(--tsi-hierarchy-text-opacity-02);
+        }
+    }
+
+    .tsi-notFound,
+    .tsi-noResults {
+        border-bottom: 1px solid var(--tsi-hierarchy-alt-element);
+
+        &.border-top {
+            border-top: 1px solid var(--tsi-hierarchy-alt-element);
+        }
+    }
+}
+
+// High contrast mode support
+@mixin hierarchyHighContrast {
+    @media (prefers-contrast: high) {
+        .tsi-hierarchyItem {
+            border: 1px solid currentColor;
+        }
+
+        .tsi-hierarchy-select,
+        .tsi-filter-path .tsi-path {
+            border-width: 2px;
+        }
+    }
+}

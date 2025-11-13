@@ -1,0 +1,38 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.tsi-primaryButton {
+    height: size(button-height);
+    border-radius: radius(lg);
+    border: 1px solid;
+
+    &.disabled {
+        cursor: default;
+        pointer-events: none;
+        opacity: 0.5;
+    }
+}
+
+.tsi-stackedButton {
+    pointer-events: all;
+    display: block;
+    background-size: size(icon-lg) size(icon-lg);
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    height: 100%;
+    width: size(icon-lg);
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}
+
+.tsi-scooterButton {
+    display: block;
+    background-size: size(icon-lg) size(icon-lg);
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    height: size(icon-lg);
+    width: size(icon-lg);
+}

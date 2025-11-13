@@ -1,0 +1,151 @@
+// Design Tokens - Spacing System
+$spacing: (
+    xxs: 1px,
+    xs: 2px,
+    sm: 4px,
+    md: 6px,
+    lg: 8px,
+    xl: 12px,
+    xxl: 20px,
+    xxxl: 28px,
+);
+
+// Design Tokens - Sizing
+$sizes: (
+    icon-sm: 14px,
+    icon-md: 17px,
+    icon-lg: 20px,
+    icon-xl: 21px,
+    button-height: 36px,
+    select-height: 32px,
+    menu-item-height: 28px,
+    control-panel-height: 20px,
+    datepicker-width: 196px,
+);
+
+// Design Tokens - Typography
+$font-family-primary: "Segoe UI", sans-serif;
+$font-family-mono: "Lucida Console", Monaco, monospace;
+
+$font-sizes: (
+    xs: 11px,
+    sm: 12px,
+    md: 13px,
+    lg: 85%,
+    // relative for mono
+);
+
+// Design Tokens - Border Radius
+$border-radius: (
+    sm: 2px,
+    md: 3px,
+    lg: 4px,
+    xl: 8px,
+);
+
+// Design Tokens - Z-Index Scale
+$z-index: (
+    base: 1,
+    elevated: 2,
+    overlay: 3,
+);
+
+// Theme Colors - Enhanced for Better Contrast & Accessibility
+$theme-dark: (
+    text: #e8eaed,
+    // Softer white for reduced eye strain
+    text-secondary: #9aa0a6,
+    // Secondary text with proper contrast
+    hover: #3c4043,
+    // Darker, more visible hover state
+    element: #2d2f31,
+    // Higher contrast elements
+    background: #1a1c1e,
+    // Slightly lighter base background
+    alt-element: #3c4043,
+    // Better visual separation
+    hover-text: #4fc3b5,
+    // Aligned with teal brand
+    scrollbar: #5f6368,
+    // More visible scrollbar
+    border: #3c4043,
+    // Border/divider color
+    focus: #4fc3b5,
+    // Focus ring for accessibility
+);
+
+$theme-light: (
+    text: #1f1f1f,
+    // Softer black, easier on eyes
+    text-secondary: #5f6368,
+    // Secondary text hierarchy
+    hover: #e8f0fe,
+    // Softer, less jarring hover
+    element: #ffffff,
+    // Pure white for elements
+    background: #f8f9fa,
+    // Warmer background
+    alt-element: #e8eaed,
+    // Better contrast for cards/panels
+    hover-text: #1a7f71,
+    // Darker teal for light theme
+    scrollbar: #949494,
+    // More visible scrollbar
+    border: #dadce0,
+    // Border/divider color
+    focus: #1a7f71,
+    // Focus ring for accessibility
+);
+
+// Brand Colors - Primary Palette
+$color-primary: #309d90; // Main teal brand color
+$color-primary-light: #d5ebe9; // Light teal variant
+$color-primary-dark: #1a7f71; // Dark teal for light theme
+
+// Secondary Brand Color
+$color-secondary: #5e8fb5; // Complementary blue
+
+// Semantic Colors for Data Visualization & UI States
+$color-success: #34a853; // Green for positive values/success
+$color-warning: #fbbc04; // Yellow for warnings (replaces warm)
+$color-error: #ea4335; // Red for errors/negative values
+$color-info: #4285f4; // Blue for informational states
+
+// Chart-Specific Accent Colors (Balanced Palette)
+$chart-colors: (
+    teal: #309d90,
+    blue: #4285f4,
+    purple: #8e44ad,
+    orange: #e67e22,
+    green: #27ae60,
+    red: #e74c3c,
+    yellow: #f39c12,
+    pink: #e91e63,
+);
+
+// Neutral Gray Scale (For Better Visual Hierarchy)
+$gray-50: #f8f9fa;
+$gray-100: #e8eaed;
+$gray-200: #dadce0;
+$gray-300: #bdc1c6;
+$gray-400: #9aa0a6;
+$gray-500: #5f6368;
+$gray-600: #3c4043;
+$gray-700: #2d2f31;
+$gray-800: #1f1f1f;
+$gray-900: #1a1c1e;
+
+// Pure Colors (Use Sparingly)
+$color-white: #fff;
+$color-black: #000;
+
+// Legacy Support (Deprecated - use semantic colors instead)
+$color-warm: $color-warning; // Maps to warning for backwards compatibility
+
+// Animation Timing
+$easing-smooth: cubic-bezier(0.1, 0.9, 0.2, 1);
+$duration-fast: 0.367s;
+
+// Shadow Tokens
+$shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+$shadow-md: 0 0 2px 0 rgba(0, 0, 0, 0.3);

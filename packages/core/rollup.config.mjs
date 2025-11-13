@@ -103,6 +103,7 @@ export default [
             format: 'umd',
             name: 'TsiClient',
             sourcemap: !isProduction,
+            exports: 'named',
         },
         context: 'window',
         plugins: [

@@ -1502,6 +1502,8 @@ class LineChart extends TemporalXAxisComponent {
                 .append("text")
                 .attr("class", (d) => `tsi-swimLaneLabel-${lane} tsi-swimLaneLabel ${onClickPresentAndValid(d) ? 'tsi-boldOnHover' : ''}`)
                 .attr("role", "heading")
+                .attr("aria-roledescription", this.getString("Swimlane label"))
+                .attr("aria-label", d => d.label)
                 .attr("aria-level", "3")
                 .merge(label)
                 .style("text-anchor", "middle")

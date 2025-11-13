@@ -4,32 +4,48 @@ import { Component } from "./../../interfaces/Component";
 import Utils from '../../utils';
 import { TemporalXAxisComponent } from '../../interfaces/TemporalXAxisComponent';
 
-type d3Selection = d3.Selection<d3.BaseType, unknown, null, undefined>;
+type D3Selection<T extends d3.BaseType = d3.BaseType> = d3.Selection<T, unknown, null, undefined>;
 
 interface IPlaybackSettings {
   intervalMillis: number;
   stepSizeMillis: number;
 }
 
+interface IPlaybackOptions {
+  theme?: string;
+  offset?: string;
+  is24HourTime?: boolean;
+  dateLocale?: string;
+  xAxisHidden?: boolean;
+}
+
 class PlaybackControls extends Component {
-  private playbackInterval: number;
-  private playButton: d3Selection;
-  private handleElement: d3Selection;
-  private controlsContainer: d3Selection;
-  private track: d3Selection;
+  private static readonly CONSTANTS = {
+    HANDLE_RADIUS: 7,
+    MINIMUM_PLAYBACK_INTERVAL_MS: 1000,
+    HANDLE_PADDING: 8,
+    AXIS_OFFSET: 6,
+  } as const;
+
+  private playbackInterval: number | null = null;
+  private playButton: D3Selection<HTMLButtonElement> | null = null;
+  private handleElement: D3Selection<SVGCircleElement> | null = null;
+  private controlsContainer: D3Selection<HTMLDivElement> | null = null;
+  private track: D3Selection<SVGGElement> | null = null;
   private trackXOffset: number;
   private trackYOffset: number;
   private trackWidth: number;
-  private timeFormatter: Function;
+  private timeFormatter: (date: Date) => string;
   private selectedTimeStamp: Date;
-  private selectTimeStampCallback: (d: Date) => {};
+  private selectTimeStampCallback: ((timestamp: Date) => void) | null = null;
   private timeStampToPosition: d3.ScaleTime<number, number>;
   private playbackSettings: IPlaybackSettings;
   private end: Date;
-  private wasPlayingWhenDragStarted: boolean;
+  private wasPlayingWhenDragStarted: boolean = false;
+  private rafId: number | null = null;
 
-  readonly handleRadius: number = 7;
-  readonly minimumPlaybackInterval: number = 1000; // 1 second
+  readonly handleRadius: number = PlaybackControls.CONSTANTS.HANDLE_RADIUS;
+  readonly minimumPlaybackInterval: number = PlaybackControls.CONSTANTS.MINIMUM_PLAYBACK_INTERVAL_MS;
 
   constructor(renderTarget: Element, initialTimeStamp: Date = null) {
     super(renderTarget);
@@ -44,9 +60,28 @@ class PlaybackControls extends Component {
   render(
     start: Date,
     end: Date,
-    onSelectTimeStamp: (d: Date) => {},
-    options,
-    playbackSettings: IPlaybackSettings) {
+    onSelectTimeStamp: (timestamp: Date) => void,
+    options: IPlaybackOptions,
+    playbackSettings: IPlaybackSettings): void {
+    // Validate inputs
+    if (!(start instanceof Date) || !(end instanceof Date)) {
+      throw new TypeError('start and end must be Date objects');
+    }
+
+    if (start >= end) {
+      throw new RangeError('start must be before end');
+    }
+
+    if (!onSelectTimeStamp || typeof onSelectTimeStamp !== 'function') {
+      throw new TypeError('onSelectTimeStamp must be a function');
+    }
+
+    // Clean up any pending animation frames before re-rendering
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+
     this.end = end;
     this.selectTimeStampCallback = onSelectTimeStamp;
     this.chartOptions.setOptions(options);
@@ -125,6 +160,9 @@ class PlaybackControls extends Component {
     this.playButton = this.controlsContainer.append('button')
       .classed('tsi-play-button', this.playbackInterval === null)
       .classed('tsi-pause-button', this.playbackInterval !== null)
+      // Accessibility attributes
+      .attr('aria-label', 'Play/Pause playback')
+      .attr('title', 'Play/Pause playback')
       .on('click', () => {
         if (this.playbackInterval === null) {
           this.play();
@@ -185,6 +223,31 @@ class PlaybackControls extends Component {
     this.selectTimeStampCallback(this.selectedTimeStamp);
   }
 
+  /**
+   * Cleanup resources to prevent memory leaks
+   */
+  destroy(): void {
+    this.pause();
+
+    // Cancel any pending animation frames
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+
+    // Remove event listeners
+    if (this.controlsContainer) {
+      this.controlsContainer.selectAll('*').on('.', null);
+    }
+
+    // Clear DOM references
+    this.playButton = null;
+    this.handleElement = null;
+    this.controlsContainer = null;
+    this.track = null;
+    this.selectTimeStampCallback = null;
+  }
+
   private clamp(number: number, min: number, max: number) {
     let clamped = Math.max(number, min);
     return Math.min(clamped, max);
@@ -195,10 +258,18 @@ class PlaybackControls extends Component {
       (this.playbackInterval !== null);
     this.pause();
 
-    let handlePosition = this.clamp(positionX, 0, this.trackWidth);
-    this.selectedTimeStamp = this.timeStampToPosition.invert(handlePosition);
+    // Use requestAnimationFrame to batch DOM updates for better performance
+    // Cancel any pending animation frame to prevent stacking updates
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+    }
 
-    this.updateSelection(handlePosition, this.selectedTimeStamp);
+    this.rafId = requestAnimationFrame(() => {
+      const handlePosition = this.clamp(positionX, 0, this.trackWidth);
+      this.selectedTimeStamp = this.timeStampToPosition.invert(handlePosition);
+      this.updateSelection(handlePosition, this.selectedTimeStamp);
+      this.rafId = null;
+    });
   }
 
   private onDragEnd() {
