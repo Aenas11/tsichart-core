@@ -62,6 +62,8 @@ class HierarchyNavigation extends Component {
     private hierarchyNavWrapper;
     // Search mode state
     private isSearchMode: boolean = false;
+    // Paths that should be auto-expanded (Set of path strings like "Factory North/Building A")
+    private pathsToAutoExpand: Set<string> = new Set();
 
     public ap: any; // awesomplete object
 
@@ -83,6 +85,11 @@ class HierarchyNavigation extends Component {
             this.autocompleteEnabled = hierarchyNavOptions.autocompleteEnabled;
         }
 
+        // Pre-compute paths that need to be auto-expanded for preselected instances
+        if (preselectedIds && preselectedIds.length > 0) {
+            await this.computePathsToAutoExpand(preselectedIds);
+        }
+
         //render search wrapper
         this.renderSearchBox()
 
@@ -93,8 +100,7 @@ class HierarchyNavigation extends Component {
         const results = this.createResultsWrapper(this.hierarchyNavWrapper);
         this.hierarchyElem = this.createHierarchyElem(results);
 
-        this.pathSearchAndRenderResult({ search: { payload: this.requestPayload() }, render: { target: this.hierarchyElem } });
-
+        await this.pathSearchAndRenderResult({ search: { payload: this.requestPayload() }, render: { target: this.hierarchyElem } });
 
     }
 
@@ -400,7 +406,7 @@ class HierarchyNavigation extends Component {
             if (result.error) {
                 throw result.error;
             }
-            this.renderSearchResult(result, payload, target);
+            await this.renderSearchResult(result, payload, target);
         } catch (err) {
             if (requestId !== this.latestRequestId) {
                 return;
@@ -412,7 +418,7 @@ class HierarchyNavigation extends Component {
         }
     }
 
-    private renderSearchResult = (r: any, payload: any, target: d3.Selection<any, any, any, any>) => {
+    private renderSearchResult = async (r: any, payload: any, target: d3.Selection<any, any, any, any>) => {
         const hierarchyData: Record<string, IHierarchyNode> = r.hierarchyNodes?.hits?.length
             ? this.fillDataRecursively(r.hierarchyNodes, payload, payload)
             : {} as Record<string, IHierarchyNode>;
@@ -436,6 +442,16 @@ class HierarchyNavigation extends Component {
 
         const merged: Record<string, IHierarchyNode | IInstanceNode> = { ...hierarchyData, ...(instancesData as any) };
         this.renderTree(merged, target);
+
+        // Auto-expand nodes that should be expanded and load their children
+        for (const key in hierarchyData) {
+            const node = hierarchyData[key];
+            if (node.isExpanded && !node.children) {
+                // This node should be expanded but doesn't have children loaded yet
+                // We need to trigger expansion after the node is rendered
+                await this.autoExpandNode(node);
+            }
+        }
     }
 
     private filterTree(searchText: string) {
@@ -702,6 +718,84 @@ class HierarchyNavigation extends Component {
         // This would require waiting for each level to load before expanding the next
     }
 
+    // Pre-compute which paths need to be auto-expanded for preselected instances
+    private async computePathsToAutoExpand(instanceIds: string[]) {
+        if (!instanceIds || instanceIds.length === 0) {
+            return;
+        }
+
+        //        console.log('[HierarchyNavigation] Computing paths to auto-expand for:', instanceIds);
+
+        try {
+            this.pathsToAutoExpand.clear();
+
+            for (const instanceId of instanceIds) {
+                // Search for this specific instance
+                const result = await this.searchFunction({
+                    path: this.path,
+                    searchTerm: instanceId,
+                    recursive: true,
+                    includeInstances: true
+                });
+
+                if (result?.instances?.hits) {
+                    for (const instance of result.instances.hits) {
+                        // Match by ID
+                        if (instance.id === instanceId ||
+                            (instance.id && instance.id.includes(instanceId))) {
+
+                            if (instance.hierarchyPath && instance.hierarchyPath.length > 0) {
+                                // Add all parent paths that need to be expanded
+                                const hierarchyPath = instance.hierarchyPath;
+                                for (let i = 1; i <= hierarchyPath.length; i++) {
+                                    const pathArray = hierarchyPath.slice(0, i);
+                                    const pathKey = pathArray.join('/');
+                                    this.pathsToAutoExpand.add(pathKey);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // console.log('[HierarchyNavigation] Paths to auto-expand:', Array.from(this.pathsToAutoExpand));
+
+        } catch (err) {
+            console.warn('Failed to compute paths to auto-expand:', err);
+        }
+    }
+
+    // Check if a path should be auto-expanded
+    private shouldAutoExpand(pathArray: string[]): boolean {
+        if (this.pathsToAutoExpand.size === 0) {
+            return false;
+        }
+        const pathKey = pathArray.join('/');
+        return this.pathsToAutoExpand.has(pathKey);
+    }
+
+    // Auto-expand a node by triggering its expand function
+    private async autoExpandNode(node: IHierarchyNode) {
+        if (!node || !node.expand || !node.node) {
+            return;
+        }
+
+        try {
+            // Wait for the DOM node to be available
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // Mark as expanded visually
+            node.node.classed('tsi-expanded', true);
+
+            // Call the expand function to load children
+            await node.expand();
+
+            // console.log(`[HierarchyNavigation] Auto-expanded node: ${node.path.join('/')}`);
+        } catch (err) {
+            console.warn(`Failed to auto-expand node ${node.path.join('/')}:`, err);
+        }
+    }
+
     // Highlight search term in text
     private highlightMatch(text: string, searchTerm: string): string {
         if (!text) return '';
@@ -719,6 +813,13 @@ class HierarchyNavigation extends Component {
 
             // cache display name on node for client-side filtering
             hierarchy.displayName = h.name || '';
+
+            // Check if this path should be auto-expanded
+            const shouldExpand = this.shouldAutoExpand(hierarchy.path);
+            if (shouldExpand) {
+                hierarchy.isExpanded = true;
+                //console.log(`[HierarchyNavigation] Auto-expanding node: ${hierarchy.path.join('/')}`);
+            }
 
             hierarchy.expand = () => {
                 hierarchy.isExpanded = true;

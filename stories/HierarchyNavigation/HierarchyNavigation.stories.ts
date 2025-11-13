@@ -404,7 +404,7 @@ function performDeepSearch(searchTerm: string, basePath: string[] = []): any {
         // Search instances
         if (data.instances?.hits) {
             for (const instance of data.instances.hits) {
-                const searchableText = `${instance.name} ${instance.description || ''}`.toLowerCase();
+                const searchableText = `${instance.name} ${instance.description || ''} ${instance.id || ''}`.toLowerCase();
                 if (searchableText.includes(term)) {
                     instanceResults.push({
                         ...instance,
