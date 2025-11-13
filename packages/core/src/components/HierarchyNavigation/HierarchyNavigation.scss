@@ -24,6 +24,12 @@
         $grays: grays('dark');
         @include theme.hierarchyColors($grays);
 
+        // Extract individual gray values for nested styles
+        $gray1: list.nth($grays, 1);
+        $gray2: list.nth($grays, 2);
+        $gray3: list.nth($grays, 3);
+        $gray4: list.nth($grays, 4);
+
         .tsi-caret-icon,
         .tsi-down-caret-icon {
             background-image: url(../../icons/CaretClosed_Dark_Theme.svg);
@@ -64,11 +70,27 @@
         .tsi-searchInput {
             color: var(--tsi-hierarchy-text);
         }
+
+        .awesomplete>ul {
+            background: color.adjust($gray3, $lightness: -5%);
+            color: $gray1;
+
+            li[aria-selected="true"],
+            li:hover,
+            li:focus {
+                background: $gray2;
+            }
+        }
     }
 
     &.tsi-light {
         $grays: grays('light');
         @include theme.hierarchyColors($grays);
+
+        // Extract individual gray values for nested styles
+        $gray1: list.nth($grays, 1);
+        $gray2: list.nth($grays, 2);
+        $gray4: list.nth($grays, 4);
 
         .tsi-caret-icon,
         .tsi-down-caret-icon {
@@ -105,6 +127,17 @@
 
         .tsi-clear {
             background-image: url(../../icons/Close_Icon_Light_Theme.svg);
+        }
+
+        .awesomplete>ul {
+            background: $gray4;
+            color: $gray1;
+
+            li[aria-selected="true"],
+            li:hover,
+            li:focus {
+                background: $gray2;
+            }
         }
     }
 
@@ -182,11 +215,109 @@
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
+            position: relative;
+            height: 32px;
 
             .tsi-searchInput {
                 width: 100%;
                 box-sizing: border-box;
-                padding-inline-end: tokens.$tsi-hierarchy-padding-sm;
+                padding-inline-end: 28px;
+            }
+
+            .tsi-clear {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                position: absolute;
+                inset-inline-end: 8px;
+                top: 6px;
+                display: none;
+                z-index: 2;
+                background-repeat: no-repeat;
+                background-position: 50%;
+                background-size: contain;
+
+                &.tsi-shown {
+                    display: block;
+                }
+            }
+
+            .tsi-searchInput::-ms-clear {
+                display: none;
+            }
+
+            // Awesomplete autocomplete styles
+            .awesomplete [hidden] {
+                display: none;
+            }
+
+            .awesomplete .visually-hidden {
+                position: absolute;
+                clip: rect(0, 0, 0, 0);
+            }
+
+            .awesomplete {
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+            .awesomplete>input {
+                padding-right: 28px;
+            }
+
+            .awesomplete>ul {
+                @extend .tsi-baseContextMenu;
+                animation: tsi-slideIn 0.367s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+                position: absolute;
+                z-index: 100;
+                list-style: none;
+                padding: 0;
+                border-radius: 0px;
+                font-size: 13px;
+                width: 100%;
+                margin-top: 34px;
+                max-height: 300px;
+                overflow-y: auto;
+
+                &:before {
+                    display: none;
+                }
+
+                li {
+                    display: block;
+                    line-height: 20px;
+                    cursor: pointer;
+                    padding: 8px 12px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    &[aria-selected="true"],
+                    &:hover,
+                    &:focus {
+                        background: var(--tsi-hierarchy-hover);
+                    }
+                }
+            }
+
+            .awesomplete>ul:empty {
+                display: none;
+            }
+
+            .tsi-search-results-info {
+                position: absolute !important;
+                display: block;
+                visibility: visible;
+                overflow: hidden;
+                width: 1px;
+                height: 1px;
+                margin: -1px;
+                border: 0;
+                padding: 0;
+                white-space: nowrap;
             }
         }
 

@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './HierarchyNavigation.scss';
+import 'awesomplete';
 import Utils from "../../utils";
 import { Component } from "./../../interfaces/Component";
-import ModelAutocomplete from '../ModelAutocomplete';
 import TreeRenderer from './TreeRenderer';
 // ensure runtime fallback for environments where TS extensions aren't resolved by bundler
 try { /* noop, allows static import for bundlers */ } catch (e) { /* noop */ }
@@ -57,6 +57,7 @@ class HierarchyNavigation extends Component {
     //selectedIds
     public selectedIds: Array<string> = [];
     public searchEnabled: boolean = true;
+    public autocompleteEnabled: boolean = true; // Enable/disable autocomplete suggestions
     private searchWrapperElem;
     private hierarchyNavWrapper;
     // Search mode state
@@ -76,6 +77,11 @@ class HierarchyNavigation extends Component {
         this.hierarchyNavWrapper = this.createHierarchyNavWrapper(targetElement);
 
         this.selectedIds = preselectedIds;
+
+        // Allow disabling autocomplete via options
+        if (hierarchyNavOptions.autocompleteEnabled !== undefined) {
+            this.autocompleteEnabled = hierarchyNavOptions.autocompleteEnabled;
+        }
 
         //render search wrapper
         this.renderSearchBox()
@@ -250,6 +256,7 @@ class HierarchyNavigation extends Component {
             .append("input")
             .attr("class", "tsi-searchInput")
             .attr("aria-label", this.getString("Search"))
+            .attr("aria-describedby", "tsi-hierarchy-search-desc")
             .attr("role", "combobox")
             .attr("aria-owns", "tsi-search-results")
             .attr("aria-expanded", "false")
@@ -259,7 +266,67 @@ class HierarchyNavigation extends Component {
                 this.getString("Search") + "..."
             );
 
+        // Add ARIA description for screen readers
+        inputWrapper
+            .append("span")
+            .attr("id", "tsi-hierarchy-search-desc")
+            .style("display", "none")
+            .text(this.getString("Search suggestion instruction") || "Use arrow keys to navigate suggestions");
+
+        // Add live region for search results info
+        inputWrapper
+            .append("div")
+            .attr("class", "tsi-search-results-info")
+            .attr("aria-live", "assertive");
+
+        // Add clear button
+        let clear = inputWrapper
+            .append("div")
+            .attr("class", "tsi-clear")
+            .attr("tabindex", "0")
+            .attr("role", "button")
+            .attr("aria-label", "Clear Search")
+            .on("click keydown", function (event) {
+                if (Utils.isKeyDownAndNotEnter(event)) {
+                    return;
+                }
+                (input.node() as any).value = "";
+                self.exitSearchMode();
+                self.ap.close();
+                d3.select(this).classed("tsi-shown", false);
+            });
+
+        // Initialize Awesomplete for autocomplete (only if enabled)
+        let Awesomplete = (window as any).Awesomplete;
+        if (this.autocompleteEnabled && Awesomplete) {
+            this.ap = new Awesomplete(input.node(), {
+                minChars: 1,
+                maxItems: 10,
+                autoFirst: true
+            });
+        } else {
+            // Create a dummy object if autocomplete is disabled
+            this.ap = {
+                list: [],
+                close: () => { },
+                evaluate: () => { }
+            };
+        }
+
         let self = this;
+        let noSuggest = false;
+        let justAwesompleted = false;
+
+        // Handle autocomplete selection (only if enabled)
+        if (this.autocompleteEnabled) {
+            (input.node() as any).addEventListener("awesomplete-selectcomplete", (event) => {
+                noSuggest = true;
+                const selectedValue = event.text.value;
+                // Trigger search with selected value
+                self.performDeepSearch(selectedValue);
+                justAwesompleted = true;
+            });
+        }
 
         input.on("keydown", (event) => {
             // Handle ESC key to clear the search box
@@ -268,9 +335,22 @@ class HierarchyNavigation extends Component {
                 inputElement.value = '';
                 // Trigger input event to clear search results
                 self.exitSearchMode();
+                self.ap.close();
+                clear.classed("tsi-shown", false);
                 return;
             }
             this.chartOptions.onKeydown(event, this.ap);
+        });
+
+        (input.node() as any).addEventListener("keyup", function (event) {
+            if (justAwesompleted) {
+                justAwesompleted = false;
+                return;
+            }
+            let key = event.which || event.keyCode;
+            if (key === 13) {
+                noSuggest = true;
+            }
         });
 
         // Debounced input handler to reduce work while typing
@@ -282,16 +362,29 @@ class HierarchyNavigation extends Component {
                 self.debounceTimer = null;
             }
 
+            // Show/hide clear button
+            clear.classed("tsi-shown", val.length > 0);
+
             if (!val || val.length === 0) {
                 // Exit search mode and restore navigation view
                 self.exitSearchMode();
+                self.ap.close();
                 return;
+            }
+
+            // Populate autocomplete suggestions with instance leaves (only if enabled)
+            if (self.autocompleteEnabled && !noSuggest && val.length >= 1) {
+                self.fetchAutocompleteSuggestions(val);
+            } else {
+                self.ap.close();
             }
 
             // Use deep search for comprehensive results
             self.debounceTimer = setTimeout(() => {
                 self.performDeepSearch(val);
             }, self.debounceDelay);
+
+            noSuggest = false;
         });
 
     }
@@ -361,6 +454,57 @@ class HierarchyNavigation extends Component {
                 (li as HTMLElement).style.display = 'none';
             }
         });
+    }
+
+    // Fetch autocomplete suggestions for instances (leaves)
+    private async fetchAutocompleteSuggestions(searchText: string) {
+        if (!searchText || searchText.length < 1) {
+            this.ap.list = [];
+            return;
+        }
+
+        try {
+            // Call server search to get instance suggestions
+            const payload = {
+                path: this.path,
+                searchTerm: searchText,
+                recursive: true,
+                includeInstances: true,
+                // Limit results for autocomplete
+                maxResults: 10
+            };
+
+            const results = await this.searchFunction(payload);
+
+            if (results.error) {
+                this.ap.list = [];
+                return;
+            }
+
+            // Extract instance names for autocomplete suggestions
+            const suggestions: Array<{ label: string, value: string }> = [];
+
+            if (results.instances?.hits) {
+                results.instances.hits.forEach((i: any) => {
+                    const displayName = this.instanceNodeStringToDisplay(i);
+                    const pathStr = i.hierarchyPath && i.hierarchyPath.length > 0
+                        ? i.hierarchyPath.join(' > ') + ' > '
+                        : '';
+
+                    suggestions.push({
+                        label: pathStr + displayName,
+                        value: displayName
+                    });
+                });
+            }
+
+            // Update Awesomplete list
+            this.ap.list = suggestions;
+
+        } catch (err) {
+            // Silently fail for autocomplete - don't interrupt user experience
+            this.ap.list = [];
+        }
     }
 
     // Perform deep search across entire hierarchy using server-side search
