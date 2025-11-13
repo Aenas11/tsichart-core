@@ -91,7 +91,7 @@ class HierarchyNavigation extends Component {
         }
 
         //render search wrapper
-        this.renderSearchBox()
+        this.renderSearchBox();
 
 
 
