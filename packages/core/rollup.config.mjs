@@ -44,7 +44,11 @@ const commonPlugins = [
             exclude: ['__tests__/**', '**/*.test.ts', '**/*.spec.ts']
         }
     }), 
-    autoExternal(), // Auto mark dependencies as external
+    autoExternal({
+        // Only externalize peerDependencies (d3), bundle everything else
+        dependencies: false,
+        peerDependencies: true
+    }), 
     commonjs(), // Convert cjs imports to esm
     json(), // Handle json file imports
 ];
