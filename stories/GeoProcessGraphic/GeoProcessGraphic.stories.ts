@@ -85,6 +85,9 @@ geoChart.render(tsqExpressions, {
             }
         }
     },
+    args: {
+        subscriptionKey: 'demo-key-required', // Default shared value
+    },
     argTypes: {
         theme: {
             control: { type: 'select' },
@@ -108,7 +111,7 @@ geoChart.render(tsqExpressions, {
         center: {
             control: 'object',
             description: 'Map center coordinates [longitude, latitude]',
-            table: { defaultValue: { summary: '[-122.33, 47.61]' } }
+            table: { defaultValue: { summary: '[153.021072, -27.470125]' } }
         },
         zoom: {
             control: { type: 'range', min: 1, max: 20, step: 1 },
@@ -169,9 +172,12 @@ function renderGeoProcessGraphic(container: HTMLElement, options: IGeoProcessGra
     container.innerHTML = '';
 
     try {
-        console.log('Rendering GeoProcessGraphic with subscription key:', options.subscriptionKey ? 'PROVIDED' : 'MISSING');
+
         const geoChart = new GeoProcessGraphic(container);
         const geoExpressions = generateSampleGeoData();
+
+        const now = new Date();
+        const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
 
         const chartOptions = {
             subscriptionKey: options.subscriptionKey || "demo-key",
@@ -186,6 +192,11 @@ function renderGeoProcessGraphic(container: HTMLElement, options: IGeoProcessGra
             width: 800,
             height: 600,
             theme: options.theme || 'light',
+            timeFrame: options.timeFrame || {
+                from: twoHoursAgo,
+                to: now
+            },
+            minutesPerInterval: options.minutesPerInterval,
             ...options
         };
 
@@ -205,16 +216,47 @@ function renderGeoProcessGraphic(container: HTMLElement, options: IGeoProcessGra
     }
 }
 
-function createGeoStory(containerStyle: string) {
+let sharedSubscriptionKey = 'demo-key-required';
+
+const geoStateManager = {
+    sharedSubscriptionKey: 'demo-key-required',
+    lastValidKey: null as string | null,
+
+    updateKey(newKey: string): void {
+        if (newKey && newKey !== 'demo-key-required') {
+            this.sharedSubscriptionKey = newKey;
+            this.lastValidKey = newKey;
+
+        }
+    },
+
+    getEffectiveKey(storyKey: string): string {
+        if (storyKey && storyKey !== 'demo-key-required') {
+            this.updateKey(storyKey);
+            return storyKey;
+        }
+        return this.lastValidKey || this.sharedSubscriptionKey;
+    }
+};
+
+function createGeoStory(containerStyle: string, storyName?: string) {
     return (args: IGeoProcessGraphicOptions) => {
-        const chartId = 'geo-chart-' + Math.random().toString(36).substring(7);
+
+        const chartId = `geo-chart-${Math.random().toString(36).substring(7)}`;
+
+        const effectiveSubscriptionKey = geoStateManager.getEffectiveKey(args.subscriptionKey);
+
+        const effectiveArgs = {
+            ...args,
+            subscriptionKey: effectiveSubscriptionKey
+        };
 
         setTimeout(() => {
             const container = document.getElementById(chartId);
             if (container) {
-                renderGeoProcessGraphic(container, args);
+                renderGeoProcessGraphic(container, effectiveArgs);
             }
-        }, 100);
+        }, 50);
 
         return html`
             <div style="${containerStyle}">
@@ -227,67 +269,71 @@ function createGeoStory(containerStyle: string) {
 export const Default: Story = {
     name: 'Vehicle Tracking (Demo)',
     args: {
-        theme: 'light',
         subscriptionKey: 'demo-key-required',
+        theme: 'light',
+        tilesetId: 'microsoft.base.road',
         center: [-122.33, 47.61],
         zoom: 12,
         speed: 1000
     },
-    render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;')
+    render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'Vehicle Tracking')
 };
 
 export const DarkTheme: Story = {
     name: 'Dark Theme',
     args: {
-        theme: 'dark',
         subscriptionKey: 'demo-key-required',
+        theme: 'dark',
+        tilesetId: 'microsoft.base.darkgrey',
         center: [-122.33, 47.61],
         zoom: 12,
         speed: 1000
     },
-    render: createGeoStory('height: 600px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 8px;')
+    render: createGeoStory('height: 600px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 8px;', 'Dark Theme')
 };
 
 export const HighZoom: Story = {
     name: 'Detailed View (High Zoom)',
     args: {
-        theme: 'light',
         subscriptionKey: 'demo-key-required',
+        theme: 'light',
+        tilesetId: 'microsoft.imagery',
         center: [-122.33, 47.61],
         zoom: 15,
         speed: 500
     },
-    render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;')
+    render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'High Zoom')
 };
 
 export const FastPlayback: Story = {
     name: 'Fast Playback',
     args: {
-        theme: 'light',
         subscriptionKey: 'demo-key-required',
+        theme: 'light',
+        tilesetId: 'microsoft.base.hybrid',
         center: [-122.33, 47.61],
         zoom: 10,
         speed: 200
     },
-    render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;'),
+    render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'Fast Playback'),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
 
         await waitFor(() => {
-            const container = canvas.getByText(/GeoProcessGraphic Component/);
-            if (!container) throw new Error("Component not rendered");
-        }, { timeout: 3000 });
+            const mapContainer = canvasElement.querySelector('.tsi-geoProcessGraphicMap');
+            if (!mapContainer) throw new Error("Map container not rendered");
+        }, { timeout: 5000 });
 
-        const playButton = canvas.queryByText('▶️ Play');
+        const playButton = canvas.queryByRole('button', { name: /play/i });
         if (playButton) {
             fireEvent.click(playButton);
-            console.log('Playback started (mock)');
+
         }
 
-        const markers = canvasElement.querySelectorAll('[title*="Truck"], [title*="Van"], [title*="Car"]');
+        const markers = canvasElement.querySelectorAll('.tsi-geoprocess-marker');
         if (markers.length > 0) {
             fireEvent.click(markers[0]);
-            console.log('Marker clicked (mock)');
+
         }
     }
 };
