@@ -9,6 +9,7 @@ interface IDateTimeButtonSingleOptions {
     is24HourTime?: boolean;
     dateLocale?: string;
     dTPIsModal?: boolean;
+    minutesForTimeLabels?: boolean;
     minMillis?: number;
     maxMillis?: number;
     currentMillis?: number;
@@ -39,6 +40,7 @@ Interactive single date-time selection button with dropdown picker for time seri
 - **Theming**: Support for light and dark themes
 - **Locale Support**: Internationalization for different regions and languages
 - **Time Format**: Support for both 12-hour and 24-hour time formats
+- **Time Precision**: Control whether to show seconds and milliseconds in time labels
 - **Validation**: Automatic validation against min/max time bounds
 
 ## Usage Example
@@ -55,7 +57,8 @@ dateTimeButton.render({
     theme: 'light',
     offset: 'Local',
     is24HourTime: true,
-    dateLocale: 'de-DE'  // German locale
+    dateLocale: 'de-DE',  // German locale
+    minutesForTimeLabels: false  // Show seconds and milliseconds
 }, 
 dayAgo.getTime(),     // minMillis
 dayAhead.getTime(),   // maxMillis
@@ -102,6 +105,11 @@ now.getTime(),        // currentMillis
         dTPIsModal: {
             control: 'boolean',
             description: 'Whether the date-time picker should be modal',
+            table: { defaultValue: { summary: 'true' } }
+        },
+        minutesForTimeLabels: {
+            control: 'boolean',
+            description: 'When true, shows only hours and minutes in time labels. When false, includes seconds and milliseconds for higher precision.',
             table: { defaultValue: { summary: 'true' } }
         },
         showFeedback: {
@@ -169,6 +177,7 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             is24HourTime: true,
             dateLocale: 'en-US',
             dTPIsModal: true,
+            minutesForTimeLabels: true,
             showFeedback: true,
             ...options
         };
@@ -424,6 +433,18 @@ export const WideTimeRange: Story = {
         offset: 'Local',
         is24HourTime: true,
         dTPIsModal: true
+    },
+    render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
+};
+
+export const HighPrecisionTime: Story = {
+    name: 'High Precision (Seconds & Milliseconds)',
+    args: {
+        theme: 'light',
+        offset: 'Local',
+        is24HourTime: true,
+        dTPIsModal: true,
+        minutesForTimeLabels: false  // Show seconds and milliseconds
     },
     render: createDateTimeButtonSingleStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;')
 };

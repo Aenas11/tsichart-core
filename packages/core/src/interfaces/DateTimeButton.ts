@@ -20,6 +20,9 @@ class DateTimeButton extends ChartComponent {
         const date = new Date(millis);
         const locale = this.chartOptions.dateLocale || 'en-US';
         const is24Hour = this.chartOptions.is24HourTime !== false;
+        
+        // Respect minutesForTimeLabels option: true = minutes only, false = include seconds/millis
+        const includeSeconds = this.chartOptions.minutesForTimeLabels === false;
 
         const formatOptions: Intl.DateTimeFormatOptions = {
             year: 'numeric',
@@ -27,17 +30,27 @@ class DateTimeButton extends ChartComponent {
             day: '2-digit',
             hour: '2-digit',
             minute: '2-digit',
-            second: '2-digit',
             hour12: !is24Hour
         };
+        
+        // Only include seconds if minutesForTimeLabels is false
+        if (includeSeconds) {
+            formatOptions.second = '2-digit';
+        }
 
         try {
             if (this.chartOptions.offset && this.chartOptions.offset !== 'Local') {
                 formatOptions.timeZone = this.getTimezoneFromOffset(this.chartOptions.offset);
             }
-            const baseFormat = date.toLocaleString(locale, formatOptions);
-            const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
-            return `${baseFormat}.${milliseconds}`;
+            let formattedDate = date.toLocaleString(locale, formatOptions);
+            
+            // Only append milliseconds if minutesForTimeLabels is false
+            if (includeSeconds) {
+                const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+                formattedDate = `${formattedDate}.${milliseconds}`;
+            }
+            
+            return formattedDate;
         } catch (error) {
             console.warn(`Failed to format date for locale ${locale}:`, error);
 
