@@ -10,7 +10,8 @@ import dts from 'rollup-plugin-dts';
 import del from 'rollup-plugin-delete';
 import terser from '@rollup/plugin-terser';
 
-const isProduction = process.env.NODE_ENV === 'production';
+// Default to production unless explicitly set to development
+const isProduction = process.env.NODE_ENV !== 'development';
 
 // Plugin to ignore SCSS imports in type definitions
 const ignoreScss = {
