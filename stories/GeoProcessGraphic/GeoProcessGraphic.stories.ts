@@ -34,17 +34,39 @@ interface IGeoProcessGraphicOptions {
 class MovingGeoProcessGraphic extends GeoProcessGraphic {
     private vehicleData: Map<string, Array<any>> = new Map();
     private routeGenerators: Map<string, any> = new Map();
+    private mapReady: boolean = false;
+    private callbackSetup: boolean = false;
 
     protected renderBase(data: Array<TsqExpression>, chartOptions: any) {
         this.generateVehicleRoutes(data, chartOptions);
         super.renderBase(data, chartOptions);
-        this.setupVehicleMovement();
+    }
+
+    protected draw() {
+        return super.draw().then(() => {
+            this.mapReady = true;
+            this.setupVehicleMovement();
+        }).catch((error) => {
+            console.error('Failed to initialize map:', error);
+            throw error;
+        });
     }
 
     private setupVehicleMovement(): void {
-        setTimeout(() => {
-            if (this.playbackControls) {
+        if (this.callbackSetup) {
+            return;
+        }
+
+        // Add timeout limit to prevent infinite loops following internal state management
+        let attempts = 0;
+        const maxAttempts = 50;
+        const waitForReady = () => {
+            attempts++;
+            if (this.playbackControls && this.mapReady) {
+                this.callbackSetup = true;
+
                 const originalCallback = (this.playbackControls as any).selectTimeStampCallback;
+
                 (this.playbackControls as any).selectTimeStampCallback = (timeStamp: Date) => {
                     if (originalCallback && typeof originalCallback === 'function') {
                         try {
@@ -53,17 +75,82 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
                             console.warn('Error calling original callback:', error);
                         }
                     }
-
                     this.handleVehicleMovement(timeStamp);
                 };
+            } else if (attempts < maxAttempts) {
+                console.log(`⏳ Waiting for components: PlaybackControls=${!!this.playbackControls}, MapReady=${this.mapReady}`);
+                setTimeout(waitForReady, 100);
             } else {
-                console.warn('PlaybackControls not available for vehicle movement setup');
+                console.error(' Timeout waiting for components to be ready after 5 seconds');
+                console.error('Final state:', {
+                    playbackControls: !!this.playbackControls,
+                    mapReady: this.mapReady,
+                    callbackSetup: this.callbackSetup
+                });
             }
-        }, 300);
+        };
+
+        setTimeout(waitForReady, 100);
+    }
+
+
+    private createVehicleMarker(tsqExpression: any, index: number): void {
+        const popup = new (window as any).atlas.Popup({
+            content: `<div class="tsi-gpgPopUp" id="tsi-popup${index}">
+                <div class="tsi-popup-title">${tsqExpression.alias || `Vehicle ${index + 1}`}</div>
+                <div class="tsi-popup-content">Loading data...</div>
+            </div>`,
+            pixelOffset: [0, -30],
+            closeButton: true
+        });
+
+        const marker = new (window as any).atlas.HtmlMarker({
+            htmlContent: this.createMarkerHtml(tsqExpression, index),
+            position: this.center || [153.021072, -27.470125],
+            popup: popup,
+            draggable: false
+        });
+
+        this.map.markers.add(marker);
+        this.map.popups.add(popup);
+
+        this.map.events.add("click", marker, () => {
+            marker.togglePopup();
+        });
+    }
+
+    private createMarkerHtml(tsqExpression: any, index: number): string {
+        return `
+            <div class="tsi-geoprocess-marker" style="
+                position: relative;
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                transform: translate(-50%, -50%);
+            ">
+                <div style="
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 50%;
+                    border: 2px solid #fff;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    background: ${['#ff6b6b', '#4ecdc4', '#45b7d1'][index]};
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                ">
+                    ${['🚛', '🚐', '🚗'][index]}
+                </div>
+            </div>
+        `;
     }
 
     private handleVehicleMovement(timeStamp: Date): void {
-
+        if (!this.mapReady || !(this as any).map) {
+            console.warn('Azure Maps not ready for vehicle movement');
+            return;
+        }
         if (!this.tsqExpressions || this.tsqExpressions.length === 0) {
             console.warn('No TSQ expressions available for vehicle movement');
             return;
@@ -126,15 +213,27 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
     }
 
     private updateVehicleMarkers(dataPoints: Array<any>): void {
-        if (!(this as any).map) {
-            console.warn('Azure Maps instance not available');
+        const map = (this as any).map;
+
+        if (!map) {
+            console.warn('Azure Maps instance not available for marker updates');
+            return;
+        }
+
+        if (!this.mapReady) {
+            console.warn('Azure Maps not fully initialized for marker updates');
             return;
         }
 
         try {
-            const map = (this as any).map;
             const markers = map.markers?.getMarkers?.() || [];
             const popups = map.popups?.getPopups?.() || [];
+
+
+            if (markers.length === 0) {
+                console.warn('No markers available for update');
+                return;
+            }
             dataPoints.forEach((dataPoint, index) => {
                 if (markers[index] &&
                     dataPoint.longitude !== undefined &&
@@ -143,9 +242,13 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
                     !isNaN(dataPoint.latitude)) {
 
                     const newPosition = [dataPoint.longitude, dataPoint.latitude];
+
+                    // Update marker position following Azure Maps patterns
                     markers[index].setOptions({
                         position: newPosition
                     });
+
+                    // Update popup content following component patterns
                     if (popups[index]) {
                         popups[index].setOptions({
                             position: newPosition,
@@ -153,7 +256,7 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
                         });
                     }
                 } else {
-                    console.warn(`⚠️ Cannot update marker ${index}: invalid position data`);
+                    console.warn(` Cannot update marker ${index}: invalid position data`);
                 }
             });
         } catch (error) {
@@ -598,10 +701,30 @@ const geoStateManager = {
             this.sharedSubscriptionKey = newKey;
             this.lastValidKey = newKey;
 
+            try {
+                localStorage.setItem('tsichart-azure-maps-key', newKey);
+                console.log('🔑 Saved subscription key to localStorage');
+            } catch (error) {
+                console.warn('Could not save key to localStorage:', error);
+            }
+
         }
     },
 
     getEffectiveKey(storyKey: string): string {
+        if (!this.lastValidKey) {
+            try {
+                const savedKey = localStorage.getItem('tsichart-azure-maps-key');
+                if (savedKey && savedKey !== 'demo-key-required') {
+                    this.lastValidKey = savedKey;
+                    this.sharedSubscriptionKey = savedKey;
+                    console.log('🔓 Loaded subscription key from localStorage');
+                }
+            } catch (error) {
+                console.warn('Could not load key from localStorage:', error);
+            }
+        }
+
         if (storyKey && storyKey !== 'demo-key-required') {
             this.updateKey(storyKey);
             return storyKey;
