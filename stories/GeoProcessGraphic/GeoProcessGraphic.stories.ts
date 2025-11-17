@@ -78,7 +78,6 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
                     this.handleVehicleMovement(timeStamp);
                 };
             } else if (attempts < maxAttempts) {
-                console.log(`⏳ Waiting for components: PlaybackControls=${!!this.playbackControls}, MapReady=${this.mapReady}`);
                 setTimeout(waitForReady, 100);
             } else {
                 console.error(' Timeout waiting for components to be ready after 5 seconds');
@@ -91,32 +90,6 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         };
 
         setTimeout(waitForReady, 100);
-    }
-
-
-    private createVehicleMarker(tsqExpression: any, index: number): void {
-        const popup = new (window as any).atlas.Popup({
-            content: `<div class="tsi-gpgPopUp" id="tsi-popup${index}">
-                <div class="tsi-popup-title">${tsqExpression.alias || `Vehicle ${index + 1}`}</div>
-                <div class="tsi-popup-content">Loading data...</div>
-            </div>`,
-            pixelOffset: [0, -30],
-            closeButton: true
-        });
-
-        const marker = new (window as any).atlas.HtmlMarker({
-            htmlContent: this.createMarkerHtml(tsqExpression, index),
-            position: this.center || [153.021072, -27.470125],
-            popup: popup,
-            draggable: false
-        });
-
-        this.map.markers.add(marker);
-        this.map.popups.add(popup);
-
-        this.map.events.add("click", marker, () => {
-            marker.togglePopup();
-        });
     }
 
     private createMarkerHtml(tsqExpression: any, index: number): string {
@@ -703,7 +676,6 @@ const geoStateManager = {
 
             try {
                 localStorage.setItem('tsichart-azure-maps-key', newKey);
-                console.log('🔑 Saved subscription key to localStorage');
             } catch (error) {
                 console.warn('Could not save key to localStorage:', error);
             }
@@ -718,7 +690,7 @@ const geoStateManager = {
                 if (savedKey && savedKey !== 'demo-key-required') {
                     this.lastValidKey = savedKey;
                     this.sharedSubscriptionKey = savedKey;
-                    console.log('🔓 Loaded subscription key from localStorage');
+
                 }
             } catch (error) {
                 console.warn('Could not load key from localStorage:', error);
