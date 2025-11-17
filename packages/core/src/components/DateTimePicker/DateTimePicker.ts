@@ -4,13 +4,34 @@ import { ChartComponent } from '../../interfaces/ChartComponent';
 import TimezonePicker from '../TimezonePicker/TimezonePicker';
 import Utils from "../../utils";
 import { createPikaday, moment } from './pikaday-wrapper';
+import { DateFormatter } from '../../utils/DateFormatter';
 
+// Keyboard key codes
+const KEY_CODES = {
+    ARROW_LEFT: 37,
+    ARROW_UP: 38,
+    ARROW_RIGHT: 39,
+    ARROW_DOWN: 40,
+    TAB: 9,
+    ESCAPE: 27
+} as const;
 
+// Quick time selection options (label, milliseconds)
+type QuickTimeOption = [string, number];
+
+interface RangeValidationResult {
+    rangeIsValid: boolean;
+    errors: string[];
+    isSaveable: boolean;
+}
+
+type OnSetCallback = (fromMillis: number, toMillis: number, offset: string, isRelative: boolean, quickTime: number) => void;
+type OnCancelCallback = () => void;
 
 class DateTimePicker extends ChartComponent {
-    private calendar: any;
-    private calendarPicker: any;
-    private timeControls: any;
+    private calendar: d3.Selection<HTMLDivElement, unknown, null, undefined>;
+    private calendarPicker: any; // Pikaday instance - external library without types
+    private timeControls: d3.Selection<HTMLDivElement, unknown, null, undefined>;
     private minMillis: number;
     private maxMillis: number;
     private fromMillis: number;
@@ -19,24 +40,25 @@ class DateTimePicker extends ChartComponent {
     private fromHours: number;
     private toMinutes: number;
     private toHours: number;
-    private onSet: any;
-    private onCancel: any;
+    private onSet: OnSetCallback;
+    private onCancel: OnCancelCallback;
     private isValid: boolean = true;
 
-    private targetElement: any;
-    private dateTimeSelectionPanel: any;
-    private quickTimesPanel: any;
+    private targetElement: d3.Selection<HTMLElement, unknown, null, undefined>;
+    private dateTimeSelectionPanel: d3.Selection<HTMLDivElement, unknown, null, undefined>;
+    private quickTimesPanel: d3.Selection<HTMLDivElement, unknown, null, undefined>;
 
     private isSettingStartTime: boolean = true;
-    private startRange;
-    private endRange;
-    private anchorDate;
+    private startRange: Date;
+    private endRange: Date;
+    private anchorDate: Date;
     private offsetName: string;
+    private dateFormatter: DateFormatter;
 
-    private fromInput: any;
-    private toInput: any;
+    private fromInput: d3.Selection<HTMLInputElement, unknown, null, undefined>;
+    private toInput: d3.Selection<HTMLInputElement, unknown, null, undefined>;
 
-    private quickTimeArray: Array<any> = [
+    private quickTimeArray: QuickTimeOption[] = [
         ["Last 15 mins", 15 * 60 * 1000],
         ["Last 30 mins", 30 * 60 * 1000],
         ["Last Hour", 60 * 60 * 1000],
@@ -54,9 +76,13 @@ class DateTimePicker extends ChartComponent {
         super(renderTarget);
     }
 
-    // returns -1 if not currently a quicktime
-    private getCurrentQuickTime() {
-        let matchingQuickTime = this.quickTimeArray.filter((quickTimeTuple) => {
+    /**
+     * Get the currently selected quick time value
+     * @returns The quick time in milliseconds, or -1 if not a quick time selection
+     * @private
+     */
+    private getCurrentQuickTime(): number {
+        const matchingQuickTime = this.quickTimeArray.filter((quickTimeTuple) => {
             return (this.toMillis - this.fromMillis === quickTimeTuple[1]);
         });
         if (matchingQuickTime.length !== 1 || this.toMillis !== this.maxMillis) {
@@ -65,8 +91,13 @@ class DateTimePicker extends ChartComponent {
         return matchingQuickTime[0][1];
     }
 
-    public getQuickTimeText(quickTimeMillis) {
-        let filteredQuickTime = this.quickTimeArray.filter((quickTimeTuple) => {
+    /**
+     * Get the display text for a quick time selection
+     * @param quickTimeMillis - The quick time value in milliseconds
+     * @returns The display text, or null if not found
+     */
+    public getQuickTimeText(quickTimeMillis: number): string | null {
+        const filteredQuickTime = this.quickTimeArray.filter((quickTimeTuple) => {
             return (quickTimeMillis === quickTimeTuple[1]);
         });
         if (filteredQuickTime.length !== 1) {
@@ -79,11 +110,11 @@ class DateTimePicker extends ChartComponent {
         return this.roundDay(Utils.adjustDateFromTimezoneOffset(Utils.offsetFromUTC(new Date(millis), this.chartOptions.offset)))
     }
 
-    private setNewOffset(oldOffset: any) {
-        var valuesToUpdate = ['fromMillis', 'toMillis'];
+    private setNewOffset(oldOffset: string): void {
+        const valuesToUpdate = ['fromMillis', 'toMillis'];
         valuesToUpdate.forEach((currValue: string) => {
-            var oldOffsetMinutes = Utils.getMinutesToUTC(oldOffset, this[currValue]);
-            var utcMillis = this[currValue] - (oldOffsetMinutes * 60 * 1000);
+            const oldOffsetMinutes = Utils.getMinutesToUTC(oldOffset, this[currValue]);
+            const utcMillis = this[currValue] - (oldOffsetMinutes * 60 * 1000);
             this[currValue] = utcMillis - Utils.getOffsetMinutes(this.chartOptions.offset, utcMillis) * 60 * 1000;
         });
 
@@ -101,7 +132,7 @@ class DateTimePicker extends ChartComponent {
 
         this.calendarPicker.draw();
 
-        var rangeErrorCheck = this.rangeIsValid(this.fromMillis, this.toMillis);
+        const rangeErrorCheck = this.rangeIsValid(this.fromMillis, this.toMillis);
         this.setIsSaveable(rangeErrorCheck.isSaveable);
         this.displayRangeErrors(rangeErrorCheck.errors);
     }
@@ -110,8 +141,19 @@ class DateTimePicker extends ChartComponent {
         this.isSettingStartTime = true;
     }
 
+    /**
+     * Render the date/time picker with range selection
+     * 
+     * @param chartOptions - Configuration options
+     * @param minMillis - Minimum selectable time
+     * @param maxMillis - Maximum selectable time
+     * @param fromMillis - Start time of range (defaults to 24 hours before maxMillis)
+     * @param toMillis - End time of range (defaults to maxMillis)
+     * @param onSet - Callback when user saves selection
+     * @param onCancel - Callback when user cancels
+     */
     public render(chartOptions: any = {}, minMillis: number, maxMillis: number,
-        fromMillis: number = null, toMillis: number = null, onSet = null, onCancel = null) {
+        fromMillis: number = null, toMillis: number = null, onSet: OnSetCallback = null, onCancel: OnCancelCallback = null) {
         this.isSettingStartTime = true;
         this.minMillis = minMillis;
         this.maxMillis = maxMillis;
@@ -126,7 +168,6 @@ class DateTimePicker extends ChartComponent {
             fromMillis = Math.max(toMillis - (24 * 60 * 60 * 1000), minMillis);
         }
         this.chartOptions.setOptions(chartOptions);
-        moment.locale(this.chartOptions.dateLocale);
         this.fromMillis = fromMillis;
         this.toMillis = toMillis;
         this.onSet = onSet;
@@ -136,13 +177,16 @@ class DateTimePicker extends ChartComponent {
         this.targetElement.html('');
         super.themify(this.targetElement, this.chartOptions.theme);
 
-        let group = this.targetElement.append('div')
+        const group = this.targetElement.append('div')
             .classed('tsi-dateTimeGroup', true)
             .on('keydown', (event) => {
-                if (event.keyCode <= 40 && event.keyCode >= 37) { //arrow key
+                const keyCode = event.keyCode;
+                // Arrow keys
+                if (keyCode >= KEY_CODES.ARROW_LEFT && keyCode <= KEY_CODES.ARROW_DOWN) {
                     event.stopPropagation();
                 }
-                if (event.keyCode === 27 && this.chartOptions.dTPIsModal) { //escape
+                // Escape key in modal mode
+                if (keyCode === KEY_CODES.ESCAPE && this.chartOptions.dTPIsModal) {
                     this.onCancel();
                     this.onSaveOrCancel();
                 }
@@ -158,17 +202,15 @@ class DateTimePicker extends ChartComponent {
         this.timeControls = this.dateTimeSelectionPanel.append("div").classed("tsi-timeControlsContainer", true);
         this.calendar = this.dateTimeSelectionPanel.append("div").classed("tsi-calendarPicker", true);
         this.createTimezonePicker();
-        var saveButtonContainer = this.dateTimeSelectionPanel.append("div").classed("tsi-saveButtonContainer", true);
-        var self = this;
+        const saveButtonContainer = this.dateTimeSelectionPanel.append("div").classed("tsi-saveButtonContainer", true);
 
-
-        var saveButton = saveButtonContainer.append("button").classed("tsi-saveButton", true).text(this.getString("Save"))
-            .on("click", function () {
-                self.onSet(self.fromMillis, self.toMillis, self.chartOptions.offset, self.maxMillis === self.toMillis, self.getCurrentQuickTime());
-                self.onSaveOrCancel();
+        const saveButton = saveButtonContainer.append("button").classed("tsi-saveButton", true).text(this.getString("Save"))
+            .on("click", () => {
+                this.onSet(this.fromMillis, this.toMillis, this.chartOptions.offset, this.maxMillis === this.toMillis, this.getCurrentQuickTime());
+                this.onSaveOrCancel();
             });
 
-        var cancelButton = saveButtonContainer.append('button')
+        const cancelButton = saveButtonContainer.append('button')
             .attr('class', 'tsi-cancelButton')
             .text(this.getString('Cancel'))
             .on('click', () => {
@@ -176,11 +218,13 @@ class DateTimePicker extends ChartComponent {
                 this.onSaveOrCancel();
             })
             .on('keydown', (event) => {
-                if (event.keyCode === 9 && !event.shiftKey && this.chartOptions.dTPIsModal) { // tab
-                    this.quickTimesPanel.selectAll('.tsi-quickTime')
+                if (event.keyCode === KEY_CODES.TAB && !event.shiftKey && this.chartOptions.dTPIsModal) {
+                    const firstQuickTime = this.quickTimesPanel.selectAll('.tsi-quickTime')
                         .filter((d, i) => i === 0)
-                        .node()
-                        .focus();
+                        .node() as HTMLElement;
+                    if (firstQuickTime) {
+                        firstQuickTime.focus();
+                    }
                     event.preventDefault();
                 }
             });
@@ -238,7 +282,7 @@ class DateTimePicker extends ChartComponent {
         })
             .on('keydown', (event) => {
                 if (event.keyCode === 9 && event.shiftKey && this.chartOptions.dTPIsModal) { // shift tab
-                    this.dateTimeSelectionPanel.select(".tsi-saveButtonContainer").select(".tsi-cancelButton").node().focus();
+                    (this.dateTimeSelectionPanel.select(".tsi-saveButtonContainer").select(".tsi-cancelButton").node() as HTMLElement)?.focus();
                     event.preventDefault();
                 }
             });
@@ -335,13 +379,29 @@ class DateTimePicker extends ChartComponent {
         }
     }
 
-    private createCalendar() {
-        var i18nOptions = {
+    /**
+     * Create and configure the Pikaday calendar component
+     * Uses the DateFormatter utility to generate locale-specific month and weekday names
+     * @private
+     */
+    private createCalendar(): void {
+        const locale = this.chartOptions.dateLocale || 'en-US';
+        const timezone = this.chartOptions.offset || 'UTC';
+
+        // Initialize or update the date formatter
+        if (!this.dateFormatter) {
+            this.dateFormatter = new DateFormatter({ locale, timezone });
+        } else {
+            this.dateFormatter.setLocale(locale);
+            this.dateFormatter.setTimezone(timezone);
+        }
+
+        const i18nOptions = {
             previousMonth: this.getString('Previous Month'),
             nextMonth: this.getString('Next Month'),
-            months: moment.localeData().months(),
-            weekdays: moment.localeData().weekdays(),
-            weekdaysShort: moment.localeData().weekdaysMin()
+            months: this.dateFormatter.getMonthNames('long'),
+            weekdays: this.dateFormatter.getWeekdayNames('long'),
+            weekdaysShort: this.dateFormatter.getWeekdayNames('short')
         };
 
         // Use the safe Pikaday wrapper
@@ -459,7 +519,7 @@ class DateTimePicker extends ChartComponent {
                 .classed("tsi-errorMessage", true)
                 .attr('role', 'alert')
                 .attr('aria-live', 'assertive')
-                .text(d => d);
+                .text((d: string) => d);
         }
     }
 
@@ -562,7 +622,7 @@ class DateTimePicker extends ChartComponent {
                 .text(this.getString('*'));
             let inputName = startOrEnd === 'start' ? 'fromInput' : 'toInput'
             this[inputName] = fromOrToContainer.append('input')
-                .attr('class', 'tsi-dateTimeInput', true)
+                .attr('class', 'tsi-dateTimeInput')
                 .attr('aria-labelledby', inputLabelID)
                 .attr('required', true)
                 .attr('id', inputID)
