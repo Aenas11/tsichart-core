@@ -56,8 +56,6 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         if (this.callbackSetup) {
             return;
         }
-
-        // Add timeout limit to prevent infinite loops following internal state management
         let attempts = 0;
         const maxAttempts = 50;
         const waitForReady = () => {
@@ -90,33 +88,6 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         };
 
         setTimeout(waitForReady, 100);
-    }
-
-    private createMarkerHtml(tsqExpression: any, index: number): string {
-        return `
-            <div class="tsi-geoprocess-marker" style="
-                position: relative;
-                width: 40px;
-                height: 40px;
-                cursor: pointer;
-                transform: translate(-50%, -50%);
-            ">
-                <div style="
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 50%;
-                    border: 2px solid #fff;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                    background: ${['#ff6b6b', '#4ecdc4', '#45b7d1'][index]};
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 18px;
-                ">
-                    ${['🚛', '🚐', '🚗'][index]}
-                </div>
-            </div>
-        `;
     }
 
     private handleVehicleMovement(timeStamp: Date): void {
@@ -215,13 +186,9 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
                     !isNaN(dataPoint.latitude)) {
 
                     const newPosition = [dataPoint.longitude, dataPoint.latitude];
-
-                    // Update marker position following Azure Maps patterns
                     markers[index].setOptions({
                         position: newPosition
                     });
-
-                    // Update popup content following component patterns
                     if (popups[index]) {
                         popups[index].setOptions({
                             position: newPosition,
@@ -237,6 +204,7 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         }
     }
 
+
     private generateVehicleRoutes(expressions: Array<TsqExpression>, chartOptions: any): void {
         const timeFrame = chartOptions.timeFrame || {
             from: new Date(Date.now() - 2 * 60 * 60 * 1000),
@@ -244,7 +212,7 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         };
 
         const center = chartOptions.center || [153.021072, -27.470125];
-        const bucketSizeMs = 5 * 60 * 1000; // 5 minute intervals
+        const bucketSizeMs = 5 * 60 * 1000;
         const totalDuration = timeFrame.to.getTime() - timeFrame.from.getTime();
         const numberOfPoints = Math.ceil(totalDuration / bucketSizeMs);
 
