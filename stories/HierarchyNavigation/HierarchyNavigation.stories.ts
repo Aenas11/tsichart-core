@@ -404,7 +404,7 @@ function performDeepSearch(searchTerm: string, basePath: string[] = []): any {
         // Search instances
         if (data.instances?.hits) {
             for (const instance of data.instances.hits) {
-                const searchableText = `${instance.name} ${instance.description || ''}`.toLowerCase();
+                const searchableText = `${instance.name} ${instance.description || ''} ${instance.id || ''}`.toLowerCase();
                 if (searchableText.includes(term)) {
                     instanceResults.push({
                         ...instance,
@@ -518,6 +518,11 @@ await hierarchyNav.render(searchFunction, {
             description: 'Visual theme for the component',
             table: { defaultValue: { summary: 'light' } }
         },
+        autocompleteEnabled: {
+            control: { type: 'boolean' },
+            description: 'Enable/disable autocomplete suggestions dropdown',
+            table: { defaultValue: { summary: 'true' } }
+        },
         preselectedIds: {
             control: { type: 'object' },
             description: 'Array of instance IDs to pre-select',
@@ -551,6 +556,7 @@ async function renderHierarchyNavigation(container: HTMLElement, options: any = 
         // Options for the hierarchy navigation
         const hierarchyOptions = {
             theme: options.theme || 'light',
+            autocompleteEnabled: options.autocompleteEnabled !== undefined ? options.autocompleteEnabled : true,
             onInstanceClick: (instance: any) => {
                 console.log('Instance clicked:', instance);
                 alert(`Instance selected:\nName: ${instance.name}\nID: ${instance.id}\nDescription: ${instance.description}`);
@@ -755,4 +761,155 @@ The search results inherit the dark theme styling with appropriate colors for ba
         theme: 'dark'
     },
     render: createHierarchyNavigationStory('height: 700px; width: 500px; padding: 20px; background: #1a1a1a;')
+};
+
+export const AutocompleteEnabled: Story = {
+    name: '6. Autocomplete Suggestions ✨',
+    parameters: {
+        docs: {
+            description: {
+                story: `
+## Autocomplete Feature
+
+This story demonstrates the **autocomplete suggestions** feature that provides instant instance suggestions as you type.
+
+### How Autocomplete Works
+
+1. **Start typing** - Autocomplete appears after just 1 character
+2. **Instant suggestions** - See up to 10 matching instances immediately
+3. **Breadcrumb context** - Each suggestion shows its full location path
+4. **Select with keyboard** - Use Arrow Up/Down to navigate, Enter to select
+5. **Click to select** - Or click a suggestion with the mouse
+
+### Try Typing These:
+
+- \`"temp"\` - See temperature sensors from different locations
+- \`"press"\` - See pressure sensors across the hierarchy
+- \`"motor"\` - See motor monitoring instances
+- \`"energy"\` - See energy meters
+- \`"forklift"\` - See forklift telemetry sensors
+
+### Key Features
+
+✅ **Instant Feedback** - Suggestions appear immediately (no debounce delay)  
+✅ **Limited Results** - Shows max 10 items to keep dropdown manageable  
+✅ **Full Context** - Each suggestion includes breadcrumb path  
+✅ **Keyboard Navigation** - Arrow keys, Enter, ESC all work  
+✅ **Auto-select First** - First suggestion is pre-selected for quick access  
+✅ **Complementary to Search** - Works alongside deep search (which shows full results)  
+
+### Autocomplete vs Deep Search
+
+| Feature | Autocomplete | Deep Search |
+|---------|-------------|-------------|
+| **Triggers** | 1+ characters typed | 2+ characters typed |
+| **Speed** | Instant | 250ms debounced |
+| **Results** | Max 10 instances only | All matching hierarchy nodes + instances |
+| **UI** | Dropdown list | Flat results with details |
+| **Purpose** | Quick instance lookup | Comprehensive search |
+
+### How to Use
+
+1. **Type in search box** - Dropdown appears instantly
+2. **Browse suggestions** - Use arrow keys or mouse
+3. **Select a suggestion** - Press Enter or click
+4. **See full results** - Deep search runs automatically showing all matches
+
+### Technical Details
+
+- **Library**: Uses Awesomplete for dropdown UI
+- **Data source**: Calls search function with \`includeInstances: true\`
+- **Limit**: \`maxResults: 10\` for autocomplete performance
+- **Format**: \`{ label: "path > name", value: "name" }\`
+
+### Note
+
+Autocomplete focuses on **instances (leaves)** only. Hierarchy nodes appear in the deep search results but not in autocomplete suggestions.
+                `
+            }
+        }
+    },
+    args: {
+        theme: 'light',
+        autocompleteEnabled: true  // Explicitly show it's enabled
+    },
+    render: createHierarchyNavigationStory('height: 700px; width: 500px; padding: 20px;')
+};
+
+export const AutocompleteDisabled: Story = {
+    name: '7. Without Autocomplete 🚫',
+    parameters: {
+        docs: {
+            description: {
+                story: `
+## Autocomplete Disabled
+
+This story shows the component with **autocomplete disabled** for comparison. The search functionality still works perfectly, but without the instant dropdown suggestions.
+
+### When to Disable Autocomplete
+
+Consider disabling autocomplete in these scenarios:
+
+1. **Performance** - Large hierarchies (10,000+ instances) where autocomplete is slow
+2. **Simplicity** - Users prefer minimal UI without dropdown distractions
+3. **Mobile** - Touch interfaces where dropdowns may be awkward
+4. **Bandwidth** - Limited network where extra requests are costly
+5. **Custom UI** - You want to implement your own suggestion system
+
+### What Changes?
+
+**With Autocomplete OFF:**
+- ❌ No dropdown suggestions as you type
+- ❌ No instant instance lookup
+- ❌ No additional network requests for suggestions
+- ✅ Search still works (type and wait 250ms for results)
+- ✅ Deep search shows full results
+- ✅ All keyboard shortcuts work (ESC, Enter)
+- ✅ Cleaner, simpler interface
+
+**User Experience:**
+1. Type in search box - No dropdown appears
+2. Wait 250ms - Full search results appear
+3. View results - All matches shown with breadcrumbs
+4. Click instances - Selection works normally
+
+### Configuration
+
+Disable autocomplete by passing the option:
+
+\`\`\`typescript
+await hierarchyNav.render(searchFunction, {
+    theme: 'light',
+    autocompleteEnabled: false  // Disable autocomplete
+}, preselectedIds);
+\`\`\`
+
+### Try It
+
+Type the same searches as the previous story:
+- \`"temperature"\` - No dropdown, but full results appear
+- \`"pressure"\` - Same behavior
+- \`"motor"\` - Notice the simpler, cleaner interface
+
+The search is still fully functional, just without the intermediate autocomplete step!
+
+### Benefits of Disabling
+
+- **Simpler UI** - Less visual clutter
+- **Fewer requests** - Only one search query (not autocomplete + deep search)
+- **Faster on slow networks** - No extra roundtrips
+- **More predictable** - Same behavior every time (no dropdown timing issues)
+
+### Note
+
+This is a **configuration option**, not a permanent state. You can enable/disable it per instance based on your needs. Default is **enabled** to provide the best out-of-the-box experience.
+                `
+            }
+        }
+    },
+    args: {
+        theme: 'light',
+        autocompleteEnabled: false  // Disable autocomplete
+    },
+    render: createHierarchyNavigationStory('height: 700px; width: 500px; padding: 20px;')
 };

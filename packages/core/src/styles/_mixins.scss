@@ -4,237 +4,325 @@
 
 // Helper function to get spacing value
 @function spacing($key) {
-    @return map.get($spacing, $key);
+  @return map.get($spacing, $key);
 }
 
 // Helper function to get size value
 @function size($key) {
-    @return map.get($sizes, $key);
+  @return map.get($sizes, $key);
 }
 
 // Helper function to get font size
 @function font-size($key) {
-    @return map.get($font-sizes, $key);
+  @return map.get($font-sizes, $key);
 }
 
 // Helper function to get border radius
 @function radius($key) {
-    @return map.get($border-radius, $key);
+  @return map.get($border-radius, $key);
 }
 
 // Helper function to get z-index
 @function z($key) {
-    @return map.get($z-index, $key);
+  @return map.get($z-index, $key);
+}
+
+// Helper function to get theme color
+@function theme-color($theme, $key) {
+  @if $theme == "dark" {
+    @return map.get($theme-dark, $key);
+  } @else if $theme == "light" {
+    @return map.get($theme-light, $key);
+  }
+}
+
+// Helper function to get chart color
+@function chart-color($key) {
+  @return map.get($chart-colors, $key);
+}
+
+// Helper function to get gray value
+@function gray($level) {
+  @if $level ==50 {
+    @return $gray-50;
+  }
+
+  @if $level ==100 {
+    @return $gray-100;
+  }
+
+  @if $level ==200 {
+    @return $gray-200;
+  }
+
+  @if $level ==300 {
+    @return $gray-300;
+  }
+
+  @if $level ==400 {
+    @return $gray-400;
+  }
+
+  @if $level ==500 {
+    @return $gray-500;
+  }
+
+  @if $level ==600 {
+    @return $gray-600;
+  }
+
+  @if $level ==700 {
+    @return $gray-700;
+  }
+
+  @if $level ==800 {
+    @return $gray-800;
+  }
+
+  @if $level ==900 {
+    @return $gray-900;
+  }
 }
 
 // Mixin for theme colors
 @mixin theme-colors($theme-map) {
-    $text: map.get($theme-map, text);
-    $hover: map.get($theme-map, hover);
-    $element: map.get($theme-map, element);
-    $background: map.get($theme-map, background);
-    $alt-element: map.get($theme-map, alt-element);
-    $hover-text: map.get($theme-map, hover-text);
-    $scrollbar: map.get($theme-map, scrollbar);
+  $text: map.get($theme-map, text);
+  $text-secondary: if(
+    map.has-key($theme-map, text-secondary),
+    map.get($theme-map, text-secondary),
+    $text
+  );
+  $hover: map.get($theme-map, hover);
+  $element: map.get($theme-map, element);
+  $background: map.get($theme-map, background);
+  $alt-element: map.get($theme-map, alt-element);
+  $hover-text: map.get($theme-map, hover-text);
+  $scrollbar: map.get($theme-map, scrollbar);
+  $border: if(
+    map.has-key($theme-map, border),
+    map.get($theme-map, border),
+    $alt-element
+  );
+  $focus: if(
+    map.has-key($theme-map, focus),
+    map.get($theme-map, focus),
+    $hover-text
+  );
 
-    // Base context menu colors
-    .tsi-baseContextMenu {
-        border-color: $hover-text;
+  // Base context menu colors
+  .tsi-baseContextMenu {
+    border-color: $border;
+    background-color: $element;
+    box-shadow: $shadow-sm;
+
+    > div {
+      &:hover,
+      &:focus {
+        background-color: $hover;
+      }
+    }
+
+    .tsi-break {
+      border-top: 1px solid $border;
+
+      &:hover,
+      &:focus {
         background-color: $element;
-        box-shadow: $shadow-sm;
+      }
+    }
+  }
 
-        >div {
+  .tsi-searchInput {
+    border: 1px solid $border;
 
-            &:hover,
-            &:focus {
-                background-color: $hover;
-            }
-        }
+    &:focus {
+      @if $focus and $focus !=null {
+        border: 1px solid $focus;
+        outline: 2px solid rgba($focus, 0.2);
+        outline-offset: 1px;
+      } @else {
+        border: 1px solid $hover-text;
+      }
+    }
+  }
 
-        .tsi-break {
-            border-top: 1px solid rgba($hover-text, 0.2);
+  .tsi-baseMono {
+    background: $background;
+  }
 
-            &:hover,
-            &:focus {
-                background-color: $element;
-            }
-        }
+  // Chart-specific colors
+  .yAxis,
+  .xAxis {
+    path {
+      stroke: $text;
+      stroke-width: 1px;
     }
 
-    .tsi-searchInput {
-        border: 1px solid $alt-element;
-
-        &:focus {
-            border: 1px solid $hover-text;
-        }
-    }
-
-    .tsi-baseMono {
-        background: $background;
-    }
-
-    // Chart-specific colors
-    .yAxis,
-    .xAxis {
-        path {
-            stroke: $text;
-            stroke-width: 1px;
-        }
-
-        .tick {
-            text {
-                fill: $text;
-                user-select: none;
-            }
-
-            line {
-                stroke: $text;
-            }
-        }
-
-        @media screen and (-ms-high-contrast: white-on-black) {
-            path {
-                stroke: $color-white;
-            }
-
-            .tick {
-                text {
-                    fill: $color-white;
-                }
-
-                line {
-                    stroke: $color-white;
-                }
-            }
-        }
-    }
-
-    .vHoverBox,
-    .hHoverBox {
-        fill: $element;
-        stroke: $hover-text;
-    }
-
-    .tsi-resizeGutter {
-        &.tsi-isDragging {
-            background-color: $alt-element;
-        }
-    }
-
-    // Scrollbar styling
-    ::-webkit-scrollbar {
-        height: spacing(lg);
-        width: spacing(lg);
-    }
-
-    ::-webkit-scrollbar-track {
-        background: none;
-
-        &:hover {
-            background: $background;
-        }
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: $scrollbar;
-        border-radius: radius(lg);
-
-        &:hover {
-            background: $scrollbar;
-        }
-    }
-
-    // Hover text elements
-    .hHoverText {
-        text-anchor: middle;
-        font-size: font-size(xs);
-    }
-
-    .vHoverText {
-        text-anchor: end;
-        font-size: font-size(xs);
-    }
-
-    .hoverText {
-        stroke: none;
+    .tick {
+      text {
         fill: $text;
-    }
+        user-select: none;
+      }
 
-    .hHoverValueBar {
+      line {
         stroke: $text;
-        stroke-width: 4px;
+      }
     }
 
-    // SVG elements
-    .stacked g path {
-        fill: $text;
-        stroke-width: 1;
-        pointer-events: all;
-        stroke: none;
-    }
+    @media screen and (-ms-high-contrast: white-on-black) {
+      path {
+        stroke: $color-white;
+      }
 
-    .stacked rect {
-        cursor: pointer;
-        fill: transparent;
-        stroke-width: 1;
-    }
-
-    // Tooltips
-    .tooltip {
-        pointer-events: none;
-
+      .tick {
         text {
-            fill: $text;
-            alignment-baseline: hanging;
+          fill: $color-white;
         }
 
-        rect {
-            fill: $element;
-            stroke: $hover-text;
+        line {
+          stroke: $color-white;
         }
+      }
+    }
+  }
 
-        .title {
-            font-weight: bold;
-            font-size: font-size(md);
-        }
+  .vHoverBox,
+  .hHoverBox {
+    fill: $element;
+    stroke: $hover-text;
+  }
 
-        .value {
-            font-weight: lighter;
-            font-size: font-size(sm);
+  .tsi-resizeGutter {
+    &.tsi-isDragging {
+      background-color: $alt-element;
+    }
+  }
 
-            &.visibleValue {
-                font-weight: bold;
-            }
-        }
+  // Scrollbar styling
+  ::-webkit-scrollbar {
+    height: spacing(lg);
+    width: spacing(lg);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: none;
+
+    &:hover {
+      background: $background;
+    }
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $scrollbar;
+    border-radius: radius(lg);
+
+    &:hover {
+      background: $scrollbar;
+    }
+  }
+
+  // Hover text elements
+  .hHoverText {
+    text-anchor: middle;
+    font-size: font-size(xs);
+  }
+
+  .vHoverText {
+    text-anchor: end;
+    font-size: font-size(xs);
+  }
+
+  .hoverText {
+    stroke: none;
+    fill: $text;
+  }
+
+  .hHoverValueBar {
+    stroke: $text;
+    stroke-width: 4px;
+  }
+
+  // SVG elements
+  .stacked g path {
+    fill: $text;
+    stroke-width: 1;
+    pointer-events: all;
+    stroke: none;
+  }
+
+  .stacked rect {
+    cursor: pointer;
+    fill: transparent;
+    stroke-width: 1;
+  }
+
+  // Tooltips
+  .tooltip {
+    pointer-events: none;
+
+    text {
+      fill: $text;
+      alignment-baseline: hanging;
     }
 
-    // Buttons
-    .tsi-primaryButton {
-        color: $text;
-        border-color: rgba($text, 0.8);
-        background-color: $background;
-
-        &:hover {
-            background-color: $hover;
-        }
+    rect {
+      fill: $element;
+      stroke: $hover-text;
     }
 
-    // Chart value text box
-    .tsi-chartValueTextBox {
-        background-color: $element;
-        border-color: $hover;
+    .title {
+      font-weight: bold;
+      font-size: font-size(md);
     }
+
+    .value {
+      font-weight: lighter;
+      font-size: font-size(sm);
+
+      &.visibleValue {
+        font-weight: bold;
+      }
+    }
+  }
+
+  // Buttons
+  .tsi-primaryButton {
+    color: $text;
+    border-color: $border;
+    background-color: $element;
+
+    &:hover {
+      background-color: $hover;
+      border-color: $hover-text;
+    }
+
+    &:focus {
+      @if $focus and $focus !=null {
+        outline: 2px solid $focus;
+        outline-offset: 2px;
+      } @else {
+        outline: 2px solid $hover-text;
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  // Chart value text box
+  .tsi-chartValueTextBox {
+    background-color: $element;
+    border-color: $border;
+  }
 }
 
 // Mixin for focus styles
 @mixin focus-ring($color: currentColor) {
-    outline: 2px solid $color;
-    outline-offset: 2px;
+  outline: 2px solid $color;
+  outline-offset: 2px;
 }
 
 // Mixin for truncate text
 @mixin truncate {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

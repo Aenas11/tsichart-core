@@ -6,736 +6,872 @@
 @use "./hierarchy-animations" as animations;
 
 .tsi-hierarchy-nav-wrapper {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
-    // Performance: isolate component for better browser optimization
-    contain: layout style paint;
+  // Performance: isolate component for better browser optimization
+  contain: layout style paint;
 
-    // Accessibility: reduced motion support
-    @include animations.reducedMotion;
+  // Accessibility: reduced motion support
+  @include animations.reducedMotion;
 
-    // High contrast mode support
-    @include theme.hierarchyHighContrast;
+  // High contrast mode support
+  @include theme.hierarchyHighContrast;
 
-    &.tsi-dark {
-        $grays: grays('dark');
-        @include theme.hierarchyColors($grays);
+  &.tsi-dark {
+    $grays: grays("dark");
+    @include theme.hierarchyColors($grays);
 
-        .tsi-caret-icon,
-        .tsi-down-caret-icon {
-            background-image: url(../../icons/CaretClosed_Dark_Theme.svg);
-        }
+    // Extract individual gray values for nested styles
+    $gray1: list.nth($grays, 1);
+    $gray2: list.nth($grays, 2);
+    $gray3: list.nth($grays, 3);
+    $gray4: list.nth($grays, 4);
 
-        .tsi-pin-icon {
-            background-image: url(../../icons/Pin_Icon_Dark_Theme.svg);
-        }
-
-        .tsi-close-icon {
-            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
-        }
-
-        .tsi-tree-icon {
-            background-image: url(../../icons/Tree_Icon_Dark_Theme.svg);
-        }
-
-        .tsi-list-icon {
-            background-image: url(../../icons/List_Icon_Dark_Theme.svg);
-        }
-
-        .tsi-filter-icon {
-            background-image: url(../../icons/Filter_Icon_Dark_Theme.svg);
-        }
-
-        .tsi-spinner-icon {
-            background-image: url(../../icons/Spinner.svg);
-        }
-
-        .tsi-search-icon {
-            background-image: url(../../icons/Search_Dark.svg);
-        }
-
-        .tsi-clear {
-            background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
-        }
-
-        .tsi-searchInput {
-            color: var(--tsi-hierarchy-text);
-        }
+    .tsi-caret-icon,
+    .tsi-down-caret-icon {
+      background-image: url(../../icons/CaretClosed_Dark_Theme.svg);
     }
 
-    &.tsi-light {
-        $grays: grays('light');
-        @include theme.hierarchyColors($grays);
-
-        .tsi-caret-icon,
-        .tsi-down-caret-icon {
-            background-image: url(../../icons/CaretClosed_Light_Theme.svg);
-        }
-
-        .tsi-pin-icon {
-            background-image: url(../../icons/Pin_Icon_Light_Theme.svg);
-        }
-
-        .tsi-close-icon {
-            background-image: url(../../icons/Close_Icon_Light_Theme.svg);
-        }
-
-        .tsi-tree-icon {
-            background-image: url(../../icons/Tree_Icon_Light_Theme.svg);
-        }
-
-        .tsi-list-icon {
-            background-image: url(../../icons/List_Icon_Light_Theme.svg);
-        }
-
-        .tsi-filter-icon {
-            background-image: url(../../icons/Filter_Icon_Light_Theme.svg);
-        }
-
-        .tsi-spinner-icon {
-            background-image: url(../../icons/Spinner.svg);
-        }
-
-        .tsi-search-icon {
-            background-image: url(../../icons/Search_Light.svg);
-        }
-
-        .tsi-clear {
-            background-image: url(../../icons/Close_Icon_Light_Theme.svg);
-        }
+    .tsi-pin-icon {
+      background-image: url(../../icons/Pin_Icon_Dark_Theme.svg);
     }
 
-    .tsi-hierarchy-selection-wrapper {
-        padding: tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-sm;
-        flex-direction: column;
-        display: flex;
-        z-index: tokens.$tsi-hierarchy-z-dropdown;
-        position: relative;
-        flex-shrink: 0; // Prevent shrinking when content expands
-
-        .tsi-hierarchy-select {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 0 tokens.$tsi-hierarchy-padding-sm;
-            box-sizing: border-box;
-            border-radius: tokens.$tsi-hierarchy-border-radius;
-            height: 32px;
-            cursor: pointer;
-
-            .tsi-hierarchy-name {
-                font-size: tokens.$tsi-hierarchy-font-size-base;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                width: calc(100% - 10px);
-                padding-inline-end: tokens.$tsi-hierarchy-padding-sm;
-                text-align: start;
-            }
-        }
-
-        .tsi-hierarchy-list-wrapper {
-            display: none;
-            z-index: tokens.$tsi-hierarchy-z-dropdown;
-            position: absolute;
-            width: calc(100% - 40px);
-            top: 53px;
-
-            ul {
-                font-size: tokens.$tsi-hierarchy-font-size-base;
-
-                li {
-                    padding: tokens.$tsi-hierarchy-padding-sm;
-                    outline: none;
-
-                    &:hover {
-                        cursor: pointer;
-                    }
-
-                    &:focus-visible {
-                        z-index: 2;
-                        outline: 2px solid var(--tsi-hierarchy-accent);
-                        outline-offset: -2px;
-                    }
-                }
-            }
-        }
+    .tsi-close-icon {
+      background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
     }
 
-    .tsi-hierarchy-search {
-        display: flex;
-        align-items: center;
-        padding: 0 10px;
-        margin-top: tokens.$tsi-hierarchy-padding-sm;
-        flex-direction: row;
-        height: 32px;
-        flex-shrink: 0; // Prevent shrinking when content expands
-
-        ul {
-            z-index: tokens.$tsi-hierarchy-z-view-type-focus !important;
-        }
-
-        .tsi-search {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-
-            .tsi-searchInput {
-                width: 100%;
-                box-sizing: border-box;
-                padding-inline-end: tokens.$tsi-hierarchy-padding-sm;
-            }
-        }
-
-        .tsi-view-types {
-            display: none;
-            flex-direction: row;
-            @include animations.fadeInAnimation;
-
-            .tsi-view-type {
-                width: 32px;
-                height: 32px;
-                padding: tokens.$tsi-hierarchy-padding-sm;
-                margin-inline-start: 1px;
-                align-items: center;
-                cursor: pointer;
-
-                .tsi-tree-icon {
-                    display: inline-block;
-                }
-
-                .tsi-list-icon {
-                    display: inline-block;
-                }
-            }
-        }
-
-        .tsi-modelAutocompleteWrapper {
-            position: relative;
-            display: inline-flex;
-            flex-grow: 1;
-
-            .tsi-clear {
-                inset-inline-end: tokens.$tsi-hierarchy-padding-xs !important;
-                inset-inline-start: unset !important;
-                margin-top: 0 !important;
-            }
-        }
+    .tsi-tree-icon {
+      background-image: url(../../icons/Tree_Icon_Dark_Theme.svg);
     }
 
-    .tsi-filter-path-wrapper {
-        display: flex;
-        height: 0;
-        transform: scaleY(0);
-        transform-origin: top;
-        transition: transform tokens.$tsi-hierarchy-transition-speed ease-out;
-        opacity: 0.5;
-        will-change: transform, opacity;
-        flex-shrink: 0; // Prevent shrinking when content expands
-
-        &.visible {
-            height: tokens.$tsi-hierarchy-filter-path-height;
-            transform: scaleY(1);
-            padding: 0 tokens.$tsi-hierarchy-padding-base;
-            margin-top: tokens.$tsi-hierarchy-padding-xs;
-        }
-
-        .tsi-filter-path {
-            display: flex;
-            width: 100%;
-            align-items: center;
-            flex-direction: row;
-            padding: 0;
-
-            .tsi-filter-icon {
-                width: tokens.$tsi-hierarchy-icon-size-sm;
-                height: tokens.$tsi-hierarchy-icon-size-xs;
-                cursor: auto;
-                margin-inline-end: tokens.$tsi-hierarchy-padding-xs;
-            }
-
-            .tsi-path-list {
-                display: flex;
-                align-items: center;
-                max-width: calc(100% - 36px);
-
-                .tsi-path {
-                    font-size: tokens.$tsi-hierarchy-font-size-sm;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    padding: tokens.$tsi-hierarchy-padding-xs;
-                    border-radius: tokens.$tsi-hierarchy-border-radius-lg;
-                    cursor: pointer;
-                    outline: none;
-
-                    &:first-child,
-                    &:last-child {
-                        min-width: 32px;
-                    }
-
-                    &:first-child {
-                        padding-inline-start: 0;
-                    }
-                }
-            }
-
-            .tsi-filter-clear {
-                width: tokens.$tsi-hierarchy-icon-size-sm !important;
-                height: tokens.$tsi-hierarchy-icon-size-sm !important;
-                margin-inline-start: auto;
-                display: none;
-                cursor: pointer;
-            }
-        }
-    }
-
-    .tsi-instance-lookup-loading {
-        display: none;
-        @include animations.fadeInAnimation;
-        padding: tokens.$tsi-hierarchy-padding-sm 18px 0;
-        align-items: center;
-        width: 100%;
-        flex-shrink: 0; // Prevent shrinking when content expands
-
-        .tsi-spinner-icon {
-            width: tokens.$tsi-hierarchy-icon-size-sm;
-            height: tokens.$tsi-hierarchy-icon-size-sm;
-            display: inline-block;
-            margin-inline-end: tokens.$tsi-hierarchy-padding-sm;
-            @include animations.rotatingAnimation;
-        }
-
-        .tsi-lookup-instance {
-            width: 100%;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            font-size: tokens.$tsi-hierarchy-font-size-md;
-            white-space: nowrap;
-        }
-    }
-
-    .tsi-hierarchy-or-list-wrapper {
-        width: 100%;
-        display: flex;
-        flex-grow: 1;
-        flex-direction: column;
-        min-height: 0;
-        padding-top: tokens.$tsi-hierarchy-padding-sm;
-        position: relative;
-
-        .tsi-hierarchy {
-            width: 100%;
-            overflow-y: auto;
-            padding-bottom: tokens.$tsi-hierarchy-padding-base;
-        }
-
-        .tsi-list {
-            overflow-y: auto;
-            width: 100%;
-            display: none;
-
-            .tsi-modelResultWrapper {
-                cursor: pointer;
-                position: relative;
-                max-height: tokens.$tsi-hierarchy-max-result-height;
-                overflow: hidden;
-                @include animations.fadeInAnimation;
-
-                .tsi-modelResult {
-                    pointer-events: none;
-                    padding: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-base;
-
-                    .tsi-modelPK {
-                        font-weight: 600;
-                        font-size: tokens.$tsi-hierarchy-font-size-base;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        white-space: nowrap;
-                    }
-
-                    .tsi-modelHighlights {
-                        font-size: tokens.$tsi-hierarchy-font-size-sm;
-                        padding-top: 2px;
-                        padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
-                        padding-bottom: 2px;
-
-                        table {
-                            border-spacing: 0;
-                            margin-top: 2px;
-
-                            tr {
-                                td {
-                                    padding: 0;
-                                    vertical-align: top;
-
-                                    &:first-of-type {
-                                        opacity: 0.6;
-                                    }
-
-                                    &:nth-of-type(2) {
-                                        padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            .tsi-show-more {
-                text-align: center !important;
-                padding: tokens.$tsi-hierarchy-padding-sm;
-            }
-        }
-
-        .tsi-show-more {
-            font-size: tokens.$tsi-hierarchy-font-size-base;
-
-            span {
-                cursor: pointer !important;
-            }
-        }
-    }
-
-    .tsi-notFound,
-    .tsi-noResults {
-        display: flex;
-        align-items: center;
-        margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-base;
-        padding: tokens.$tsi-hierarchy-padding-xs 0;
-        @include animations.fadeInAnimation;
-
-        .tsi-not-found-message {
-            width: calc(100% - tokens.$tsi-hierarchy-icon-size-sm);
-            padding-inline-end: tokens.$tsi-hierarchy-padding-xs;
-            font-size: tokens.$tsi-hierarchy-font-size-sm;
-            line-height: 17px;
-
-            .tsi-search-globally-link {
-                padding-inline-start: tokens.$tsi-hierarchy-padding-xs;
-                cursor: pointer;
-            }
-        }
-
-        .tsi-clear {
-            width: tokens.$tsi-hierarchy-icon-size-sm;
-            height: tokens.$tsi-hierarchy-icon-size-sm;
-            cursor: pointer;
-            display: inline-block;
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
+    .tsi-list-icon {
+      background-image: url(../../icons/List_Icon_Dark_Theme.svg);
     }
 
     .tsi-filter-icon {
-        z-index: tokens.$tsi-hierarchy-z-filter-icon !important;
-        inset-inline-end: tokens.$tsi-hierarchy-padding-base;
-        position: absolute;
-        visibility: hidden;
-        height: tokens.$tsi-hierarchy-icon-size;
-        width: tokens.$tsi-hierarchy-icon-size;
-        cursor: pointer;
-        background-repeat: no-repeat;
-        background-size: 11px;
-        background-position: center;
-        top: 6px;
+      background-image: url(../../icons/Filter_Icon_Dark_Theme.svg);
     }
 
+    .tsi-spinner-icon {
+      background-image: url(../../icons/Spinner.svg);
+    }
+
+    .tsi-search-icon {
+      background-image: url(../../icons/Search_Dark.svg);
+    }
+
+    .tsi-clear {
+      background-image: url(../../icons/Close_Icon_Dark_Theme.svg);
+    }
+
+    .tsi-searchInput {
+      color: var(--tsi-hierarchy-text);
+    }
+
+    .awesomplete > ul {
+      background: color.adjust($gray3, $lightness: -5%);
+      color: $gray1;
+
+      li[aria-selected="true"],
+      li:hover,
+      li:focus {
+        background: $gray2;
+      }
+    }
+  }
+
+  &.tsi-light {
+    $grays: grays("light");
+    @include theme.hierarchyColors($grays);
+
+    // Extract individual gray values for nested styles
+    $gray1: list.nth($grays, 1);
+    $gray2: list.nth($grays, 2);
+    $gray4: list.nth($grays, 4);
+
+    .tsi-caret-icon,
     .tsi-down-caret-icon {
-        height: 14px;
-        width: 14px;
-        background-repeat: no-repeat;
-        background-size: contain;
-        transform: rotate(90deg);
-        @include animations.smoothTransform;
+      background-image: url(../../icons/CaretClosed_Light_Theme.svg);
     }
 
-    .tsi-close-icon,
-    .tsi-list-icon,
-    .tsi-tree-icon {
-        cursor: pointer;
-        height: tokens.$tsi-hierarchy-icon-size;
-        width: tokens.$tsi-hierarchy-icon-size;
-        background-repeat: no-repeat;
-        background-size: contain;
+    .tsi-pin-icon {
+      background-image: url(../../icons/Pin_Icon_Light_Theme.svg);
     }
+
+    .tsi-close-icon {
+      background-image: url(../../icons/Close_Icon_Light_Theme.svg);
+    }
+
+    .tsi-tree-icon {
+      background-image: url(../../icons/Tree_Icon_Light_Theme.svg);
+    }
+
+    .tsi-list-icon {
+      background-image: url(../../icons/List_Icon_Light_Theme.svg);
+    }
+
+    .tsi-filter-icon {
+      background-image: url(../../icons/Filter_Icon_Light_Theme.svg);
+    }
+
+    .tsi-spinner-icon {
+      background-image: url(../../icons/Spinner.svg);
+    }
+
+    .tsi-search-icon {
+      background-image: url(../../icons/Search_Light.svg);
+    }
+
+    .tsi-clear {
+      background-image: url(../../icons/Close_Icon_Light_Theme.svg);
+    }
+
+    .awesomplete > ul {
+      background: $gray4;
+      color: $gray1;
+
+      li[aria-selected="true"],
+      li:hover,
+      li:focus {
+        background: $gray2;
+      }
+    }
+  }
+
+  .tsi-hierarchy-selection-wrapper {
+    padding: tokens.$tsi-hierarchy-padding-base
+      tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-sm;
+    flex-direction: column;
+    display: flex;
+    z-index: tokens.$tsi-hierarchy-z-dropdown;
+    position: relative;
+    flex-shrink: 0; // Prevent shrinking when content expands
+
+    .tsi-hierarchy-select {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0 tokens.$tsi-hierarchy-padding-sm;
+      box-sizing: border-box;
+      border-radius: tokens.$tsi-hierarchy-border-radius;
+      height: 32px;
+      cursor: pointer;
+
+      .tsi-hierarchy-name {
+        font-size: tokens.$tsi-hierarchy-font-size-base;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: calc(100% - 10px);
+        padding-inline-end: tokens.$tsi-hierarchy-padding-sm;
+        text-align: start;
+      }
+    }
+
+    .tsi-hierarchy-list-wrapper {
+      display: none;
+      z-index: tokens.$tsi-hierarchy-z-dropdown;
+      position: absolute;
+      width: calc(100% - 40px);
+      top: 53px;
+
+      ul {
+        font-size: tokens.$tsi-hierarchy-font-size-base;
+
+        li {
+          padding: tokens.$tsi-hierarchy-padding-sm;
+          outline: none;
+
+          &:hover {
+            cursor: pointer;
+          }
+
+          &:focus-visible {
+            z-index: 2;
+            outline: 2px solid var(--tsi-hierarchy-accent);
+            outline-offset: -2px;
+          }
+        }
+      }
+    }
+  }
+
+  .tsi-hierarchy-search {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    margin-top: tokens.$tsi-hierarchy-padding-sm;
+    flex-direction: row;
+    height: 32px;
+    flex-shrink: 0; // Prevent shrinking when content expands
 
     ul {
+      z-index: tokens.$tsi-hierarchy-z-view-type-focus !important;
+    }
+
+    .tsi-search {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      height: 32px;
+
+      .tsi-searchInput {
+        width: 100%;
+        box-sizing: border-box;
+        padding-inline-end: 28px;
+      }
+
+      .tsi-clear {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        position: absolute;
+        inset-inline-end: 8px;
+        top: 6px;
+        display: none;
+        z-index: 2;
+        background-repeat: no-repeat;
+        background-position: 50%;
+        background-size: contain;
+
+        &.tsi-shown {
+          display: block;
+        }
+      }
+
+      .tsi-searchInput::-ms-clear {
+        display: none;
+      }
+
+      // Awesomplete autocomplete styles
+      .awesomplete [hidden] {
+        display: none;
+      }
+
+      .awesomplete .visually-hidden {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+      }
+
+      .awesomplete {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .awesomplete > input {
+        padding-right: 28px;
+      }
+
+      .awesomplete > ul {
+        @extend .tsi-baseContextMenu;
+        animation: tsi-slideIn 0.367s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        position: absolute;
+        z-index: 100;
         list-style: none;
         padding: 0;
-        margin: 0;
+        border-radius: 0px;
+        font-size: 13px;
         width: 100%;
+        margin-top: 34px;
+        max-height: 300px;
+        overflow-y: auto;
 
-        &.tsi-noPad {
-            padding: 8px 20px;
-            margin: 0;
-            overflow: auto;
-            height: 100%;
-        }
-    }
-
-    li {
-        position: relative;
-        @include animations.fadeInAnimation;
-
-        // Performance: enable content-visibility for off-screen items
-        content-visibility: auto;
-        contain-intrinsic-size: auto tokens.$tsi-hierarchy-item-height;
-
-        .tsi-caret-icon {
-            position: absolute;
-            display: block;
-            height: tokens.$tsi-hierarchy-icon-size-xs;
-            width: tokens.$tsi-hierarchy-icon-size-xs;
-            cursor: pointer;
-            z-index: tokens.$tsi-hierarchy-z-caret;
-            background-size: tokens.$tsi-hierarchy-icon-size-xs;
-            background-repeat: no-repeat;
-            top: 11px;
-            background-position: 50%;
-            @include animations.smoothTransform;
-            pointer-events: none;
-            transform: rotate(0deg);
-        }
-
-        .tsi-hierarchyItem {
-            display: flex;
-            flex-wrap: wrap;
-            position: relative;
-            margin: 0;
-            min-height: tokens.$tsi-hierarchy-item-min-height;
-            font-size: tokens.$tsi-hierarchy-font-size-base;
-            align-items: center;
-            padding-inline-end: 40px;
-            cursor: pointer !important;
-
-            // Performance: containment for better rendering
-            contain: layout paint;
-
-            .tsi-name {
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-                max-width: calc(100% - 26px);
-            }
-
-            .tsi-instanceCount {
-                opacity: 0.6;
-                padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
-                font-size: tokens.$tsi-hierarchy-font-size-xs;
-                position: relative;
-                top: 1px;
-            }
-
-            .tsi-highlights-detail {
-                font-weight: 400;
-                font-size: tokens.$tsi-hierarchy-font-size-sm;
-                padding-top: 2px;
-                padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
-                padding-bottom: 2px;
-                display: none;
-                width: 100%;
-
-                table {
-                    margin: 2px;
-                    table-layout: fixed;
-                    width: 100%;
-
-                    tr {
-                        td {
-                            padding: 0;
-                            vertical-align: top;
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
-
-                            &:first-of-type {
-                                opacity: 0.6;
-                            }
-
-                            &:nth-of-type(2) {
-                                padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        &.tsi-expanded {
-            >.tsi-hierarchyItem>.tsi-caret-icon {
-                content: '';
-                cursor: pointer;
-                transform: rotate(90deg);
-            }
-        }
-
-        &.tsi-leaf {
-            font-weight: 600;
-        }
-    }
-
-    .tsi-noBefore .tsi-caret-icon {
-        content: '' !important;
-    }
-
-    .tsi-hierarchyNavigationContextMenu {
-        @extend .tsi-baseContextMenu;
-        border: none;
-        position: absolute;
-        width: tokens.$tsi-hierarchy-context-menu-width;
-        inset-inline-start: calc(100% - 32px);
-        top: 0;
-        z-index: tokens.$tsi-hierarchy-z-context-menu;
-        transition: top tokens.$tsi-hierarchy-transition-speed tokens.$tsi-hierarchy-transition-easing;
-        display: flex;
-        flex-direction: column;
-
-        .tsi-search {
-            height: 32px;
-            padding: 0;
-            margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm;
-            width: calc(100% - 16px);
-
-            &:focus-visible,
-            &:hover {
-                background-color: unset !important;
-                outline: 2px solid var(--tsi-hierarchy-accent);
-            }
-        }
-
-        ul {
-            padding: 0;
-            margin: 0;
-            overflow-y: auto;
-            max-width: 200px;
-            max-height: tokens.$tsi-hierarchy-context-menu-max-height;
+        &:before {
+          display: none;
         }
 
         li {
-            font-size: tokens.$tsi-hierarchy-font-size-sm;
-            cursor: pointer;
-            height: tokens.$tsi-hierarchy-item-height;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
+          display: block;
+          line-height: 20px;
+          cursor: pointer;
+          padding: 8px 12px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &[aria-selected="true"],
+          &:hover,
+          &:focus {
+            background: var(--tsi-hierarchy-hover);
+          }
         }
+      }
 
-        button {
-            text-align: center;
-            margin: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-xs;
-            display: block;
-            min-height: tokens.$tsi-hierarchy-item-height;
-        }
-
-        .tsi-selectionItemWrapper {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm;
-            cursor: pointer;
-
-            .tsi-hierarchyCheckbox {
-                display: inline-block;
-                width: tokens.$tsi-hierarchy-checkbox-size;
-                height: tokens.$tsi-hierarchy-checkbox-size;
-                margin: 0;
-                background-image: url('../../icons/checkboxes.svg');
-                background-size: contain;
-                background-repeat: no-repeat;
-            }
-
-            .tsi-selectionItemKind {
-                width: tokens.$tsi-hierarchy-icon-size;
-                height: tokens.$tsi-hierarchy-icon-size;
-                background-size: contain;
-                background-repeat: no-repeat;
-                flex-shrink: 0;
-
-                &.categorical {
-                    background-image: url('../../icons/categorical.svg');
-                }
-
-                &.aggregate {
-                    background-image: url('../../icons/aggregate.svg');
-                }
-
-                &.numeric {
-                    background-image: url('../../icons/numeric.svg');
-                }
-            }
-
-            .tsi-selectionItem {
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-                width: calc(100% - 40px);
-                margin: 0 tokens.$tsi-hierarchy-padding-sm;
-                padding-inline-start: 2px;
-            }
-        }
-    }
-
-    .tsi-hitCount {
+      .awesomplete > ul:empty {
         display: none;
+      }
+
+      .tsi-search-results-info {
+        position: absolute !important;
+        display: block;
+        visibility: visible;
+        overflow: hidden;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        border: 0;
+        padding: 0;
+        white-space: nowrap;
+      }
     }
 
-    .tsi-search-results {
-        padding: 8px;
+    .tsi-view-types {
+      display: none;
+      flex-direction: row;
+      @include animations.fadeInAnimation;
 
-        .tsi-search-results-header {
-            padding: 8px;
-            font-size: 14px;
-            color: var(--tsi-hierarchy-text-secondary);
+      .tsi-view-type {
+        width: 32px;
+        height: 32px;
+        padding: tokens.$tsi-hierarchy-padding-sm;
+        margin-inline-start: 1px;
+        align-items: center;
+        cursor: pointer;
+
+        .tsi-tree-icon {
+          display: inline-block;
         }
 
-        .tsi-search-result-item {
-            padding: 12px 8px;
-            border-bottom: 1px solid var(--tsi-hierarchy-border);
-            cursor: pointer;
+        .tsi-list-icon {
+          display: inline-block;
+        }
+      }
+    }
 
-            &:hover {
-                background-color: var(--tsi-hierarchy-hover);
-            }
+    .tsi-modelAutocompleteWrapper {
+      position: relative;
+      display: inline-flex;
+      flex-grow: 1;
 
-            &:focus-visible {
-                outline: 2px solid var(--tsi-hierarchy-accent);
-                outline-offset: -2px;
-            }
+      .tsi-clear {
+        inset-inline-end: tokens.$tsi-hierarchy-padding-xs !important;
+        inset-inline-start: unset !important;
+        margin-top: 0 !important;
+      }
+    }
+  }
 
-            &.tsi-selected {
-                background-color: var(--tsi-hierarchy-selected, rgba(0, 120, 212, 0.1));
-                border-left: 3px solid var(--tsi-hierarchy-accent);
-                padding-left: 5px;
-            }
+  .tsi-filter-path-wrapper {
+    display: flex;
+    height: 0;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform tokens.$tsi-hierarchy-transition-speed ease-out;
+    opacity: 0.5;
+    will-change: transform, opacity;
+    flex-shrink: 0; // Prevent shrinking when content expands
 
-            .tsi-search-breadcrumb {
-                font-size: 11px;
-                color: var(--tsi-hierarchy-text-secondary);
-                margin-bottom: 4px;
-            }
+    &.visible {
+      height: tokens.$tsi-hierarchy-filter-path-height;
+      transform: scaleY(1);
+      padding: 0 tokens.$tsi-hierarchy-padding-base;
+      margin-top: tokens.$tsi-hierarchy-padding-xs;
+    }
 
-            .tsi-search-result-name {
-                font-size: 13px;
-                font-weight: 600;
+    .tsi-filter-path {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      flex-direction: row;
+      padding: 0;
 
-                mark {
-                    background-color: #fff9a8;
-                    color: black;
-                    font-weight: 700;
+      .tsi-filter-icon {
+        width: tokens.$tsi-hierarchy-icon-size-sm;
+        height: tokens.$tsi-hierarchy-icon-size-xs;
+        cursor: auto;
+        margin-inline-end: tokens.$tsi-hierarchy-padding-xs;
+      }
+
+      .tsi-path-list {
+        display: flex;
+        align-items: center;
+        max-width: calc(100% - 36px);
+
+        .tsi-path {
+          font-size: tokens.$tsi-hierarchy-font-size-sm;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          padding: tokens.$tsi-hierarchy-padding-xs;
+          border-radius: tokens.$tsi-hierarchy-border-radius-lg;
+          cursor: pointer;
+          outline: none;
+
+          &:first-child,
+          &:last-child {
+            min-width: 32px;
+          }
+
+          &:first-child {
+            padding-inline-start: 0;
+          }
+        }
+      }
+
+      .tsi-filter-clear {
+        width: tokens.$tsi-hierarchy-icon-size-sm !important;
+        height: tokens.$tsi-hierarchy-icon-size-sm !important;
+        margin-inline-start: auto;
+        display: none;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .tsi-instance-lookup-loading {
+    display: none;
+    @include animations.fadeInAnimation;
+    padding: tokens.$tsi-hierarchy-padding-sm 18px 0;
+    align-items: center;
+    width: 100%;
+    flex-shrink: 0; // Prevent shrinking when content expands
+
+    .tsi-spinner-icon {
+      width: tokens.$tsi-hierarchy-icon-size-sm;
+      height: tokens.$tsi-hierarchy-icon-size-sm;
+      display: inline-block;
+      margin-inline-end: tokens.$tsi-hierarchy-padding-sm;
+      @include animations.rotatingAnimation;
+    }
+
+    .tsi-lookup-instance {
+      width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      font-size: tokens.$tsi-hierarchy-font-size-md;
+      white-space: nowrap;
+    }
+  }
+
+  .tsi-hierarchy-or-list-wrapper {
+    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    min-height: 0;
+    padding-top: tokens.$tsi-hierarchy-padding-sm;
+    position: relative;
+
+    .tsi-hierarchy {
+      width: 100%;
+      overflow-y: auto;
+      padding-bottom: tokens.$tsi-hierarchy-padding-base;
+    }
+
+    .tsi-list {
+      overflow-y: auto;
+      width: 100%;
+      display: none;
+
+      .tsi-modelResultWrapper {
+        cursor: pointer;
+        position: relative;
+        max-height: tokens.$tsi-hierarchy-max-result-height;
+        overflow: hidden;
+        @include animations.fadeInAnimation;
+
+        .tsi-modelResult {
+          pointer-events: none;
+          padding: tokens.$tsi-hierarchy-padding-sm
+            tokens.$tsi-hierarchy-padding-base;
+
+          .tsi-modelPK {
+            font-weight: 600;
+            font-size: tokens.$tsi-hierarchy-font-size-base;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          .tsi-modelHighlights {
+            font-size: tokens.$tsi-hierarchy-font-size-sm;
+            padding-top: 2px;
+            padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
+            padding-bottom: 2px;
+
+            table {
+              border-spacing: 0;
+              margin-top: 2px;
+
+              tr {
+                td {
+                  padding: 0;
+                  vertical-align: top;
+
+                  &:first-of-type {
+                    opacity: 0.6;
+                  }
+
+                  &:nth-of-type(2) {
+                    padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
+                  }
                 }
+              }
             }
-
-            .tsi-search-result-description,
-            .tsi-search-result-count {
-                font-size: 12px;
-                color: var(--tsi-hierarchy-text-secondary);
-                margin-top: 4px;
-            }
+          }
         }
+      }
+
+      .tsi-show-more {
+        text-align: center !important;
+        padding: tokens.$tsi-hierarchy-padding-sm;
+      }
     }
+
+    .tsi-show-more {
+      font-size: tokens.$tsi-hierarchy-font-size-base;
+
+      span {
+        cursor: pointer !important;
+      }
+    }
+  }
+
+  .tsi-notFound,
+  .tsi-noResults {
+    display: flex;
+    align-items: center;
+    margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-base;
+    padding: tokens.$tsi-hierarchy-padding-xs 0;
+    @include animations.fadeInAnimation;
+
+    .tsi-not-found-message {
+      width: calc(100% - tokens.$tsi-hierarchy-icon-size-sm);
+      padding-inline-end: tokens.$tsi-hierarchy-padding-xs;
+      font-size: tokens.$tsi-hierarchy-font-size-sm;
+      line-height: 17px;
+
+      .tsi-search-globally-link {
+        padding-inline-start: tokens.$tsi-hierarchy-padding-xs;
+        cursor: pointer;
+      }
+    }
+
+    .tsi-clear {
+      width: tokens.$tsi-hierarchy-icon-size-sm;
+      height: tokens.$tsi-hierarchy-icon-size-sm;
+      cursor: pointer;
+      display: inline-block;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  }
+
+  .tsi-filter-icon {
+    z-index: tokens.$tsi-hierarchy-z-filter-icon !important;
+    inset-inline-end: tokens.$tsi-hierarchy-padding-base;
+    position: absolute;
+    visibility: hidden;
+    height: tokens.$tsi-hierarchy-icon-size;
+    width: tokens.$tsi-hierarchy-icon-size;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-size: 11px;
+    background-position: center;
+    top: 6px;
+  }
+
+  .tsi-down-caret-icon {
+    height: 14px;
+    width: 14px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    transform: rotate(90deg);
+    @include animations.smoothTransform;
+  }
+
+  .tsi-close-icon,
+  .tsi-list-icon,
+  .tsi-tree-icon {
+    cursor: pointer;
+    height: tokens.$tsi-hierarchy-icon-size;
+    width: tokens.$tsi-hierarchy-icon-size;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+
+    &.tsi-noPad {
+      padding: 8px 20px;
+      margin: 0;
+      overflow: auto;
+      height: 100%;
+    }
+  }
+
+  li {
+    position: relative;
+    @include animations.fadeInAnimation;
+
+    // Performance: enable content-visibility for off-screen items
+    content-visibility: auto;
+    contain-intrinsic-size: auto tokens.$tsi-hierarchy-item-height;
+
+    .tsi-caret-icon {
+      position: absolute;
+      display: block;
+      height: tokens.$tsi-hierarchy-icon-size-xs;
+      width: tokens.$tsi-hierarchy-icon-size-xs;
+      cursor: pointer;
+      z-index: tokens.$tsi-hierarchy-z-caret;
+      background-size: tokens.$tsi-hierarchy-icon-size-xs;
+      background-repeat: no-repeat;
+      top: 11px;
+      background-position: 50%;
+      @include animations.smoothTransform;
+      pointer-events: none;
+      transform: rotate(0deg);
+    }
+
+    .tsi-hierarchyItem {
+      display: flex;
+      flex-wrap: wrap;
+      position: relative;
+      margin: 0;
+      min-height: tokens.$tsi-hierarchy-item-min-height;
+      font-size: tokens.$tsi-hierarchy-font-size-base;
+      align-items: center;
+      padding-inline-end: 40px;
+      cursor: pointer !important;
+
+      // Performance: containment for better rendering
+      contain: layout paint;
+
+      .tsi-name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: calc(100% - 26px);
+      }
+
+      .tsi-instanceCount {
+        opacity: 0.6;
+        padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
+        font-size: tokens.$tsi-hierarchy-font-size-xs;
+        position: relative;
+        top: 1px;
+      }
+
+      .tsi-highlights-detail {
+        font-weight: 400;
+        font-size: tokens.$tsi-hierarchy-font-size-sm;
+        padding-top: 2px;
+        padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
+        padding-bottom: 2px;
+        display: none;
+        width: 100%;
+
+        table {
+          margin: 2px;
+          table-layout: fixed;
+          width: 100%;
+
+          tr {
+            td {
+              padding: 0;
+              vertical-align: top;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+
+              &:first-of-type {
+                opacity: 0.6;
+              }
+
+              &:nth-of-type(2) {
+                padding-inline-start: tokens.$tsi-hierarchy-padding-sm;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &.tsi-expanded {
+      > .tsi-hierarchyItem > .tsi-caret-icon {
+        content: "";
+        cursor: pointer;
+        transform: rotate(90deg);
+      }
+    }
+
+    &.tsi-leaf {
+      font-weight: 600;
+    }
+  }
+
+  .tsi-noBefore .tsi-caret-icon {
+    content: "" !important;
+  }
+
+  .tsi-hierarchyNavigationContextMenu {
+    @extend .tsi-baseContextMenu;
+    border: none;
+    position: absolute;
+    width: tokens.$tsi-hierarchy-context-menu-width;
+    inset-inline-start: calc(100% - 32px);
+    top: 0;
+    z-index: tokens.$tsi-hierarchy-z-context-menu;
+    transition: top tokens.$tsi-hierarchy-transition-speed
+      tokens.$tsi-hierarchy-transition-easing;
+    display: flex;
+    flex-direction: column;
+
+    .tsi-search {
+      height: 32px;
+      padding: 0;
+      margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm
+        tokens.$tsi-hierarchy-padding-sm;
+      width: calc(100% - 16px);
+
+      &:focus-visible,
+      &:hover {
+        background-color: unset !important;
+        outline: 2px solid var(--tsi-hierarchy-accent);
+      }
+    }
+
+    ul {
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      max-width: 200px;
+      max-height: tokens.$tsi-hierarchy-context-menu-max-height;
+    }
+
+    li {
+      font-size: tokens.$tsi-hierarchy-font-size-sm;
+      cursor: pointer;
+      height: tokens.$tsi-hierarchy-item-height;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    button {
+      text-align: center;
+      margin: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm
+        tokens.$tsi-hierarchy-padding-xs;
+      display: block;
+      min-height: tokens.$tsi-hierarchy-item-height;
+    }
+
+    .tsi-selectionItemWrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm;
+      cursor: pointer;
+
+      .tsi-hierarchyCheckbox {
+        display: inline-block;
+        width: tokens.$tsi-hierarchy-checkbox-size;
+        height: tokens.$tsi-hierarchy-checkbox-size;
+        margin: 0;
+        background-image: url("../../icons/checkboxes.svg");
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+
+      .tsi-selectionItemKind {
+        width: tokens.$tsi-hierarchy-icon-size;
+        height: tokens.$tsi-hierarchy-icon-size;
+        background-size: contain;
+        background-repeat: no-repeat;
+        flex-shrink: 0;
+
+        &.categorical {
+          background-image: url("../../icons/categorical.svg");
+        }
+
+        &.aggregate {
+          background-image: url("../../icons/aggregate.svg");
+        }
+
+        &.numeric {
+          background-image: url("../../icons/numeric.svg");
+        }
+      }
+
+      .tsi-selectionItem {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        width: calc(100% - 40px);
+        margin: 0 tokens.$tsi-hierarchy-padding-sm;
+        padding-inline-start: 2px;
+      }
+    }
+  }
+
+  .tsi-hitCount {
+    display: none;
+  }
+
+  .tsi-search-results {
+    padding: 8px;
+
+    .tsi-search-results-header {
+      padding: 8px;
+      font-size: 14px;
+      color: var(--tsi-hierarchy-text-secondary);
+    }
+
+    .tsi-search-result-item {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--tsi-hierarchy-border);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--tsi-hierarchy-hover);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--tsi-hierarchy-accent);
+        outline-offset: -2px;
+      }
+
+      &.tsi-selected {
+        background-color: var(--tsi-hierarchy-selected, rgba(0, 120, 212, 0.1));
+        border-left: 3px solid var(--tsi-hierarchy-accent);
+        padding-left: 5px;
+      }
+
+      .tsi-search-breadcrumb {
+        font-size: 11px;
+        color: var(--tsi-hierarchy-text-secondary);
+        margin-bottom: 4px;
+      }
+
+      .tsi-search-result-name {
+        font-size: 13px;
+        font-weight: 600;
+
+        mark {
+          background-color: #fff9a8;
+          color: black;
+          font-weight: 700;
+        }
+      }
+
+      .tsi-search-result-description,
+      .tsi-search-result-count {
+        font-size: 12px;
+        color: var(--tsi-hierarchy-text-secondary);
+        margin-top: 4px;
+      }
+    }
+  }
 }

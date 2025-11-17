@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import './HierarchyNavigation.scss';
+import 'awesomplete';
 import Utils from "../../utils";
 import { Component } from "./../../interfaces/Component";
-import ModelAutocomplete from '../ModelAutocomplete';
 import TreeRenderer from './TreeRenderer';
 // ensure runtime fallback for environments where TS extensions aren't resolved by bundler
 try { /* noop, allows static import for bundlers */ } catch (e) { /* noop */ }
@@ -57,10 +57,13 @@ class HierarchyNavigation extends Component {
     //selectedIds
     public selectedIds: Array<string> = [];
     public searchEnabled: boolean = true;
+    public autocompleteEnabled: boolean = true; // Enable/disable autocomplete suggestions
     private searchWrapperElem;
     private hierarchyNavWrapper;
     // Search mode state
     private isSearchMode: boolean = false;
+    // Paths that should be auto-expanded (Set of path strings like "Factory North/Building A")
+    private pathsToAutoExpand: Set<string> = new Set();
 
     public ap: any; // awesomplete object
 
@@ -77,8 +80,18 @@ class HierarchyNavigation extends Component {
 
         this.selectedIds = preselectedIds;
 
+        // Allow disabling autocomplete via options
+        if (hierarchyNavOptions.autocompleteEnabled !== undefined) {
+            this.autocompleteEnabled = hierarchyNavOptions.autocompleteEnabled;
+        }
+
+        // Pre-compute paths that need to be auto-expanded for preselected instances
+        if (preselectedIds && preselectedIds.length > 0) {
+            await this.computePathsToAutoExpand(preselectedIds);
+        }
+
         //render search wrapper
-        this.renderSearchBox()
+        this.renderSearchBox();
 
 
 
@@ -87,8 +100,7 @@ class HierarchyNavigation extends Component {
         const results = this.createResultsWrapper(this.hierarchyNavWrapper);
         this.hierarchyElem = this.createHierarchyElem(results);
 
-        this.pathSearchAndRenderResult({ search: { payload: this.requestPayload() }, render: { target: this.hierarchyElem } });
-
+        await this.pathSearchAndRenderResult({ search: { payload: this.requestPayload() }, render: { target: this.hierarchyElem } });
 
     }
 
@@ -250,6 +262,7 @@ class HierarchyNavigation extends Component {
             .append("input")
             .attr("class", "tsi-searchInput")
             .attr("aria-label", this.getString("Search"))
+            .attr("aria-describedby", "tsi-hierarchy-search-desc")
             .attr("role", "combobox")
             .attr("aria-owns", "tsi-search-results")
             .attr("aria-expanded", "false")
@@ -259,7 +272,67 @@ class HierarchyNavigation extends Component {
                 this.getString("Search") + "..."
             );
 
+        // Add ARIA description for screen readers
+        inputWrapper
+            .append("span")
+            .attr("id", "tsi-hierarchy-search-desc")
+            .style("display", "none")
+            .text(this.getString("Search suggestion instruction") || "Use arrow keys to navigate suggestions");
+
+        // Add live region for search results info
+        inputWrapper
+            .append("div")
+            .attr("class", "tsi-search-results-info")
+            .attr("aria-live", "assertive");
+
+        // Add clear button
+        let clear = inputWrapper
+            .append("div")
+            .attr("class", "tsi-clear")
+            .attr("tabindex", "0")
+            .attr("role", "button")
+            .attr("aria-label", "Clear Search")
+            .on("click keydown", function (event) {
+                if (Utils.isKeyDownAndNotEnter(event)) {
+                    return;
+                }
+                (input.node() as any).value = "";
+                self.exitSearchMode();
+                self.ap.close();
+                d3.select(this).classed("tsi-shown", false);
+            });
+
+        // Initialize Awesomplete for autocomplete (only if enabled)
+        let Awesomplete = (window as any).Awesomplete;
+        if (this.autocompleteEnabled && Awesomplete) {
+            this.ap = new Awesomplete(input.node(), {
+                minChars: 1,
+                maxItems: 10,
+                autoFirst: true
+            });
+        } else {
+            // Create a dummy object if autocomplete is disabled
+            this.ap = {
+                list: [],
+                close: () => { },
+                evaluate: () => { }
+            };
+        }
+
         let self = this;
+        let noSuggest = false;
+        let justAwesompleted = false;
+
+        // Handle autocomplete selection (only if enabled)
+        if (this.autocompleteEnabled) {
+            (input.node() as any).addEventListener("awesomplete-selectcomplete", (event) => {
+                noSuggest = true;
+                const selectedValue = event.text.value;
+                // Trigger search with selected value
+                self.performDeepSearch(selectedValue);
+                justAwesompleted = true;
+            });
+        }
 
         input.on("keydown", (event) => {
             // Handle ESC key to clear the search box
@@ -268,9 +341,22 @@ class HierarchyNavigation extends Component {
                 inputElement.value = '';
                 // Trigger input event to clear search results
                 self.exitSearchMode();
+                self.ap.close();
+                clear.classed("tsi-shown", false);
                 return;
             }
             this.chartOptions.onKeydown(event, this.ap);
+        });
+
+        (input.node() as any).addEventListener("keyup", function (event) {
+            if (justAwesompleted) {
+                justAwesompleted = false;
+                return;
+            }
+            let key = event.which || event.keyCode;
+            if (key === 13) {
+                noSuggest = true;
+            }
         });
 
         // Debounced input handler to reduce work while typing
@@ -282,16 +368,29 @@ class HierarchyNavigation extends Component {
                 self.debounceTimer = null;
             }
 
+            // Show/hide clear button
+            clear.classed("tsi-shown", val.length > 0);
+
             if (!val || val.length === 0) {
                 // Exit search mode and restore navigation view
                 self.exitSearchMode();
+                self.ap.close();
                 return;
+            }
+
+            // Populate autocomplete suggestions with instance leaves (only if enabled)
+            if (self.autocompleteEnabled && !noSuggest && val.length >= 1) {
+                self.fetchAutocompleteSuggestions(val);
+            } else {
+                self.ap.close();
             }
 
             // Use deep search for comprehensive results
             self.debounceTimer = setTimeout(() => {
                 self.performDeepSearch(val);
             }, self.debounceDelay);
+
+            noSuggest = false;
         });
 
     }
@@ -307,7 +406,7 @@ class HierarchyNavigation extends Component {
             if (result.error) {
                 throw result.error;
             }
-            this.renderSearchResult(result, payload, target);
+            await this.renderSearchResult(result, payload, target);
         } catch (err) {
             if (requestId !== this.latestRequestId) {
                 return;
@@ -319,7 +418,7 @@ class HierarchyNavigation extends Component {
         }
     }
 
-    private renderSearchResult = (r: any, payload: any, target: d3.Selection<any, any, any, any>) => {
+    private renderSearchResult = async (r: any, payload: any, target: d3.Selection<any, any, any, any>) => {
         const hierarchyData: Record<string, IHierarchyNode> = r.hierarchyNodes?.hits?.length
             ? this.fillDataRecursively(r.hierarchyNodes, payload, payload)
             : {} as Record<string, IHierarchyNode>;
@@ -343,6 +442,16 @@ class HierarchyNavigation extends Component {
 
         const merged: Record<string, IHierarchyNode | IInstanceNode> = { ...hierarchyData, ...(instancesData as any) };
         this.renderTree(merged, target);
+
+        // Auto-expand nodes that should be expanded and load their children
+        for (const key in hierarchyData) {
+            const node = hierarchyData[key];
+            if (node.isExpanded && !node.children) {
+                // This node should be expanded but doesn't have children loaded yet
+                // We need to trigger expansion after the node is rendered
+                await this.autoExpandNode(node);
+            }
+        }
     }
 
     private filterTree(searchText: string) {
@@ -361,6 +470,57 @@ class HierarchyNavigation extends Component {
                 (li as HTMLElement).style.display = 'none';
             }
         });
+    }
+
+    // Fetch autocomplete suggestions for instances (leaves)
+    private async fetchAutocompleteSuggestions(searchText: string) {
+        if (!searchText || searchText.length < 1) {
+            this.ap.list = [];
+            return;
+        }
+
+        try {
+            // Call server search to get instance suggestions
+            const payload = {
+                path: this.path,
+                searchTerm: searchText,
+                recursive: true,
+                includeInstances: true,
+                // Limit results for autocomplete
+                maxResults: 10
+            };
+
+            const results = await this.searchFunction(payload);
+
+            if (results.error) {
+                this.ap.list = [];
+                return;
+            }
+
+            // Extract instance names for autocomplete suggestions
+            const suggestions: Array<{ label: string, value: string }> = [];
+
+            if (results.instances?.hits) {
+                results.instances.hits.forEach((i: any) => {
+                    const displayName = this.instanceNodeStringToDisplay(i);
+                    const pathStr = i.hierarchyPath && i.hierarchyPath.length > 0
+                        ? i.hierarchyPath.join(' > ') + ' > '
+                        : '';
+
+                    suggestions.push({
+                        label: pathStr + displayName,
+                        value: displayName
+                    });
+                });
+            }
+
+            // Update Awesomplete list
+            this.ap.list = suggestions;
+
+        } catch (err) {
+            // Silently fail for autocomplete - don't interrupt user experience
+            this.ap.list = [];
+        }
     }
 
     // Perform deep search across entire hierarchy using server-side search
@@ -558,6 +718,84 @@ class HierarchyNavigation extends Component {
         // This would require waiting for each level to load before expanding the next
     }
 
+    // Pre-compute which paths need to be auto-expanded for preselected instances
+    private async computePathsToAutoExpand(instanceIds: string[]) {
+        if (!instanceIds || instanceIds.length === 0) {
+            return;
+        }
+
+        //        console.log('[HierarchyNavigation] Computing paths to auto-expand for:', instanceIds);
+
+        try {
+            this.pathsToAutoExpand.clear();
+
+            for (const instanceId of instanceIds) {
+                // Search for this specific instance
+                const result = await this.searchFunction({
+                    path: this.path,
+                    searchTerm: instanceId,
+                    recursive: true,
+                    includeInstances: true
+                });
+
+                if (result?.instances?.hits) {
+                    for (const instance of result.instances.hits) {
+                        // Match by ID
+                        if (instance.id === instanceId ||
+                            (instance.id && instance.id.includes(instanceId))) {
+
+                            if (instance.hierarchyPath && instance.hierarchyPath.length > 0) {
+                                // Add all parent paths that need to be expanded
+                                const hierarchyPath = instance.hierarchyPath;
+                                for (let i = 1; i <= hierarchyPath.length; i++) {
+                                    const pathArray = hierarchyPath.slice(0, i);
+                                    const pathKey = pathArray.join('/');
+                                    this.pathsToAutoExpand.add(pathKey);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // console.log('[HierarchyNavigation] Paths to auto-expand:', Array.from(this.pathsToAutoExpand));
+
+        } catch (err) {
+            console.warn('Failed to compute paths to auto-expand:', err);
+        }
+    }
+
+    // Check if a path should be auto-expanded
+    private shouldAutoExpand(pathArray: string[]): boolean {
+        if (this.pathsToAutoExpand.size === 0) {
+            return false;
+        }
+        const pathKey = pathArray.join('/');
+        return this.pathsToAutoExpand.has(pathKey);
+    }
+
+    // Auto-expand a node by triggering its expand function
+    private async autoExpandNode(node: IHierarchyNode) {
+        if (!node || !node.expand || !node.node) {
+            return;
+        }
+
+        try {
+            // Wait for the DOM node to be available
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+            // Mark as expanded visually
+            node.node.classed('tsi-expanded', true);
+
+            // Call the expand function to load children
+            await node.expand();
+
+            // console.log(`[HierarchyNavigation] Auto-expanded node: ${node.path.join('/')}`);
+        } catch (err) {
+            console.warn(`Failed to auto-expand node ${node.path.join('/')}:`, err);
+        }
+    }
+
     // Highlight search term in text
     private highlightMatch(text: string, searchTerm: string): string {
         if (!text) return '';
@@ -575,6 +813,13 @@ class HierarchyNavigation extends Component {
 
             // cache display name on node for client-side filtering
             hierarchy.displayName = h.name || '';
+
+            // Check if this path should be auto-expanded
+            const shouldExpand = this.shouldAutoExpand(hierarchy.path);
+            if (shouldExpand) {
+                hierarchy.isExpanded = true;
+                //console.log(`[HierarchyNavigation] Auto-expanding node: ${hierarchy.path.join('/')}`);
+            }
 
             hierarchy.expand = () => {
                 hierarchy.isExpanded = true;

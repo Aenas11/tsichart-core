@@ -3,70 +3,70 @@
 
 // Pikaday datepicker overrides
 .pika-single {
-    border-bottom: none;
-    border-left: none;
-    border-right: none;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
 }
 
 .pika-lendar {
-    text-decoration: none;
-    width: size(datepicker-width);
-    margin: 0 spacing(xl);
+  text-decoration: none;
+  width: size(datepicker-width);
+  margin: 0 spacing(xl);
 
-    abbr {
-        text-decoration: none;
-    }
+  abbr {
+    text-decoration: none;
+  }
 }
 
 .pika-table .pika-row {
-    height: size(menu-item-height);
-    margin: 0;
+  height: size(menu-item-height);
+  margin: 0;
 
-    td {
-        padding: 0;
-    }
+  td {
+    padding: 0;
+  }
 }
 
 .pika-button {
-    border-radius: 0;
-    text-align: center;
+  border-radius: 0;
+  text-align: center;
 }
 
 .pika-day {
-    width: size(menu-item-height);
-    height: size(menu-item-height);
-    margin: 0;
+  width: size(menu-item-height);
+  height: size(menu-item-height);
+  margin: 0;
 
-    &:hover {
-        background-color: $color-primary;
-        color: $color-white;
-    }
+  &:hover {
+    background-color: #309d90; // Primary teal
+    color: $color-white;
+  }
 }
 
 // Date range states
 .pika-table td {
-    &.is-inrange .pika-day {
-        background-color: $color-primary-light;
-    }
+  &.is-inrange .pika-day {
+    background-color: rgba(#309d90, 0.15); // Teal at 15% opacity
+  }
 
-    &.is-endrange .pika-day,
-    &.is-startrange .pika-day {
-        background-color: $color-primary;
-        color: $color-white;
+  &.is-endrange .pika-day,
+  &.is-startrange .pika-day {
+    background-color: #309d90; // Primary teal
+    color: $color-white;
 
-        &:hover {
-            background-color: $color-primary;
-            color: $color-white;
-        }
+    &:hover {
+      background-color: #1a7f71; // Darker teal for hover
+      color: $color-white;
     }
+  }
 
-    &.is-startrange button {
-        border-bottom-left-radius: radius(xl);
-        border-top-left-radius: radius(xl);
-    }
+  &.is-startrange button {
+    border-bottom-left-radius: radius(xl);
+    border-top-left-radius: radius(xl);
+  }
 
-    &.is-endrange button {
-        border-bottom-right-radius: radius(xl);
-        border-top-right-radius: radius(xl);
-    }
+  &.is-endrange button {
+    border-bottom-right-radius: radius(xl);
+    border-top-right-radius: radius(xl);
+  }
 }
