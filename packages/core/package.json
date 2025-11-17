@@ -1,6 +1,6 @@
 {
   "name": "tsichart-core",
-  "version": "2.0.0",
+  "version": "2.1.4",
   "description": "Framework-agnostic time series charting library - Core package",
   "keywords": [
     "timeseries",
@@ -73,8 +73,8 @@
   "author": "Alex Sysoiev <alexander.sysoev@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c rollup.config.mjs",
-    "dev": "rollup -c --watch",
+    "build": "NODE_ENV=production rollup -c rollup.config.mjs",
+    "dev": "NODE_ENV=development rollup -c --watch",
     "dev:server": "webpack serve --config webpack.dev.js",
     "dev:build": "webpack --config webpack.dev.js",
     "test": "jest",

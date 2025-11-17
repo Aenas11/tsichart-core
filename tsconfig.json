@@ -2,12 +2,12 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "noImplicitAny": false,
-        "module": "es6",
-        "target": "es5",
+        "target": "ES2020",
+        "module": "ESNext",
         "jsx": "react",
         "allowJs": false,
         "lib": [
-            "es5",
+            "ES2020",
             "es2015.promise",
             "dom",
             "es6"

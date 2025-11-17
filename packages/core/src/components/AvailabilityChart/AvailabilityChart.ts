@@ -38,8 +38,8 @@ class AvailabilityChart extends ChartComponent {
     private rawAvailability: any;
     private maxBuckets: number;
     private bucketSize: number;
-    private dateTimePickerContainer: any;
-    private dateTimePicker: any;
+    // private dateTimePickerContainer: any;
+    // private dateTimePicker: any;
 
     constructor(renderTarget: Element) {
         super(renderTarget);
@@ -100,7 +100,7 @@ class AvailabilityChart extends ChartComponent {
         this.setBrush(fromMillis, toMillis, true);
         this.chartOptions.brushMoveEndAction(new Date(fromMillis), new Date(toMillis), this.chartOptions.offset, this.chartOptions.isRelative, this.chartOptions.currentQuickTime);
         this.setTicks();
-        this.dateTimePickerContainer.style("display", "none");
+        //this.dateTimePickerContainer.style("display", "none");
     }
 
     //transformation of buckets created by the UX client to buckets for the availabilityChart
@@ -227,8 +227,8 @@ class AvailabilityChart extends ChartComponent {
             this.buildFromAndToContainer();
             this.sparkLineChart = new LineChart(sparkLineContainer.node() as any);
             this.sparkLineChart.chartMargins.left = (this.chartOptions.availabilityLeftMargin - this.margins.left);
-            this.dateTimePickerContainer = this.targetElement.append("div").classed("tsi-dateTimePickerContainer", true);
-            this.dateTimePicker = new DateTimePicker(this.dateTimePickerContainer.node());
+            // this.dateTimePickerContainer = this.targetElement.append("div").classed("tsi-dateTimePickerContainer", true);
+            // this.dateTimePicker = new DateTimePicker(this.dateTimePickerContainer.node());
             window.addEventListener('resize', () => {
                 this.timePickerLineChart.draw();
                 this.setTicks();
@@ -243,7 +243,7 @@ class AvailabilityChart extends ChartComponent {
         }
 
         //clear the date time picker
-        this.dateTimePickerContainer.style("display", "none");
+        //   this.dateTimePickerContainer.style("display", "none");
 
         this.timePickerContainer.selectAll('.tsi-compactFromTo').remove();
         if (this.chartOptions.isCompact) {
@@ -337,7 +337,7 @@ class AvailabilityChart extends ChartComponent {
         let maxMillis = this.toMillis + (Utils.getOffsetMinutes(this.chartOptions.offset, this.toMillis) * 60 * 1000);
         let startMillis = this.selectedFromMillis + (Utils.getOffsetMinutes(this.chartOptions.offset, this.selectedFromMillis) * 60 * 1000);
         let endMillis = this.selectedToMillis + (Utils.getOffsetMinutes(this.chartOptions.offset, this.selectedFromMillis) * 60 * 1000);
-        this.dateTimeButton.render(this.chartOptions, this.fromMillis, this.toMillis, this.selectedFromMillis, this.selectedToMillis,
+        this.dateTimeButton.render(this.chartOptions, minMillis, maxMillis, startMillis, endMillis,
             (fromMillis, toMillis, offset, isRelative, currentQuickTime) => {
                 this.chartOptions.offset = offset;
 
@@ -350,14 +350,14 @@ class AvailabilityChart extends ChartComponent {
                 (<any>d3.select(this.renderTarget).select(".tsi-dateTimeContainer").node()).focus();
             },
             () => {
-                this.dateTimePickerContainer.style("display", "none");
+                // this.dateTimePickerContainer.style("display", "none");
                 (<any>d3.select(this.renderTarget).select(".tsi-dateTimeContainer").node()).focus();
             });
     }
 
     private setFromAndToTimes(fromMillis, toMillis, isFromButton = false) {
-        let timezone = Utils.parseTimezoneName(this.chartOptions.offset);
-        let timezoneAbbreviation = Utils.timezoneAbbreviation(timezone);
+        //let timezone = Utils.parseTimezoneName(this.chartOptions.offset);
+        // let timezoneAbbreviation = Utils.timezoneAbbreviation(timezone);
         this.setSelectedMillis(fromMillis, toMillis);
         if (!isFromButton) {
             this.renderDateTimeButton();

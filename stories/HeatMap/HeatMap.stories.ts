@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import HeatMap from '../../packages/core/src/components/Heatmap';
 import { ChartData } from '../../packages/core/src/types';
-import { fireEvent, screen, within, waitFor } from 'storybook/test';
+import { fireEvent, within, waitFor } from 'storybook/test';
 
 // Heatmaps visualize a SINGLE metric across time and categories
 // Each interface represents one type of metric that can be displayed

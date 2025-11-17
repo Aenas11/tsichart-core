@@ -12,7 +12,7 @@ class ModelAutocomplete extends Component {
     super(renderTarget);
   }
 
-  public render(environmentFqdn: string, getToken: any, chartOptions: any) {
+  public render(chartOptions: any) {
     this.chartOptions.setOptions(chartOptions);
     let targetElement = d3.select(this.renderTarget);
     targetElement.html("");
