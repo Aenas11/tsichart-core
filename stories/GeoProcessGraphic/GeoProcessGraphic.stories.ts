@@ -32,6 +32,9 @@ interface IGeoProcessGraphicOptions {
 }
 
 class MovingGeoProcessGraphic extends GeoProcessGraphic {
+    // Vehicle movement tracking and route simulation
+    // This class extends GeoProcessGraphic to provide smooth, realistic vehicle movement
+    // with optimized data generation for fluid playback experience
     private vehicleData: Map<string, Array<any>> = new Map();
     private routeGenerators: Map<string, any> = new Map();
     private mapReady: boolean = false;
@@ -201,7 +204,8 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         };
 
         const center = chartOptions.center || [153.021072, -27.470125];
-        const bucketSizeMs = 5 * 60 * 1000;
+        // Use much smaller bucket size for smoother movement (30 seconds instead of 5 minutes)
+        const bucketSizeMs = 30 * 1000; // 30 seconds
         const totalDuration = timeFrame.to.getTime() - timeFrame.from.getTime();
         const numberOfPoints = Math.ceil(totalDuration / bucketSizeMs);
 
@@ -321,44 +325,84 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
 
     private generateRoutePoints(center: [number, number], count: number, vehicleIndex: number): Array<[number, number]> {
         const routes = [
+            // Route 1: City delivery route (Truck) - expanded with more waypoints
             {
                 waypoints: [
                     [153.021072, -27.470125], // Brisbane CBD
+                    [153.023, -27.468],        // North
                     [153.025, -27.465],        // North
+                    [153.028, -27.463],        // Northeast
                     [153.030, -27.460],        // Northeast  
+                    [153.033, -27.462],        // East
                     [153.035, -27.465],        // East
+                    [153.036, -27.468],        // Southeast
+                    [153.035, -27.471],        // Southeast
+                    [153.033, -27.474],        // South
                     [153.030, -27.475],        // Southeast
+                    [153.027, -27.477],        // South
                     [153.025, -27.478],        // South
+                    [153.022, -27.477],        // Southwest
                     [153.020, -27.475],        // Southwest
+                    [153.018, -27.472],        // West
                     [153.018, -27.470],        // West
+                    [153.020, -27.468],        // Northwest
                     [153.021072, -27.470125]  // Back to start
                 ],
                 speed: 0.8
             },
-            // Route 2: Suburban delivery route (Van)
+            // Route 2: Suburban delivery route (Van) - expanded
             {
                 waypoints: [
                     [153.021072, -27.470125], // Start CBD
+                    [153.018, -27.473],        // Southwest
+                    [153.015, -27.476],        // Southwest
+                    [153.012, -27.478],        // Southwest
                     [153.010, -27.480],        // Southwest suburbs
+                    [153.007, -27.482],        // Further southwest
+                    [153.004, -27.484],        // Further southwest
                     [153.000, -27.485],        // Further southwest
+                    [152.997, -27.487],        // Residential area
                     [152.995, -27.490],        // Residential area
+                    [152.998, -27.492],        // Loop around
+                    [153.001, -27.494],        // Loop around
                     [153.005, -27.495],        // Loop around
+                    [153.008, -27.493],        // Return path
+                    [153.012, -27.492],        // Return path
                     [153.015, -27.490],        // Return path
+                    [153.017, -27.487],        // Back towards CBD
                     [153.020, -27.485],        // Back towards CBD
+                    [153.021, -27.482],        // Back towards CBD
                     [153.021072, -27.470125]  // Return to start
                 ],
                 speed: 1.2
             },
-            // Route 3: Highway patrol route (Car)
+            // Route 3: Highway patrol route (Car) - expanded
             {
                 waypoints: [
                     [153.021072, -27.470125], // Start CBD
+                    [153.025, -27.465],        // North
+                    [153.030, -27.460],        // North
+                    [153.035, -27.455],        // North highway
                     [153.040, -27.450],        // North highway
+                    [153.045, -27.445],        // Further north
+                    [153.050, -27.440],        // Further north
+                    [153.055, -27.435],        // Further north
                     [153.060, -27.430],        // Further north
+                    [153.065, -27.425],        // Highway section
                     [153.070, -27.420],        // Highway exit
+                    [153.075, -27.422],        // Service road
                     [153.080, -27.425],        // Service road
-                    [153.075, -27.440],        // Return south
-                    [153.050, -27.460],
+                    [153.078, -27.430],        // Return south
+                    [153.075, -27.435],        // Return south
+                    [153.070, -27.440],        // Return south
+                    [153.065, -27.445],        // Return south
+                    [153.060, -27.450],        // Return south
+                    [153.055, -27.455],        // Return south
+                    [153.050, -27.460],        // Return south
+                    [153.045, -27.465],        // Return south
+                    [153.040, -27.468],        // Return to CBD
+                    [153.030, -27.470],        // Return to CBD
+                    [153.021072, -27.470125]  // Return to start
                 ],
                 speed: 1.5
             }
@@ -367,6 +411,7 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         const route = routes[vehicleIndex % routes.length];
         const interpolatedPoints: Array<[number, number]> = [];
 
+        // Calculate points per segment to distribute evenly
         const waypointsPerSegment = Math.ceil(count / (route.waypoints.length - 1));
 
         for (let i = 0; i < route.waypoints.length - 1; i++) {
@@ -376,7 +421,8 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
             for (let j = 0; j < waypointsPerSegment && interpolatedPoints.length < count; j++) {
                 const t = j / waypointsPerSegment;
 
-                const noise = 0.0005;
+                // Add smaller random noise for smoother paths
+                const noise = 0.0002;
                 const randomX = (Math.random() - 0.5) * noise;
                 const randomY = (Math.random() - 0.5) * noise;
 
@@ -446,6 +492,11 @@ Interactive map-based visualization for time series location data with the follo
 - **Time-based Playback**: Replay location data with history controls
 - **Interactive Markers**: Custom vehicle icons with detailed popups
 - **Multiple Map Styles**: Road, satellite, hybrid, and dark themes
+- **Optimized Movement**: 30-second data intervals for smooth, fluid vehicle tracking
+
+## Performance Optimization
+This demo uses 30-second time buckets (240 data points over 2 hours) instead of 5-minute intervals
+for smoother vehicle movement. Playback speed is set to 300ms for responsive, realistic animation.
 
 ## Prerequisites
 - **Azure Maps Subscription Key**: Required for map functionality
@@ -498,7 +549,7 @@ Available tilesets:
         }
     },
     args: {
-        subscriptionKey: import.meta.env.VITE_AZURE_MAPS_KEY || 'ENTER-YOUR-KEY-HERE'
+        subscriptionKey: (import.meta as any).env?.VITE_AZURE_MAPS_KEY || 'ENTER-YOUR-KEY-HERE'
     },
     argTypes: {
         theme: {
@@ -534,8 +585,8 @@ Available tilesets:
             description: 'Map zoom level (matches your example zoom=15)'
         },
         speed: {
-            control: { type: 'range', min: 200, max: 5000, step: 100 },
-            description: 'Playback speed in milliseconds (lower = faster)'
+            control: { type: 'range', min: 100, max: 2000, step: 50 },
+            description: 'Playback speed in milliseconds (lower = faster, smoother movement)'
         }
     }
 }
@@ -568,7 +619,7 @@ function generateSampleGeoData(): IGeoTsqExpression[] {
             {
                 from: timeSpanStart,
                 to: timeSpanEnd,
-                bucketSize: "5m"
+                bucketSize: "30s"  // 30 seconds for smoother movement (was "5m")
             },
             {
                 alias: vehicle.name,
@@ -659,7 +710,7 @@ export const Default: Story = {
         tilesetId: 'microsoft.base.road',
         center: [153.021072, -27.470125],
         zoom: 12,
-        speed: 1000
+        speed: 300  // Much faster playback: 300ms instead of 1000ms
     },
     render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'Vehicle Tracking')
 };
@@ -671,7 +722,7 @@ export const DarkTheme: Story = {
         tilesetId: 'microsoft.base.darkgrey',
         center: [153.021072, -27.470125],
         zoom: 12,
-        speed: 1000
+        speed: 300  // Faster playback
     },
     render: createGeoStory('height: 600px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 8px;', 'Dark Theme')
 };
@@ -683,7 +734,7 @@ export const HighZoom: Story = {
         tilesetId: 'microsoft.imagery',
         center: [153.021072, -27.470125],
         zoom: 15,
-        speed: 500
+        speed: 200  // Even faster for detailed view
     },
     render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'High Zoom')
 };
@@ -695,7 +746,7 @@ export const FastPlayback: Story = {
         tilesetId: 'microsoft.base.hybrid',
         center: [153.021072, -27.470125],
         zoom: 10,
-        speed: 5
+        speed: 2  // 250ms per point = 2 hours of data plays in 1 minute (240 points × 250ms = 60,000ms)
     },
     render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'Fast Playback'),
     play: async ({ canvasElement }) => {
@@ -721,6 +772,6 @@ export const FastPlayback: Story = {
             if (markers.length > 0) {
                 fireEvent.click(markers[0]);
             }
-        }, 3000);
+        }, 300);
     }
 };
