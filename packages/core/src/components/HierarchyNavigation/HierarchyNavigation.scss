@@ -71,7 +71,7 @@
       color: var(--tsi-hierarchy-text);
     }
 
-    .awesomplete>ul {
+    .awesomplete > ul {
       background: color.adjust($gray3, $lightness: -5%);
       color: $gray1;
 
@@ -129,7 +129,7 @@
       background-image: url(../../icons/Close_Icon_Light_Theme.svg);
     }
 
-    .awesomplete>ul {
+    .awesomplete > ul {
       background: $gray4;
       color: $gray1;
 
@@ -142,7 +142,8 @@
   }
 
   .tsi-hierarchy-selection-wrapper {
-    padding: tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-sm;
+    padding: tokens.$tsi-hierarchy-padding-base
+      tokens.$tsi-hierarchy-padding-base tokens.$tsi-hierarchy-padding-sm;
     flex-direction: column;
     display: flex;
     z-index: tokens.$tsi-hierarchy-z-dropdown;
@@ -264,11 +265,11 @@
         left: 0;
       }
 
-      .awesomplete>input {
+      .awesomplete > input {
         padding-right: 28px;
       }
 
-      .awesomplete>ul {
+      .awesomplete > ul {
         @extend .tsi-baseContextMenu;
         animation: tsi-slideIn 0.367s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
         position: absolute;
@@ -303,7 +304,7 @@
         }
       }
 
-      .awesomplete>ul:empty {
+      .awesomplete > ul:empty {
         display: none;
       }
 
@@ -478,7 +479,8 @@
 
         .tsi-modelResult {
           pointer-events: none;
-          padding: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-base;
+          padding: tokens.$tsi-hierarchy-padding-sm
+            tokens.$tsi-hierarchy-padding-base;
 
           .tsi-modelPK {
             font-weight: 600;
@@ -698,7 +700,7 @@
     }
 
     &.tsi-expanded {
-      >.tsi-hierarchyItem>.tsi-caret-icon {
+      > .tsi-hierarchyItem > .tsi-caret-icon {
         content: "";
         cursor: pointer;
         transform: rotate(90deg);
@@ -722,14 +724,16 @@
     inset-inline-start: calc(100% - 32px);
     top: 0;
     z-index: tokens.$tsi-hierarchy-z-context-menu;
-    transition: top tokens.$tsi-hierarchy-transition-speed tokens.$tsi-hierarchy-transition-easing;
+    transition: top tokens.$tsi-hierarchy-transition-speed
+      tokens.$tsi-hierarchy-transition-easing;
     display: flex;
     flex-direction: column;
 
     .tsi-search {
       height: 32px;
       padding: 0;
-      margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm;
+      margin: tokens.$tsi-hierarchy-padding-xs tokens.$tsi-hierarchy-padding-sm
+        tokens.$tsi-hierarchy-padding-sm;
       width: calc(100% - 16px);
 
       &:focus-visible,
@@ -758,7 +762,8 @@
 
     button {
       text-align: center;
-      margin: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-xs;
+      margin: tokens.$tsi-hierarchy-padding-sm tokens.$tsi-hierarchy-padding-sm
+        tokens.$tsi-hierarchy-padding-xs;
       display: block;
       min-height: tokens.$tsi-hierarchy-item-height;
     }

@@ -29,11 +29,9 @@
 
 // Helper function to get theme color
 @function theme-color($theme, $key) {
-  @if $theme =="dark" {
+  @if $theme == "dark" {
     @return map.get($theme-dark, $key);
-  }
-
-  @else if $theme =="light" {
+  } @else if $theme == "light" {
     @return map.get($theme-light, $key);
   }
 }
@@ -89,21 +87,27 @@
 // Mixin for theme colors
 @mixin theme-colors($theme-map) {
   $text: map.get($theme-map, text);
-  $text-secondary: if(map.has-key($theme-map, text-secondary),
-      map.get($theme-map, text-secondary),
-      $text );
+  $text-secondary: if(
+    map.has-key($theme-map, text-secondary),
+    map.get($theme-map, text-secondary),
+    $text
+  );
   $hover: map.get($theme-map, hover);
   $element: map.get($theme-map, element);
   $background: map.get($theme-map, background);
   $alt-element: map.get($theme-map, alt-element);
   $hover-text: map.get($theme-map, hover-text);
   $scrollbar: map.get($theme-map, scrollbar);
-  $border: if(map.has-key($theme-map, border),
-      map.get($theme-map, border),
-      $alt-element );
-  $focus: if(map.has-key($theme-map, focus),
-      map.get($theme-map, focus),
-      $hover-text );
+  $border: if(
+    map.has-key($theme-map, border),
+    map.get($theme-map, border),
+    $alt-element
+  );
+  $focus: if(
+    map.has-key($theme-map, focus),
+    map.get($theme-map, focus),
+    $hover-text
+  );
 
   // Base context menu colors
   .tsi-baseContextMenu {
@@ -111,8 +115,7 @@
     background-color: $element;
     box-shadow: $shadow-sm;
 
-    >div {
-
+    > div {
       &:hover,
       &:focus {
         background-color: $hover;
@@ -137,9 +140,7 @@
         border: 1px solid $focus;
         outline: 2px solid rgba($focus, 0.2);
         outline-offset: 1px;
-      }
-
-      @else {
+      } @else {
         border: 1px solid $hover-text;
       }
     }
@@ -299,9 +300,7 @@
       @if $focus and $focus !=null {
         outline: 2px solid $focus;
         outline-offset: 2px;
-      }
-
-      @else {
+      } @else {
         outline: 2px solid $hover-text;
         outline-offset: 2px;
       }

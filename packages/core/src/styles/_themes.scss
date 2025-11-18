@@ -5,30 +5,28 @@
 // Backward compatibility function for legacy code
 // This maintains the old grays() function API while using the new map-based approach
 @function grays($theme) {
-  @if $theme =="dark" {
+  @if $theme == "dark" {
     @return map.get($theme-dark, text), map.get($theme-dark, hover),
-    map.get($theme-dark, element), map.get($theme-dark, background),
-    map.get($theme-dark, alt-element), map.get($theme-dark, hover-text),
-    map.get($theme-dark, scrollbar), map.get($theme-dark, border),
-    map.get($theme-dark, focus), map.get($theme-dark, text-secondary);
+      map.get($theme-dark, element), map.get($theme-dark, background),
+      map.get($theme-dark, alt-element), map.get($theme-dark, hover-text),
+      map.get($theme-dark, scrollbar), map.get($theme-dark, border),
+      map.get($theme-dark, focus), map.get($theme-dark, text-secondary);
   }
 
-  @if $theme =="light" {
+  @if $theme == "light" {
     @return map.get($theme-light, text), map.get($theme-light, hover),
-    map.get($theme-light, element), map.get($theme-light, background),
-    map.get($theme-light, alt-element), map.get($theme-light, hover-text),
-    map.get($theme-light, scrollbar), map.get($theme-light, border),
-    map.get($theme-light, focus), map.get($theme-light, text-secondary);
+      map.get($theme-light, element), map.get($theme-light, background),
+      map.get($theme-light, alt-element), map.get($theme-light, hover-text),
+      map.get($theme-light, scrollbar), map.get($theme-light, border),
+      map.get($theme-light, focus), map.get($theme-light, text-secondary);
   }
 }
 
 // Apply theme colors using the new mixin
 @mixin apply-theme($theme-name) {
-  @if $theme-name =="dark" {
+  @if $theme-name == "dark" {
     @include theme-colors($theme-dark);
-  }
-
-  @else if $theme-name =="light" {
+  } @else if $theme-name == "light" {
     @include theme-colors($theme-light);
   }
 }
