@@ -314,6 +314,10 @@ class Grid extends Component {
                         this.gridComponent.remove();
                     }
                 });
+        } else {
+
+            this.gridComponent.style('display', null);
+            this.gridComponent.selectAll('.tsi-closeButton').remove();
         }
     }
 
