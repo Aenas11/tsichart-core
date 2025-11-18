@@ -103,19 +103,8 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         const vehiclePositions: Array<any> = [];
 
         this.tsqExpressions.forEach((expression, index) => {
-            let vehicleId: string;
-            try {
-                if (Array.isArray(expression.timeSeriesId)) {
-                    vehicleId = expression.timeSeriesId[0];
-                } else if (expression.timeSeriesId && typeof expression.timeSeriesId === 'object') {
-                    vehicleId = (expression.timeSeriesId as any).timeSeriesId?.[0] || `vehicle-${index}`;
-                } else {
-                    vehicleId = `vehicle-${index}`;
-                }
-            } catch (error) {
-                console.warn('Error extracting vehicle ID:', error);
-                vehicleId = `vehicle-${index}`;
-            }
+            let vehicleId = `vehicle-${index}`;
+
 
             const vehicleData = this.vehicleData.get(vehicleId);
 
@@ -217,15 +206,8 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         const numberOfPoints = Math.ceil(totalDuration / bucketSizeMs);
 
         expressions.forEach((expression, index) => {
-            let vehicleId: string;
+            let vehicleId = `vehicle-${index}`;
 
-            if (Array.isArray(expression.timeSeriesId)) {
-                vehicleId = expression.timeSeriesId[0];
-            } else if (expression.timeSeriesId && typeof expression.timeSeriesId === 'object') {
-                vehicleId = (expression.timeSeriesId as any).timeSeriesId?.[0] || `vehicle-${index}`;
-            } else {
-                vehicleId = `vehicle-${index}`;
-            }
 
             const route = this.generateRoutePoints(center, numberOfPoints, index);
             const timeSeriesData = this.generateTimeSeriesData(
