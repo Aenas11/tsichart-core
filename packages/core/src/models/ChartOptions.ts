@@ -143,7 +143,7 @@ class ChartOptions {
         this.yAxisHidden = this.mergeValue(chartOptionsObj, 'yAxisHidden', false);
         this.focusHidden = this.mergeValue(chartOptionsObj, 'focusHidden', false);
         this.singleLineXAxisLabel = this.mergeValue(chartOptionsObj, 'singleLineXAxisLabel', false);
-        this.legend = this.mergeValue(chartOptionsObj, 'legend', 'shown');
+        this.legend = this.mergeValue(chartOptionsObj, 'legend', 'hidden');
         this.tooltip = this.mergeValue(chartOptionsObj, 'tooltip', false);
         this.throttleSlider = this.mergeValue(chartOptionsObj, 'throttleSlider', false);
         this.snapBrush = this.mergeValue(chartOptionsObj, 'snapBrush', false);
@@ -172,7 +172,7 @@ class ChartOptions {
         this.onKeydown = this.mergeValue(chartOptionsObj, 'onKeydown', () => { });
         this.onInput = this.mergeValue(chartOptionsObj, 'onInput', () => { });
         this.brushHandlesVisible = this.mergeValue(chartOptionsObj, 'brushHandlesVisible', false);
-        this.hideChartControlPanel = this.mergeValue(chartOptionsObj, 'hideChartControlPanel', false);
+        this.hideChartControlPanel = this.mergeValue(chartOptionsObj, 'hideChartControlPanel', true);
         this.offset = this.mergeValue(chartOptionsObj, 'offset', 0);
         this.is24HourTime = this.mergeValue(chartOptionsObj, 'is24HourTime', true);
         this.includeTimezones = this.mergeValue(chartOptionsObj, 'includeTimezones', true);
