@@ -26,6 +26,8 @@ class DateTimeButton extends ChartComponent {
         // Respect minutesForTimeLabels option: true = minutes only, false = include seconds/millis
         const includeSeconds = this.chartOptions.minutesForTimeLabels === false;
 
+
+
         const formatOptions: Intl.DateTimeFormatOptions = {
             year: 'numeric',
             month: '2-digit',
@@ -33,6 +35,10 @@ class DateTimeButton extends ChartComponent {
             hour: '2-digit',
             minute: '2-digit',
             hour12: !is24Hour,
+        };
+
+        //show timezone name only if offset is set to something other than 'Local'
+        if (this.chartOptions.offset && this.chartOptions.offset !== 'Local') {
             //timeZoneName can be 'short', 'long', 'shortOffset', 'longOffset', "shortGeneric", "longGeneric", using 'short' for brevity
             //examples of each:
             // short: "PST"
@@ -40,9 +46,9 @@ class DateTimeButton extends ChartComponent {
             // shortOffset: "GMT-8"
             // longOffset: "GMT-08:00"
             // shortGeneric: "PT"
-            // longGeneric: "Pacific Time"
-            timeZoneName: 'shortGeneric', // Let Intl handle timezone display
-        };
+            // longGeneric: "Pacific Time"            
+            formatOptions.timeZoneName = 'shortGeneric';
+        }
 
         // Only include seconds if minutesForTimeLabels is false
         if (includeSeconds) {
