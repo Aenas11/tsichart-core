@@ -33,7 +33,15 @@ class DateTimeButton extends ChartComponent {
             hour: '2-digit',
             minute: '2-digit',
             hour12: !is24Hour,
-            timeZoneName: 'short', // Let Intl handle timezone display
+            //timeZoneName can be 'short', 'long', 'shortOffset', 'longOffset', "shortGeneric", "longGeneric", using 'short' for brevity
+            //examples of each:
+            // short: "PST"
+            // long: "Pacific Standard Time"
+            // shortOffset: "GMT-8"
+            // longOffset: "GMT-08:00"
+            // shortGeneric: "PT"
+            // longGeneric: "Pacific Time"
+            timeZoneName: 'shortGeneric', // Let Intl handle timezone display
         };
 
         // Only include seconds if minutesForTimeLabels is false
