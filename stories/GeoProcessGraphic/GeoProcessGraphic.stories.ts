@@ -204,8 +204,9 @@ class MovingGeoProcessGraphic extends GeoProcessGraphic {
         };
 
         const center = chartOptions.center || [153.021072, -27.470125];
-        // Use much smaller bucket size for smoother movement (30 seconds instead of 5 minutes)
-        const bucketSizeMs = 30 * 1000; // 30 seconds
+        // For fast playback: use 5-second buckets for ultra-smooth movement
+        // This creates 1440 data points (2 hours / 5 seconds) for continuous animation
+        const bucketSizeMs = 5 * 1000; // 5 seconds (was 30 seconds)
         const totalDuration = timeFrame.to.getTime() - timeFrame.from.getTime();
         const numberOfPoints = Math.ceil(totalDuration / bucketSizeMs);
 
@@ -492,11 +493,12 @@ Interactive map-based visualization for time series location data with the follo
 - **Time-based Playback**: Replay location data with history controls
 - **Interactive Markers**: Custom vehicle icons with detailed popups
 - **Multiple Map Styles**: Road, satellite, hybrid, and dark themes
-- **Optimized Movement**: 30-second data intervals for smooth, fluid vehicle tracking
+- **Optimized Movement**: 5-second data intervals for ultra-smooth, fast vehicle tracking
 
 ## Performance Optimization
-This demo uses 30-second time buckets (240 data points over 2 hours) instead of 5-minute intervals
-for smoother vehicle movement. Playback speed is set to 300ms for responsive, realistic animation.
+This demo uses 5-second time buckets (1,440 data points over 2 hours) for ultra-smooth vehicle movement.
+With PlaybackControls minimum of 1000ms, the full 2-hour dataset plays in approximately 24 minutes at normal speed,
+or can be sped up interactively using the speed control.
 
 ## Prerequisites
 - **Azure Maps Subscription Key**: Required for map functionality
@@ -585,8 +587,8 @@ Available tilesets:
             description: 'Map zoom level (matches your example zoom=15)'
         },
         speed: {
-            control: { type: 'range', min: 100, max: 2000, step: 50 },
-            description: 'Playback speed in milliseconds (lower = faster, smoother movement)'
+            control: { type: 'range', min: 50, max: 2000, step: 50 },
+            description: 'Playback speed in milliseconds (lower = faster). Practical range: 100-500ms for smooth animation. Minimum: 50ms (extreme speed, may impact performance)'
         }
     }
 }
@@ -619,7 +621,7 @@ function generateSampleGeoData(): IGeoTsqExpression[] {
             {
                 from: timeSpanStart,
                 to: timeSpanEnd,
-                bucketSize: "30s"  // 30 seconds for smoother movement (was "5m")
+                bucketSize: "5s"  // 5 seconds for ultra-smooth, fast movement (was "30s")
             },
             {
                 alias: vehicle.name,
@@ -740,13 +742,13 @@ export const HighZoom: Story = {
 };
 
 export const FastPlayback: Story = {
-    name: 'Fast Playback',
+    name: 'Fast Playback (Maximum Speed)',
     args: {
         theme: 'light',
         tilesetId: 'microsoft.base.hybrid',
         center: [153.021072, -27.470125],
         zoom: 10,
-        speed: 2  // 250ms per point = 2 hours of data plays in 1 minute (240 points × 250ms = 60,000ms)
+        speed: 50  // Note: PlaybackControls enforces 1000ms minimum, but with 5s buckets, movement is continuous
     },
     render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'Fast Playback'),
     play: async ({ canvasElement }) => {
