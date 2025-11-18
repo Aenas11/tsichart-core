@@ -470,12 +470,40 @@ Interactive map-based visualization for time series location data with the follo
 - **Position Data**: Time series data must include longitude/latitude variables
 - **Custom Marker Images**: URLs to marker images for different device types
 
-## Tile Configuration
+## Configuration Best Practices
 
-The component supports Azure Maps tile API:
+### For Production (Recommended):
+\`\`\`typescript
+// 1. Add to .env file (never commit this!)
+VITE_AZURE_MAPS_KEY=your-actual-subscription-key
+
+// 2. Use in your application
+const geoChart = new GeoProcessGraphic(container);
+geoChart.render(tsqExpressions, {
+    subscriptionKey: import.meta.env.VITE_AZURE_MAPS_KEY,
+    center: [153.021072, -27.470125],
+    zoom: 15,
+    tilesetId: "microsoft.base.road"
+});
 \`\`\`
-https://atlas.microsoft.com/map/tile?subscription-key={key}&api-version=2024-04-01&tilesetId={tilesetId}&zoom={z}&x={x}&y={y}&tileSize=256
+
+### For Storybook Development:
+**Configuration:**
+- Add your Azure Maps key to \`.env\` file in project root
+- Set \`VITE_AZURE_MAPS_KEY=your-key-here\`
+- Restart Storybook to pick up the environment variable
+- If no key is provided, fallback UI will be displayed
+
+**Quick Start:**
+\`\`\`bash
+# Add to .env file
+echo "VITE_AZURE_MAPS_KEY=your-key-here" >> .env
+
+# Restart Storybook
+pnpm storybook
 \`\`\`
+
+## Tile Configuration
 
 Available tilesets:
 - \`microsoft.base.road\` - Standard road map
@@ -483,25 +511,12 @@ Available tilesets:
 - \`microsoft.imagery\` - Satellite imagery
 - \`microsoft.base.hybrid\` - Satellite with road labels
 
-## Usage Example
-
-\`\`\`typescript
-const geoChart = new GeoProcessGraphic(container);
-geoChart.render(tsqExpressions, {
-    subscriptionKey: "your-azure-maps-key",
-    center: [153.021072, -27.470125],
-    zoom: 15,
-    tilesetId: "microsoft.base.road",
-    theme: 'light'
-});
-\`\`\`
-
                 `
             }
         }
     },
     args: {
-        subscriptionKey: 'demo-key-required', // Default shared value
+        subscriptionKey: import.meta.env.VITE_AZURE_MAPS_KEY || 'ENTER-YOUR-KEY-HERE'
     },
     argTypes: {
         theme: {
@@ -510,8 +525,12 @@ geoChart.render(tsqExpressions, {
             description: 'Visual theme for the map'
         },
         subscriptionKey: {
-            control: 'text',
-            description: 'Azure Maps subscription key (required)'
+            control: false,
+            description: 'Azure Maps subscription key - Set via VITE_AZURE_MAPS_KEY in .env file',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: 'import.meta.env.VITE_AZURE_MAPS_KEY' }
+            }
         },
         tilesetId: {
             control: { type: 'select' },
@@ -596,7 +615,6 @@ function renderGeoProcessGraphic(container: HTMLElement, options: IGeoProcessGra
         const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
 
         const chartOptions = {
-            subscriptionKey: options.subscriptionKey || "demo-key",
             center: options.center || [153.021072, -27.470125], // Brisbane
             zoom: options.zoom || 10,
             tilesetId: options.tilesetId || 'microsoft.base.road',
@@ -633,62 +651,14 @@ function renderGeoProcessGraphic(container: HTMLElement, options: IGeoProcessGra
     }
 }
 
-const geoStateManager = {
-    sharedSubscriptionKey: 'demo-key-required',
-    lastValidKey: null as string | null,
-
-    updateKey(newKey: string): void {
-        if (newKey && newKey !== 'demo-key-required') {
-            this.sharedSubscriptionKey = newKey;
-            this.lastValidKey = newKey;
-
-            try {
-                localStorage.setItem('tsichart-azure-maps-key', newKey);
-            } catch (error) {
-                console.warn('Could not save key to localStorage:', error);
-            }
-
-        }
-    },
-
-    getEffectiveKey(storyKey: string): string {
-        if (!this.lastValidKey) {
-            try {
-                const savedKey = localStorage.getItem('tsichart-azure-maps-key');
-                if (savedKey && savedKey !== 'demo-key-required') {
-                    this.lastValidKey = savedKey;
-                    this.sharedSubscriptionKey = savedKey;
-
-                }
-            } catch (error) {
-                console.warn('Could not load key from localStorage:', error);
-            }
-        }
-
-        if (storyKey && storyKey !== 'demo-key-required') {
-            this.updateKey(storyKey);
-            return storyKey;
-        }
-        return this.lastValidKey || this.sharedSubscriptionKey;
-    }
-};
-
 function createGeoStory(containerStyle: string, storyName?: string) {
     return (args: IGeoProcessGraphicOptions) => {
-
         const chartId = `geo-chart-${Math.random().toString(36).substring(7)}`;
-
-        const effectiveSubscriptionKey = geoStateManager.getEffectiveKey(args.subscriptionKey);
-
-        const effectiveArgs = {
-            ...args,
-            subscriptionKey: effectiveSubscriptionKey
-        };
 
         setTimeout(() => {
             const container = document.getElementById(chartId);
             if (container) {
-                renderGeoProcessGraphic(container, effectiveArgs);
+                renderGeoProcessGraphic(container, args);
             }
         }, 50);
 
@@ -703,7 +673,6 @@ function createGeoStory(containerStyle: string, storyName?: string) {
 export const Default: Story = {
     name: 'Vehicle Tracking (Demo)',
     args: {
-        subscriptionKey: 'demo-key-required',
         theme: 'light',
         tilesetId: 'microsoft.base.road',
         center: [153.021072, -27.470125],
@@ -716,7 +685,6 @@ export const Default: Story = {
 export const DarkTheme: Story = {
     name: 'Dark Theme',
     args: {
-        subscriptionKey: 'demo-key-required',
         theme: 'dark',
         tilesetId: 'microsoft.base.darkgrey',
         center: [153.021072, -27.470125],
@@ -729,7 +697,6 @@ export const DarkTheme: Story = {
 export const HighZoom: Story = {
     name: 'Detailed View (High Zoom)',
     args: {
-        subscriptionKey: 'demo-key-required',
         theme: 'light',
         tilesetId: 'microsoft.imagery',
         center: [153.021072, -27.470125],
@@ -742,12 +709,11 @@ export const HighZoom: Story = {
 export const FastPlayback: Story = {
     name: 'Fast Playback',
     args: {
-        subscriptionKey: 'demo-key-required',
         theme: 'light',
         tilesetId: 'microsoft.base.hybrid',
         center: [153.021072, -27.470125],
         zoom: 10,
-        speed: 500
+        speed: 5
     },
     render: createGeoStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 8px;', 'Fast Playback'),
     play: async ({ canvasElement }) => {
@@ -756,9 +722,9 @@ export const FastPlayback: Story = {
         await waitFor(() => {
             const mapContainer = canvasElement.querySelector('.tsi-geoProcessGraphicMap');
             if (!mapContainer) throw new Error("Map container not rendered");
-        }, { timeout: 5000 });
+        }, { timeout: 500 });
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         const playButton = canvas.queryByRole('button', { name: /play/i }) ||
             canvasElement.querySelector('.tsi-play-button');
