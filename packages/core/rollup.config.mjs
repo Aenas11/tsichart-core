@@ -10,7 +10,8 @@ import dts from 'rollup-plugin-dts';
 import del from 'rollup-plugin-delete';
 import terser from '@rollup/plugin-terser';
 
-const isProduction = process.env.NODE_ENV === 'production';
+// Default to production unless explicitly set to development
+const isProduction = process.env.NODE_ENV !== 'development';
 
 // Plugin to ignore SCSS imports in type definitions
 const ignoreScss = {
@@ -44,7 +45,11 @@ const commonPlugins = [
             exclude: ['__tests__/**', '**/*.test.ts', '**/*.spec.ts']
         }
     }), 
-    autoExternal(), // Auto mark dependencies as external
+    autoExternal({
+        // Only externalize peerDependencies (d3), bundle everything else
+        dependencies: false,
+        peerDependencies: true
+    }), 
     commonjs(), // Convert cjs imports to esm
     json(), // Handle json file imports
 ];

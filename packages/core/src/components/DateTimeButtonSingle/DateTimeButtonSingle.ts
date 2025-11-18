@@ -3,6 +3,8 @@ import './DateTimeButtonSingle.scss';
 import { DateTimeButton } from '../../interfaces/DateTimeButton';
 import SingleDateTimePicker from '../SingleDateTimePicker/SingleDateTimePicker';
 
+type OnSetCallback = (millis: number) => void;
+
 class DateTimeButtonSingle extends DateTimeButton {
 
     private selectedMillis: number;
@@ -56,19 +58,25 @@ class DateTimeButtonSingle extends DateTimeButton {
         this.closeSDTP();
     }
 
-    public render(chartOptions: any = {}, minMillis: number, maxMillis: number, selectedMillis: number = null, onSet = null) {
-        super.render(chartOptions, minMillis, maxMillis, onSet);
+    public render(chartOptions: any = {}, minMillis: number, maxMillis: number, selectedMillis: number = null, onSet: OnSetCallback = null) {
+        super.initializeDateTimeButton(chartOptions, minMillis, maxMillis, (millis) => {
+            if (onSet) {
+                onSet(millis);
+            }
+        });
         this.selectedMillis = selectedMillis;
         d3.select(this.renderTarget).classed('tsi-dateTimeContainerSingle', true);
         this.dateTimeButton.text(this.buttonDateTimeFormat(selectedMillis));
         if (!this.dateTimePicker) {
-            this.dateTimePicker = new SingleDateTimePicker(this.dateTimePickerContainer.node());
+            const sdtp = new SingleDateTimePicker(this.dateTimePickerContainer.node());
+            // Store as 'any' to avoid type conflict since DateTimePicker and SingleDateTimePicker are different types
+            this.dateTimePicker = sdtp as any;
         }
 
         this.dateTimeButton.on("click", () => {
             this.chartOptions.dTPIsModal = true;
             this.dateTimePickerContainer.style("display", "block");
-            this.dateTimePicker.render(this.chartOptions, this.minMillis, this.maxMillis, this.selectedMillis, this.sDTPOnSet);
+            (this.dateTimePicker as any).render(this.chartOptions, this.minMillis, this.maxMillis, this.selectedMillis, this.sDTPOnSet);
             this.setupClickOutsideHandler();
         });
     }
