@@ -175,7 +175,8 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             theme: 'light',
             offset: 'Local',
             is24HourTime: true,
-            dateLocale: 'en-US',
+            //set date locale to browser default if not provided
+            dateLocale: navigator.language || 'en-US',
             dTPIsModal: true,
             minutesForTimeLabels: true,
             showFeedback: true,

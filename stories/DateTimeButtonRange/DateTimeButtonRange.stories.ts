@@ -184,7 +184,8 @@ function renderDateTimeButtonRange(container: HTMLElement, options: IDateTimeBut
             theme: 'light',
             offset: 'Local',
             is24HourTime: true,
-            dateLocale: 'en-US',
+            //set date locale to browser default if not provided
+            dateLocale: navigator.language || 'en-US',
             dTPIsModal: true,
             minutesForTimeLabels: true,
             ...options
@@ -262,7 +263,7 @@ export const Default: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
+        dateLocale: navigator.language || 'en-US',
         dTPIsModal: true,
         minutesForTimeLabels: true
     },
@@ -275,7 +276,6 @@ export const DarkTheme: Story = {
         theme: 'dark',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory()
@@ -287,7 +287,6 @@ export const TwelveHourFormat: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: false,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory()
@@ -299,7 +298,6 @@ export const DifferentTimezones: Story = {
         theme: 'light',
         offset: 'UTC',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory()
@@ -311,7 +309,6 @@ export const HistoricalData: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory('historical')
@@ -323,7 +320,6 @@ export const FutureRange: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory('future')
@@ -347,7 +343,6 @@ export const WideRange: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory('wide')
@@ -359,7 +354,6 @@ export const HighPrecisionTime: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true,
         minutesForTimeLabels: false  // Show seconds and milliseconds
     },
@@ -372,7 +366,6 @@ export const Interactive: Story = {
         theme: 'light',
         offset: 'Local',
         is24HourTime: true,
-        dateLocale: 'en-US',
         dTPIsModal: true
     },
     render: createDateTimeButtonRangeStory(),
