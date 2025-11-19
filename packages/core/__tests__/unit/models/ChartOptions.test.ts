@@ -19,7 +19,7 @@ describe('ChartOptions', () => {
             expect(chartOptions.yAxisHidden).toBe(false);
             expect(chartOptions.focusHidden).toBe(false);
             expect(chartOptions.singleLineXAxisLabel).toBe(false);
-            expect(chartOptions.legend).toBe('shown');
+            expect(chartOptions.legend).toBe('hidden');
             expect(chartOptions.tooltip).toBe(false);
             expect(chartOptions.throttleSlider).toBe(false);
             expect(chartOptions.snapBrush).toBe(false);
@@ -37,7 +37,7 @@ describe('ChartOptions', () => {
             expect(chartOptions.xAxisHidden).toBe(false);
             expect(chartOptions.suppressResizeListener).toBe(false);
             expect(chartOptions.brushHandlesVisible).toBe(false);
-            expect(chartOptions.hideChartControlPanel).toBe(false);
+            expect(chartOptions.hideChartControlPanel).toBe(true);
             expect(chartOptions.offset).toBe(0);
             expect(chartOptions.is24HourTime).toBe(true);
             expect(chartOptions.includeTimezones).toBe(true);
