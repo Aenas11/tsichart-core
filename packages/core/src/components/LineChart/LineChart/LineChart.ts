@@ -1,39 +1,40 @@
 import * as d3 from 'd3';
 import * as d3Voronoi from 'd3-voronoi';
 import './LineChart.scss';
-import Utils from "../../utils";
-import { DataTypes, YAxisStates, TooltipMeasureFormat } from "./../../constants/Enums";
-import { LINECHARTTOPPADDING, LINECHARTCHARTMARGINS, VALUEBARHEIGHT, SERIESLABELWIDTH } from "./../../constants/Constants";
-import Legend from "./../Legend";
-import { TemporalXAxisComponent } from "./../../interfaces/TemporalXAxisComponent";
-import { LineChartData } from "./../../models/LineChartData";
-import ContextMenu from '../ContextMenu';
-import Tooltip from '../Tooltip';
-import { ChartDataOptions } from '../../models/ChartDataOptions';
-import LinePlot from '../LinePlot';
-import CategoricalPlot from '../CategoricalPlot';
-import EventsPlot from '../EventsPlot';
-import { AxisState } from '../../models/AxisState';
-import Marker from '../Marker';
-import { swimlaneLabelConstants } from '../../constants/Constants'
-import { HorizontalMarker } from '../../utils/Interfaces';
+import Utils from "../../../utils";
+import { DataTypes, YAxisStates, TooltipMeasureFormat } from "../../../constants/Enums";
+import { LINECHARTTOPPADDING, LINECHARTCHARTMARGINS, VALUEBARHEIGHT, SERIESLABELWIDTH } from "../../../constants/Constants";
+import Legend from "../../Legend";
+import { TemporalXAxisComponent } from "../../../interfaces/TemporalXAxisComponent";
+import { LineChartData } from "../../../models/LineChartData";
+import ContextMenu from '../../ContextMenu';
+import { ChartDataOptions } from '../../../models/ChartDataOptions';
+import LinePlot from '../../LinePlot';
+import CategoricalPlot from '../../CategoricalPlot';
+import EventsPlot from '../../EventsPlot';
+import { AxisState } from '../../../models/AxisState';
+import { swimlaneLabelConstants } from '../../../constants/Constants'
+import { HorizontalMarker } from '../../../utils/Interfaces';
 import { ILineChartOptions } from "./ILineChartOptions";
-import { ChartData } from '../../types';
+import { ChartData } from '../../../types';
+import { ILineChart } from './ILineChart';
+import Brush from './Brush';
+import Tooltip from './Tooltip';
+import Marker from './Marker';
 
-class LineChart extends TemporalXAxisComponent {
-    private targetElement: any;
-    private focus: any;
+class LineChart extends TemporalXAxisComponent implements ILineChart {
+    public targetElement: any;
+    public focus: any;
     private horizontalValueBox: any;
     private verticalValueBox: any;
     private horizontalValueBar: any;
-    private contextMenu: ContextMenu;
-    private brushContextMenu: ContextMenu;
+    public contextMenu: ContextMenu;
+    public brushContextMenu: ContextMenu;
     private setDisplayStateFromData: any;
     private minBrushWidth = 1;
     private strokeOpacity = 1;
     private nonFocusStrokeOpactiy = .3;
     chartComponentData = new LineChartData();
-    private surpressBrushTimeSet: boolean = false;
     private hasStackedButton: boolean = false;
     private stackedButton: any = null;
     private visibleAggCount: number;
@@ -42,34 +43,30 @@ class LineChart extends TemporalXAxisComponent {
 
     private tooltip: Tooltip;
     private height: number;
-    private xLowerBound: number;
-    private xUpperBound: number;
-    private y: any;
-    private yMap: any;
+    public xLowerBound: number;
+    public xUpperBound: number;
+    public y: any;
+    public yMap: any;
     private line: any;
     private areaPath: any;
     private envelope: any;
-    private voronoi: any;
-    private possibleTimesArray: any;
+    public voronoi: any;
+    public possibleTimesArray: any;
     private colorMap: any;
 
-    private markers = {};
-
+    private markers: { [guid: string]: Marker } = {};
     private seriesLabelsMarker: Marker = null;
-    private markerGuidMap: any = {};
-    private isDroppingMarker: boolean = false;
-    private activeMarker: Marker;
-    private brush: any;
-    private brushElem: any;
-    public brushStartTime: Date;
-    public brushEndTime: Date;
-    private brushStartPosition: number = null;
-    private brushEndPosition: number = null;
-    private hasBrush: boolean = false;
-    private isClearingBrush: boolean = false;
+    public isDroppingMarker: boolean = false;
+    public activeMarker: Marker;
+
+    public brush: Brush;
     private previousAggregateData: any = d3.local();
     private previousIncludeDots: any = d3.local();
     private voronoiDiagram;
+
+    public getChartOptions() {
+        return this.chartOptions;
+    }
     private voronoiRegion;
     private mx = null;
     private my = null;
@@ -91,23 +88,21 @@ class LineChart extends TemporalXAxisComponent {
         super(renderTarget);
         this.MINHEIGHT = 26;
         this.chartMargins = Object.assign({}, LINECHARTCHARTMARGINS);
+        this.brush = new Brush(this);
+        this.tooltip = new Tooltip(this);
     }
-
-    LineChart() {
-    }
-
 
     //get the left and right positions of the brush
     public getBrushPositions() {
         var leftPos = null;
         var rightPos = null;
-        if (this.brushStartTime) {
-            var rawLeft = this.x(this.brushStartTime);
+        if (this.brush.brushStartTime) {
+            var rawLeft = this.x(this.brush.brushStartTime);
             if (rawLeft >= 0 && rawLeft <= this.chartWidth)
                 leftPos = Math.round(rawLeft + this.chartMargins.left);
         }
-        if (this.brushEndTime) {
-            var rawRight = this.x(this.brushEndTime);
+        if (this.brush.brushEndTime) {
+            var rawRight = this.x(this.brush.brushEndTime);
             if (rawRight >= 0 && rawRight <= this.chartWidth)
                 rightPos = Math.round(rawRight + this.chartMargins.left);
         }
@@ -520,42 +515,15 @@ class LineChart extends TemporalXAxisComponent {
     }
 
     public setBrushStartTime(startTime) {
-        this.brushStartTime = startTime;
+        this.brush.brushStartTime = startTime;
     }
 
     public setBrushEndTime(endTime) {
-        this.brushEndTime = endTime;
+        this.brush.brushEndTime = endTime;
     }
 
     public setBrush() {
-        if (this.brushStartTime && this.brushEndTime && this.brushElem && this.brush) {
-            var rawLeftSide = this.x(this.brushStartTime);
-            var rawRightSide = this.x(this.brushEndTime);
-
-            //if selection is out of range of brush. clear brush
-            this.brushElem.call(this.brush.move, null);
-            if ((rawRightSide < this.xOffset) || (rawLeftSide > (this.chartWidth - (2 * this.xOffset)))) {
-                this.isClearingBrush = true;
-                this.brushElem.call(this.brush.move, null);
-                return;
-            }
-
-            let leftSide = Math.min(this.chartWidth - (2 * this.xOffset), Math.max(this.xOffset, this.x(this.brushStartTime)));
-            let rightSide = Math.min(this.chartWidth - (2 * this.xOffset), Math.max(this.xOffset, this.x(this.brushEndTime)));
-
-            this.surpressBrushTimeSet = true;
-            this.brushStartPosition = leftSide;
-            this.brushEndPosition = rightSide;
-            //small adjusetment so that width is always at least 1 pixel
-            if (rightSide - leftSide < 1) {
-                if (rightSide + 1 > this.chartWidth - (2 * this.xOffset)) {
-                    leftSide += -1;
-                } else {
-                    rightSide += 1;
-                }
-            }
-            this.brushElem.call(this.brush.move, [leftSide, rightSide]);
-        }
+        this.brush.setBrush();
     }
 
     private findClosestValidTime(rawMillis: number) {
@@ -577,22 +545,22 @@ class LineChart extends TemporalXAxisComponent {
     }
 
     public exportMarkers() {
-        this.chartOptions.markers = Object.keys(this.markerGuidMap)
+        this.chartOptions.markers = Object.keys(this.markers)
             .filter((markerGuid) => !this.activeMarker || this.activeMarker.getGuid() !== markerGuid)
-            .map((markerGuid) => { return [this.markerGuidMap[markerGuid].getMillis(), this.markerGuidMap[markerGuid].getLabelText()] });
+            .map((markerGuid) => { return [this.markers[markerGuid].getMillis(), this.markers[markerGuid].getLabelText()] });
         this.chartOptions.onMarkersChange(this.chartOptions.markers);
     }
 
     private createOnMarkerChange(markerGuid: string, marker: any) {
         return (isDeleting, droppedMarker, shouldSort: boolean = true) => {
             if (droppedMarker) {
-                this.markerGuidMap[markerGuid] = marker;
+                this.markers[markerGuid] = marker;
             }
             else if (isDeleting) {
-                delete this.markerGuidMap[markerGuid];
+                delete this.markers[markerGuid];
 
                 //set focus to first marker if markers exist on delete
-                let visibleMarkers: any = Object.values(this.markerGuidMap).filter((marker: Marker) => {
+                let visibleMarkers: any = Object.values(this.markers).filter((marker: Marker) => {
                     return marker.isMarkerInRange();
                 });
                 if (visibleMarkers.length !== 0) {
@@ -657,18 +625,18 @@ class LineChart extends TemporalXAxisComponent {
     private importMarkers() {
         if (this.chartOptions.markers && this.chartOptions.markers.length > 0) {
             // delete all the old markers
-            if (Object.keys(this.markerGuidMap).length) {
-                Object.keys(this.markerGuidMap).forEach((guid) => {
-                    this.markerGuidMap[guid].destroyMarker();
-                    delete this.markerGuidMap[guid];
+            if (Object.keys(this.markers).length) {
+                Object.keys(this.markers).forEach((guid) => {
+                    this.markers[guid].destroy();
+                    delete this.markers[guid];
                 });
             }
-            this.markerGuidMap = {};
+            this.markers = {};
             this.chartOptions.markers.forEach((markerValueTuples, markerIndex) => {
                 if (markerValueTuples === null || markerValueTuples === undefined) {
                     return;
                 }
-                let marker = new Marker(this.renderTarget);
+                let marker = new Marker(this);
                 let markerUID = Utils.guid();
 
                 let markerMillis;
@@ -680,7 +648,7 @@ class LineChart extends TemporalXAxisComponent {
                     markerMillis = markerValueTuples[0];
                 }
                 marker.setMillis(markerMillis);
-                this.markerGuidMap[markerUID] = marker;
+                this.markers[markerUID] = marker;
             });
             this.renderAllMarkers();
             this.sortMarkers();
@@ -689,7 +657,7 @@ class LineChart extends TemporalXAxisComponent {
 
 
     private createSeriesLabelsMarker() {
-        this.seriesLabelsMarker = new Marker(this.renderTarget);
+        this.seriesLabelsMarker = new Marker(this);
     }
 
     private renderSeriesLabelsMarker() {
@@ -700,8 +668,8 @@ class LineChart extends TemporalXAxisComponent {
 
     private renderAllMarkers() {
         this.getAllLinesTransitionsComplete().then(() => {
-            Object.keys(this.markerGuidMap).forEach((guid) => {
-                let marker = this.markerGuidMap[guid];
+            Object.keys(this.markers).forEach((guid) => {
+                let marker = this.markers[guid];
                 let onChange = this.createOnMarkerChange(guid, marker);
                 this.renderMarker(marker, marker.getMillis(), onChange)
             });
@@ -735,12 +703,12 @@ class LineChart extends TemporalXAxisComponent {
 
         Utils.focusOnEllipsisButton(this.renderTarget);
 
-        let marker = new Marker(this.renderTarget);
+        let marker = new Marker(this);
         let markerUID = Utils.guid();
         let onChange = this.createOnMarkerChange(markerUID, marker);
         this.activeMarker = marker;
-        this.markerGuidMap[markerUID] = marker;
-        this.renderMarker(marker, Infinity, onChange, `${this.getString('Marker')} ${Object.keys(this.markerGuidMap).length}`);
+        this.markers[markerUID] = marker;
+        this.renderMarker(marker, Infinity, onChange, `${this.getString('Marker')} ${Object.keys(this.markers).length}`);
     }
 
     private voronoiExists(): boolean {
@@ -778,8 +746,8 @@ class LineChart extends TemporalXAxisComponent {
             var mousePosition = d3.pointer(d3Event, <any>this.targetElement.node());
 
             let sitePageCoords;
-            if (this.hasBrush) {
-                sitePageCoords = this.brushElem.node().getBoundingClientRect();
+            if (this.brush) {
+                sitePageCoords = this.brush.brushElem.node().getBoundingClientRect();
             } else {
                 sitePageCoords = this.voronoiRegion.node().getBoundingClientRect();
             }
@@ -803,7 +771,7 @@ class LineChart extends TemporalXAxisComponent {
             return;
 
         if (!this.filteredValueExist() || !this.voronoiExists()) return;
-        if (this.brushElem && !this.isDroppingMarker) return;
+        if (this.brush && !this.isDroppingMarker) return;
         const [mx, my] = d3.pointer(d3Event, mouseEvent);
         var site: any = this.voronoiDiagram.find(mx, my);
         let cDO = this.getCDOFromAggKey(site.data.aggregateKey);
@@ -835,156 +803,6 @@ class LineChart extends TemporalXAxisComponent {
 
     private getValueOfVisible(d) {
         return Utils.getValueOfVisible(d, this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy));
-    }
-
-    private brushBrush(event) {
-        var handleHeight = this.getHandleHeight();
-        this.brushElem.selectAll('.handle')
-            .attr('height', handleHeight)
-            .attr('y', (this.chartHeight - handleHeight) / 2);
-
-        if (!event.sourceEvent) {
-            return;
-        }
-        if (event.sourceEvent && event.sourceEvent.type === 'mousemove') {
-            this.brushElem.select(".selection").attr("visibility", "visible");
-            //check boundary conditions for width of the brush
-            if (event.selection[1] - event.selection[0] < this.minBrushWidth) {
-                return;
-            } else {
-                this.brushElem.selectAll(".handle").attr("visibility", "visible");
-            }
-        }
-        if (this.surpressBrushTimeSet == true) {
-            this.surpressBrushTimeSet = false;
-            return;
-        }
-        if (!event.selection) return;
-
-        if (this.contextMenu)
-            this.contextMenu.hide();
-        if (this.brushContextMenu)
-            this.brushContextMenu.hide();
-
-        var newBrushStartPosition = event.selection[0];
-        var newBrushEndPosition = event.selection[1];
-        if (newBrushStartPosition != this.brushStartPosition) {
-            this.brushStartTime = this.x.invert(event.selection[0]);
-            this.brushStartPosition = newBrushStartPosition;
-        }
-        if (newBrushEndPosition != this.brushEndPosition) {
-            this.brushEndTime = this.x.invert(event.selection[1]);
-            this.brushEndPosition = newBrushEndPosition;
-        }
-
-        if (this.chartOptions.brushMoveAction) {
-            this.chartOptions.brushMoveAction(this.brushStartTime, this.brushEndTime);
-        }
-    }
-
-    private brushEnd(d3Event, mouseEvent) {
-        if (this.isClearingBrush) {
-            this.isClearingBrush = false;
-            if (this.brushContextMenu) {
-                this.brushContextMenu.hide();
-            }
-            return;
-        }
-        if (d3Event && d3Event.selection == null && d3Event.sourceEvent && d3Event.sourceEvent.type == "mouseup" && this.chartOptions.minBrushWidth == 0) {
-            if (this.brushContextMenu) {
-                this.brushContextMenu.hide();
-            }
-            const [mx, my] = d3.pointer(d3Event, mouseEvent);
-            var site: any = this.voronoiDiagram.find(mx, my);
-            let isClearingBrush = (this.brushStartPosition !== null) && (this.brushEndPosition !== null);
-            if (this.chartComponentData.stickiedKey !== null && !this.isDroppingMarker && !isClearingBrush) {
-                this.chartComponentData.stickiedKey = null;
-                (<any>this.legendObject.legendElement.selectAll('.tsi-splitByLabel')).classed("stickied", false);
-                // recompute voronoi with no sticky
-                this.voronoiDiagram = this.voronoi(this.getFilteredAndSticky(this.chartComponentData.allValues));
-                site = this.voronoiDiagram.find(mx, my);
-                this.voronoiMousemove(site.data);
-                this.chartOptions.onUnsticky(site.data.aggregateKey, site.data.splitBy);
-                return;
-            }
-
-            this.brushStartTime = null;
-            this.brushEndTime = null;
-            this.brushStartPosition = null;
-            this.brushEndPosition = null;
-
-            if (!this.isDroppingMarker && !isClearingBrush && !(this.contextMenu && this.contextMenu.contextMenuVisible)) {
-                this.stickySeries(site.data.aggregateKey, site.data.splitBy);
-            } else {
-                this.isDroppingMarker = false;
-            }
-            return;
-        }
-
-        if (d3Event.selection == null) {
-            if (!this.chartOptions.brushClearable) {
-                d3.select(mouseEvent).transition().call(d3Event.target.move, [this.x(this.brushStartTime), this.x(this.brushEndTime)]);
-            }
-            return;
-        }
-        var transformCall = null; //if the brush needs to be transformed due to snap brush or it being too small, this is envoked
-        var isZeroWidth = false; //clear the brush context menu if the brush has 0 width
-        if (this.chartOptions.snapBrush) {
-            //find the closest possible value and set to that
-            if (this.possibleTimesArray.length > 0) {
-                var findClosestTime = (rawXValue): Date => {
-                    var closestDate = null;
-                    this.possibleTimesArray.reduce((prev, curr) => {
-                        var prospectiveDiff = Math.abs(rawXValue - this.x(curr));
-                        var currBestDiff = Math.abs(rawXValue - prev);
-                        if (prospectiveDiff < currBestDiff) {
-                            closestDate = curr;
-                            return this.x(curr)
-                        }
-                        return prev;
-                    }, Infinity);
-                    return closestDate;
-                }
-                var newBrushStartTime = findClosestTime(d3Event.selection[0]);
-                var newBrushEndTime = findClosestTime(d3Event.selection[1]);
-                if (newBrushStartTime != this.brushStartTime || newBrushEndTime != this.brushEndTime) {
-                    this.brushStartTime = newBrushStartTime;
-                    this.brushEndTime = newBrushEndTime;
-                    this.brushStartPosition = this.x(this.brushStartTime);
-                    this.brushEndPosition = this.x(this.brushEndTime);
-                    transformCall = () => d3.select(mouseEvent).transition().call(d3Event.target.move, [this.x(this.brushStartTime), this.x(this.brushEndTime)]);
-                    isZeroWidth = this.x(this.brushStartTime) == this.x(this.brushEndTime);
-                }
-            }
-        }
-        if (d3Event.selection[1] - d3Event.selection[0] < this.minBrushWidth) {
-            let rightSide = Math.min(d3Event.selection[0] + this.minBrushWidth, this.x.range()[1]);
-            transformCall = () => d3.select(mouseEvent).transition().call(d3Event.target.move, [rightSide - this.minBrushWidth, rightSide]);
-            isZeroWidth = (rightSide - this.minBrushWidth == rightSide);
-        }
-        if (this.chartOptions.brushMoveEndAction && (d3Event.sourceEvent && d3Event.sourceEvent.type == 'mouseup')) {
-            this.chartOptions.brushMoveEndAction(this.brushStartTime, this.brushEndTime);
-        }
-        if (this.chartOptions.brushContextMenuActions && this.chartOptions.autoTriggerBrushContextMenu &&
-            (d3Event.sourceEvent && d3Event.sourceEvent.type == 'mouseup')) {
-            if (!this.chartOptions.brushContextMenuActions || this.chartOptions.brushContextMenuActions.length == 0)
-                return;
-            var mousePosition = d3.pointer(d3Event, <any>this.targetElement.node());
-            //constrain the mouse position to the renderTarget
-            var boundingCRect = this.targetElement.node().getBoundingClientRect();
-            var correctedMousePositionX = Math.min(boundingCRect.width, Math.max(mousePosition[0], 0));
-            var correctedMousePositionY = Math.min(boundingCRect.height, Math.max(mousePosition[1], 0));
-            var correctedMousePosition = [correctedMousePositionX, correctedMousePositionY];
-
-            this.brushContextMenu.draw(this.chartComponentData, this.renderTarget, this.chartOptions,
-                correctedMousePosition, null, null, null, this.brushStartTime, this.brushEndTime);
-        }
-        if (transformCall) {
-            transformCall();
-            if (this.brushContextMenu && isZeroWidth) {
-                this.brushContextMenu.hide();
-            }
-        }
     }
 
     private focusMarkerLabel(filterFunction, aggKey, splitBy) {
@@ -1022,57 +840,8 @@ class LineChart extends TemporalXAxisComponent {
         this.focusOnlyHoveredSeries(aggregateKey, splitBy, false);
     }
 
-    private drawBrushRange() {
-        if (this.chartOptions.brushRangeVisible) {
-            if (this.targetElement.select('.tsi-rangeTextContainer').empty() && (this.brushStartTime || this.brushEndTime)) {
-                var rangeTextContainer = this.targetElement.append("div")
-                    .attr("class", "tsi-rangeTextContainer");
-            }
-            this.updateBrushRange();
-        }
-    }
-
     private getSVGLeftOffset() {
         return this.chartOptions.legend === 'shown' ? (this.width - this.svgSelection.node().getBoundingClientRect().width) : 0;
-    }
-
-    public updateBrushRange() {
-        let svgLeftOffset = this.getSVGLeftOffset();
-        if (!(this.brushStartTime || this.brushEndTime)) {
-            this.deleteBrushRange();
-            return;
-        }
-
-        let rangeText = Utils.rangeTimeFormat(this.brushEndTime.valueOf() - this.brushStartTime.valueOf());
-        let rangeTextContainer = this.targetElement.select('.tsi-rangeTextContainer');
-
-        let leftPos = this.chartMargins.left +
-            Math.min(Math.max(0, this.x(this.brushStartTime)), this.x.range()[1]) + svgLeftOffset;
-
-        let rightPos = this.chartMargins.left +
-            Math.min(Math.max(0, this.x(this.brushEndTime)), this.x.range()[1]) + svgLeftOffset;
-
-        rangeTextContainer
-            .text(rangeText)
-            .style("left", Math.max(8, Math.round((leftPos + rightPos) / 2)) + "px")
-            .style("top", (this.chartMargins.top + this.chartOptions.aggTopMargin) + 'px')
-
-        if (this.chartOptions.color) {
-            rangeTextContainer
-                .style('background-color', this.chartOptions.color)
-                .style('color', 'white');
-        }
-
-        let calcedWidth = rangeTextContainer.node().getBoundingClientRect().width;
-        if (this.chartOptions.isCompact && (rightPos - leftPos) < calcedWidth) {
-            rangeTextContainer.style('visibility', 'hidden');
-        } else {
-            rangeTextContainer.style('visibility', 'visible');
-        }
-    }
-
-    public deleteBrushRange() {
-        this.targetElement.select('.tsi-rangeTextContainer').remove();
     }
 
     public getYExtents() {
@@ -1089,11 +858,7 @@ class LineChart extends TemporalXAxisComponent {
     };
 
     private clearBrush() {
-        this.svgSelection.select('.svgGroup').select(".brushElem").call(this.brush.move, null);
-        this.deleteBrushRange();
-        if (this.brushContextMenu) {
-            this.brushContextMenu.hide();
-        }
+        this.brush.clear();
     }
 
     private getVisibleNumerics() {
@@ -1538,7 +1303,6 @@ class LineChart extends TemporalXAxisComponent {
         });
         this.originalSwimLaneOptions = options.swimLaneOptions;
 
-        this.hasBrush = !!(options && (options.brushMoveAction || options.brushMoveEndAction || options.brushContextMenuActions));
         this.chartOptions.setOptions(options);
         this.chartMargins.right = this.chartOptions.labelSeriesWithMarker ? (SERIESLABELWIDTH + 8) : LINECHARTCHARTMARGINS.right;
         this.width = this.getWidth();
@@ -1576,11 +1340,7 @@ class LineChart extends TemporalXAxisComponent {
         this.chartHeight = Math.max(1, this.height - this.chartMargins.bottom - this.chartMargins.top);
         this.chartWidth = this.getChartWidth();
 
-        if (this.brush && this.svgSelection.select('.svgGroup').select(".brushElem") && !this.chartOptions.keepBrush) {
-            this.brushStartTime = null;
-            this.brushEndTime = null;
-            this.brushStartPosition = null;
-            this.brushEndPosition = null;
+        if (this.brush && !this.chartOptions.keepBrush) {
             this.clearBrush();
         }
 
@@ -1635,13 +1395,9 @@ class LineChart extends TemporalXAxisComponent {
 
             var defs = this.svgSelection.append('defs');
 
-            this.brushElem = null;
-            if (this.hasBrush) {
-                this.brushElem = g.append("g")
-                    .attr("class", "brushElem");
-                this.brushElem.classed("hideBrushHandles", !this.chartOptions.brushHandlesVisible);
-            } else {
-                //if there is no brushElem, the voronoi lives here
+            this.brush.render(this.chartOptions);
+            if (!this.brush) {
+                //if there is no brush, the voronoi lives here
                 this.voronoiRegion = g.append("rect").classed("voronoiRect", true);
             }
 
@@ -1723,10 +1479,6 @@ class LineChart extends TemporalXAxisComponent {
 
                 g.attr("transform", "translate(" + this.chartMargins.left + "," + this.chartMargins.top + ")");
 
-                if (this.brushElem) {
-                    this.brushElem.classed("hideBrushHandles", !this.chartOptions.brushHandlesVisible);
-                }
-
                 this.focus.select('.tsi-hLine').attr("x2", this.chartWidth);
                 this.focus.select('.tsi-vLine').attr("y2", this.chartHeight);
                 this.svgSelection
@@ -1786,33 +1538,7 @@ class LineChart extends TemporalXAxisComponent {
                         .attr("height", this.chartHeight);
                 }
 
-                if (this.brushElem) {
-                    var self = this;
-                    this.brush = d3.brushX()
-                        .extent([[this.xLowerBound, Math.min(this.chartHeight, this.chartOptions.aggTopMargin)],
-                        [this.xUpperBound, this.chartHeight]])
-                        .on("start", function (event) {
-                            if (self.activeMarker !== null && self.isDroppingMarker) {
-                                self.voronoiClick(event, this);
-                            }
-                            var handleHeight = self.getHandleHeight();
-                            self.brushElem.selectAll('.handle')
-                                .attr('height', handleHeight)
-                                .attr('y', (self.chartHeight - handleHeight) / 2)
-                                .attr('rx', '4px')
-                                .attr('ry', '4px');
-                        })
-                        .on("brush", function (event) {
-                            self.brushBrush(event);
-                            self.drawBrushRange();
-                        })
-                        .on("end", function (event) {
-                            self.brushEnd(event, this);
-                            self.drawBrushRange();
-                        });
-                    this.brushElem.call(this.brush);
-                    this.setBrush();
-                }
+                this.brush.draw(this.xLowerBound, this.xUpperBound);
 
                 var yExtent: any = this.getYExtent(this.chartComponentData.allValues, false, null);
                 var yRange = (yExtent[1] - yExtent[0]) > 0 ? yExtent[1] - yExtent[0] : 1;
@@ -1966,8 +1692,8 @@ class LineChart extends TemporalXAxisComponent {
                     })
                     .extent([[0, 0], [this.chartWidth, this.chartHeight]]);
 
-                //if brushElem present then use the overlay, otherwise create a rect to put the voronoi on
-                var voronoiSelection = (this.brushElem ? this.brushElem.select(".overlay") : this.voronoiRegion);
+                //if brush present then use the overlay, otherwise create a rect to put the voronoi on
+                var voronoiSelection = (this.brush ? this.brush.brushElem.select(".overlay") : this.voronoiRegion);
 
                 voronoiSelection.on("mousemove", function (event) {
                     let mouseEvent = d3.pointer(event);
@@ -1989,21 +1715,21 @@ class LineChart extends TemporalXAxisComponent {
                         self.voronoiClick(event, this);
                     });
 
-                if (this.brushElem) {
-                    this.brushElem.selectAll(".selection, .handle").on("contextmenu", function (event, d) {
+                if (this.brush) {
+                    this.brush.brushElem.selectAll(".selection, .handle").on("contextmenu", function (event, d) {
                         if (!self.chartOptions.brushContextMenuActions || self.chartOptions.brushContextMenuActions.length == 0 || self.chartOptions.autoTriggerBrushContextMenu)
                             return;
                         var mousePosition = d3.pointer(event, <any>self.targetElement.node());
                         event.preventDefault();
                         self.brushContextMenu.draw(self.chartComponentData, self.renderTarget, self.chartOptions,
-                            mousePosition, null, null, null, self.brushStartTime, self.brushEndTime);
+                            mousePosition, null, null, null, self.brush.brushStartTime, self.brush.brushEndTime);
                     });
-                    this.brushElem.selectAll('.selection')
+                    this.brush.brushElem.selectAll('.selection')
                         .attr('stroke', this.chartOptions.color ? this.chartOptions.color : 'none')
                         .attr('fill', this.chartOptions.color ? this.chartOptions.color : 'grey');
 
                     var handleHeight = self.getHandleHeight();
-                    this.brushElem.selectAll('.handle')
+                    this.brush.brushElem.selectAll('.handle')
                         .attr('fill', this.chartOptions.color ? this.chartOptions.color : 'grey')
                         .attr('height', handleHeight)
                         .attr('y', (this.chartHeight - handleHeight) / 2);
@@ -2066,7 +1792,7 @@ class LineChart extends TemporalXAxisComponent {
         });
 
         this.legendPostRenderProcess(this.chartOptions.legend, this.svgSelection, true, () => {
-            this.updateBrushRange();
+            this.brush.updateBrushRange();
         });
     }
 
