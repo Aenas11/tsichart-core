@@ -261,7 +261,7 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
         }
 
         return dateTimeButton;
-    } catch (error) {
+    } catch (error: any) {
         console.error('DateTimeButtonSingle rendering error:', error);
         container.innerHTML = `<div style="color: red; padding: 20px;">
             <h3>Error rendering DateTimeButtonSingle</h3>
@@ -537,7 +537,7 @@ export const LocaleComparison: Story = {
                         moment.locale(previousLocale);
                         // Restore previous locale
                         moment.locale(previousLocale);
-                    } catch (error) {
+                    } catch (error: any) {
                         console.warn(`Failed to set moment locale to ${locale}:`, error);
                         momentFormatted = `Error: ${error.message}`;
                         momentShort = `Error: ${error.message}`;

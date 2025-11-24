@@ -225,7 +225,7 @@ function renderDateTimeButtonRange(container: HTMLElement, options: IDateTimeBut
         );
 
         return dateTimeButton;
-    } catch (error) {
+    } catch (error: any) {
         console.error('DateTimeButtonRange rendering error:', error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
             <h3>Error rendering DateTimeButtonRange</h3>
