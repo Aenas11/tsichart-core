@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { ILineChart } from './ILineChart';
+import { Utils } from '../../..';
 
 class Brush {
     private lineChart: ILineChart;
@@ -162,7 +163,7 @@ class Brush {
                 this.lineChart.chartComponentData.stickiedKey = null;
                 (<any>this.lineChart.legendObject.legendElement.selectAll('.tsi-splitByLabel')).classed("stickied", false);
                 // recompute voronoi with no sticky
-                this.lineChart.voronoiDiagram = this.lineChart.voronoi(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+                this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
                 site = this.lineChart.voronoiDiagram.find(mx, my);
                 this.lineChart.voronoiMousemove(site.data);
                 this.lineChart.chartOptions.onUnsticky(site.data.aggregateKey, site.data.splitBy);

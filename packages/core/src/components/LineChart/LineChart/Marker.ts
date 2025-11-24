@@ -21,7 +21,7 @@ class Marker {
         this.onMarkerChange = renderOptions.onChange;
         this.labelText = renderOptions.labelText;
 
-        let markerContainer = d3.select(this.lineChart.renderTarget).selectAll(".tsi-markerContainer").data([this]);
+        let markerContainer = d3.select(this.lineChart.renderTarget).selectAll<HTMLDivElement, this>(".tsi-markerContainer").data([this]);
         let markerContainerEntered = markerContainer.enter()
             .append("div")
             .attr("class", "tsi-markerContainer")
@@ -32,17 +32,17 @@ class Marker {
 
         let self = this;
         let drag = d3.drag()
-            .on("start", function() {
+            .on("start", function () {
                 d3.select(this).classed("tsi-dragging", true);
             })
-            .on("drag", function(event) {
+            .on("drag", function (event) {
                 let rawTime = self.lineChart.x.invert(event.x);
                 let closestTime = Utils.findClosestTime(rawTime.valueOf(), self.lineChart.chartComponentData.timeMap);
                 self.millis = closestTime;
                 d3.select(this)
                     .style("left", `${renderOptions.marginLeft + self.lineChart.x(closestTime)}px`);
             })
-            .on("end", function() {
+            .on("end", function () {
                 d3.select(this).classed("tsi-dragging", false);
                 if (self.onMarkerChange) {
                     self.onMarkerChange(false, true);
@@ -51,13 +51,13 @@ class Marker {
 
         markerContainerEntered.call(drag);
 
-        let marker = markerContainerEntered.selectAll(".tsi-marker").data([this]);
+        let marker = markerContainerEntered.selectAll<HTMLDivElement, this>(".tsi-marker").data([this]);
         marker.enter()
             .append("div")
             .attr("class", "tsi-marker")
             .merge(marker);
 
-        let label = markerContainerEntered.selectAll(".tsi-markerLabel").data([this]);
+        let label = markerContainerEntered.selectAll<HTMLDivElement, this>(".tsi-markerLabel").data([this]);
         label.enter()
             .append("div")
             .attr("class", "tsi-markerLabel")

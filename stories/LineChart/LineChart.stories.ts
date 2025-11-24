@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import LineChart from '../../packages/core/src/components/LineChart';
 import { ChartData } from '../../packages/core/src/types';
-import { ILineChartOptions } from '../../packages/core/src/components/LineChart/ILineChartOptions';
+import { ILineChartOptions } from '../../packages/core/src/components/LineChart/LineChart/ILineChartOptions';
 
 import { fireEvent, screen, within, waitFor, waitForElementToBeRemoved } from 'storybook/test';
 
@@ -199,9 +199,10 @@ function renderLineChart(container: HTMLElement, options: any = {}) {
         return chart;
     } catch (error) {
         console.error('LineChart rendering error:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
             <h3>Error rendering LineChart</h3>
-            <p><strong>Error:</strong> ${error.message}</p>
+            <p><strong>Error:</strong> ${errorMessage}</p>
             <p><small>Check browser console for more details</small></p>
         </div>`;
     }

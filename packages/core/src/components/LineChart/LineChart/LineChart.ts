@@ -23,6 +23,11 @@ import CustomTooltip from './Tooltip';
 import Marker from './Marker';
 
 class LineChart extends TemporalXAxisComponent implements ILineChart {
+    public legendObject: Legend;
+    public chartWidth: number;
+    public chartHeight: number;
+    public svgSelection: any;
+    public chartOptions: any;
     public targetElement: any;
     public focus: any;
     private horizontalValueBox: any;
@@ -43,6 +48,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
 
     private tooltip: CustomTooltip;
     public height: number;
+    public x: any;
     public xLowerBound: number;
     public xUpperBound: number;
     public y: any;
@@ -62,7 +68,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
     public brush: Brush;
     private previousAggregateData: any = d3.local();
     private previousIncludeDots: any = d3.local();
-    private voronoiDiagram;
+    public voronoiDiagram;
 
     public getChartOptions() {
         return this.chartOptions;
@@ -446,7 +452,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         });
     }
 
-    private getFilteredAndSticky(aggValues) { //getFilteredValues, then filter by sticky
+    public getFilteredAndSticky(aggValues) { //getFilteredValues, then filter by sticky
         var filteredValues = this.getFilteredValues(aggValues);
         let numericFiltered = filteredValues.filter((d: any) => {
             return (this.getDataType(d.aggregateKey) === DataTypes.Numeric)
@@ -480,7 +486,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         this.chartOptions.onUnsticky(aggKey, splitby);
     }
 
-    private stickySeries = (aggregateKey: string, splitBy: string = null) => {
+    public stickySeries = (aggregateKey: string, splitBy: string = null) => {
         if (this.getDataType(aggregateKey) !== DataTypes.Numeric || !this.chartOptions.shouldSticky) {
             return;
         }
@@ -503,7 +509,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         this.chartOptions.onSticky(aggregateKey, splitBy);
     }
 
-    private getHandleHeight(): number {
+    public getHandleHeight(): number {
         return Math.min(Math.max(this.chartHeight / 2, 24), this.chartHeight + 8);
     }
 
@@ -627,7 +633,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
             // delete all the old markers
             if (Object.keys(this.markers).length) {
                 Object.keys(this.markers).forEach((guid) => {
-                    this.markers[guid].destroy();
+                    this.markers[guid].destroyMarker();
                     delete this.markers[guid];
                 });
             }
@@ -715,7 +721,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         return (this.getVisibleNumerics() !== 0);
     }
 
-    private voronoiMousemove(mouseEvent) {
+    public voronoiMousemove(mouseEvent) {
         if (!this.filteredValueExist() || !this.voronoiExists()) return;
         this.mx = mouseEvent[0];
         this.my = mouseEvent[1];
@@ -765,7 +771,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         }
     }
 
-    private voronoiClick(d3Event, mouseEvent) {
+    public voronoiClick(d3Event, mouseEvent) {
         //supress if the context menu is visible
         if (this.contextMenu && this.contextMenu.contextMenuVisible)
             return;
@@ -805,7 +811,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         return Utils.getValueOfVisible(d, this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy));
     }
 
-    private focusMarkerLabel(filterFunction, aggKey, splitBy) {
+    public focusMarkerLabel(filterFunction, aggKey, splitBy) {
         Utils.revertAllSubtitleText(d3.select(this.renderTarget).selectAll(".tsi-markerValue"), .2);
 
 
@@ -840,7 +846,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         this.focusOnlyHoveredSeries(aggregateKey, splitBy, false);
     }
 
-    private getSVGLeftOffset() {
+    public getSVGLeftOffset() {
         return this.chartOptions.legend === 'shown' ? (this.width - this.svgSelection.node().getBoundingClientRect().width) : 0;
     }
 

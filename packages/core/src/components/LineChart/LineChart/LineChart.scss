@@ -1,8 +1,8 @@
 @use "sass:list";
 @use "sass:color";
-@use "../../styles" as *;
+@use "../../../styles" as *;
 
-@mixin lcColors($grays){
+@mixin lcColors($grays) {
     $gray1: list.nth($grays, 1); // text
     $gray2: list.nth($grays, 2); // hover
     $gray3: list.nth($grays, 3); // element
@@ -19,25 +19,30 @@
         background-color: $gray1;
     }
 
-    .tsi-lineChartSVG{
-        .tsi-discreteEventTeardrop{
+    .tsi-lineChartSVG {
+        .tsi-discreteEventTeardrop {
             fill: $gray3;
-        }        
+        }
+
         .tsi-categoricalHoverRect {
             stroke: $gray1;
         }
-        text{
+
+        text {
             fill: $gray1;
         }
+
         .tsi-focus {
-            circle{
+            circle {
                 fill: $gray1;
-            }    
+            }
         }
-        .tsi-focusLine{
+
+        .tsi-focusLine {
             stroke: $gray2;
         }
-        .guideLine{
+
+        .guideLine {
             stroke: $gray1;
         }
 
@@ -46,30 +51,35 @@
             fill: $gray1 !important;
         }
 
-        .tsi-boldYAxisText{
+        .tsi-boldYAxisText {
             font-weight: bolder !important;
         }
 
         .xAxisBaseline {
             stroke: $gray1 !important;
             pointer-events: none;
-            @media screen and (-ms-high-contrast: white-on-black) { 
+
+            @media screen and (-ms-high-contrast: white-on-black) {
                 stroke: #fff !important;
             }
         }
+
         .tsi-horizontalValueBar {
             stroke: rgba($gray1, .8);
         }
 
-        .tsi-swimLaneLabel{
+        .tsi-swimLaneLabel {
             font-weight: 500;
-            font-size:13px;
-            &.tsi-axisHover{
+            font-size: 13px;
+
+            &.tsi-axisHover {
                 font-weight: bolder;
             }
-            &.tsi-boldOnHover{
+
+            &.tsi-boldOnHover {
                 cursor: pointer;
-                &:hover{
+
+                &:hover {
                     font-weight: bolder;
                 }
             }
@@ -78,38 +88,48 @@
 
     .tsi-scooterContainer {
         color: $gray1;
+
         .tsi-scooterTimeLabel {
             background-color: $gray3;
             border-color: $gray6;
+
             .tsi-closeButton {
                 background-color: transparent;
                 border: none;
                 margin: 0;
+
                 &:hover {
                     background-color: $gray2;
                 }
             }
         }
 
-        .tsi-scooterLine, .tsi-scooterDragger {
+        .tsi-scooterLine,
+        .tsi-scooterDragger {
             background-color: $gray6;
         }
     }
+
     .tsi-markerInstructions {
         background-color: rgba($gray3, .9);
     }
+
     @include chartColors($grays);
 }
 
 .tsi-lineChart {
-    .tsi-horizontalValueBox, .tsi-verticalValueBox {
+
+    .tsi-horizontalValueBox,
+    .tsi-verticalValueBox {
         @extend .tsi-chartValueTextBox;
         z-index: 2;
         pointer-events: none;
     }
+
     .tsi-horizontalValueBox {
         transform: translateX(-50%);
     }
+
     .tsi-verticalValueBox {
         transform: translateY(-50%);
     }
@@ -128,7 +148,7 @@
         padding-right: 4px;
         font-size: 11px;
         border-radius: 4px;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         display: flex;
         align-content: center;
         z-index: 1;
@@ -140,6 +160,7 @@
 
         .tsi-ellipsisMenuContainer {
             pointer-events: all;
+
             .tsi-ellipsisMenu {
                 z-index: 2 !important;
             }
@@ -177,7 +198,8 @@
         transform: translateX(-1px);
         z-index: 1;
 
-        .tsi-scooterDragger, .tsi-scooterTimeLabel {
+        .tsi-scooterDragger,
+        .tsi-scooterTimeLabel {
             pointer-events: all;
         }
 
@@ -193,7 +215,7 @@
             left: 0px;
             top: 0px;
             cursor: move;
-        } 
+        }
 
         .tsi-scooterDragger {
             top: 100%;
@@ -206,7 +228,8 @@
         }
 
         .tsi-scooterValue {
-            position:absolute;
+            position: absolute;
+
             .tsi-scooterValueLabel {
                 position: absolute;
                 left: 10px;
@@ -217,11 +240,11 @@
                 transform: translateY(-50%);
                 -webkit-transform: translateY(-50%);
             }
-    
+
             .tsi-scooterValueCaret {
                 left: 2px;
-                width: 0; 
-                height: 0; 
+                width: 0;
+                height: 0;
                 border-top: 8px solid transparent;
                 border-bottom: 8px solid transparent;
                 border-right-width: 8px;
@@ -229,8 +252,9 @@
                 position: absolute;
                 transform: translateY(-50%);
                 -webkit-transform: translateY(-50%);
-            }    
+            }
         }
+
         .tsi-scooterTimeLabel {
             cursor: move;
             bottom: 100%;
@@ -244,7 +268,8 @@
             line-height: 20px;
             border-width: 1px;
             border-style: solid;
-            box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3);	
+            box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3);
+
             .tsi-closeButton {
                 border-radius: 3px;
                 position: absolute;
@@ -265,6 +290,7 @@
             width: 8px;
             shape-rendering: unset;
         }
+
         &.hideBrushHandles {
             .handle {
                 visibility: hidden;
@@ -273,17 +299,18 @@
     }
 
     .tsi-horizontalMarkerLine {
-        stroke-dasharray: 2,2;
+        stroke-dasharray: 2, 2;
     }
 
     .tsi-horizontalMarkerText {
         font-style: italic;
         text-anchor: end;
     }
-    
-    &.tsi-dark{
+
+    &.tsi-dark {
         $grays: grays('dark');
         @include lcColors($grays);
+
         .tsi-scooterContainer {
             .tsi-scooterValueLabel {
                 background-color: rgba(0, 0, 0, .9);
@@ -294,25 +321,30 @@
             background-image: url(../../icons/drag_handle_dark.svg)
         }
     }
-    &.tsi-light{
+
+    &.tsi-light {
         $grays: grays('light');
         @include lcColors($grays);
+
         .tsi-scooterContainer {
             .tsi-scooterValueLabel {
                 background-color: rgba(255, 255, 255, .9);
             }
         }
+
         .tsi-resizeGutter {
             background-image: url(../../icons/drag_handle_light.svg);
         }
     }
-        
+
     display: flex;
     position: relative;
 
-    .tsi-lineChartEventsWrapper, .tsi-lineChartStatesWrapper {
+    .tsi-lineChartEventsWrapper,
+    .tsi-lineChartStatesWrapper {
         position: absolute;
         pointer-events: none;
+
         svg {
             display: block;
         }
@@ -343,19 +375,20 @@
         }
 
         text {
-            font-size:12px;
+            font-size: 12px;
         }
 
-        path{
-            fill: none;   
+        path {
+            fill: none;
         }
 
         .tsi-focus {
             circle {
                 stroke-width: 1px;
                 pointer-events: none;
-            }    
+            }
         }
+
         .tsi-focusLine {
             stroke-width: 1px !important;
             pointer-events: none;
@@ -389,10 +422,12 @@
             stroke-width: 1px !important;
         }
     }
+
     .tsi-stackedButton {
         &.tsi-lightTheme {
             background-image: url(../../icons/Layer_Icon_Light_Theme.svg);
         }
+
         &.tsi-darkTheme {
             background-image: url(../../icons/Layer_Icon_Dark_Theme.svg);
         }
@@ -411,9 +446,11 @@
         border-width: 1px;
         border-style: solid;
         border-color: transparent;
+
         &.tsi-lightTheme {
             background-image: url(../../icons/flag_light_theme.svg);
         }
+
         &.tsi-darkTheme {
             background-image: url(../../icons/flag_dark_theme.svg);
         }

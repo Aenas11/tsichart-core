@@ -1,4 +1,4 @@
-import { ChartOptions } from "../../models/ChartOptions";
+import { ChartOptions } from "../../../models/ChartOptions";
 
 /**
  * Configuration options for the LineChart component.
