@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { ILineChart } from './ILLineChart';
+import { ILineChart } from './ILineChart';
 import Utils from '../../../utils';
 
 class Marker {
@@ -87,7 +87,15 @@ class Marker {
         this.labelText = text;
     }
 
-    public destroy() {
+    public isMarkerInRange() {
+        return true;
+    }
+
+    public focusCloseButton() {
+        return;
+    }
+
+    public destroyMarker() {
         d3.select(this.lineChart.renderTarget).selectAll(".tsi-markerContainer").filter((d: any) => d.guid === this.guid).remove();
     }
 }

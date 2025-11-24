@@ -2,8 +2,8 @@ import * as d3 from 'd3';
 import { ChartDataOptions } from '../../../models/ChartDataOptions';
 import { LineChartData } from '../../../models/LineChartData';
 import ContextMenu from '../../ContextMenu';
-import Tooltip from '../../Tooltip';
-import Marker from '../../Marker';
+import CustomTooltip from './Tooltip';
+import Marker from './Marker';
 import { ILineChartOptions } from "./ILineChartOptions";
 
 export interface ILineChart {
@@ -15,10 +15,13 @@ export interface ILineChart {
     svgSelection: any;
 
     x: any;
+    y: any;
+    yMap: any;
 
     chartMargins: any;
     chartHeight: number;
     chartWidth: number;
+    height: number;
     xOffset: number;
 
     contextMenu: ContextMenu;
@@ -29,6 +32,9 @@ export interface ILineChart {
     possibleTimesArray: any;
 
     activeMarker: Marker;
+    colorMap: any;
+
+    draw: (isFromResize?: boolean, event?: any) => void;
 
     getHandleHeight: () => number;
     voronoiClick: (d3Event, mouseEvent) => void;
@@ -36,7 +42,15 @@ export interface ILineChart {
     unstickySeries: (aggKey: string, splitBy?: string) => void;
     stickySeries: (aggregateKey: string, splitBy?: string) => void;
     voronoiMousemove: (mouseEvent) => void;
+    getValueOfVisible: (d: any) => any;
+    focusOnlyHoveredSeries: (aggKey: any, splitBy: any, shouldSetFocusedValues: boolean) => void;
+    findClosestValidTime: (rawMillis: number) => number;
+    labelMouseover: (aggregateKey: string, splitBy?: string) => void;
+    labelMouseout: () => void;
+    getMarkerMarginLeft: () => number;
 
     getChartOptions: () => ILineChartOptions;
     brush: any;
+    legendObject: any;
+    getFilteredAndSticky: (aggValues: any) => any;
 }

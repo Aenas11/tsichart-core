@@ -4,7 +4,7 @@ import { ILineChart } from './ILineChart';
 class Brush {
     private lineChart: ILineChart;
     private brush: any;
-    private brushElem: any;
+    public brushElem: any;
     public brushStartTime: Date;
     public brushEndTime: Date;
     private brushStartPosition: number = null;
@@ -294,7 +294,9 @@ class Brush {
     }
 
     public deleteBrushRange() {
-        this.lineChart.targetElement.select('.tsi-rangeTextContainer').remove();
+        if (this.lineChart.targetElement) {
+            this.lineChart.targetElement.select('.tsi-rangeTextContainer').remove();
+        }
     }
 
     public get brushExtents() {

@@ -1,2 +1,2 @@
-export { default } from './LineChart';
-export * from './LineChart';
+export { default } from './LineChart/LineChart';
+export * from './LineChart/LineChart';

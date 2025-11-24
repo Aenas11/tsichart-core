@@ -1,12 +1,11 @@
 import * as d3 from 'd3';
-import LineChart from '../../../src/components/LineChart';
-import { ChartComponentData } from '../../../src/models/ChartComponentData';
+import LineChart from '../../../src/components/LineChart/LineChart/LineChart';
 import { ILineChartOptions } from '../../../src/components/LineChart/LineChart/ILineChartOptions';
 
 describe('LineChart', () => {
     let renderTarget: HTMLDivElement;
     let lineChart: LineChart;
-    let data: ChartComponentData;
+    let data: any[];
     let options: ILineChartOptions;
 
     beforeEach(() => {
@@ -16,7 +15,7 @@ describe('LineChart', () => {
         renderTarget.style.height = '600px';
         document.body.appendChild(renderTarget);
 
-        data = new ChartComponentData();
+        data = [];
         options = {
             theme: 'dark',
             grid: true,

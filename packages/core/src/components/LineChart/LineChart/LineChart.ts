@@ -19,7 +19,7 @@ import { ILineChartOptions } from "./ILineChartOptions";
 import { ChartData } from '../../../types';
 import { ILineChart } from './ILineChart';
 import Brush from './Brush';
-import Tooltip from './Tooltip';
+import CustomTooltip from './Tooltip';
 import Marker from './Marker';
 
 class LineChart extends TemporalXAxisComponent implements ILineChart {
@@ -41,8 +41,8 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
     private swimLaneLabelGroup: any;
     private horizontalLabelOffset = LINECHARTCHARTMARGINS.left + swimlaneLabelConstants.leftMarginOffset;
 
-    private tooltip: Tooltip;
-    private height: number;
+    private tooltip: CustomTooltip;
+    public height: number;
     public xLowerBound: number;
     public xUpperBound: number;
     public y: any;
@@ -52,7 +52,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
     private envelope: any;
     public voronoi: any;
     public possibleTimesArray: any;
-    private colorMap: any;
+    public colorMap: any;
 
     private markers: { [guid: string]: Marker } = {};
     private seriesLabelsMarker: Marker = null;
@@ -76,7 +76,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
     private plotComponents = {};
 
     private isFirstMarkerDrop = true;
-    private xOffset = 8;
+    public xOffset = 8;
 
     private swimlaneYExtents = {}; // mapping of swimlanes to the y extents of that swimlane
     private swimLaneContents = {};
@@ -89,7 +89,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         this.MINHEIGHT = 26;
         this.chartMargins = Object.assign({}, LINECHARTCHARTMARGINS);
         this.brush = new Brush(this);
-        this.tooltip = new Tooltip(this);
+        this.tooltip = new CustomTooltip(this);
     }
 
     //get the left and right positions of the brush
@@ -200,7 +200,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         }
     }
 
-    private focusOnlyHoveredSeries = (aggKey, splitBy, shouldSetFocusedValues: boolean) => {
+    public focusOnlyHoveredSeries = (aggKey, splitBy, shouldSetFocusedValues: boolean) => {
         if (aggKey !== this.focusedAggKey || splitBy !== this.focusedSplitby) {
             let selectedFilter = Utils.createValueFilter(aggKey, splitBy);
 
@@ -526,7 +526,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         this.brush.setBrush();
     }
 
-    private findClosestValidTime(rawMillis: number) {
+    public findClosestValidTime(rawMillis: number) {
         var minDiff = Infinity;
         return Object.keys(this.chartComponentData.timeMap).reduce((closestValue: number, currValue: any) => {
             var diff = Math.abs(Number(currValue) - rawMillis);
@@ -538,7 +538,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         }, Infinity);
     }
 
-    private getMarkerMarginLeft() {
+    public getMarkerMarginLeft() {
         var legendWidth = this.legendObject.legendElement.node().getBoundingClientRect().width;
         return this.chartMargins.left + (this.chartOptions.legend === "shown" || this.chartOptions.legend === "hidden" ? legendWidth : 0) +
             (this.chartOptions.legend === "shown" ? this.GUTTERWIDTH : 0);
@@ -801,7 +801,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         }
     }
 
-    private getValueOfVisible(d) {
+    public getValueOfVisible(d) {
         return Utils.getValueOfVisible(d, this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy));
     }
 
@@ -1442,7 +1442,7 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
                 attr("class", "tsi-swimLaneLabels");
 
             if (!this.tooltip) {
-                this.tooltip = new Tooltip(d3.select(this.renderTarget));
+                this.tooltip = new CustomTooltip(d3.select(this.renderTarget));
             }
 
             this.draw = (isFromResize = false, event) => {
