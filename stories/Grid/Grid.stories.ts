@@ -114,12 +114,8 @@ function generateSampleGridData() {
             for (let hourIndex = 0; hourIndex < 12; hourIndex++) {
                 const timestamp = new Date(from.getTime() + hourIndex * 60 * 60 * 1000);
                 const baseTemp = 20 + sensorIndex * 2 + roomIndex * 1;
-                const baseHumidity = 40 + sensorIndex * 5 + roomIndex * 2;
-                const basePressure = 1010 + sensorIndex * 2 + roomIndex * 1;
                 rowData[timestamp.toISOString()] = {
-                    temperature: parseFloat((baseTemp + Math.sin(hourIndex / 3) * 3 + Math.random() * 2).toFixed(1)),
-                    humidity: parseFloat((baseHumidity + Math.cos(hourIndex / 4) * 5 + Math.random() * 3).toFixed(1)),
-                    pressure: parseFloat((basePressure + Math.sin(hourIndex / 6) * 2 + Math.random() * 1).toFixed(1))
+                    temperature: parseFloat((baseTemp + Math.sin(hourIndex / 3) * 3 + Math.random() * 2).toFixed(1))
                 };
             }
             data.push(rowData);
@@ -137,16 +133,18 @@ function renderGrid(container: HTMLElement, options: any = {}) {
         grid.usesMillis = false;
 
         const sampleData = generateSampleGridData();
+        // const measures = ['temperature', 'humidity', 'pressure'];
+        // const { pivotedRows, allTimestamps } = pivotGridData(sampleData, measures);
         const gridOptions = {
             theme: options.theme || 'light',
             fromChart: options.fromChart || false,
             offset: options.offset || 'Local',
             dateLocale: options.dateLocale || 'en-US',
-            spMeasures: ['temperature', 'humidity', 'pressure'],
+            spMeasures: ['temperature'],
             ...options
         };
 
-        const aggregateExpressionOptions = sampleData.map((rowData, index) => ({
+        const aggregateExpressionOptions = sampleData.map((rowData) => ({
             aggKey: rowData.__tsiLabel__,
             searchSpan: {
                 from: new Date(Date.now() - 12 * 60 * 60 * 1000),
@@ -161,7 +159,7 @@ function renderGrid(container: HTMLElement, options: any = {}) {
         chartComponentData.usesMillis = false;
 
 
-        const allTimestamps = new Set();
+        const allTimestamps = new Set<string>();
         sampleData.forEach(rowData => {
             Object.keys(rowData).forEach(key => {
                 if (key.includes('T') && key.includes('Z')) {
@@ -174,7 +172,7 @@ function renderGrid(container: HTMLElement, options: any = {}) {
         chartComponentData.timeArrays = {};
         chartComponentData.displayState = {};
 
-        sampleData.forEach((rowData, index) => {
+        sampleData.forEach((rowData) => {
             const aggKey = rowData.__tsiLabel__;
             const splitBy = '';
             chartComponentData.timeArrays[aggKey] = { [splitBy]: [] };
@@ -184,25 +182,28 @@ function renderGrid(container: HTMLElement, options: any = {}) {
                 splitBys: {
                     [splitBy]: {
                         visible: true,
-                        types: gridOptions.spMeasures
+                        types: ['temperature']
                     }
                 }
             };
 
             chartComponentData.allTimestampsArray.forEach(timestamp => {
-                const measureData = rowData[timestamp];
+                const rawValue = rowData[timestamp]?.temperature ?? null;
+
                 chartComponentData.timeArrays[aggKey][splitBy].push({
                     dateTime: new Date(timestamp),
-                    measures: measureData || null
+                    temperature: rawValue,                    // Flat property (required!)
+                    measures: { temperature: rawValue }       // Also keep nested for safety
                 });
             });
         });
 
         chartComponentData.fromMillis = -Infinity;
         chartComponentData.toMillis = Infinity;
-        let aaa = chartComponentData.timeArrays[Object.keys(chartComponentData.timeArrays)[0]]?.['']?.slice(0, 2)
-        console.log(sampleData, "---------------", aaa, "1111111111")
+        // let aaa = chartComponentData.timeArrays[Object.keys(chartComponentData.timeArrays)[0]]?.['']?.slice(0, 2)
+        console.log(sampleData, "---------------", gridOptions, "gridOptions", aggregateExpressionOptions, "aggregateExpressionOptions", chartComponentData, "chartComponentData");
         grid.render(sampleData, gridOptions, aggregateExpressionOptions, chartComponentData);
+        // grid.render(sampleData, gridOptions, null, null);
         return grid;
     } catch (error) {
         console.error('Grid rendering error following defensive programming:', error);
