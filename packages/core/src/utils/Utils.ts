@@ -283,11 +283,13 @@ export default class Utils {
             } else {
                 stringFormat = "L " + this.subDateTimeFormat(is24HourTime, usesSeconds, usesMillis);
             }
+            let result = "";
             if (typeof offset == 'string' && isNaN(offset as any)) {
-                return moment.tz(d, 'UTC').tz(offset === 'Local' ? moment.tz.guess() : offset).locale(locale).format(stringFormat);
+                result = moment.tz(d, 'UTC').tz(offset === 'Local' ? moment.tz.guess() : offset).locale(locale).format(stringFormat);
             } else {
-                return moment.tz(d, "UTC").utcOffset(offset).locale(locale).format(stringFormat);
+                result = moment.tz(d, "UTC").utcOffset(offset).locale(locale).format(stringFormat);
             }
+            return result;
         }
     }
 
