@@ -175,7 +175,8 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
             theme: 'light',
             offset: 'Local',
             is24HourTime: true,
-            dateLocale: 'en-US',
+            //set date locale to browser default if not provided
+            dateLocale: navigator.language || 'en-US',
             dTPIsModal: true,
             minutesForTimeLabels: true,
             showFeedback: true,
@@ -260,7 +261,7 @@ function renderDateTimeButtonSingle(container: HTMLElement, options: IDateTimeBu
         }
 
         return dateTimeButton;
-    } catch (error) {
+    } catch (error: any) {
         console.error('DateTimeButtonSingle rendering error:', error);
         container.innerHTML = `<div style="color: red; padding: 20px;">
             <h3>Error rendering DateTimeButtonSingle</h3>
@@ -536,7 +537,7 @@ export const LocaleComparison: Story = {
                         moment.locale(previousLocale);
                         // Restore previous locale
                         moment.locale(previousLocale);
-                    } catch (error) {
+                    } catch (error: any) {
                         console.warn(`Failed to set moment locale to ${locale}:`, error);
                         momentFormatted = `Error: ${error.message}`;
                         momentShort = `Error: ${error.message}`;

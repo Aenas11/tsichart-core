@@ -23,9 +23,8 @@ abstract class HistoryPlayback extends Component {
   protected graphicOriginalHeight: number;
   protected currentCancelTrigger: Function;
   protected availabilityInterval: number;
-  protected environmentFqdn: string;
+
   protected availability: TsqRange;
-  protected getAuthToken: () => Promise<string>;
   protected playbackRate: number;
   protected graphic: any;
 
@@ -33,7 +32,6 @@ abstract class HistoryPlayback extends Component {
   readonly defaultPlaybackRate = 3000; // 3 seconds
   readonly fetchAvailabilityFrequency = 30000; // 30 seconds
   readonly playbackSliderHeight = 88;
-  readonly previewApiFlag = "?api-version=2018-11-01-preview";
 
   constructor(renderTarget: Element) {
     super(renderTarget);
@@ -47,13 +45,9 @@ abstract class HistoryPlayback extends Component {
   protected onGraphicLoaded(): void { }
 
   protected renderBase(
-    environmentFqdn: string,
-    getToken: () => Promise<string>,
     data: Array<TsqExpression>,
     chartOptions
   ) {
-    this.environmentFqdn = environmentFqdn;
-    this.getAuthToken = getToken;
     this.tsqExpressions = data;
     this.chartOptions.setOptions(chartOptions);
     this.playbackRate =
@@ -79,9 +73,6 @@ abstract class HistoryPlayback extends Component {
       return tsqExpression.toTsq();
     });
 
-    this.getAuthToken().then((authToken: string) => {
-
-    });
   }
 
   private calcQueryWindow(timeStamp: Date) {

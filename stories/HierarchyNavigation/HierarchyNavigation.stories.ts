@@ -791,12 +791,12 @@ This story demonstrates the **autocomplete suggestions** feature that provides i
 
 ### Key Features
 
-✅ **Instant Feedback** - Suggestions appear immediately (no debounce delay)  
-✅ **Limited Results** - Shows max 10 items to keep dropdown manageable  
-✅ **Full Context** - Each suggestion includes breadcrumb path  
-✅ **Keyboard Navigation** - Arrow keys, Enter, ESC all work  
-✅ **Auto-select First** - First suggestion is pre-selected for quick access  
-✅ **Complementary to Search** - Works alongside deep search (which shows full results)  
+✅ **Instant Feedback** - Suggestions appear immediately (no debounce delay)
+✅ **Limited Results** - Shows max 10 items to keep dropdown manageable
+✅ **Full Context** - Each suggestion includes breadcrumb path
+✅ **Keyboard Navigation** - Arrow keys, Enter, ESC all work
+✅ **Auto-select First** - First suggestion is pre-selected for quick access
+✅ **Complementary to Search** - Works alongside deep search (which shows full results)
 
 ### Autocomplete vs Deep Search
 

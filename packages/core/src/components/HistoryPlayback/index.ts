@@ -1,2 +1,2 @@
 export { default } from './HistoryPlayback';
-export { GraphicInfo } from './HistoryPlayback';
+export type { GraphicInfo } from './HistoryPlayback';

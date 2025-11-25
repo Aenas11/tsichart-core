@@ -26,6 +26,8 @@ class DateTimeButton extends ChartComponent {
         // Respect minutesForTimeLabels option: true = minutes only, false = include seconds/millis
         const includeSeconds = this.chartOptions.minutesForTimeLabels === false;
 
+
+
         const formatOptions: Intl.DateTimeFormatOptions = {
             year: 'numeric',
             month: '2-digit',
@@ -33,8 +35,20 @@ class DateTimeButton extends ChartComponent {
             hour: '2-digit',
             minute: '2-digit',
             hour12: !is24Hour,
-            timeZoneName: 'short', // Let Intl handle timezone display
         };
+
+        //show timezone name only if offset is set to something other than 'Local'
+        if (this.chartOptions.offset && this.chartOptions.offset !== 'Local') {
+            //timeZoneName can be 'short', 'long', 'shortOffset', 'longOffset', "shortGeneric", "longGeneric", using 'short' for brevity
+            //examples of each:
+            // short: "PST"
+            // long: "Pacific Standard Time"
+            // shortOffset: "GMT-8"
+            // longOffset: "GMT-08:00"
+            // shortGeneric: "PT"
+            // longGeneric: "Pacific Time"            
+            formatOptions.timeZoneName = 'shortGeneric';
+        }
 
         // Only include seconds if minutesForTimeLabels is false
         if (includeSeconds) {
@@ -76,6 +90,19 @@ class DateTimeButton extends ChartComponent {
             this.dateTimePickerContainer.style('display', 'none');
         }
         super.themify(d3.select(this.renderTarget), this.chartOptions.theme);
+    }
+
+    private getTimezoneFromOffset(offset: string): string {
+
+        const timezoneMap = {
+            'UTC': 'UTC',
+            'EST': 'America/New_York',
+            'PST': 'America/Los_Angeles',
+            'CST': 'America/Chicago',
+            'MST': 'America/Denver'
+        };
+
+        return timezoneMap[offset] || 'UTC';
     }
 }
 export { DateTimeButton }
