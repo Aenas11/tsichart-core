@@ -1,0 +1,87 @@
+// ============================================================================
+// TSIChart Core Styles - Modular Architecture
+// ============================================================================
+// This is the main entry point for all styles. Individual components and
+// utilities are organized into separate files for better maintainability.
+
+@use "sass:list";
+@use "sass:color";
+@use "sass:math";
+
+// Forward SASS modules for external use
+@forward "sass:list";
+@forward "sass:color";
+@forward "sass:math";
+
+// Import design tokens and utilities
+@use "variables" as *;
+@use "mixins" as *;
+@use "themes";
+@use "animations";
+@use "utilities";
+
+// Import component styles
+@use "components/buttons";
+@use "components/context-menu";
+@use "components/charts";
+@use "components/search";
+@use "components/select";
+@use "components/datepicker";
+
+// ============================================================================
+// Backward Compatibility Layer
+// ============================================================================
+// These legacy functions and mixins are maintained for backward compatibility
+// with existing code. New code should use the modular approach above.
+
+// Legacy grays() function - delegates to new theme system
+@function grays($theme) {
+  @return themes.grays($theme);
+}
+
+// Legacy baseContextMenuColors mixin - uses new theme-colors mixin
+@mixin baseContextMenuColors($grays) {
+  $gray1: list.nth($grays, 1);
+  $gray2: list.nth($grays, 2);
+  $gray3: list.nth($grays, 3);
+  $gray4: list.nth($grays, 4);
+  $gray5: list.nth($grays, 5);
+  $gray6: list.nth($grays, 6);
+
+  // Build a temporary theme map
+  $theme-map: (
+    text: $gray1,
+    hover: $gray2,
+    element: $gray3,
+    background: $gray4,
+    alt-element: $gray5,
+    hover-text: $gray6,
+    scrollbar: list.nth($grays, 7)
+  );
+
+@include theme-colors($theme-map);
+}
+
+// Legacy chartColors mixin - delegates to new theme-colors mixin
+@mixin chartColors($grays) {
+  $gray1: list.nth($grays, 1);
+  $gray2: list.nth($grays, 2);
+  $gray3: list.nth($grays, 3);
+  $gray4: list.nth($grays, 4);
+  $gray5: list.nth($grays, 5);
+  $gray6: list.nth($grays, 6);
+  $gray7: list.nth($grays, 7);
+
+  // Build a temporary theme map
+  $theme-map: (
+    text: $gray1,
+    hover: $gray2,
+    element: $gray3,
+    background: $gray4,
+    alt-element: $gray5,
+    hover-text: $gray6,
+    scrollbar: $gray7
+  );
+
+@include theme-colors($theme-map);
+}

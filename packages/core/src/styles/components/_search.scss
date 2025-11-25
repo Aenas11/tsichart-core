@@ -1,0 +1,30 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.tsi-search {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    position: relative;
+
+    .tsi-search-icon {
+        width: size(icon-xl);
+        height: size(icon-md);
+        background-repeat: no-repeat;
+        margin-left: spacing(lg);
+        background-size: size(icon-sm);
+        background-position-y: 2px;
+    }
+
+    .tsi-searchInput {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        padding-left: size(menu-item-height);
+        background: transparent;
+        outline: none;
+        text-overflow: ellipsis;
+    }
+}

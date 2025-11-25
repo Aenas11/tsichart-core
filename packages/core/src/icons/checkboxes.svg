@@ -1,0 +1,6 @@
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">
+    <g transform="translate(-160 -223)">
+      <path style="fill: #0077ff; stroke: #0077ff" class="tsiIconCbBg" d="M2,0H12a2,2,0,0,1,2,2V12a2,2,0,0,1-2,2H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0Z" transform="translate(160 223)" />
+      <path style="fill: #f8f8f8" class="tsiIconCbCheck" d="M10.764-8.736,4.5-2.467,1.236-5.736l.527-.527L4.5-3.533l5.736-5.73Z" transform="translate(161 236)" />
+    </g>
+  </svg>

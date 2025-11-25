@@ -1,0 +1,52 @@
+@use "./hierarchy-tokens" as tokens;
+
+// Optimized animations with GPU acceleration
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes rotating {
+    from {
+        transform: rotate3d(0, 0, 1, 0deg);
+    }
+
+    to {
+        transform: rotate3d(0, 0, 1, 360deg);
+    }
+}
+
+// Reduced motion support for accessibility
+@mixin reducedMotion {
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+// Animation helpers
+@mixin fadeInAnimation {
+    animation: fade-in tokens.$tsi-hierarchy-animation-duration tokens.$tsi-hierarchy-transition-easing;
+}
+
+@mixin rotatingAnimation {
+    animation: rotating tokens.$tsi-hierarchy-spinner-duration linear infinite;
+    will-change: transform;
+    contain: layout size;
+}
+
+@mixin smoothTransform {
+    transition: transform tokens.$tsi-hierarchy-transition-speed tokens.$tsi-hierarchy-transition-easing;
+    will-change: transform;
+}

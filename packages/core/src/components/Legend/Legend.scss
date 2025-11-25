@@ -1,0 +1,416 @@
+@use "sass:list";
+@use "sass:color";
+@use "../../styles" as *;
+@use "./tokens" as *;
+
+// ============================================================================
+// MIXINS
+// ============================================================================
+
+// Mixin for applying theme colors using CSS custom properties
+// This approach allows for better runtime theme switching and reduced specificity
+@mixin legendColors($grays) {
+  $gray1: list.nth($grays, 1); // text
+  $gray2: list.nth($grays, 2); // hover
+  $gray3: list.nth($grays, 3); // element
+  $gray4: list.nth($grays, 4); // background
+  $gray5: list.nth($grays, 5); // alt element
+  $gray6: list.nth($grays, 6);
+
+  // Set CSS custom properties for theme colors
+  --legend-text-color: #{$gray1};
+  --legend-hover-color: #{$gray2};
+  --legend-element-color: #{$gray3};
+  --legend-bg-color: #{$gray4};
+  --legend-alt-element-color: #{$gray5};
+  --legend-text-hover-color: #{$gray6};
+
+  color: var(--legend-text-color);
+  fill: var(--legend-text-color);
+  
+  path {
+    stroke: var(--legend-text-color);
+  }
+
+  border-inline-end: 1px solid var(--legend-bg-color);
+}
+
+// Shared styles for interactive label states
+@mixin label-interactive-states {
+  fill: var(--legend-text-color);
+  color: var(--legend-text-color);
+
+  &:hover,
+  &.inFocus {
+    color: var(--legend-text-hover-color);
+  }
+
+  &.stickied {
+    background-color: rgba(var(--legend-hover-color-rgb), $legend-opacity-stickied);
+  }
+
+  &:not(.shown) {
+    opacity: $legend-opacity-hidden;
+  }
+
+  &.shown {
+    opacity: $legend-opacity-visible;
+  }
+}
+
+// Shared styles for select elements
+@mixin legend-select-base {
+  color: var(--legend-text-color);
+  opacity: $legend-opacity-select;
+  background-color: transparent;
+  border: 1px solid transparent;
+  appearance: none;
+  
+  option {
+    background: var(--legend-element-color);
+  }
+}
+
+// Eye icon styles (extracted for reuse)
+@mixin eye-icon-base {
+  display: block;
+  background-size: $legend-eye-icon-width 11px;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  block-size: 100%;
+  inline-size: $legend-eye-icon-width;
+  inset-inline-end: $legend-eye-icon-width;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
+// ============================================================================
+// MAIN LEGEND CONTAINER
+// ============================================================================
+
+.tsi-legend {
+  overflow-y: auto;
+  overflow-x: hidden;
+  block-size: calc(100% - $legend-padding);
+  padding-inline-start: $legend-spacing-md;
+
+  // Theme variants
+  &.tsi-dark {
+    $grays: grays("dark");
+    @include legendColors($grays);
+    --legend-hover-color-rgb: 98, 102, 108;
+  }
+
+  &.tsi-light {
+    $grays: grays("light");
+    @include legendColors($grays);
+    --legend-hover-color-rgb: 179, 214, 242;
+  }
+
+  // Visibility states
+  &.hidden {
+    display: none;
+  }
+
+  &:not(.hidden) {
+    display: block;
+  }
+
+  // ============================================================================
+  // COMPACT MODE
+  // ============================================================================
+
+  &.compact {
+    margin-inline: $legend-spacing-xl;
+    inset-block-start: $legend-spacing-md;
+    block-size: $legend-compact-height;
+    inline-size: calc(100% - #{$legend-spacing-xl * 2});
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    border-inline-end: none;
+    padding: 0;
+
+    .tsi-seriesLabel {
+      overflow: hidden;
+      white-space: nowrap;
+      flex-basis: auto;
+      flex-shrink: 1;
+      border: none;
+      padding: 0;
+      text-align: center;
+      margin: $legend-spacing-sm;
+
+      &:hover {
+        overflow-x: auto;
+      }
+
+      &:not(.shown) {
+        border: none;
+      }
+
+      .tsi-seriesNameLabel {
+        display: none;
+      }
+
+      select {
+        display: none;
+      }
+
+      .tsi-splitByContainer {
+        max-block-size: 140px;
+        display: inline-block;
+
+        .tsi-splitByLabel {
+          display: inline-block;
+          margin: 0 $legend-spacing-sm;
+          padding: 0 $legend-spacing-sm 1px $legend-spacing-sm;
+          block-size: $legend-series-name-height;
+          margin-block-start: 1px;
+          overflow: hidden;
+
+          .tsi-eyeIcon {
+            display: none;
+          }
+
+          .tsi-colorKey {
+            display: block;
+            position: absolute;
+            block-size: $legend-icon-size-sm;
+            inline-size: $legend-icon-size-sm;
+            inset-block-start: -3px;
+            forced-color-adjust: none;
+
+            &.tsi-eventsColorKey,
+            &.tsi-categoricalColorKey {
+              block-size: $legend-icon-size-md;
+              inline-size: $legend-icon-size-md;
+              inset-block-start: unset;
+              margin-block-start: $legend-spacing-sm;
+              margin-inline-start: 0;
+            }
+          }
+
+          .tsi-seriesName {
+            max-inline-size: $legend-series-name-max-width;
+            margin-inline: $legend-spacing-lg 0;
+            text-align: start;
+            inline-size: initial;
+            font-size: $legend-font-size-sm;
+          }
+        }
+      }
+    }
+  }
+
+  // ============================================================================
+  // NON-COMPACT MODE
+  // ============================================================================
+
+  &:not(.compact) {
+    block-size: 100%;
+
+    &.tsi-flexLegend {
+      display: flex;
+      flex-direction: column;
+    }
+
+    // Show more button
+    .tsi-legendShowMore {
+      background: none;
+      border: none;
+      visibility: visible;
+      margin: $legend-spacing-md auto;
+      cursor: pointer;
+      color: var(--legend-text-hover-color);
+      opacity: $legend-opacity-visible;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    // Split-by container
+    .tsi-splitByContainer {
+      overflow-y: auto;
+      visibility: hidden;
+      min-block-size: $legend-min-split-by-container-height;
+      block-size: calc(100% - 25px);
+
+      .tsi-splitByLabel,
+      &:hover,
+      &:focus {
+        visibility: visible;
+      }
+    }
+
+    // Eye icon styles for non-compact mode
+    .tsi-seriesNameLabel .tsi-eyeIcon,
+    .tsi-splitByLabel .tsi-eyeIcon {
+      @include eye-icon-base;
+    }
+
+    // Theme-specific eye icon images
+    &.tsi-light .tsi-eyeIcon {
+      background-image: url(../../icons/Eye_light_theme.svg);
+    }
+
+    &.tsi-dark .tsi-eyeIcon {
+      background-image: url(../../icons/Eye_dark_theme.svg);
+    }
+  }
+
+  // ============================================================================
+  // SERIES LABELS (SHARED BETWEEN MODES)
+  // ============================================================================
+
+  .tsi-seriesLabel {
+    margin: $legend-spacing-md;
+
+    // No split-by variant
+    &.tsi-nsb {
+      .tsi-splitByContainer {
+        overflow-y: hidden;
+      }
+
+      .tsi-seriesNameLabel {
+        display: none;
+      }
+    }
+  }
+
+  // Series name label and split-by label shared styles
+  .tsi-seriesNameLabel,
+  .tsi-splitByLabel {
+    @include label-interactive-states;
+    display: flex;
+
+    &.tsi-nonCompactNonNumeric {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    // Text elements
+    h4,
+    .tsi-seriesName {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-block: $legend-spacing-xs $legend-spacing-sm;
+      font-weight: 400;
+      margin-inline-end: 36px;
+    }
+
+    h4 {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: $legend-font-size-lg;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .tsi-seriesName {
+      cursor: default;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      font-size: $legend-font-size-md;
+    }
+
+    // Select dropdown
+    select {
+      @include legend-select-base;
+      inset-inline-start: $legend-spacing-xl;
+      max-inline-size: calc(100% - 64px);
+      margin: $legend-spacing-xs;
+      border: none;
+      position: absolute;
+      inset-block-start: $legend-spacing-lg;
+      padding: $legend-spacing-xs;
+      background-image: url(../../icons/chevron.svg);
+      background-repeat: no-repeat;
+      background-position-x: calc(100% - $legend-spacing-sm);
+      background-position-y: 7px;
+      background-size: 18px;
+      padding-inline-end: 28px;
+    }
+
+    &.tsi-splitByLabelCompact {
+      block-size: $legend-split-by-label-compact-height;
+    }
+
+    // Color key
+    .tsi-colorKey {
+      flex-shrink: 0;
+      inline-size: $legend-icon-size-md;
+      block-size: $legend-icon-size-md;
+      margin-block-start: $legend-spacing-md;
+      margin-inline-end: $legend-spacing-md;
+      border-radius: $legend-border-radius-md;
+      position: relative;
+      inset-block-start: -2px;
+      forced-color-adjust: none;
+
+      &.tsi-eventsColorKey,
+      &.tsi-categoricalColorKey {
+        block-size: $legend-icon-size-lg;
+        inline-size: $legend-icon-size-lg;
+        margin-block-start: unset;
+      }
+    }
+  }
+
+  // Series name label specific styles
+  .tsi-seriesNameLabel {
+    cursor: pointer;
+    padding: 0 $legend-spacing-sm;
+    position: relative;
+    inline-size: 100%;
+    border: none;
+    background-color: transparent;
+
+    &.shown {
+      background-color: var(--legend-element-color);
+    }
+
+    svg {
+      display: inline-block;
+    }
+
+    select {
+      block-size: 17px;
+      inline-size: 50px;
+      position: absolute;
+      inset-inline-end: $legend-spacing-sm;
+      inset-block-start: 6px;
+      display: none;
+    }
+  }
+
+  // Split-by label specific styles
+  .tsi-splitByLabel {
+    font-size: $legend-font-size-xl;
+    padding: 0 $legend-spacing-sm;
+    position: relative;
+    block-size: $legend-split-by-label-height;
+    border-radius: $legend-border-radius-sm;
+
+    &.hidden {
+      block-size: 0;
+      display: none;
+      padding: 0;
+    }
+  }
+
+  // Series type label
+  .tsi-seriesTypeLabel {
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+    padding-inline-start: $legend-spacing-md;
+
+    &.disabled {
+      display: none;
+    }
+  }
+}

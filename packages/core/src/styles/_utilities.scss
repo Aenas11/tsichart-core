@@ -1,0 +1,49 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+// Base styles for all TSI components - using :where() for 0 specificity
+:where([class*="tsi-"]) {
+    box-sizing: border-box;
+    font-family: $font-family-primary;
+}
+
+// Utility classes
+.tsi-textWrap {
+    overflow: hidden;
+    white-space: pre-wrap;
+    text-overflow: ellipsis;
+    hyphens: auto;
+    overflow-wrap: break-word;
+}
+
+.tsi-hidden {
+    display: none;
+}
+
+.tsi-baseMono {
+    display: inline-block;
+    padding: spacing(sm);
+    border-radius: radius(md);
+    font-family: $font-family-mono;
+    font-size: font-size(lg);
+    line-height: font-size(lg);
+    font-weight: 300;
+}
+
+// Generic shape rendering
+rect,
+line {
+    shape-rendering: crispedges;
+}
+
+svg {
+    display: block;
+}
+
+.focus {
+    display: none;
+}
+
+.tsi-gridComponent {
+    z-index: z(overlay);
+}

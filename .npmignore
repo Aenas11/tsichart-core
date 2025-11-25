@@ -1,0 +1,53 @@
+# Source files (only ship compiled dist)
+src/
+tsconfig.json
+rollup.config.js
+webpack.*.js
+
+# Development files
+pages/
+.vscode/
+.devcontainer/
+*.log
+*.tgz
+
+# Tests
+test/
+tests/
+__tests__/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Build artifacts
+build_artifacts/
+node_modules/
+.cache/
+
+# Documentation source (keep compiled docs)
+docs/source/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.travis.yml
+.circleci/
+azure-pipelines.yml
+
+# Editor files
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Misc
+.env
+.env.local
+coverage/
+.nyc_output/

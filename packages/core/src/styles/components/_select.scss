@@ -1,0 +1,25 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+// Hide default select arrow in IE/Edge
+select::-ms-expand {
+    display: none;
+}
+
+.tsi-select {
+    margin: spacing(xs);
+    position: relative;
+    appearance: none;
+    padding: spacing(md);
+    padding-right: size(menu-item-height);
+    border: 1px solid;
+    border-radius: radius(sm);
+    white-space: nowrap;
+    overflow: hidden;
+    height: size(select-height);
+    background-position: calc(100% - spacing(sm)) spacing(xl);
+
+    option {
+        padding: spacing(md);
+    }
+}
