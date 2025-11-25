@@ -42,16 +42,16 @@ describe('EllipsisMenu', () => {
             expect(items.length).toBe(2);
         });
 
-        it('should apply dark theme by default', () => {
+        it('should apply light theme by default', () => {
             ellipsisMenu.render([]);
 
-            expect(renderTarget.classList.contains('tsi-dark')).toBe(true);
+            expect(renderTarget.classList.contains('tsi-light')).toBe(true);
         });
 
-        it('should apply light theme when specified', () => {
-            ellipsisMenu.render([], { theme: 'light' });
+        it('should apply dark theme when specified', () => {
+            ellipsisMenu.render([], { theme: 'dark' });
 
-            expect(renderTarget.classList.contains('tsi-light')).toBe(true);
+            expect(renderTarget.classList.contains('tsi-dark')).toBe(true);
         });
 
         it('should create button with correct attributes', () => {
