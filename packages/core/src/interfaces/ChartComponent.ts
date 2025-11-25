@@ -36,13 +36,13 @@ class ChartComponent extends Component {
 		this.chartComponentData = new ChartComponentData();
 	}
 
-	public showGrid() {
-		Grid.showGrid(this.renderTarget, this.chartOptions, this.aggregateExpressionOptions, this.chartComponentData);
+	public showGrid(chartOptions) {
+		Grid.showGrid(this.renderTarget, chartOptions, this.aggregateExpressionOptions, this.chartComponentData);
 	}
 
-	public gatedShowGrid() {
+	public gatedShowGrid(chartOptions) {
 		if (this.isGridVisible()) {
-			this.showGrid();
+			this.showGrid(chartOptions);
 		}
 	}
 

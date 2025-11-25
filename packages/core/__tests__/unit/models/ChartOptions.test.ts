@@ -85,11 +85,11 @@ describe('ChartOptions', () => {
         });
 
         it('should handle function options', () => {
-            const mockMouseover = jest.fn();
-            const mockMouseout = jest.fn();
-            const mockSticky = jest.fn();
-            const mockUnsticky = jest.fn();
-            const mockBrushMove = jest.fn();
+            const mockMouseover = vi.fn();
+            const mockMouseout = vi.fn();
+            const mockSticky = vi.fn();
+            const mockUnsticky = vi.fn();
+            const mockBrushMove = vi.fn();
 
             const chartOptions = new ChartOptions();
             chartOptions.setOptions({
@@ -281,7 +281,7 @@ describe('ChartOptions', () => {
         });
 
         it.skip('should handle function properties in toObject - SKIPPED: Bug in production code', () => {
-            const mockFn = jest.fn();
+            const mockFn = vi.fn();
             const chartOptions = new ChartOptions();
             chartOptions.setOptions({
                 onMouseover: mockFn

@@ -9,6 +9,13 @@ import { ILineChartOptions } from "./ILineChartOptions";
 export interface ILineChart {
     chartComponentData: LineChartData;
     chartOptions: ILineChartOptions;
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 
     renderTarget: Element;
     targetElement: any;
@@ -18,11 +25,59 @@ export interface ILineChart {
     y: any;
     yMap: any;
 
+=======
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+
+    renderTarget: Element;
+    targetElement: any;
+    svgSelection: any;
+
+    x: any;
+    y: any;
+    yMap: any;
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
     chartMargins: any;
     chartHeight: number;
     chartWidth: number;
     height: number;
     xOffset: number;
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 
     contextMenu: ContextMenu;
     brushContextMenu: ContextMenu;
@@ -34,6 +89,49 @@ export interface ILineChart {
     activeMarker: Marker;
     colorMap: any;
 
+=======
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+
+    contextMenu: ContextMenu;
+    brushContextMenu: ContextMenu;
+
+    voronoiDiagram: any;
+    isDroppingMarker: boolean;
+    possibleTimesArray: any;
+
+    activeMarker: Marker;
+    colorMap: any;
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
     draw: (isFromResize?: boolean, event?: any) => void;
 
     getHandleHeight: () => number;

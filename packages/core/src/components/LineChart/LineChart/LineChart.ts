@@ -23,11 +23,50 @@ import CustomTooltip from './Tooltip';
 import Marker from './Marker';
 
 class LineChart extends TemporalXAxisComponent implements ILineChart {
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
     public legendObject: Legend;
     public chartWidth: number;
     public chartHeight: number;
     public svgSelection: any;
     public chartOptions: any;
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
     public targetElement: any;
     public focus: any;
     private horizontalValueBox: any;
@@ -48,7 +87,34 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
 
     private tooltip: CustomTooltip;
     public height: number;
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
     public x: any;
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+    public x: any;
+>>>>>>> origin/airefactoring
+=======
+    public x: any;
+>>>>>>> origin/airefactoring
+=======
+    public x: any;
+>>>>>>> origin/airefactoring
+=======
+    public x: any;
+>>>>>>> origin/airefactoring
+=======
+    public x: any;
+>>>>>>> origin/airefactoring
+=======
+    public x: any;
+>>>>>>> origin/airefactoring
     public xLowerBound: number;
     public xUpperBound: number;
     public y: any;
@@ -68,7 +134,35 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
     public brush: Brush;
     private previousAggregateData: any = d3.local();
     private previousIncludeDots: any = d3.local();
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    private voronoiDiagram;
+=======
     public voronoiDiagram;
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+    public voronoiDiagram;
+>>>>>>> origin/airefactoring
+=======
+    public voronoiDiagram;
+>>>>>>> origin/airefactoring
+=======
+    public voronoiDiagram;
+>>>>>>> origin/airefactoring
+=======
+    public voronoiDiagram;
+>>>>>>> origin/airefactoring
+=======
+    public voronoiDiagram;
+>>>>>>> origin/airefactoring
+=======
+    public voronoiDiagram;
+>>>>>>> origin/airefactoring
 
     public getChartOptions() {
         return this.chartOptions;
@@ -633,7 +727,35 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
             // delete all the old markers
             if (Object.keys(this.markers).length) {
                 Object.keys(this.markers).forEach((guid) => {
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+                    this.markers[guid].destroy();
+=======
                     this.markers[guid].destroyMarker();
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+                    this.markers[guid].destroyMarker();
+>>>>>>> origin/airefactoring
+=======
+                    this.markers[guid].destroyMarker();
+>>>>>>> origin/airefactoring
+=======
+                    this.markers[guid].destroyMarker();
+>>>>>>> origin/airefactoring
+=======
+                    this.markers[guid].destroyMarker();
+>>>>>>> origin/airefactoring
+=======
+                    this.markers[guid].destroyMarker();
+>>>>>>> origin/airefactoring
+=======
+                    this.markers[guid].destroyMarker();
+>>>>>>> origin/airefactoring
                     delete this.markers[guid];
                 });
             }
@@ -811,7 +933,35 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         return Utils.getValueOfVisible(d, this.chartComponentData.getVisibleMeasure(d.aggregateKey, d.splitBy));
     }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    private focusMarkerLabel(filterFunction, aggKey, splitBy) {
+=======
     public focusMarkerLabel(filterFunction, aggKey, splitBy) {
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+    public focusMarkerLabel(filterFunction, aggKey, splitBy) {
+>>>>>>> origin/airefactoring
+=======
+    public focusMarkerLabel(filterFunction, aggKey, splitBy) {
+>>>>>>> origin/airefactoring
+=======
+    public focusMarkerLabel(filterFunction, aggKey, splitBy) {
+>>>>>>> origin/airefactoring
+=======
+    public focusMarkerLabel(filterFunction, aggKey, splitBy) {
+>>>>>>> origin/airefactoring
+=======
+    public focusMarkerLabel(filterFunction, aggKey, splitBy) {
+>>>>>>> origin/airefactoring
+=======
+    public focusMarkerLabel(filterFunction, aggKey, splitBy) {
+>>>>>>> origin/airefactoring
         Utils.revertAllSubtitleText(d3.select(this.renderTarget).selectAll(".tsi-markerValue"), .2);
 
 
@@ -846,7 +996,35 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
         this.focusOnlyHoveredSeries(aggregateKey, splitBy, false);
     }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    private getSVGLeftOffset() {
+=======
     public getSVGLeftOffset() {
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+    public getSVGLeftOffset() {
+>>>>>>> origin/airefactoring
+=======
+    public getSVGLeftOffset() {
+>>>>>>> origin/airefactoring
+=======
+    public getSVGLeftOffset() {
+>>>>>>> origin/airefactoring
+=======
+    public getSVGLeftOffset() {
+>>>>>>> origin/airefactoring
+=======
+    public getSVGLeftOffset() {
+>>>>>>> origin/airefactoring
+=======
+    public getSVGLeftOffset() {
+>>>>>>> origin/airefactoring
         return this.chartOptions.legend === 'shown' ? (this.width - this.svgSelection.node().getBoundingClientRect().width) : 0;
     }
 
@@ -1778,7 +1956,9 @@ class LineChart extends TemporalXAxisComponent implements ILineChart {
 
         this.chartComponentData.mergeDataToDisplayStateAndTimeArrays(this.data, this.aggregateExpressionOptions);
         this.draw();
-        this.gatedShowGrid();
+        if (this.chartOptions.grid) {
+            this.gatedShowGrid(this.chartOptions);
+        }
         this.chartOptions.noAnimate = false;  // ensure internal renders are always animated, overriding the users noAnimate option
 
         if (this.chartOptions.labelSeriesWithMarker && this.seriesLabelsMarker === null) {

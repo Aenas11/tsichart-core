@@ -43,5 +43,54 @@ describe('LineChart', () => {
             const svgElement = renderTarget.querySelector('.tsi-lineChartSVG');
             expect(svgElement).toBeTruthy();
         });
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+        it('should render a grid when enabled', () => {
+            options.grid = true;
+            lineChart.render(data, options, []);
+            const gridElement = renderTarget.querySelector('.tsi-grid');
+            expect(gridElement).toBeTruthy();
+        });
+
+        it('should not render a grid when disabled', () => {
+            options.grid = false;
+            lineChart.render(data, options, []);
+            const gridElement = renderTarget.querySelector('.tsi-grid');
+            expect(gridElement).toBeFalsy();
+        });
+
+        it('should render a legend when shown', () => {
+            options.legend = 'shown';
+            lineChart.render(data, options, []);
+            const legendElement = renderTarget.querySelector('.tsi-legend');
+            expect(legendElement).toBeTruthy();
+        });
+
+        it('should not render a legend when hidden', () => {
+            options.legend = 'hidden';
+            lineChart.render(data, options, []);
+            const legendElement = renderTarget.querySelector('.tsi-legend');
+            expect(legendElement.classList.contains('hidden')).toBe(true);
+        });
+=======
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
+=======
+>>>>>>> origin/airefactoring
     });
 });

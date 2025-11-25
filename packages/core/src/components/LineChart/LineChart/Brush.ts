@@ -1,6 +1,34 @@
 import * as d3 from 'd3';
 import { ILineChart } from './ILineChart';
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+import Utils from '../../../utils';
+=======
 import { Utils } from '../../..';
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+import { Utils } from '../../..';
+>>>>>>> origin/airefactoring
+=======
+import { Utils } from '../../..';
+>>>>>>> origin/airefactoring
+=======
+import { Utils } from '../../..';
+>>>>>>> origin/airefactoring
+=======
+import { Utils } from '../../..';
+>>>>>>> origin/airefactoring
+=======
+import { Utils } from '../../..';
+>>>>>>> origin/airefactoring
+=======
+import { Utils } from '../../..';
+>>>>>>> origin/airefactoring
 
 class Brush {
     private lineChart: ILineChart;
@@ -163,7 +191,35 @@ class Brush {
                 this.lineChart.chartComponentData.stickiedKey = null;
                 (<any>this.lineChart.legendObject.legendElement.selectAll('.tsi-splitByLabel')).classed("stickied", false);
                 // recompute voronoi with no sticky
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+                this.lineChart.voronoiDiagram = this.lineChart.voronoi(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+=======
                 this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+                this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+>>>>>>> origin/airefactoring
+=======
+                this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+>>>>>>> origin/airefactoring
+=======
+                this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+>>>>>>> origin/airefactoring
+=======
+                this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+>>>>>>> origin/airefactoring
+=======
+                this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+>>>>>>> origin/airefactoring
+=======
+                this.lineChart.voronoiDiagram = this.lineChart.voronoiDiagram(this.lineChart.getFilteredAndSticky(this.lineChart.chartComponentData.allValues));
+>>>>>>> origin/airefactoring
                 site = this.lineChart.voronoiDiagram.find(mx, my);
                 this.lineChart.voronoiMousemove(site.data);
                 this.lineChart.chartOptions.onUnsticky(site.data.aggregateKey, site.data.splitBy);
@@ -248,7 +304,35 @@ class Brush {
             }
         }
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
     private drawBrushRange() {
         if (this.lineChart.chartOptions.brushRangeVisible) {
             if (this.lineChart.targetElement.select('.tsi-rangeTextContainer').empty() && (this.brushStartTime || this.brushEndTime)) {
@@ -293,7 +377,35 @@ class Brush {
             rangeTextContainer.style('visibility', 'visible');
         }
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> 7055322ec922188f65223b2000a759252bbbb96f
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
+=======
+
+>>>>>>> origin/airefactoring
     public deleteBrushRange() {
         if (this.lineChart.targetElement) {
             this.lineChart.targetElement.select('.tsi-rangeTextContainer').remove();

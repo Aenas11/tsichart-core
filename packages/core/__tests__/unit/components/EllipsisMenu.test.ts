@@ -32,8 +32,8 @@ describe('EllipsisMenu', () => {
 
         it('should render menu items', () => {
             const menuItems = [
-                { iconClass: 'download', label: 'Download', action: jest.fn() },
-                { iconClass: 'grid', label: 'Toggle Grid', action: jest.fn() }
+                { iconClass: 'download', label: 'Download', action: vi.fn() },
+                { iconClass: 'grid', label: 'Toggle Grid', action: vi.fn() }
             ];
 
             ellipsisMenu.render(menuItems);
@@ -72,7 +72,7 @@ describe('EllipsisMenu', () => {
 
         it('should set aria-label for menu items', () => {
             const menuItems = [
-                { iconClass: 'download', label: 'Download CSV', action: jest.fn() }
+                { iconClass: 'download', label: 'Download CSV', action: vi.fn() }
             ];
 
             ellipsisMenu.render(menuItems);
@@ -83,7 +83,7 @@ describe('EllipsisMenu', () => {
 
         it('should set role menuitem for menu items', () => {
             const menuItems = [
-                { iconClass: 'download', label: 'Download', action: jest.fn() }
+                { iconClass: 'download', label: 'Download', action: vi.fn() }
             ];
 
             ellipsisMenu.render(menuItems);
@@ -95,7 +95,7 @@ describe('EllipsisMenu', () => {
 
     describe('menu interaction', () => {
         it('should call action when menu item is clicked', () => {
-            const mockAction = jest.fn();
+            const mockAction = vi.fn();
             const menuItems = [
                 { iconClass: 'download', label: 'Download', action: mockAction }
             ];
@@ -109,8 +109,8 @@ describe('EllipsisMenu', () => {
         });
 
         it('should handle multiple menu items with different actions', () => {
-            const mockAction1 = jest.fn();
-            const mockAction2 = jest.fn();
+            const mockAction1 = vi.fn();
+            const mockAction2 = vi.fn();
             const menuItems = [
                 { iconClass: 'download', label: 'Download', action: mockAction1 },
                 { iconClass: 'grid', label: 'Grid', action: mockAction2 }
@@ -162,11 +162,11 @@ describe('EllipsisMenu', () => {
     describe('re-rendering', () => {
         it('should clear previous items when re-rendered', () => {
             const menuItems1 = [
-                { iconClass: 'download', label: 'Download', action: jest.fn() }
+                { iconClass: 'download', label: 'Download', action: vi.fn() }
             ];
             const menuItems2 = [
-                { iconClass: 'grid', label: 'Grid', action: jest.fn() },
-                { iconClass: 'flag', label: 'Flag', action: jest.fn() }
+                { iconClass: 'grid', label: 'Grid', action: vi.fn() },
+                { iconClass: 'flag', label: 'Flag', action: vi.fn() }
             ];
 
             ellipsisMenu.render(menuItems1);

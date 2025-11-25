@@ -56,7 +56,7 @@ describe('ChartDataOptions', () => {
                 dataType: DataTypes.Categorical,
                 valueMapping: { A: 1, B: 2 },
                 height: 80,
-                onElementClick: jest.fn(),
+                onElementClick: vi.fn(),
                 eventElementType: EventElementTypes.Teardrop,
                 rollupCategoricalValues: true,
                 tooltipAttributes: [['attr1', 'value1']],

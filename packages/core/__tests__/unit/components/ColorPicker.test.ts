@@ -163,7 +163,7 @@ describe('ColorPicker', () => {
 
     describe('color selection', () => {
         it('should call onSelect callback when color is clicked', () => {
-            const mockOnSelect = jest.fn();
+            const mockOnSelect = vi.fn();
             const customColors = ['#FF0000', '#00FF00'];
             colorPicker.render({ colors: customColors, numberOfColors: 2, onSelect: mockOnSelect });
 
@@ -210,7 +210,7 @@ describe('ColorPicker', () => {
         });
 
         it('should call onClick callback when button is clicked', () => {
-            const mockOnClick = jest.fn();
+            const mockOnClick = vi.fn();
             colorPicker.render({ onClick: mockOnClick });
 
             const button = renderTarget.querySelector('.tsi-colorPickerButton') as HTMLElement;
