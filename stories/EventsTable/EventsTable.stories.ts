@@ -321,13 +321,13 @@ export const DocumentationDemo: Story = {
                             <p>EventsTable accepts two data formats:</p>
                             <h5>1. Standard Format:</h5>
                             <pre style="background: white; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>[
-  {
-    "timestamp": "2023-01-01T00:00:00Z",
-    "deviceId": "sensor-001", 
-    "temperature": 22.5,
-    "status": "normal"
-      }
-]</code></pre>
+                                {
+                                    "timestamp": "2023-01-01T00:00:00Z",
+                                    "deviceId": "sensor-001", 
+                                    "temperature": 22.5,
+                                    "status": "normal"
+                                    }
+                                ]</code></pre>
                             <h5>2. TSX Format (using renderFromEventsTsx):</h5>
                             <pre style="background: white; padding: 10px; border-radius: 4px; overflow-x: auto;"><code>[
   {
