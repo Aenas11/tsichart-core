@@ -17,7 +17,7 @@ class ChartComponentData {
     public toMillis: number = 0;
     public stickiedKey: any = null;
     public allTimestampsArray: any;
-    public isFromHeatmap: boolean = false;
+    public isFromHeatmap: boolean = false
 
     constructor() {
     }
