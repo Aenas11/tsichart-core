@@ -225,6 +225,7 @@ class EventsTable extends ChartComponent {
         });
     }
 
+
     //creates columnHeaders, returns a dictionary of widths so that buildTable can know the min width of each column
     private buildHeaders(filteredColumnKeys, focusedHeader = null) {
         let longAndDoubleExist = (propertyKey) => {
