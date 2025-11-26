@@ -129,12 +129,11 @@ class Grid extends Component {
 
     private setFilteredTimestamps = () => {
         if (this.chartComponentData.fromMillis === Infinity) {
-            this.filteredTimestamps = this.chartComponentData.allTimestampsArray;
+            this.filteredTimestamps = this.chartComponentData.allTimestampsArray.map(ts => new Date(ts));
         } else {
-            this.filteredTimestamps = this.chartComponentData.allTimestampsArray.filter((ts) => {
-                let currMillis = (new Date(ts)).valueOf();
-                return (currMillis >= this.chartComponentData.fromMillis && currMillis < this.chartComponentData.toMillis);
-            });
+            this.filteredTimestamps = this.chartComponentData.allTimestampsArray
+                .map(ts => new Date(ts))
+                .filter(ts => ts.getTime() >= this.chartComponentData.fromMillis && ts.getTime() < this.chartComponentData.toMillis);
         }
     }
 
@@ -152,9 +151,7 @@ class Grid extends Component {
                 this.arrowNavigate(event, 0, i + 1)
             })
             .text(this.getFormattedDate)
-            .attr('aria-label', (h) => {
-                return `${this.getString('column header for date')} ${this.getFormattedDate(h)}`
-            });
+            .attr('aria-label', d => `${this.getString('column header for date')} ${this.getFormattedDate(d)}`);
         headerCellsEntered.exit().remove();
     }
 
@@ -177,7 +174,9 @@ class Grid extends Component {
                 let splitBy = d[1];
                 let seriesData = self.convertSeriesToGridData(allTimeStampMap, self.chartComponentData.timeArrays[aggKey][splitBy]);
                 let cells = d3.select(this).selectAll<any, unknown>('.tsi-valueCell').data(seriesData);
-                let measuresData = self.chartOptions.spMeasures ? self.chartOptions.spMeasures : self.chartComponentData.displayState[aggKey].splitBys[splitBy].types;
+                let measuresData = self.chartOptions.spMeasures ||
+                    (self.chartComponentData.displayState[aggKey]?.splitBys?.[splitBy]?.types) ||
+                    ['temperature'];
 
                 //Row header with the name of the series
                 let headerCell = d3.select(this).selectAll<any, unknown>('tsi-rowHeaderCell').data([d]);
@@ -248,74 +247,63 @@ class Grid extends Component {
     }
 
     public render(data: any, options: any, aggregateExpressionOptions: any, chartComponentData: ChartComponentData = null) {
-        data = Utils.standardizeTSStrings(data);
         this.chartOptions.setOptions(options);
         this.gridComponent = d3.select(this.renderTarget);
+
         if (chartComponentData) {
             this.chartComponentData = chartComponentData;
         } else {
+            data = Utils.standardizeTSStrings(data);
             this.chartComponentData.mergeDataToDisplayStateAndTimeArrays(data, aggregateExpressionOptions);
         }
-
         this.setFilteredTimestamps();
 
         super.themify(this.gridComponent, this.chartOptions.theme);
 
         this.gridComponent
             .classed("tsi-gridComponent", true)
-            .classed("tsi-fromChart", !!options.fromChart)
-        var grid = this.gridComponent
-            .append('div')
-            .attr("class", "tsi-gridWrapper")
-            .attr("tabindex", 0)
-            .on("click", () => {
-                if (this) {
-                    this.focus(0, 0);
-                }
-            });
+            .classed("tsi-fromChart", !!options.fromChart);
 
-        var headers = Object.keys(data.reduce((p, c) => {
-            Object.keys(c).forEach(k => {
-                if (k != this.rowLabelKey && k != this.colorKey)
-                    p[k] = true;
-            })
-            return p;
-        }, {})).sort();
+        const gridWrapper = this.gridComponent.selectAll('.tsi-gridWrapper').data([0]);
+        const wrapperEnter = gridWrapper.enter()
+            .append('div')
+            .attr('class', 'tsi-gridWrapper')
+            .attr('tabindex', 0)
+            .on('click', () => this.focus(0, 0));
 
         if (!this.table) {
-            this.table = grid.append('table').classed('tsi-gridTable', true);
+            this.table = wrapperEnter.append('table').classed('tsi-gridTable', true);
             this.tableHeaderRow = this.table.append('tr').classed('tsi-gridHeaderRow', true);
             this.tableHeaderRow.append('th')
-                .attr("tabindex", 0)
-                .attr("class", "tsi-topLeft " + this.cellClass(0, 0))
-                .on("keydown", (event) => {
-                    this.arrowNavigate(event, 0, 0);
-                });
+                .attr('tabindex', 0)
+                .attr('class', 'tsi-topLeft ' + this.cellClass(0, 0))
+                .on('keydown', (event: any) => this.arrowNavigate(event, 0, 0));
         }
 
+        // CRITICAL: Always use filteredTimestamps from chartComponentData
         this.addHeaderCells();
         this.addValueCells();
 
+        // Close button logic
         if (this.chartOptions.fromChart) {
             this.gridComponent.selectAll('.tsi-closeButton').remove();
-            this.closeButton = grid.append('button')
-                .attr("class", "tsi-closeButton")
+            this.closeButton = wrapperEnter.append('button')
+                .attr('class', 'tsi-closeButton')
                 .attr('aria-label', this.getString('close grid'))
-                .html('&times')
-                .on('keydown', (event) => {
+                .html('×')
+                .on('keydown', (event: any) => {
                     if (event.keyCode === 9) {
                         this.focus(0, 0);
                         event.preventDefault();
                     }
                 })
-                .on("click", () => {
-                    if (!!options.fromChart) {
+                .on('click', () => {
+                    if (options.fromChart) {
                         Utils.focusOnEllipsisButton(this.renderTarget.parentNode);
                         this.gridComponent.remove();
                     }
                 });
         } else {
-
             this.gridComponent.style('display', null);
             this.gridComponent.selectAll('.tsi-closeButton').remove();
         }

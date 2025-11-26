@@ -4,6 +4,7 @@ import Grid from "../../packages/core/src/components/Grid/Grid";
 import { ChartOptions } from '../../packages/core/src/models/ChartOptions';
 import { ChartComponentData } from '../../packages/core/src/models/ChartComponentData';
 import { fireEvent, screen, within, waitFor } from 'storybook/test';
+import { all } from "awesomplete";
 
 const meta: Meta<ChartOptions> = {
     title: "Components/Grid",
@@ -98,120 +99,96 @@ The Grid component provides static methods following **monolithic component** pa
 export default meta;
 type Story = StoryObj<ChartOptions>;
 
-function generateSampleGridData() {
-    const from = new Date(Date.now() - 12 * 60 * 60 * 1000);
-    const data = [];
+// const from = new Date(Date.now() - 12 * 60 * 60 * 1000);
+// const timestamps = [];
+// for (let hour = 0; hour < 12; hour++) {
+//     timestamps.push(new Date(from.getTime() + hour * 3600 * 1000).toISOString());
+// }
 
+function generateSampleGridData() {
+    const from = new Date(Date.UTC(2025, 10, 25, 6, 0, 0)); // Nov 25, 2025, 06:00:00 UTC
+    const timestamps: string[] = [];
+    for (let hour = 0; hour < 12; hour++) {
+        timestamps.push(new Date(from.getTime() + hour * 3600 * 1000).toISOString());
+    }
+    timestamps.reverse();
+    const data = [];
     for (let sensorIndex = 0; sensorIndex < 3; sensorIndex++) {
         for (let roomIndex = 0; roomIndex < 2; roomIndex++) {
             const sensorName = `Sensor${String.fromCharCode(65 + sensorIndex)}`;
             const roomName = `Room${roomIndex + 1}`;
-            const rowData = {
+            const rowData: any = {
                 "__tsiLabel__": `${sensorName}: ${roomName}`,
-                "__tsiColor__": ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'][sensorIndex * 2 + roomIndex],
+                "__tsiColor__": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"][sensorIndex * 2 + roomIndex],
                 "__tsiAggIndex__": sensorIndex * 2 + roomIndex
             };
-            for (let hourIndex = 0; hourIndex < 12; hourIndex++) {
-                const timestamp = new Date(from.getTime() + hourIndex * 60 * 60 * 1000);
-                const baseTemp = 20 + sensorIndex * 2 + roomIndex * 1;
-                rowData[timestamp.toISOString()] = {
-                    temperature: parseFloat((baseTemp + Math.sin(hourIndex / 3) * 3 + Math.random() * 2).toFixed(1))
+            timestamps.forEach(ts => {
+                const base = 20 + sensorIndex * 2 + roomIndex * 1;
+                rowData[ts] = {
+                    temperature: parseFloat((base + Math.random() * 2).toFixed(1))
                 };
-            }
+            });
             data.push(rowData);
         }
     }
-    return data;
+    return { data, timestamps };
 }
 
 function renderGrid(container: HTMLElement, options: any = {}) {
     container.innerHTML = '';
-
     try {
         const grid = new Grid(container);
         grid.usesSeconds = false;
         grid.usesMillis = false;
+        const { data: sampleData, timestamps: allTimestamps } = generateSampleGridData();
 
-        const sampleData = generateSampleGridData();
-        // const measures = ['temperature', 'humidity', 'pressure'];
-        // const { pivotedRows, allTimestamps } = pivotGridData(sampleData, measures);
+        const chartComponentData = new ChartComponentData();
+        chartComponentData.allTimestampsArray = allTimestamps;
+        chartComponentData.timeArrays = {};
+        chartComponentData.displayState = {};
+        const aggregateExpressionOptions: any[] = [];
+        // --- FIX ---
+        sampleData.forEach(row => {
+            const aggKey = row.__tsiLabel__;
+            chartComponentData.timeArrays[aggKey] = {};
+            chartComponentData.displayState[aggKey] = {
+                name: aggKey,
+                color: row.__tsiColor__,
+                visible: true,
+                splitBys: {}
+            };
+
+            const splitByKey = 'default';
+            chartComponentData.timeArrays[aggKey][splitByKey] = allTimestamps.map(ts => ({
+                dateTime: new Date(ts),
+                measures: { temperature: row[ts]?.temperature ?? null }
+            }));
+            chartComponentData.displayState[aggKey].splitBys[splitByKey] = {
+                visible: true,
+                types: ['temperature'],
+                visibleType: 'temperature'
+            };
+            aggregateExpressionOptions.push({
+                aggKey,
+                color: row.__tsiColor__,
+                alias: aggKey,
+                splitBy: splitByKey,
+                measureTypes: ['temperature'],
+                visible: false
+            });
+        });
         const gridOptions = {
             theme: options.theme || 'light',
-            fromChart: options.fromChart || false,
             offset: options.offset || 'Local',
             dateLocale: options.dateLocale || 'en-US',
             spMeasures: ['temperature'],
-            ...options
+            fromChart: options.fromChart || false,
         };
-
-        const aggregateExpressionOptions = sampleData.map((rowData) => ({
-            aggKey: rowData.__tsiLabel__,
-            searchSpan: {
-                from: new Date(Date.now() - 12 * 60 * 60 * 1000),
-                to: new Date()
-            },
-            color: rowData.__tsiColor__,
-            alias: rowData.__tsiLabel__,
-        }));
-
-        const chartComponentData = new ChartComponentData();
-        chartComponentData.usesSeconds = false;
-        chartComponentData.usesMillis = false;
-
-
-        const allTimestamps = new Set<string>();
-        sampleData.forEach(rowData => {
-            Object.keys(rowData).forEach(key => {
-                if (key.includes('T') && key.includes('Z')) {
-                    allTimestamps.add(key);
-                }
-            });
-        });
-
-        chartComponentData.allTimestampsArray = Array.from(allTimestamps).sort();
-        chartComponentData.timeArrays = {};
-        chartComponentData.displayState = {};
-
-        sampleData.forEach((rowData) => {
-            const aggKey = rowData.__tsiLabel__;
-            const splitBy = '';
-            chartComponentData.timeArrays[aggKey] = { [splitBy]: [] };
-            chartComponentData.displayState[aggKey] = {
-                name: aggKey,
-                color: rowData.__tsiColor__,
-                splitBys: {
-                    [splitBy]: {
-                        visible: true,
-                        types: ['temperature']
-                    }
-                }
-            };
-
-            chartComponentData.allTimestampsArray.forEach(timestamp => {
-                const rawValue = rowData[timestamp]?.temperature ?? null;
-
-                chartComponentData.timeArrays[aggKey][splitBy].push({
-                    dateTime: new Date(timestamp),
-                    temperature: rawValue,                    // Flat property (required!)
-                    measures: { temperature: rawValue }       // Also keep nested for safety
-                });
-            });
-        });
-
-        chartComponentData.fromMillis = -Infinity;
-        chartComponentData.toMillis = Infinity;
-        // let aaa = chartComponentData.timeArrays[Object.keys(chartComponentData.timeArrays)[0]]?.['']?.slice(0, 2)
-        console.log(sampleData, "---------------", gridOptions, "gridOptions", aggregateExpressionOptions, "aggregateExpressionOptions", chartComponentData, "chartComponentData");
         grid.render(sampleData, gridOptions, aggregateExpressionOptions, chartComponentData);
-        // grid.render(sampleData, gridOptions, null, null);
         return grid;
-    } catch (error) {
-        console.error('Grid rendering error following defensive programming:', error);
-        container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
-            <h3>Error rendering Grid</h3>
-            <p><strong>Error:</strong> ${error.message}</p>
-            <p><small>Check browser console for more details</small></p>
-        </div>`;
+    } catch (error: any) {
+        console.error('Grid rendering error:', error);
+        container.innerHTML = `<div style="color:red;padding:20px;">${error.message}</div>`;
     }
 }
 
