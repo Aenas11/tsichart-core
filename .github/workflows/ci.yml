@@ -4,11 +4,10 @@ on:
   push:
     branches:
       - main
-      - refactor/**
-      - feature/**
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
