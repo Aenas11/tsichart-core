@@ -127,6 +127,17 @@ class Grid extends Component {
         return h;
     }
 
+    private getRowColor(aggKey: string, splitBy: string): string {
+        const colors = Utils.createSplitByColors(
+            this.chartComponentData.displayState,
+            aggKey,
+            this.chartOptions.keepSplitByColor
+        );
+        const splitByKeys = Object.keys(this.chartComponentData.timeArrays[aggKey]);
+        const splitByIndex = splitByKeys.indexOf(splitBy);
+        return colors[splitByIndex] || this.chartComponentData.displayState[aggKey]?.color || '#000';
+    }
+
     private setFilteredTimestamps = () => {
         if (this.chartComponentData.fromMillis === Infinity) {
             this.filteredTimestamps = this.chartComponentData.allTimestampsArray;
@@ -179,6 +190,9 @@ class Grid extends Component {
                 let cells = d3.select(this).selectAll<any, unknown>('.tsi-valueCell').data(seriesData);
                 let measuresData = self.chartOptions.spMeasures ? self.chartOptions.spMeasures : self.chartComponentData.displayState[aggKey].splitBys[splitBy].types;
 
+                // Get the color for this row
+                let rowColor = self.getRowColor(aggKey, splitBy);
+
                 //Row header with the name of the series
                 let headerCell = d3.select(this).selectAll<any, unknown>('tsi-rowHeaderCell').data([d]);
 
@@ -199,7 +213,15 @@ class Grid extends Component {
                     })
                     .each(function (d) {
                         d3.select(this).select('*').remove();
-                        let container = d3.select(this).append('div').attr('class', 'tsi-rowHeaderContainer');
+                        let container = d3.select(this).append('div')
+                            .attr('class', 'tsi-rowHeaderContainer')
+                            .style('position', 'relative');
+
+                        // Add color indicator
+                        container.append('div')
+                            .attr('class', 'tsi-colorIndicator')
+                            .style('background-color', rowColor);
+
                         let seriesName = container.append('div')
                             .attr('class', 'tsi-rowHeaderSeriesName');
                         Utils.appendFormattedElementsFromString(seriesName, getRowHeaderText(d));
@@ -274,13 +296,13 @@ class Grid extends Component {
                 }
             });
 
-        var headers = Object.keys(data.reduce((p, c) => {
-            Object.keys(c).forEach(k => {
-                if (k != this.rowLabelKey && k != this.colorKey)
-                    p[k] = true;
-            })
-            return p;
-        }, {})).sort();
+        // var headers = Object.keys(data.reduce((p, c) => {
+        //     Object.keys(c).forEach(k => {
+        //         if (k != this.rowLabelKey && k != this.colorKey)
+        //             p[k] = true;
+        //     })
+        //     return p;
+        // }, {})).sort();
 
         if (!this.table) {
             this.table = grid.append('table').classed('tsi-gridTable', true);

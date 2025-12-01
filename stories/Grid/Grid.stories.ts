@@ -184,6 +184,7 @@ function renderGrid(container: HTMLElement, options: any = {}) {
             chartComponentData.displayState[aggKey] = {
                 name: aggKey,
                 color: rowData.__tsiColor__,
+                visible: true,
                 splitBys: {
                     [splitBy]: {
                         visible: true,
@@ -197,13 +198,13 @@ function renderGrid(container: HTMLElement, options: any = {}) {
 
                 chartComponentData.timeArrays[aggKey][splitBy].push({
                     dateTime: new Date(timestamp),
-                    temperature: rawValue,                    // Flat property (required!)
-                    measures: { temperature: rawValue }       // Also keep nested for safety
+                    temperature: rawValue,
+                    measures: rawValue !== null ? { temperature: rawValue } : {}  // ✅ Avoid null
                 });
             });
         });
 
-        chartComponentData.fromMillis = -Infinity;
+        chartComponentData.fromMillis = Infinity;
         chartComponentData.toMillis = Infinity;
         // let aaa = chartComponentData.timeArrays[Object.keys(chartComponentData.timeArrays)[0]]?.['']?.slice(0, 2)
         console.log(sampleData, "---------------", gridOptions, "gridOptions", aggregateExpressionOptions, "aggregateExpressionOptions", chartComponentData, "chartComponentData");
