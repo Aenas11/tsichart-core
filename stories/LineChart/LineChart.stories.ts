@@ -357,7 +357,7 @@ function renderLineChart(container: HTMLElement, options: any = {}) {
             legend: 'shown',                       // New default: 'shown' (was 'hidden')
             grid: true,                            // New default: true (was false)
             tooltip: true,                         // New default: true (was false)
-            yAxisState: 'shared',                  // New default: 'shared' (was 'stacked')
+            yAxisState: 'stacked',                  // New default: 'shared' (was 'stacked')
             interpolationFunction: 'curveMonotoneX', // New default: curveMonotoneX (was none)
             includeDots: true,                     // New default: true (was false)
             brushHandlesVisible: true,             // New default: true (was false)
