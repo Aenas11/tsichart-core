@@ -45,6 +45,8 @@ jobs:
         run: pnpm build:core
 
       - name: Build Storybook
+        env:
+          VITE_AZURE_MAPS_KEY: ${{ secrets.VITE_AZURE_MAPS_KEY }}
         run: pnpm build-storybook --output-dir ./storybook-static
 
       - name: Upload artifact
