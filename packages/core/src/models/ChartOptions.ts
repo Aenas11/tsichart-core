@@ -230,7 +230,7 @@ class ChartOptions {
         this.brushClearable = this.mergeValue(chartOptionsObj, 'brushClearable', true);
         this.brushMoveAction = this.mergeValue(chartOptionsObj, 'brushMoveAction', () => { });
         this.brushMoveEndAction = this.mergeValue(chartOptionsObj, 'brushMoveEndAction', () => { });
-        this.yAxisState = this.mergeValue(chartOptionsObj, 'yAxisState', 'shared');
+        this.yAxisState = this.mergeValue(chartOptionsObj, 'yAxisState', YAxisStates.Stacked);
         this.xAxisHidden = this.mergeValue(chartOptionsObj, 'xAxisHidden', false);
         this.suppressResizeListener = this.mergeValue(chartOptionsObj, 'suppressResizeListener', false);
         this.onMouseout = this.mergeValue(chartOptionsObj, 'onMouseout', () => { });
