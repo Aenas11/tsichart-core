@@ -33,7 +33,7 @@ describe('ChartOptions', () => {
             expect(chartOptions.arcWidthRatio).toBe(0.55);
             expect(chartOptions.bucketSizeMillis).toBe(0);
             expect(chartOptions.brushClearable).toBe(true);
-            expect(chartOptions.yAxisState).toBe('shared');
+            expect(chartOptions.yAxisState).toBe('stacked');
             expect(chartOptions.xAxisHidden).toBe(false);
             expect(chartOptions.suppressResizeListener).toBe(false);
             expect(chartOptions.brushHandlesVisible).toBe(true);
