@@ -413,7 +413,7 @@ export const Default: Story = {
     name: 'Light Theme (Default)',
     args: {
         theme: 'light',
-        yAxisState: 'stacked',
+        yAxisState: 'shared',
         legend: 'shown',
         tooltip: true,
         grid: true,
