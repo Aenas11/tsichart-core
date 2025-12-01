@@ -296,14 +296,6 @@ class Grid extends Component {
                 }
             });
 
-        // var headers = Object.keys(data.reduce((p, c) => {
-        //     Object.keys(c).forEach(k => {
-        //         if (k != this.rowLabelKey && k != this.colorKey)
-        //             p[k] = true;
-        //     })
-        //     return p;
-        // }, {})).sort();
-
         if (!this.table) {
             this.table = grid.append('table').classed('tsi-gridTable', true);
             this.tableHeaderRow = this.table.append('tr').classed('tsi-gridHeaderRow', true);
