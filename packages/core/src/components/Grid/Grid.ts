@@ -6,19 +6,40 @@ import { ChartOptions } from '../../models/ChartOptions';
 import { ChartComponentData } from '../../models/ChartComponentData';
 import { GRIDCONTAINERCLASS } from '../../constants/Constants';
 
-class Grid extends Component {
-    private gridComponent: any;
-    private rowLabelKey: string = "__tsiLabel__";
-    private colorKey: string = "__tsiColor__";
-    private aggIndexKey: string = '__tsiAggIndex__';
-    private chartComponentData: ChartComponentData = new ChartComponentData();
-    private draw;
-    private closeButton = null;
-    private filteredTimestamps;
+interface GridCell {
+    dateTime?: Date;
+    measures?: Record<string, number | null>;
+}
 
-    private table;
-    private tableHeaderRow;
-    private tableContentRows;
+interface GridRow {
+    [key: string]: GridCell | string | number | undefined;
+}
+
+interface RowDataTuple extends Array<string> {
+    0: string; // aggKey
+    1: string; // splitBy
+}
+
+interface TimestampCache {
+    key: string;
+    result: string[];
+}
+
+class Grid extends Component {
+    private static readonly KEYS = {
+        ROW_LABEL: '__tsiLabel__',
+        COLOR: '__tsiColor__',
+        AGG_INDEX: '__tsiAggIndex__'
+    } as const;
+
+    private gridComponent: d3.Selection<HTMLDivElement, unknown, null, undefined> | null = null;
+    private chartComponentData: ChartComponentData = new ChartComponentData();
+    private closeButton: d3.Selection<HTMLButtonElement, unknown, null, undefined> | null = null;
+    private filteredTimestamps: string[] = [];
+    private timestampCache: TimestampCache | null = null;
+
+    private table: d3.Selection<HTMLTableElement, unknown, null, undefined> | null = null;
+    private tableHeaderRow: d3.Selection<HTMLTableRowElement, unknown, null, undefined> | null = null;
 
     public usesSeconds: boolean = false;
     public usesMillis: boolean = false;
@@ -59,72 +80,86 @@ class Grid extends Component {
         };
     }
 
-    Grid() {
+    private cellClass = (ridx: number, cidx: number): string => {
+        return `tsi-table-${ridx}-${cidx}`;
     }
 
-    private cellClass = (ridx, cidx) => {
-        return "tsi-table-" + ridx + '-' + cidx;
-    }
+    public focus = (rowIdx: number, colIdx: number): void => {
+        if (!this.gridComponent) return;
 
-    public focus = (rowIdx, colIdx) => {
         try {
-            (<any>this.gridComponent.select('.' + this.cellClass(rowIdx, colIdx)).node())
-                .focus();
+            const cell = this.gridComponent.select<HTMLElement>(`.${this.cellClass(rowIdx, colIdx)}`).node();
+            cell?.focus();
         } catch (e) {
-            console.log(e);
+            console.error('Error focusing grid cell:', e);
         }
     }
 
-    public renderFromAggregates(data: any, options: any, aggregateExpressionOptions: any, chartComponentData) {
+    public renderFromAggregates(data: any, options: any, aggregateExpressionOptions: any, chartComponentData: ChartComponentData) {
         this.chartOptions.setOptions(options);
-        var dataAsJson = data.reduce((p, c, i) => {
-            var aeName = Object.keys(c)[0];
-            Object.keys(c[aeName]).forEach(sbName => {
-                var row = {};
-                Object.keys(c[aeName][sbName]).forEach(dt => {
-                    row[dt] = c[aeName][sbName][dt];
-                })
-                row[this.rowLabelKey] = (Object.keys(c[aeName]).length == 1 && sbName == "" ? aeName : sbName);
-                if (aggregateExpressionOptions && aggregateExpressionOptions[i].color)
-                    row[this.colorKey] = aggregateExpressionOptions[i].color;
-                row[this.aggIndexKey] = i;
-                p.push(row);
-            })
-            return p;
-        }, []);
+        const dataAsJson = data.flatMap((item: any, aggIndex: number) => {
+            const aggName = Object.keys(item)[0];
+            const aggData = item[aggName];
+
+            return Object.entries(aggData).map(([splitByName, values]: [string, any]) => {
+                const row: GridRow = { ...values };
+                row[Grid.KEYS.ROW_LABEL] = (Object.keys(aggData).length === 1 && splitByName === "") ? aggName : splitByName;
+
+                const color = aggregateExpressionOptions?.[aggIndex]?.color;
+                if (color) {
+                    row[Grid.KEYS.COLOR] = color;
+                }
+
+                row[Grid.KEYS.AGG_INDEX] = aggIndex;
+                return row;
+            });
+        });
         return this.render(dataAsJson, options, aggregateExpressionOptions, chartComponentData);
     }
 
-    private getRowData() {
-        let rowData = [];
-        Object.keys(this.chartComponentData.timeArrays).forEach((aggKey) => {
-            Object.keys(this.chartComponentData.timeArrays[aggKey]).forEach((sb, sbI) => {
-                if (this.chartComponentData.getSplitByVisible(aggKey, sb)) {
-                    rowData.push([aggKey, sb]);
+    private getRowData(): RowDataTuple[] {
+        const rowData: RowDataTuple[] = [];
+
+        for (const [aggKey, timeArray] of Object.entries(this.chartComponentData.timeArrays)) {
+            for (const splitBy of Object.keys(timeArray)) {
+                if (this.chartComponentData.getSplitByVisible(aggKey, splitBy)) {
+                    rowData.push([aggKey, splitBy] as RowDataTuple);
                 }
-            })
-        });
+            }
+        }
+
         return rowData;
     }
 
-    private convertSeriesToGridData(allTimeStampMap, currSeries) {
-        Object.keys(allTimeStampMap).forEach(k => allTimeStampMap[k] = {});
-        currSeries = currSeries.filter((d) => {
-            return d.measures !== null;
-        })
-        currSeries.map((dataPoint) => {
+    private convertSeriesToGridData(allTimeStampMap: Record<string, GridCell>, currSeries: any[]): GridCell[] {
+        // Initialize all timestamps
+        for (const key of Object.keys(allTimeStampMap)) {
+            allTimeStampMap[key] = {};
+        }
+
+        // Filter and map data points
+        const validSeries = currSeries.filter(d => d.measures !== null);
+        for (const dataPoint of validSeries) {
             allTimeStampMap[dataPoint.dateTime.toISOString()] = dataPoint;
-        });
-        return Object.keys(allTimeStampMap).map((ts) => {
-            return allTimeStampMap[ts];
-        });
+        }
+
+        return Object.values(allTimeStampMap);
     }
 
-    private getFormattedDate = (h) => {
-        var hAsDate = <any>(new Date(h));
-        if (hAsDate != this.getString('Invalid Date'))
-            return Utils.timeFormat(this.usesSeconds, this.usesMillis, this.chartOptions.offset, null, null, null, this.chartOptions.dateLocale)(hAsDate);
-        return h;
+    private getFormattedDate = (timestamp: string | Date): string => {
+        const date = new Date(timestamp);
+        if (!isNaN(date.getTime())) {
+            return Utils.timeFormat(
+                this.usesSeconds,
+                this.usesMillis,
+                this.chartOptions.offset,
+                null,
+                null,
+                null,
+                this.chartOptions.dateLocale
+            )(date);
+        }
+        return String(timestamp);
     }
 
     private getRowColor(aggKey: string, splitBy: string): string {
@@ -138,135 +173,175 @@ class Grid extends Component {
         return colors[splitByIndex] || this.chartComponentData.displayState[aggKey]?.color || '#000';
     }
 
-    private setFilteredTimestamps = () => {
+    private setFilteredTimestamps = (): void => {
+        // Cache key based on time range
+        const cacheKey = `${this.chartComponentData.fromMillis}-${this.chartComponentData.toMillis}`;
+
+        // Return cached result if available
+        if (this.timestampCache?.key === cacheKey) {
+            this.filteredTimestamps = this.timestampCache.result;
+            return;
+        }
+
+        // Calculate filtered timestamps
         if (this.chartComponentData.fromMillis === Infinity) {
             this.filteredTimestamps = this.chartComponentData.allTimestampsArray;
         } else {
-            this.filteredTimestamps = this.chartComponentData.allTimestampsArray.filter((ts) => {
-                let currMillis = (new Date(ts)).valueOf();
-                return (currMillis >= this.chartComponentData.fromMillis && currMillis < this.chartComponentData.toMillis);
+            this.filteredTimestamps = this.chartComponentData.allTimestampsArray.filter((timestamp) => {
+                const currMillis = new Date(timestamp).valueOf();
+                return currMillis >= this.chartComponentData.fromMillis && currMillis < this.chartComponentData.toMillis;
             });
         }
+
+        // Update cache
+        this.timestampCache = { key: cacheKey, result: this.filteredTimestamps };
     }
 
-    private addHeaderCells() {
-        let headerCellData = this.filteredTimestamps;// this.chartComponentData.allTimestampsArray;
-        let headerCells = this.tableHeaderRow.selectAll('.tsi-headerCell').data(headerCellData);
-        let headerCellsEntered = headerCells.enter()
+    private addHeaderCells(): void {
+        if (!this.tableHeaderRow) return;
+
+        const headerCellData = this.filteredTimestamps;
+        const headerCells = this.tableHeaderRow.selectAll<HTMLTableCellElement, string>('.tsi-headerCell').data(headerCellData);
+
+        const headerCellsEntered = headerCells.enter()
             .append('th')
-            .attr("tabindex", 1)
+            .attr('tabindex', 1)
             .merge(headerCells)
-            .attr("class", (d, i) => this.cellClass(0, i + 1) + ' tsi-headerCell')
-            .on("keydown", (event, d) => {
-                const e = headerCellsEntered.nodes();
-                const i = e.indexOf(event.currentTarget);
-                this.arrowNavigate(event, 0, i + 1)
+            .attr('class', (d, i) => `${this.cellClass(0, i + 1)} tsi-headerCell`)
+            .on('keydown', (event, d) => {
+                const nodes = headerCellsEntered.nodes();
+                const index = nodes.indexOf(event.currentTarget as HTMLTableCellElement);
+                this.arrowNavigate(event, 0, index + 1);
             })
             .text(this.getFormattedDate)
-            .attr('aria-label', (h) => {
-                return `${this.getString('column header for date')} ${this.getFormattedDate(h)}`
+            .attr('aria-label', (timestamp) => {
+                return `${this.getString('column header for date')} ${this.getFormattedDate(timestamp)}`;
             });
-        headerCellsEntered.exit().remove();
+
+        headerCells.exit().remove();
     }
 
-    private addValueCells() {
-        let rowData = this.getRowData();
-        let rows = this.table.selectAll('.tsi-gridContentRow').data(rowData);
-        let self = this;
-        let allTimeStampMap = this.filteredTimestamps.reduce((tsMap, ts) => {
+    private renderRowHeader(element: HTMLTableRowElement, rowData: RowDataTuple, rowIndex: number): void {
+        const [aggKey, splitBy] = rowData;
+        const rowColor = this.getRowColor(aggKey, splitBy);
+
+        const getRowHeaderText = (): string => {
+            return `${this.chartComponentData.displayState[aggKey].name}${splitBy !== '' ? `: ${splitBy}` : ''}`;
+        };
+
+        const measuresData = this.chartOptions.spMeasures ??
+            this.chartComponentData.displayState[aggKey].splitBys[splitBy].types;
+
+        const headerCell = d3.select(element).selectAll<HTMLTableCellElement, RowDataTuple>('.tsi-rowHeaderCell').data([rowData]);
+
+        headerCell.enter()
+            .append('td')
+            .attr('tabindex', 1)
+            .merge(headerCell)
+            .attr('class', `tsi-rowHeaderCell ${this.cellClass(rowIndex + 1, 0)}`)
+            .on('keydown', (event) => {
+                this.arrowNavigate(event, rowIndex + 1, 0);
+            })
+            .attr('aria-label', () => {
+                return `${this.getString('row header for')} ${Utils.stripNullGuid(getRowHeaderText())}`;
+            })
+            .each(function () {
+                d3.select(this).select('*').remove();
+                const container = d3.select(this).append('div')
+                    .attr('class', 'tsi-rowHeaderContainer')
+                    .style('position', 'relative');
+
+                // Add color indicator
+                container.append('div')
+                    .attr('class', 'tsi-colorIndicator')
+                    .style('background-color', rowColor);
+
+                const seriesName = container.append('div')
+                    .attr('class', 'tsi-rowHeaderSeriesName');
+                Utils.appendFormattedElementsFromString(seriesName, getRowHeaderText());
+
+                const measureContainer = container.append('div')
+                    .attr('class', 'tsi-rowHeaderMeasures');
+
+                measureContainer.selectAll('.tsi-measureName')
+                    .data(measuresData)
+                    .enter()
+                    .append('div')
+                    .attr('class', 'tsi-measureName')
+                    .text((d: any) => d);
+            });
+
+        headerCell.exit().remove();
+    }
+
+    private renderValueCells(element: HTMLTableRowElement, rowData: RowDataTuple, rowIndex: number): void {
+        const [aggKey, splitBy] = rowData;
+        const allTimeStampMap = this.filteredTimestamps.reduce<Record<string, GridCell>>((tsMap, ts) => {
             tsMap[ts] = {};
             return tsMap;
         }, {});
 
-        let headerCellData = this.filteredTimestamps;
+        const seriesData = this.convertSeriesToGridData(
+            allTimeStampMap,
+            this.chartComponentData.timeArrays[aggKey][splitBy]
+        );
 
-        let rowsEntered = rows.enter()
-            .append('tr')
-            .classed('tsi-gridContentRow', true)
-            .each(function (d, i) {
-                let aggKey = d[0];
-                let splitBy = d[1];
-                let seriesData = self.convertSeriesToGridData(allTimeStampMap, self.chartComponentData.timeArrays[aggKey][splitBy]);
-                let cells = d3.select(this).selectAll<any, unknown>('.tsi-valueCell').data(seriesData);
-                let measuresData = self.chartOptions.spMeasures ? self.chartOptions.spMeasures : self.chartComponentData.displayState[aggKey].splitBys[splitBy].types;
+        const measuresData = this.chartOptions.spMeasures ??
+            this.chartComponentData.displayState[aggKey].splitBys[splitBy].types;
 
-                // Get the color for this row
-                let rowColor = self.getRowColor(aggKey, splitBy);
+        const getRowHeaderText = (): string => {
+            return `${this.chartComponentData.displayState[aggKey].name}${splitBy !== '' ? `: ${splitBy}` : ''}`;
+        };
 
-                //Row header with the name of the series
-                let headerCell = d3.select(this).selectAll<any, unknown>('tsi-rowHeaderCell').data([d]);
+        const cells = d3.select(element).selectAll<HTMLTableCellElement, GridCell>('.tsi-valueCell').data(seriesData);
 
-                let getRowHeaderText = (d) => {
-                    return `${self.chartComponentData.displayState[aggKey].name}${(splitBy !== '' ? (': ' + splitBy) : '')}`;
+        const cellsEntered = cells.enter()
+            .append('td')
+            .merge(cells)
+            .attr('class', (d, col) => `tsi-valueCell ${this.cellClass(rowIndex + 1, col + 1)}`)
+            .on('keydown', (event) => {
+                const nodes = cellsEntered.nodes();
+                const col = nodes.indexOf(event.currentTarget as HTMLTableCellElement);
+                this.arrowNavigate(event, rowIndex + 1, col + 1);
+            })
+            .attr('tabindex', 1)
+            .attr('aria-label', (d: GridCell, i) => {
+                if (!d.measures || Object.keys(d.measures).length === 0) {
+                    return `${this.getString('no values at')} ${getRowHeaderText()} ${this.getString('and')} ${this.getFormattedDate(this.filteredTimestamps[i])}`;
                 }
-
-                headerCell.enter()
-                    .append('td')
-                    .attr("tabindex", 1)
-                    .merge(headerCell)
-                    .attr('class', (d, col) => `tsi-rowHeaderCell ${self.cellClass(i + 1, 0)}`)
-                    .on("keydown", (event, d) => {
-                        self.arrowNavigate(event, i + 1, 0)
-                    })
-                    .attr('aria-label', d => {
-                        return `${self.getString('row header for')} ${Utils.stripNullGuid(getRowHeaderText(d))}`;
-                    })
-                    .each(function (d) {
-                        d3.select(this).select('*').remove();
-                        let container = d3.select(this).append('div')
-                            .attr('class', 'tsi-rowHeaderContainer')
-                            .style('position', 'relative');
-
-                        // Add color indicator
-                        container.append('div')
-                            .attr('class', 'tsi-colorIndicator')
-                            .style('background-color', rowColor);
-
-                        let seriesName = container.append('div')
-                            .attr('class', 'tsi-rowHeaderSeriesName');
-                        Utils.appendFormattedElementsFromString(seriesName, getRowHeaderText(d));
-                        let measureContainer = container.append('div')
-                            .attr('class', 'tsi-rowHeaderMeasures');
-
-                        let measureNames = measureContainer.selectAll('.tsi-measureName').data(measuresData);
-                        measureNames.enter()
-                            .append('div')
-                            .attr('class', 'tsi-measureName')
-                            .text((d: any) => d);
-                    })
-                headerCell.exit().remove();
-
-                let cellsEntered = cells.enter()
-                    .append('td')
-                    .merge(cells)
-                    .attr('class', (d, col) => `tsi-valueCell ${self.cellClass(i + 1, col + 1)}`)
-                    .on("keydown", (event, d) => {
-                        const e = cellsEntered.nodes();
-                        const col = e.indexOf(event.currentTarget);
-                        self.arrowNavigate(event, i + 1, col + 1)
-                    })
-                    .attr("tabindex", 1)
-                    .attr('aria-label', (d: any, i) => {
-                        if (!d.measures || Object.keys(d.measures).length === 0) {
-                            return `${self.getString('no values at')} ${getRowHeaderText(d)} and ${self.getFormattedDate(new Date(headerCellData[i]))}`;
-                        }
-                        let formattedValues = Object.keys(d.measures).map((measureName) => {
-                            return `${measureName}: ${d.measures[measureName]}`;
-                        }).join(', ');
-                        return `${self.getString('values for cell at')} ${getRowHeaderText(d)} ${self.getString('and')} ${self.getFormattedDate(d.dateTime)} ${self.getString('are')} ${formattedValues}`;
-                    })
-                    .each(function (d: any, i) {
-                        let measures = d3.select(this).selectAll('.tsi-measureValue').data(measuresData);
-                        measures.enter()
-                            .append('div')
-                            .attr('class', 'tsi-measureValue')
-                            .text((measure: string) => d.measures ? d.measures[measure] : '');
-                        measures.exit().remove();
-                    });
-                cellsEntered.exit().remove();
+                const formattedValues = Object.entries(d.measures)
+                    .map(([measureName, value]) => `${measureName}: ${value}`)
+                    .join(', ');
+                return `${this.getString('values for cell at')} ${getRowHeaderText()} ${this.getString('and')} ${this.getFormattedDate(d.dateTime!)} ${this.getString('are')} ${formattedValues}`;
+            })
+            .each(function (d: GridCell) {
+                const measures = d3.select(this).selectAll('.tsi-measureValue').data(measuresData);
+                measures.enter()
+                    .append('div')
+                    .attr('class', 'tsi-measureValue')
+                    .text((measure: string) => d.measures?.[measure] ?? '');
+                measures.exit().remove();
             });
 
-        rowsEntered.exit().remove();
+        cells.exit().remove();
+    }
+
+    private addValueCells(): void {
+        if (!this.table) return;
+
+        const rowData = this.getRowData();
+        const rows = this.table.selectAll<HTMLTableRowElement, RowDataTuple>('.tsi-gridContentRow').data(rowData);
+
+        rows.enter()
+            .append('tr')
+            .classed('tsi-gridContentRow', true)
+            .each((d, i, nodes) => {
+                this.renderRowHeader(nodes[i], d, i);
+                this.renderValueCells(nodes[i], d, i);
+            });
+
+
+        rows.exit().remove();
     }
 
     public render(data: any, options: any, aggregateExpressionOptions: any, chartComponentData: ChartComponentData = null) {
@@ -335,41 +410,48 @@ class Grid extends Component {
         }
     }
 
-    private arrowNavigate = (d3event: any, rowIdx: number, colIdx: number) => {
-        if (d3event.keyCode === 9) {
+    private arrowNavigate = (event: KeyboardEvent, rowIdx: number, colIdx: number): void => {
+        // Handle tab to close button
+        if (event.keyCode === 9) {
             if (this.closeButton) {
-                (this.closeButton.node()).focus();
-                d3event.preventDefault();
+                this.closeButton.node()?.focus();
+                event.preventDefault();
             }
             return;
         }
-        var codes = [37, 38, 39, 40];
-        var codeIndex = codes.indexOf(d3event.keyCode);
-        if (codeIndex == -1)
-            return;
-        switch (codeIndex) {
-            case 0:
-                // left
-                this.focus(rowIdx, colIdx - 1);
-                d3event.preventDefault();
+
+        // Arrow key codes: left=37, up=38, right=39, down=40
+        const arrowKeys = [37, 38, 39, 40];
+        const keyIndex = arrowKeys.indexOf(event.keyCode);
+
+        if (keyIndex === -1) return;
+
+        // Calculate bounds
+        const maxRows = this.getRowData().length;
+        const maxCols = this.filteredTimestamps.length;
+
+        let newRow = rowIdx;
+        let newCol = colIdx;
+
+        switch (keyIndex) {
+            case 0: // left
+                newCol = Math.max(0, colIdx - 1);
                 break;
-            case 1:
-                // up
-                this.focus(rowIdx - 1, colIdx);
-                d3event.preventDefault();
+            case 1: // up
+                newRow = Math.max(0, rowIdx - 1);
                 break;
-            case 2:
-                // right
-                this.focus(rowIdx, colIdx + 1);
-                d3event.preventDefault();
+            case 2: // right
+                newCol = Math.min(maxCols, colIdx + 1);
                 break;
-            case 3:
-                // down
-                this.focus(rowIdx + 1, colIdx);
-                d3event.preventDefault();
+            case 3: // down
+                newRow = Math.min(maxRows, rowIdx + 1);
                 break;
-            default:
-                break;
+        }
+
+        // Only focus and prevent default if position actually changed
+        if (newRow !== rowIdx || newCol !== colIdx) {
+            this.focus(newRow, newCol);
+            event.preventDefault();
         }
     }
 }
