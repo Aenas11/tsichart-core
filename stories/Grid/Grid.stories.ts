@@ -106,7 +106,12 @@ function generateSampleGridData() {
         for (let roomIndex = 0; roomIndex < 2; roomIndex++) {
             const sensorName = `Sensor${String.fromCharCode(65 + sensorIndex)}`;
             const roomName = `Room${roomIndex + 1}`;
-            const rowData = {
+            const rowData: {
+                __tsiLabel__: string;
+                __tsiColor__: string;
+                __tsiAggIndex__: number;
+                [key: string]: any;
+            } = {
                 "__tsiLabel__": `${sensorName}: ${roomName}`,
                 "__tsiColor__": ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'][sensorIndex * 2 + roomIndex],
                 "__tsiAggIndex__": sensorIndex * 2 + roomIndex
@@ -139,7 +144,7 @@ function renderGrid(container: HTMLElement, options: any = {}) {
             theme: options.theme || 'light',
             fromChart: options.fromChart || false,
             offset: options.offset || 'Local',
-            dateLocale: options.dateLocale || 'en-US',
+            //dateLocale: options.dateLocale || 'en-US',
             spMeasures: ['temperature'],
             ...options
         };
@@ -187,7 +192,7 @@ function renderGrid(container: HTMLElement, options: any = {}) {
                 }
             };
 
-            chartComponentData.allTimestampsArray.forEach(timestamp => {
+            chartComponentData.allTimestampsArray.forEach((timestamp: string) => {
                 const rawValue = rowData[timestamp]?.temperature ?? null;
 
                 chartComponentData.timeArrays[aggKey][splitBy].push({
@@ -205,7 +210,7 @@ function renderGrid(container: HTMLElement, options: any = {}) {
         grid.render(sampleData, gridOptions, aggregateExpressionOptions, chartComponentData);
         // grid.render(sampleData, gridOptions, null, null);
         return grid;
-    } catch (error) {
+    } catch (error: Error | any) {
         console.error('Grid rendering error following defensive programming:', error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
             <h3>Error rendering Grid</h3>
@@ -218,7 +223,7 @@ function renderGrid(container: HTMLElement, options: any = {}) {
 function createGridStory(containerStyle: string) {
     return (args: any) => {
         const gridId = 'grid-' + Math.random().toString(36).substring(7);
-        let currentGrid = null;
+        let currentGrid: Grid | null = null;
         const updateGrid = () => {
             const container = document.getElementById(gridId);
             if (container) {
@@ -226,7 +231,7 @@ function createGridStory(containerStyle: string) {
                 if (currentGrid) {
                     container.innerHTML = '';
                 }
-                currentGrid = renderGrid(container, args);
+                currentGrid = renderGrid(container, args) ?? null;
             }
         };
 
