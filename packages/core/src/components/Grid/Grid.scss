@@ -2,52 +2,75 @@
 @use "sass:color";
 @use "../../styles" as *;
 
+// Utility mixins
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin grid-shadow($opacity: 0.3) {
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, $opacity);
+}
+
+@mixin focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  box-shadow: inset 0 0 1px 1px var(--grid-focus-color);
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: outline-offset 0.15s ease, box-shadow 0.15s ease;
+  }
+}
+
 @mixin gridColors($grays) {
   $gray1: list.nth($grays, 1); // text
-  $gray2: list.nth($grays, 2); // hover
   $gray3: list.nth($grays, 3); // element
-  $gray4: list.nth($grays, 4); // background
-  $gray5: list.nth($grays, 5);
-  $gray6: list.nth($grays, 6); // hover
+  $gray5: list.nth($grays, 5); // header background
+  $gray6: list.nth($grays, 6); // focus
 
-  color: $gray1;
-  background: $gray3;
+  // CSS Custom Properties
+  --grid-text-color: #{$gray1};
+  --grid-bg-color: #{$gray3};
+  --grid-header-bg: #{$gray5};
+  --grid-focus-color: #{$gray6};
+  --grid-border-color: #{rgba($gray1, 0.7)};
+  --grid-overlay-bg: #{rgba($gray1, 0.3)};
+  --grid-shadow-color: #{rgba($gray3, 0.3)};
+
+  color: var(--grid-text-color);
+  background: var(--grid-bg-color);
+
   &.tsi-fromChart {
-    background: rgba($gray1, 0.3);
+    background: var(--grid-overlay-bg);
+
     .tsi-gridWrapper {
-      background: $gray3;
-      box-shadow: 0px 0px 10px 4px rgba($gray3, 0.3);
+      background: var(--grid-bg-color);
+      box-shadow: 0 0 10px 4px var(--grid-shadow-color);
     }
   }
+
   .tsi-closeButton {
     background: #ccc;
-    box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.3);
+    @include grid-shadow(0.3);
   }
-  .tsi-gridWrapper {
-    table {
-      background: $gray3;
-      tr {
-        td,
-        th {
-          &:focus,
-          &:active {
-            box-shadow: inset 0px 0px 1px 1px $gray6;
-          }
-          border: 1px solid rgba($gray1, 0.7);
-        }
-        th,
-        .tsi-rowHeaderWrapper,
-        .tsi-rowHeaderCell {
-          background: $gray5;
-        }
-        .tsi-rowHeaderWrapper {
-          .tsi-measureTypeWrapper {
-            .tsi-measureType {
-              opacity: 0.6;
-            }
-          }
-        }
+
+  .tsi-gridWrapper table {
+    background: var(--grid-bg-color);
+
+    td,
+    th {
+      border: 1px solid var(--grid-border-color);
+
+      &:focus,
+      &:focus-visible {
+        @include focus-ring;
       }
+    }
+
+    th,
+    .tsi-rowHeaderCell {
+      background: var(--grid-header-bg);
     }
   }
 
@@ -59,6 +82,7 @@
     $grays: grays("dark");
     @include gridColors($grays);
   }
+
   &.tsi-light {
     $grays: grays("light");
     @include gridColors($grays);
@@ -67,12 +91,14 @@
   width: 100%;
   height: 100%;
   position: absolute;
+
   &.tsi-fromChart {
     .tsi-closeButton {
       display: block;
       opacity: 1;
       z-index: 1;
     }
+
     .tsi-gridWrapper {
       width: calc(100% - 40px);
       height: calc(100% - 40px);
@@ -85,110 +111,85 @@
     display: block;
     padding: 4px 8px;
     border-radius: 12px;
+    border: none;
     cursor: pointer;
     position: absolute;
-    right: 4px;
-    top: 4px;
+    inset: 4px 4px auto auto;
     background: #ccc;
-    border: none;
-    box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.3);
+    @include grid-shadow(0.3);
   }
 
   .tsi-gridWrapper {
     width: 100%;
     height: 100%;
     overflow: auto;
+
     table {
       font-size: 11px;
       border-collapse: collapse;
-      .tsi-gridContentRow {
-        &:hover {
-          .tsi-rowHeaderMeasures {
-            visibility: visible !important;
-          }
-        }
-
-        .tsi-valueCell {
-          padding: 0px;
-        }
-
-        .tsi-valueCell .tsi-measureValue,
-        .tsi-rowHeaderCell
-          .tsi-rowHeaderContainer
-          .tsi-rowHeaderMeasures
-          .tsi-measureName {
-          height: 20px;
-          padding: 0px 4px;
-          white-space: nowrap;
-          display: flex;
-          align-items: center;
-        }
-
-        .tsi-rowHeaderCell {
-          padding: 0px;
-          .tsi-rowHeaderContainer {
-            display: table;
-            .tsi-rowHeaderSeriesName {
-              padding: 2px;
-            }
-            .tsi-rowHeaderMeasures {
-              visibility: hidden;
-              min-width: 80px;
-              display: table;
-              display: table-cell;
-              text-align: center;
-              vertical-align: middle;
-
-              .tsi-measureName {
-                opacity: 0.6;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                align-content: flex-end;
-                justify-content: flex-end;
-              }
-            }
-          }
-        }
-      }
-
-      tr {
-        th,
-        .tsi-rowHeaderWrapper,
-        .tsi-rowHeaderCell {
-          padding: 2px;
-          white-space: nowrap;
-        }
-        td {
-          padding: 2px;
-        }
-        .tsi-rowHeaderWrapper {
-          border-left: 4px solid transparent;
-          white-space: nowrap;
-          position: relative;
-          padding-right: 88px;
-          .tsi-rowHeader {
-            max-width: 150px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-          }
-          .tsi-measureTypeWrapper {
-            position: absolute;
-            right: 4px;
-            top: 2px;
-            display: none;
-            max-width: 76px;
-            overflow: hidden;
-            .tsi-measureType {
-              text-overflow: ellipsis;
-              overflow: hidden;
-              display: block;
-              opacity: 0.6;
-            }
-          }
-        }
-      }
     }
+  }
+
+  // Shared measure item styles
+  .tsi-measureValue,
+  .tsi-measureName {
+    height: 20px;
+    padding: 0 4px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+
+  .tsi-measureName {
+    opacity: 0.6;
+    @include text-ellipsis;
+    justify-content: flex-end;
+  }
+
+  // Grid content rows
+  .tsi-gridContentRow:hover .tsi-rowHeaderMeasures {
+    visibility: visible;
+  }
+
+  .tsi-valueCell {
+    padding: 0;
+  }
+
+  .tsi-rowHeaderCell {
+    padding: 0;
+  }
+
+  .tsi-rowHeaderContainer {
+    position: relative;
+  }
+
+  .tsi-colorIndicator {
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    inset: 0 auto 0 0;
+  }
+
+  .tsi-rowHeaderSeriesName {
+    padding: 2px;
+    padding-inline-start: 8px;
+  }
+
+  .tsi-rowHeaderMeasures {
+    visibility: hidden;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  // Table cell defaults
+  th,
+  .tsi-rowHeaderCell {
+    padding: 2px;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 2px;
   }
 
   .tsi-baseMono {

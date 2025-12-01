@@ -37,16 +37,16 @@ describe('ColorPicker', () => {
             expect(renderTarget.querySelector('.tsi-colorGrid')).toBeTruthy();
         });
 
-        it('should apply dark theme by default', () => {
+        it('should apply light theme by default', () => {
             colorPicker.render();
 
-            expect(renderTarget.classList.contains('tsi-dark')).toBe(true);
+            expect(renderTarget.classList.contains('tsi-light')).toBe(true);
         });
 
-        it('should apply light theme when specified', () => {
-            colorPicker.render({ theme: 'light' });
+        it('should apply dark theme when specified', () => {
+            colorPicker.render({ theme: 'dark' });
 
-            expect(renderTarget.classList.contains('tsi-light')).toBe(true);
+            expect(renderTarget.classList.contains('tsi-dark')).toBe(true);
         });
 
         it('should render default number of colors (15)', () => {

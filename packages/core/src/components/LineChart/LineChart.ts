@@ -1365,6 +1365,64 @@ class LineChart extends TemporalXAxisComponent {
         return this.getHorizontalMarkersWithYScales().length ? 16 : 0;
     }
 
+    /**
+     * Calculate data context for adaptive heuristics.
+     * Analyzes current data to determine series count, data point density, and other characteristics.
+     */
+    private calculateDataContext() {
+        let seriesCount = 0;
+        let totalDataPoints = 0;
+        let hasEnvelope = false;
+        let hasUniformInterval = false;
+
+        // Count visible series and total data points
+        Object.keys(this.chartComponentData.timeArrays).forEach(aggKey => {
+            if (this.chartComponentData.displayState[aggKey]?.visible) {
+                const splitBys = this.chartComponentData.timeArrays[aggKey];
+                Object.keys(splitBys).forEach(splitBy => {
+                    seriesCount++;
+                    const dataArray = splitBys[splitBy];
+                    totalDataPoints += dataArray ? dataArray.length : 0;
+
+                    // Check for envelope data (min/max measures)
+                    if (dataArray && dataArray.length > 0 && dataArray[0].measures) {
+                        if ('min' in dataArray[0].measures && 'max' in dataArray[0].measures) {
+                            hasEnvelope = true;
+                        }
+                    }
+                });
+            }
+        });
+
+        // Check for uniform intervals by sampling first visible series
+        const firstAggKey = Object.keys(this.chartComponentData.timeArrays).find(
+            key => this.chartComponentData.displayState[key]?.visible
+        );
+        if (firstAggKey) {
+            const firstSplitBy = Object.keys(this.chartComponentData.timeArrays[firstAggKey])[0];
+            const sampleData = this.chartComponentData.timeArrays[firstAggKey]?.[firstSplitBy];
+            if (sampleData && sampleData.length > 2) {
+                const intervals = [];
+                for (let i = 1; i < Math.min(sampleData.length, 10); i++) {
+                    intervals.push(sampleData[i].dateTime.valueOf() - sampleData[i - 1].dateTime.valueOf());
+                }
+                // Check if intervals are uniform (within 5% tolerance)
+                const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                hasUniformInterval = intervals.every(interval =>
+                    Math.abs(interval - avgInterval) / avgInterval < 0.05
+                );
+            }
+        }
+
+        return {
+            seriesCount,
+            totalDataPoints,
+            hasEnvelope,
+            hasUniformInterval,
+            chartType: 'line'
+        };
+    }
+
     private drawHorizontalMarkers() {
         const markerList = this.getHorizontalMarkersWithYScales();
         const self = this;
@@ -1569,6 +1627,10 @@ class LineChart extends TemporalXAxisComponent {
         this.chartComponentData.data.forEach((d, i) => {
             this.aggregateExpressionOptions[i].aggKey = d.aggKey;
         });
+
+        // Apply adaptive heuristics based on actual data characteristics
+        const dataContext = this.calculateDataContext();
+        this.chartOptions.applyAdaptiveHeuristics(dataContext);
         if (this.chartOptions.xAxisHidden && this.chartOptions.focusHidden) {
             this.chartMargins.bottom = 5;
         }

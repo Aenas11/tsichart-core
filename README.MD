@@ -17,8 +17,7 @@ A powerful, flexible JavaScript library for visualizing time series data with **
 [![npm version](https://badge.fury.io/js/tsichart-core.svg)](https://www.npmjs.com/package/tsichart-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/Aenas11/tsichart-core)
-[![Live Examples](https://img.shields.io/badge/Examples-Live%20Demo-green)](https://aenas11.github.io/tsichart-core/) 
-[![Storybook](https://img.shields.io/badge/Storybook-Component%20Docs-ff69b4)](https://aenas11.github.io/tsichart-core/storybook/) 
+[![Storybook](https://img.shields.io/badge/Storybook-Component%20Docs-ff69b4)](https://aenas11.github.io/tsichart-core/) 
 
 ## Installation
 
