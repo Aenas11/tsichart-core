@@ -551,7 +551,7 @@ Available tilesets:
         }
     },
     args: {
-        subscriptionKey: (import.meta as any).env?.VITE_AZURE_MAPS_KEY || 'ENTER-YOUR-KEY-HERE'
+        subscriptionKey: import.meta.env.VITE_AZURE_MAPS_KEY || 'ENTER-YOUR-KEY-HERE'
     },
     argTypes: {
         theme: {
