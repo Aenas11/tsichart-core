@@ -551,7 +551,7 @@ Available tilesets:
         }
     },
     args: {
-        subscriptionKey: import.meta.env.VITE_AZURE_MAPS_KEY || 'ENTER-YOUR-KEY-HERE'
+        subscriptionKey: import.meta.env.VITE_AZURE_MAPS_KEY || ''
     },
     argTypes: {
         theme: {
@@ -560,8 +560,8 @@ Available tilesets:
             description: 'Visual theme for the map'
         },
         subscriptionKey: {
-            control: false,
-            description: 'Azure Maps subscription key - Set via VITE_AZURE_MAPS_KEY in .env file',
+            control: { type: 'text' },
+            description: 'Azure Maps subscription key - Enter your own key for the demo to work',
             table: {
                 type: { summary: 'string' },
                 defaultValue: { summary: 'import.meta.env.VITE_AZURE_MAPS_KEY' }
