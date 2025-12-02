@@ -41,14 +41,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Environment variables with VITE_ prefix are embedded at build time by Vite
+      # Priority: vars.VITE_AZURE_MAPS_KEY (repository/environment variable) then secrets.VITE_AZURE_MAPS_KEY (secret)
+      # To configure: Go to Settings → Secrets and variables → Actions
+      #   - For secrets: Add under "Secrets" tab
+      #   - For variables: Add under "Variables" tab
       - name: Build core package (required for Storybook)
         env:
-          VITE_AZURE_MAPS_KEY: ${{ secrets.VITE_AZURE_MAPS_KEY }}
+          VITE_AZURE_MAPS_KEY: ${{ vars.VITE_AZURE_MAPS_KEY || secrets.VITE_AZURE_MAPS_KEY }}
         run: pnpm build:core
 
       - name: Build Storybook
         env:
-          VITE_AZURE_MAPS_KEY: ${{ secrets.VITE_AZURE_MAPS_KEY }}
+          VITE_AZURE_MAPS_KEY: ${{ vars.VITE_AZURE_MAPS_KEY || secrets.VITE_AZURE_MAPS_KEY }}
         run: pnpm build-storybook --output-dir ./storybook-static
 
       - name: Upload artifact

@@ -675,10 +675,11 @@ function renderGeoProcessGraphic(container: HTMLElement, options: IGeoProcessGra
 
     } catch (error) {
         console.error('GeoProcessGraphic rendering error:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         container.innerHTML = `
             <div style="color: red; padding: 20px; font-family: monospace;">
                 <h3>Error rendering GeoProcessGraphic</h3>
-                <p><strong>Error:</strong> ${error.message}</p>
+                <p><strong>Error:</strong> ${errorMessage}</p>
                 <p><small>Check browser console for more details</small></p>
             </div>
         `;
