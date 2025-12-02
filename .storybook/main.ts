@@ -1,7 +1,6 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
 import { createRequire } from "node:module";
 import type { StorybookConfig } from '@storybook/web-components-vite';
-import { mergeConfig } from 'vite';
 
 import { join, dirname } from "path"
 
@@ -29,12 +28,13 @@ const config: StorybookConfig = {
     "options": {}
   },
   async viteFinal(config) {
-    // Ensure environment variables are properly defined for the build
-    return mergeConfig(config, {
-      define: {
-        'import.meta.env.VITE_AZURE_MAPS_KEY': JSON.stringify(process.env.VITE_AZURE_MAPS_KEY || '')
-      }
-    });
+    // Ensure VITE_ prefixed environment variables are available in the build
+    // This is needed for variables set in CI/CD (GitHub Actions)
+    config.define = config.define || {};
+    config.define['import.meta.env.VITE_AZURE_MAPS_KEY'] = JSON.stringify(
+      process.env.VITE_AZURE_MAPS_KEY || ''
+    );
+    return config;
   }
 };
 export default config;
