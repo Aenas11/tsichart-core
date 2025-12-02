@@ -26,15 +26,6 @@ const config: StorybookConfig = {
   "framework": {
     "name": getAbsolutePath('@storybook/web-components-vite'),
     "options": {}
-  },
-  async viteFinal(config) {
-    // Ensure VITE_ prefixed environment variables are available in the build
-    // This is needed for variables set in CI/CD (GitHub Actions)
-    config.define = config.define || {};
-    config.define['import.meta.env.VITE_AZURE_MAPS_KEY'] = JSON.stringify(
-      process.env.VITE_AZURE_MAPS_KEY || ''
-    );
-    return config;
   }
 };
 export default config;
