@@ -560,8 +560,8 @@ Available tilesets:
             description: 'Visual theme for the map'
         },
         subscriptionKey: {
-            control: false,
-            description: 'Azure Maps subscription key - Set via VITE_AZURE_MAPS_KEY in .env file',
+            control: { type: 'text' },
+            description: 'Azure Maps subscription key - Enter your own key for the demo to work',
             table: {
                 type: { summary: 'string' },
                 defaultValue: { summary: 'import.meta.env.VITE_AZURE_MAPS_KEY' }
@@ -675,20 +675,21 @@ function renderGeoProcessGraphic(container: HTMLElement, options: IGeoProcessGra
 
     } catch (error) {
         console.error('GeoProcessGraphic rendering error:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         container.innerHTML = `
-            <div style="color: red; padding: 20px; font-family: monospace;">
-                <h3>Error rendering GeoProcessGraphic</h3>
-                <p><strong>Error:</strong> ${error.message}</p>
-                <p><small>Check browser console for more details</small></p>
-            </div>
-        `;
+            < div style = "color: red; padding: 20px; font-family: monospace;" >
+                <h3>Error rendering GeoProcessGraphic </h3>
+                    < p > <strong>Error: </strong> ${errorMessage}</p >
+                        <p><small>Check browser console for more details < /small></p >
+                            </div>
+                                `;
         return null;
     }
 }
 
 function createGeoStory(containerStyle: string, storyName?: string) {
     return (args: IGeoProcessGraphicOptions) => {
-        const chartId = `geo-chart-${Math.random().toString(36).substring(7)}`;
+        const chartId = `geo - chart - ${Math.random().toString(36).substring(7)} `;
 
         setTimeout(() => {
             const container = document.getElementById(chartId);
@@ -698,10 +699,10 @@ function createGeoStory(containerStyle: string, storyName?: string) {
         }, 50);
 
         return html`
-            <div style="${containerStyle}">
-                <div id="${chartId}" style="height: 100%; width: 100%;"></div>
-            </div>
-        `;
+            < div style = "${containerStyle}" >
+                <div id="${chartId}" style = "height: 100%; width: 100%;" > </div>
+                    </div>
+                        `;
     };
 }
 

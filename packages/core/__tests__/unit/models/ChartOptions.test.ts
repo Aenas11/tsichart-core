@@ -7,7 +7,7 @@ describe('ChartOptions', () => {
             const chartOptions = new ChartOptions();
             chartOptions.setOptions({});
 
-            expect(chartOptions.grid).toBe(false);
+            expect(chartOptions.grid).toBe(true);
             expect(chartOptions.preserveAvailabilityState).toBe(false);
             expect(chartOptions.isCompact).toBe(false);
             expect(chartOptions.keepBrush).toBe(false);
@@ -19,27 +19,28 @@ describe('ChartOptions', () => {
             expect(chartOptions.yAxisHidden).toBe(false);
             expect(chartOptions.focusHidden).toBe(false);
             expect(chartOptions.singleLineXAxisLabel).toBe(false);
-            expect(chartOptions.legend).toBe('hidden');
-            expect(chartOptions.tooltip).toBe(false);
+            expect(chartOptions.legend).toBe('shown');
+            expect(chartOptions.tooltip).toBe(true);
             expect(chartOptions.throttleSlider).toBe(false);
             expect(chartOptions.snapBrush).toBe(false);
-            expect(chartOptions.minBrushWidth).toBe(0);
-            expect(chartOptions.theme).toBe('dark');
+            expect(chartOptions.minBrushWidth).toBe(1);
+            expect(chartOptions.theme).toBe('light');
             expect(chartOptions.keepSplitByColor).toBe(false);
             expect(chartOptions.fromChart).toBe(false);
             expect(chartOptions.stacked).toBe(false);
             expect(chartOptions.scaledToCurrentTime).toBe(false);
             expect(chartOptions.zeroYAxis).toBe(true);
-            expect(chartOptions.arcWidthRatio).toBe(0);
+            expect(chartOptions.arcWidthRatio).toBe(0.55);
             expect(chartOptions.bucketSizeMillis).toBe(0);
             expect(chartOptions.brushClearable).toBe(true);
             expect(chartOptions.yAxisState).toBe('stacked');
             expect(chartOptions.xAxisHidden).toBe(false);
             expect(chartOptions.suppressResizeListener).toBe(false);
-            expect(chartOptions.brushHandlesVisible).toBe(false);
-            expect(chartOptions.hideChartControlPanel).toBe(true);
+            expect(chartOptions.brushHandlesVisible).toBe(true);
+            expect(chartOptions.hideChartControlPanel).toBe(false);
             expect(chartOptions.offset).toBe(0);
-            expect(chartOptions.is24HourTime).toBe(true);
+            // is24HourTime is now locale-dependent, defaults to true for most locales except en-US, en-AU, en-CA, en-NZ, en-PH
+            expect(typeof chartOptions.is24HourTime).toBe('boolean');
             expect(chartOptions.includeTimezones).toBe(true);
             expect(chartOptions.availabilityLeftMargin).toBe(60);
             expect(chartOptions.includeEnvelope).toBe(false);
@@ -234,8 +235,8 @@ describe('ChartOptions', () => {
             chartOptions.setOptions(undefined);
 
             // Should set defaults without crashing
-            expect(chartOptions.grid).toBe(false);
-            expect(chartOptions.theme).toBe('dark');
+            expect(chartOptions.grid).toBe(true);
+            expect(chartOptions.theme).toBe('light');
         });
 
         it('should handle null options object', () => {
@@ -243,8 +244,8 @@ describe('ChartOptions', () => {
             chartOptions.setOptions(null);
 
             // Should set defaults without crashing
-            expect(chartOptions.grid).toBe(false);
-            expect(chartOptions.theme).toBe('dark');
+            expect(chartOptions.grid).toBe(true);
+            expect(chartOptions.theme).toBe('light');
         });
     });
 

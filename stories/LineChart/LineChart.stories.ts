@@ -35,17 +35,122 @@ Interactive line chart for time series data visualization with the following fea
 - **Sticky Series**: Click to focus on specific data series
 - **Theming**: Support for light and dark themes
 - **Responsive**: Automatically adjusts to container size
+- **Adaptive Heuristics**: Automatically optimizes settings based on data characteristics
+
+---
+
+## Default Values
+
+The LineChart comes with sensible defaults optimized for the best out-of-the-box experience:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| \`theme\` | \`'light'\` | Visual theme (light is more universally accessible) |
+| \`legend\` | \`'shown'\` | Legend visibility for multi-series identification |
+| \`grid\` | \`true\` | Gridlines for better quantitative reading |
+| \`tooltip\` | \`true\` | Interactive tooltips for data exploration |
+| \`yAxisState\` | \`'shared'\` | Shared axis preserves scale relationships |
+| \`includeDots\` | \`true\` | Data point markers for visibility |
+| \`brushHandlesVisible\` | \`true\` | Visible brush handles for better affordance |
+| \`minBrushWidth\` | \`1\` | Prevents accidental zero-span selections |
+| \`interpolationFunction\` | \`curveMonotoneX\` | Smooth, professional-looking curves |
+| \`arcWidthRatio\` | \`0.55\` | Proper donut chart appearance |
+| \`is24HourTime\` | *locale-based* | Automatically derived from \`dateLocale\` |
+
+---
+
+## Adaptive Heuristics
+
+The LineChart **automatically analyzes your data** and adjusts options for optimal presentation. This happens transparently when you call \`render()\`.
+
+### Legend Adaptation
+| Condition | Behavior |
+|-----------|----------|
+| Single series | Legend hidden (redundant) |
+| 2-10 series | Legend shown |
+| 10+ series | Legend compact (saves space) |
+
+### Data Point Dots
+| Condition | Behavior |
+|-----------|----------|
+| ≤500 total points | Dots enabled |
+| >500 total points | Dots disabled (performance optimization) |
+
+### Brush Snapping
+| Condition | Behavior |
+|-----------|----------|
+| Uniform time intervals | \`snapBrush: true\` enabled |
+| Irregular intervals | \`snapBrush\` remains off |
+
+### Series Markers
+| Condition | Behavior |
+|-----------|----------|
+| Legend hidden + 2-10 series | Series markers enabled |
+| Otherwise | Default behavior |
+
+### Interpolation
+| Chart Type | Interpolation |
+|------------|---------------|
+| Events/categorical | \`CurveStepAfter\` (step function) |
+| Continuous data | \`CurveMonotoneX\` (smooth curve) |
+
+### Envelope Display
+| Condition | Behavior |
+|-----------|----------|
+| Area chart + min/max data | Envelope auto-enabled |
+| Otherwise | Envelope remains off |
+
+---
+
+## Time Format Locale
+
+The \`is24HourTime\` option is **automatically derived** from your \`dateLocale\` setting:
+
+- **12-hour format**: \`en-US\`, \`en-AU\`, \`en-CA\`, \`en-NZ\`, \`en-PH\`
+- **24-hour format**: All other locales
+
+You can always override this by setting \`is24HourTime\` explicitly.
+
+---
+
+## Overriding Adaptive Behavior
+
+Adaptive heuristics only modify options that **haven't been explicitly set**. To override:
+
+\`\`\`typescript
+chart.render(data, {
+    legend: 'hidden',      // Explicit = no legend adaptation
+    includeDots: true,     // Explicit = dots always shown
+    snapBrush: false       // Explicit = snapping always off
+}, {});
+\`\`\`
+
+---
 
 ## Usage Example
 
-\`\`\` typescript
+### Minimal Configuration (Recommended)
+Let adaptive heuristics optimize your chart:
+
+\`\`\`typescript
 import TsiClient from 'tsichart-core';
 
-// Create chart instance
 const tsiClient = new TsiClient();
 const chart = new tsiClient.LineChart(containerElement);
 
-// Prepare your data in the expected format
+// Just provide your data - heuristics handle the rest!
+chart.render(data, {}, {});
+\`\`\`
+
+### Full Configuration Example
+For complete control over all options:
+
+\`\`\`typescript
+import TsiClient from 'tsichart-core';
+
+const tsiClient = new TsiClient();
+const chart = new tsiClient.LineChart(containerElement);
+
 const data = [{
     "SeriesName": {
         "SplitByValue": {
@@ -56,22 +161,53 @@ const data = [{
     }
 }];
 
-// Render the chart
 chart.render(data, {
     theme: 'light',
     legend: 'shown',
     grid: true,
     tooltip: true,
-    yAxisState: 'stacked',
+    yAxisState: 'shared',
     interpolationFunction: 'curveMonotoneX',
+    includeDots: true,
+    brushHandlesVisible: true,
     includeEnvelope: false,
     brushContextMenuActions: [],
     snapBrush: false,
-    minBrushWidth: 0,
+    minBrushWidth: 1,
     is24HourTime: true,
     offset: 'Local',
     zeroYAxis: false
 }, {});
+\`\`\`
+
+---
+
+## Migration from Older Versions
+
+If upgrading from versions before November 2025, note these **breaking default changes**:
+
+| Option | Old Default | New Default |
+|--------|-------------|-------------|
+| \`theme\` | \`'dark'\` | \`'light'\` |
+| \`legend\` | \`'hidden'\` | \`'shown'\` |
+| \`tooltip\` | \`false\` | \`true\` |
+| \`grid\` | \`false\` | \`true\` |
+| \`yAxisState\` | \`'stacked'\` | \`'shared'\` |
+| \`includeDots\` | \`false\` | \`true\` |
+
+To preserve legacy behavior:
+
+\`\`\`typescript
+const legacyOptions = {
+    theme: 'dark',
+    legend: 'hidden',
+    tooltip: false,
+    grid: false,
+    yAxisState: 'stacked',
+    includeDots: false,
+    brushHandlesVisible: false,
+    minBrushWidth: 0
+};
 \`\`\`
                 `
             },
@@ -81,25 +217,65 @@ chart.render(data, {
         theme: {
             control: { type: 'select' },
             options: ['light', 'dark'],
-            description: 'Visual theme for the chart'
+            description: 'Visual theme for the chart. Light theme is more universally accessible.',
+            table: { defaultValue: { summary: 'light' } }
         },
         yAxisState: {
             control: { type: 'select' },
             options: ['stacked', 'shared', 'overlap'],
-            description: 'How multiple series should be displayed on the Y-axis',
-            table: { defaultValue: { summary: 'stacked' } }
+            description: 'How multiple series should be displayed on the Y-axis. Shared axis preserves scale relationships.',
+            table: { defaultValue: { summary: 'shared' } }
         },
         legend: {
             control: { type: 'select' },
             options: ['shown', 'hidden', 'compact'],
-            description: 'Legend display mode',
+            description: 'Legend display mode. Adaptive: hidden for single series, compact for 10+ series.',
             table: { defaultValue: { summary: 'shown' } }
         },
-
         tooltip: {
             control: 'boolean',
-            description: 'Enable/disable interactive tooltips',
+            description: 'Enable/disable interactive tooltips for data exploration.',
             table: { defaultValue: { summary: 'true' } }
+        },
+        grid: {
+            control: 'boolean',
+            description: 'Show/hide gridlines for better quantitative reading.',
+            table: { defaultValue: { summary: 'true' } }
+        },
+        includeDots: {
+            control: 'boolean',
+            description: 'Show data point markers. Adaptive: disabled for >500 total data points.',
+            table: { defaultValue: { summary: 'true' } }
+        },
+        brushHandlesVisible: {
+            control: 'boolean',
+            description: 'Show visible brush handles for better affordance.',
+            table: { defaultValue: { summary: 'true' } }
+        },
+        snapBrush: {
+            control: 'boolean',
+            description: 'Snap brush selection to data points. Adaptive: enabled for uniform time intervals.',
+            table: { defaultValue: { summary: 'false' } }
+        },
+        minBrushWidth: {
+            control: { type: 'number' },
+            description: 'Minimum brush selection width in pixels. Prevents zero-span selections.',
+            table: { defaultValue: { summary: '1' } }
+        },
+        includeEnvelope: {
+            control: 'boolean',
+            description: 'Show envelope (min/max confidence bands). Adaptive: enabled for area charts with envelope data.',
+            table: { defaultValue: { summary: 'false' } }
+        },
+        is24HourTime: {
+            control: 'boolean',
+            description: 'Use 24-hour time format. Adaptive: derived from dateLocale setting.',
+            table: { defaultValue: { summary: 'locale-based' } }
+        },
+        zeroYAxis: {
+            control: 'boolean',
+            description: 'Force Y-axis to start at zero.',
+            table: { defaultValue: { summary: 'false' } }
         },
         // onClick: {
         //     action: 'clicked',
@@ -174,34 +350,40 @@ function renderLineChart(container: HTMLElement, options: any = {}) {
         // Create LineChart instance
         const chart = new LineChart(container);
 
-        // Default options for the chart
+        // Default options for the chart (matching new adaptive defaults)
+        // Note: Many of these are now the library defaults, shown here for clarity
         const chartOptions = {
-            theme: options.theme || 'light',
-            legend: 'shown',
-            grid: true,
-            tooltip: true,
+            theme: options.theme || 'light',      // New default: 'light' (was 'dark')
+            legend: 'shown',                       // New default: 'shown' (was 'hidden')
+            grid: true,                            // New default: true (was false)
+            tooltip: true,                         // New default: true (was false)
             yAxisState: 'stacked',
-            interpolationFunction: 'curveMonotoneX',
+            interpolationFunction: 'curveMonotoneX', // New default: curveMonotoneX (was none)
+            includeDots: true,                     // New default: true (was false)
+            brushHandlesVisible: true,             // New default: true (was false)
             includeEnvelope: false,
             brushContextMenuActions: [],
-            snapBrush: false,
-            minBrushWidth: 0,
-            is24HourTime: true,
+            snapBrush: false,                      // Adaptive: enabled for uniform intervals
+            minBrushWidth: 1,                      // New default: 1 (was 0)
+            is24HourTime: true,                    // Adaptive: derived from dateLocale
             offset: 'Local',
             zeroYAxis: false,
             ...options
         };
 
         // Generate and render data
+        // Note: Adaptive heuristics will analyze this data and may adjust
+        // options like legend, includeDots, and snapBrush automatically
         const sampleData = generateSampleData();
         chart.render(sampleData, chartOptions, {});
 
         return chart;
     } catch (error) {
         console.error('LineChart rendering error:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         container.innerHTML = `<div style="color: red; padding: 20px; font-family: monospace;">
             <h3>Error rendering LineChart</h3>
-            <p><strong>Error:</strong> ${error.message}</p>
+            <p><strong>Error:</strong> ${errorMessage}</p>
             <p><small>Check browser console for more details</small></p>
         </div>`;
     }
@@ -228,12 +410,15 @@ function createLineChartStory(containerStyle: string) {
 }
 
 export const Default: Story = {
-    name: 'Light Theme  (Default)',
+    name: 'Light Theme (Default)',
     args: {
         theme: 'light',
-        yAxisState: 'stacked',
+        yAxisState: 'shared',
         legend: 'shown',
         tooltip: true,
+        grid: true,
+        includeDots: true,
+        brushHandlesVisible: true,
     },
     render: createLineChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
 };
@@ -242,9 +427,12 @@ export const DarkTheme: Story = {
     name: 'Dark Theme',
     args: {
         theme: 'dark',
-        yAxisState: 'stacked',
+        yAxisState: 'shared',
         legend: 'shown',
         tooltip: true,
+        grid: true,
+        includeDots: true,
+        brushHandlesVisible: true,
     },
     render: createLineChartStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
 };

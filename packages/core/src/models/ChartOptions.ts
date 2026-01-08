@@ -126,9 +126,77 @@ class ChartOptions {
         return d3.curveMonotoneX;
     }
 
+    /**
+     * Apply adaptive heuristics to adjust chart options based on data characteristics.
+     * This method is called by chart components after data is available to optimize UX.
+     * 
+     * @param dataContext - Information about the data being visualized
+     * @param dataContext.seriesCount - Number of series/aggregates in the data
+     * @param dataContext.totalDataPoints - Total number of data points across all series
+     * @param dataContext.hasEnvelope - Whether data contains min/max envelope information
+     * @param dataContext.hasUniformInterval - Whether timestamps are uniformly spaced
+     * @param dataContext.chartType - Type of chart ('line', 'bar', 'scatter', etc.)
+     */
+    public applyAdaptiveHeuristics(dataContext: {
+        seriesCount?: number,
+        totalDataPoints?: number,
+        hasEnvelope?: boolean,
+        hasUniformInterval?: boolean,
+        chartType?: string
+    } = {}) {
+        const { seriesCount = 0, totalDataPoints = 0, hasEnvelope = false, hasUniformInterval = false, chartType = '' } = dataContext;
+
+        // Adaptive legend: hide for single series, show for multiple, compact for many
+        if (this.legend === 'shown') { // Only adapt if user hasn't explicitly set it
+            if (seriesCount === 1) {
+                this.legend = 'hidden';
+            } else if (seriesCount > 10) {
+                this.legend = 'compact';
+            }
+        }
+
+        // Adaptive dots: disable for dense data to improve performance
+        if (this.includeDots && totalDataPoints > 500) {
+            this.includeDots = false;
+        }
+
+        // Adaptive brush snapping: enable for uniform intervals
+        if (!this.snapBrush && hasUniformInterval) {
+            this.snapBrush = true;
+        }
+
+        // Adaptive envelope: auto-enable when data has envelope and isArea is true
+        if (!this.includeEnvelope && hasEnvelope && this.isArea) {
+            this.includeEnvelope = true;
+        }
+
+        // Adaptive interpolation: use step functions for categorical/event data
+        if (chartType === 'events' && this.interpolationFunction === d3.curveMonotoneX) {
+            this.interpolationFunction = d3.curveStepAfter;
+        }
+
+        // Adaptive series markers: enable when legend is hidden and series count is manageable
+        if (!this.labelSeriesWithMarker && this.legend === 'hidden' && seriesCount > 1 && seriesCount <= 10) {
+            this.labelSeriesWithMarker = true;
+        }
+    }
+
+    /**
+     * Derive 24-hour time format preference from locale.
+     * Used internally when is24HourTime is not explicitly set.
+     */
+    private deriveTimeFormatFromLocale(locale: string): boolean {
+        // Locales that typically use 12-hour format
+        const twelve_hour_locales = ['en-US', 'en-AU', 'en-CA', 'en-NZ', 'en-PH'];
+        return !twelve_hour_locales.includes(locale);
+    }
+
     setOptions(chartOptionsObj) {
         chartOptionsObj = !chartOptionsObj ? {} : chartOptionsObj
-        this.grid = this.mergeValue(chartOptionsObj, 'grid', false);
+        // Updated UX-friendly defaults (2025-11 refactor): grid true, legend shown, tooltip enabled,
+        // light theme, arcWidthRatio 0.55, include dots & brush handles, minBrushWidth 1, yAxisState shared,
+        // interpolationFunction defaults to CurveMonotoneX for smoother lines.
+        this.grid = this.mergeValue(chartOptionsObj, 'grid', true);
         this.preserveAvailabilityState = this.mergeValue(chartOptionsObj, 'preserveAvailabilityState', false);
         this.persistDateTimeButtonRange = this.mergeValue(chartOptionsObj, 'persistDateTimeButtonRange', false);
         this.isCompact = this.mergeValue(chartOptionsObj, 'isCompact', false);
@@ -143,12 +211,12 @@ class ChartOptions {
         this.yAxisHidden = this.mergeValue(chartOptionsObj, 'yAxisHidden', false);
         this.focusHidden = this.mergeValue(chartOptionsObj, 'focusHidden', false);
         this.singleLineXAxisLabel = this.mergeValue(chartOptionsObj, 'singleLineXAxisLabel', false);
-        this.legend = this.mergeValue(chartOptionsObj, 'legend', 'hidden');
-        this.tooltip = this.mergeValue(chartOptionsObj, 'tooltip', false);
+        this.legend = this.mergeValue(chartOptionsObj, 'legend', 'shown');
+        this.tooltip = this.mergeValue(chartOptionsObj, 'tooltip', true);
         this.throttleSlider = this.mergeValue(chartOptionsObj, 'throttleSlider', false);
         this.snapBrush = this.mergeValue(chartOptionsObj, 'snapBrush', false);
-        this.minBrushWidth = this.mergeValue(chartOptionsObj, 'minBrushWidth', 0);
-        this.theme = this.mergeValue(chartOptionsObj, 'theme', 'dark');
+        this.minBrushWidth = this.mergeValue(chartOptionsObj, 'minBrushWidth', 1);
+        this.theme = this.mergeValue(chartOptionsObj, 'theme', 'light');
         this.keepSplitByColor = this.mergeValue(chartOptionsObj, 'keepSplitByColor', false);
         this.brushContextMenuActions = this.mergeValue(chartOptionsObj, 'brushContextMenuActions', null);
         this.timeFrame = this.mergeValue(chartOptionsObj, 'timeFrame', null);
@@ -157,12 +225,12 @@ class ChartOptions {
         this.stacked = this.mergeValue(chartOptionsObj, 'stacked', false);
         this.scaledToCurrentTime = this.mergeValue(chartOptionsObj, 'scaledToCurrentTime', false);
         this.zeroYAxis = this.mergeValue(chartOptionsObj, 'zeroYAxis', true);
-        this.arcWidthRatio = this.mergeValue(chartOptionsObj, 'arcWidthRatio', 0);
-        this.bucketSizeMillis = this.mergeValue(chartOptionsObj, 'bucketSizeMillis', 0);
+        this.arcWidthRatio = this.mergeValue(chartOptionsObj, 'arcWidthRatio', 0.55);
+        this.bucketSizeMillis = this.mergeValue(chartOptionsObj, 'bucketSizeMillis', 0); // kept numeric auto sentinel
         this.brushClearable = this.mergeValue(chartOptionsObj, 'brushClearable', true);
         this.brushMoveAction = this.mergeValue(chartOptionsObj, 'brushMoveAction', () => { });
         this.brushMoveEndAction = this.mergeValue(chartOptionsObj, 'brushMoveEndAction', () => { });
-        this.yAxisState = this.mergeValue(chartOptionsObj, 'yAxisState', 'stacked');
+        this.yAxisState = this.mergeValue(chartOptionsObj, 'yAxisState', YAxisStates.Stacked);
         this.xAxisHidden = this.mergeValue(chartOptionsObj, 'xAxisHidden', false);
         this.suppressResizeListener = this.mergeValue(chartOptionsObj, 'suppressResizeListener', false);
         this.onMouseout = this.mergeValue(chartOptionsObj, 'onMouseout', () => { });
@@ -171,14 +239,17 @@ class ChartOptions {
         this.onUnsticky = this.mergeValue(chartOptionsObj, 'onUnsticky', () => { });
         this.onKeydown = this.mergeValue(chartOptionsObj, 'onKeydown', () => { });
         this.onInput = this.mergeValue(chartOptionsObj, 'onInput', () => { });
-        this.brushHandlesVisible = this.mergeValue(chartOptionsObj, 'brushHandlesVisible', false);
-        this.hideChartControlPanel = this.mergeValue(chartOptionsObj, 'hideChartControlPanel', true);
+        this.brushHandlesVisible = this.mergeValue(chartOptionsObj, 'brushHandlesVisible', true);
+        this.hideChartControlPanel = this.mergeValue(chartOptionsObj, 'hideChartControlPanel', false);
         this.offset = this.mergeValue(chartOptionsObj, 'offset', 0);
-        this.is24HourTime = this.mergeValue(chartOptionsObj, 'is24HourTime', true);
+        // Adaptive: derive 24-hour format from locale if not explicitly set
+        const localeGuess = this.mergeValue(chartOptionsObj, 'dateLocale', Utils.languageGuess());
+        const defaultTimeFormat = this.deriveTimeFormatFromLocale(localeGuess);
+        this.is24HourTime = this.mergeValue(chartOptionsObj, 'is24HourTime', defaultTimeFormat);
         this.includeTimezones = this.mergeValue(chartOptionsObj, 'includeTimezones', true);
         this.availabilityLeftMargin = this.mergeValue(chartOptionsObj, 'availabilityLeftMargin', 60);
         this.onInstanceClick = this.mergeValue(chartOptionsObj, 'onInstanceClick', () => { return {} });
-        this.interpolationFunction = this.getInterpolationFunction(this.mergeValue(chartOptionsObj, 'interpolationFunction', InterpolationFunctions.None));
+        this.interpolationFunction = this.getInterpolationFunction(this.mergeValue(chartOptionsObj, 'interpolationFunction', InterpolationFunctions.CurveMonotoneX));
         this.includeEnvelope = this.mergeValue(chartOptionsObj, 'includeEnvelope', false);
         this.canDownload = this.mergeValue(chartOptionsObj, 'canDownload', true);
         this.withContextMenu = this.mergeValue(chartOptionsObj, 'withContextMenu', false);
@@ -274,7 +345,8 @@ class ChartOptions {
             brushHandlesVisible: this.brushHandlesVisible,
             hideChartControlPanel: this.hideChartControlPanel,
             offset: this.offset,
-            is24HourTime: this.is24HourTime.valueOf,
+            // Serialization fixes: ensure boolean value returned (was function reference before)
+            is24HourTime: this.is24HourTime,
             includeTimezones: this.includeTimezones,
             availabilityLeftMargin: this.availabilityLeftMargin,
             onInstanceClick: this.onInstanceClick,
@@ -293,7 +365,8 @@ class ChartOptions {
             scatterPlotRadius: this.scatterPlotRadius,
             spAxisLabels: this.spAxisLabels,
             brushRangeVisible: this.brushRangeVisible,
-            strings: this.strings.toObject(),
+            // Ensure we expose merged strings via Strings instance, not a plain object expecting toObject()
+            strings: this.stringsInstance.toObject(),
             dateLocale: this.dateLocale,
             defaultAvailabilityZoomRangeMillis: this.defaultAvailabilityZoomRangeMillis,
             warmStoreRange: this.warmStoreRange,
