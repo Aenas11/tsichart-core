@@ -5,6 +5,8 @@ import HistoryPlayback, {
 } from "./../../components/HistoryPlayback";
 import Utils from "../../utils";
 import TsqExpression from "../../models/TsqExpression";
+import { TsqRange } from "../../models/TsqRange";
+import PlaybackControls from "../../components/PlaybackControls";
 
 class ProcessGraphic extends HistoryPlayback {
   private graphicSrc: string;
@@ -21,7 +23,92 @@ class ProcessGraphic extends HistoryPlayback {
     chartOptions
   ) {
     this.graphicSrc = graphicSrc;
-    this.renderBase(environmentFqdn, getToken, data, chartOptions);
+
+    // Initialize component structure
+    this.cleanup();
+    this.initializeComponent();
+
+    // Set up expressions and options
+    this.tsqExpressions = data;
+    this.chartOptions.setOptions(chartOptions);
+    this.playbackRate = this.chartOptions.updateInterval || this.defaultPlaybackRate;
+
+    // Initialize availability for playback controls
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    this.availability = new TsqRange(oneDayAgo, now);
+    this.availability.setNeatBucketSizeByNumerOfBuckets(this.numberOfBuckets);
+    this.availability.alignWithServerEpoch();
+
+    // Initialize playback controls
+    this.playbackControls = new PlaybackControls(this.playbackControlsContainer.node() as Element);
+
+    // Load the image and render
+    this.loadResources()
+      .then(() => this.draw())
+      .catch((error) => {
+        console.error('Failed to load process graphic:', error);
+        this.showErrorMessage('Failed to load process diagram image');
+      });
+  }
+
+  private cleanup(): void {
+    if (this.targetElement) {
+      this.targetElement.selectAll("*").remove();
+    }
+  }
+
+  private initializeComponent(): void {
+    this.targetElement = d3.select(this.renderTarget);
+    this.targetElement.selectAll("*").remove();
+
+    this.componentContainer = this.targetElement
+      .append("div")
+      .attr("class", "tsi-processGraphicContainer");
+
+    this.component = this.componentContainer
+      .append("div")
+      .attr("class", "tsi-processGraphic");
+
+    this.playbackControlsContainer = this.targetElement
+      .append("div")
+      .attr("class", "tsi-playbackControlsContainer");
+  }
+
+  private showErrorMessage(message: string): void {
+    if (this.component) {
+      this.component
+        .selectAll("*")
+        .remove();
+      this.component
+        .append("div")
+        .style("color", "red")
+        .style("padding", "16px")
+        .style("text-align", "center")
+        .text(message);
+    }
+  }
+
+  private onSelecTimestamp(timeStamp: Date) {
+    const mockResults = this.getMockDataForTimestamp(timeStamp);
+    this.getDataPoints(mockResults);
+  }
+
+  private getMockDataForTimestamp(timeStamp: Date): Array<any> {
+    // Return mock data matching your expressions
+    return this.tsqExpressions.map((expr, index) => {
+      const baseValues = [45, 80, 65]; // Compressor, Pump, Valve base values
+      const variance = [10, 15, 8];
+      const value = baseValues[index] + (Math.random() - 0.5) * variance[index];
+
+      return {
+        properties: [
+          {
+            values: [Math.max(0, value)]
+          }
+        ]
+      };
+    });
   }
 
   protected loadResources(): Promise<GraphicInfo> {
@@ -67,7 +154,20 @@ class ProcessGraphic extends HistoryPlayback {
       .style("width", `${resizedImageDim.width}px`)
       .style("height", `${resizedImageDim.height}px`);
 
-    this.drawBase();
+    this.playbackControlsContainer
+      .style("width", `${this.renderTarget.clientWidth}px`)
+      .style("height", `${this.playbackSliderHeight}px`);
+
+    this.playbackControls.render(
+      this.availability.from,
+      this.availability.to,
+      this.onSelecTimestamp,  // Pass the callback here
+      this.chartOptions,
+      {
+        intervalMillis: this.playbackRate,
+        stepSizeMillis: this.availability.bucketSizeMillis,
+      }
+    );
   }
 
   private getResizedImageDimensions(
@@ -83,10 +183,6 @@ class ProcessGraphic extends HistoryPlayback {
       };
     }
 
-    // Calculate the factor we would need to multiply width by to make it fit in the container.
-    // Do the same for height. The smallest of those two corresponds to the largest size reduction
-    // needed. Multiply both width and height by the smallest factor to a) ensure we maintain the
-    // aspect ratio of the image b) ensure the image fits inside the container.
     let widthFactor = containerWidth / imageWidth;
     let heightFactor = containerHeight / imageHeight;
     let resizeFactor = Math.min(widthFactor, heightFactor);
