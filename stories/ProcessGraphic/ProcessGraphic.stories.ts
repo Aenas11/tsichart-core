@@ -279,36 +279,6 @@ export default meta;
 type Story = StoryObj<IProcessGraphicOptions>;
 
 
-function generateSampleProcessData() {
-    const data: any[] = [];
-    const from = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
-
-    const components = {
-        'Compressor': { start: 40, variance: 10 },
-        'Pump': { start: 75, variance: 15 },
-        'Valve': { start: 60, variance: 8 }
-    };
-
-    for (const [componentKey, { start, variance }] of Object.entries(components)) {
-        const componentData: any = {};
-        componentData[componentKey] = {
-            "": {}
-        };
-
-        for (let i = 0; i < 24; i++) {
-            const timestamp = new Date(from.getTime() + i * 60 * 60 * 1000);
-            const isoString = timestamp.toISOString();
-
-            const value = start + (Math.random() - 0.5) * variance;
-            componentData[componentKey][""][isoString] = { value: Math.max(0, value) };
-        }
-
-        data.push(componentData);
-    }
-
-    return data;
-}
-
 function createProcessExpressions() {
     const timeSpanStart = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
     const timeSpanEnd = new Date();
@@ -403,7 +373,7 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
     }
 }
 
-function createProcessGraphicStory(containerStyle: string = '') {
+function createProcessGraphicStory() {
     return (args: any) => {
         return html`
             <style>
@@ -506,7 +476,7 @@ export const Default: Story = {
         theme: 'light',
         updateInterval: 3000,
     },
-    render: createProcessGraphicStory('height: 600px; width: 100%; border: 1px solid #ddd; border-radius: 4px;')
+    render: createProcessGraphicStory()
 };
 
 
@@ -516,7 +486,7 @@ export const DarkTheme: Story = {
         theme: 'dark',
         updateInterval: 3000,
     },
-    render: createProcessGraphicStory('height: 600px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
+    render: createProcessGraphicStory()
 };
 
 
@@ -546,7 +516,7 @@ export const Interaction: Story = {
         theme: 'light',
         updateInterval: 2000,
     },
-    render: createProcessGraphicStory('height: 600px; width: 100%;'),
+    render: createProcessGraphicStory(),
     play: async ({ canvasElement }) => {
         await waitFor(() => {
             const graphic = canvasElement.querySelector('.tsi-processGraphic');
