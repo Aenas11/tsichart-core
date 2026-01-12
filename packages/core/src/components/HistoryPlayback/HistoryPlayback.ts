@@ -61,18 +61,13 @@ abstract class HistoryPlayback extends Component {
     }
   }
 
-  private onSelecTimestamp(timeStamp: Date) {
-    let queryWindow = this.calcQueryWindow(timeStamp);
+  private onSelecTimestamp = (timeStamp: Date) => {
+    const results = this.getMockDataForTimestamp(timeStamp);
+    this.getDataPoints(results);
+  }
 
-    let tsqArray = this.tsqExpressions.map((tsqExpression) => {
-      tsqExpression.searchSpan = {
-        from: queryWindow.fromMillis,
-        to: queryWindow.toMillis,
-        bucketSize: queryWindow.bucketSize,
-      };
-      return tsqExpression.toTsq();
-    });
-
+  protected getMockDataForTimestamp(timeStamp: Date): Array<any> {
+    return [];
   }
 
   private calcQueryWindow(timeStamp: Date) {
