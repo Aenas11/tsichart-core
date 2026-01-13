@@ -16,8 +16,6 @@ class ProcessGraphic extends HistoryPlayback {
   }
 
   render(
-    environmentFqdn: string,
-    getToken: () => Promise<string>,
     graphicSrc: string,
     data: Array<TsqExpression>,
     chartOptions

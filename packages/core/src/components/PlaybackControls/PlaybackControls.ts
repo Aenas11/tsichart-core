@@ -30,6 +30,8 @@ class PlaybackControls extends Component {
   private playbackInterval: number | null = null;
   private playButton: D3Selection<HTMLButtonElement> | null = null;
   private handleElement: D3Selection<SVGCircleElement> | null = null;
+  private decreasePlaybackSpeedButton: D3Selection<HTMLButtonElement> | null = null;
+  private increasePlaybackSpeedButton: D3Selection<HTMLButtonElement> | null = null;
   private controlsContainer: D3Selection<HTMLDivElement> | null = null;
   private track: D3Selection<SVGGElement> | null = null;
   private trackXOffset: number;
@@ -175,6 +177,65 @@ class PlaybackControls extends Component {
       .classed('tsi-playback-timestamp', true)
       .style('margin', `0 ${this.trackXOffset}px`);
 
+    const MIN_SPEED = 0.25;
+    const SPEED_STEP = 0.25;
+    let currentSpeed = 1;
+
+    const baseIntervalMillis = this.playbackSettings.intervalMillis;
+
+    const updateInterval = () => {
+      const dynamicMinInterval = PlaybackControls.CONSTANTS.MINIMUM_PLAYBACK_INTERVAL_MS / currentSpeed;
+      this.playbackSettings.intervalMillis = Math.max(
+        Math.round(baseIntervalMillis / currentSpeed),
+        dynamicMinInterval
+      );
+    };
+
+    const updateSpeedButtonLabels = () => {
+      this.decreasePlaybackSpeedButton.text(`<< ${SPEED_STEP}`);
+      this.increasePlaybackSpeedButton.text(` ${SPEED_STEP} >>`);
+      currentSpeedDisplay.text(`Current speed: ${currentSpeed.toFixed(2)}`);
+    };
+
+    this.decreasePlaybackSpeedButton = this.controlsContainer.append('button')
+      .classed('tsi-decrease-playback-speed-button', true)
+      .attr('aria-label', 'Decrease playback speed')
+      .attr('title', 'Decrease playback speed')
+      .style('width', '70px');
+
+    this.decreasePlaybackSpeedButton.on('click', () => {
+      currentSpeed = Math.max(currentSpeed - SPEED_STEP, MIN_SPEED);
+      updateInterval();
+      updateSpeedButtonLabels();
+      if (this.playbackInterval !== null) {
+        this.pause();
+        this.play();
+      }
+    });
+
+    const currentSpeedDisplay = this.controlsContainer.append('div')
+      .classed('tsi-current-playback-speed', true)
+      .text(`Current speed: ${currentSpeed.toFixed(2)}`);
+
+    this.increasePlaybackSpeedButton = this.controlsContainer.append('button')
+      .classed('tsi-increase-playback-speed-button', true)
+      .attr('aria-label', 'Increase playback speed')
+      .attr('title', 'Increase playback speed')
+      .style('width', '70px');
+
+    this.increasePlaybackSpeedButton.on('click', () => {
+      currentSpeed = currentSpeed + SPEED_STEP;
+      updateInterval();
+      updateSpeedButtonLabels();
+      if (this.playbackInterval !== null) {
+        this.pause();
+        this.play();
+      }
+    });
+
+
+
+    updateSpeedButtonLabels();
     this.selectedTimeStamp = this.selectedTimeStamp || start;
     let handlePosition = this.timeStampToPosition(this.selectedTimeStamp);
     this.updateSelection(handlePosition, this.selectedTimeStamp);
@@ -184,7 +245,8 @@ class PlaybackControls extends Component {
     if (this.playbackInterval === null) {
       // Default to an interval if one is not provided. Also, the interval should
       // not be lower than the minimum playback interval.
-      let playbackIntervalMs = Math.max(this.playbackSettings.intervalMillis || this.minimumPlaybackInterval, this.minimumPlaybackInterval);
+      // let playbackIntervalMs = Math.max(this.playbackSettings.intervalMillis || this.minimumPlaybackInterval, this.minimumPlaybackInterval);
+      let playbackIntervalMs = this.playbackSettings.intervalMillis;
 
       this.next();
       this.playbackInterval = window.setInterval(this.next.bind(this), playbackIntervalMs);

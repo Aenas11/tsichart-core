@@ -273,10 +273,26 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
         };
 
         const onSelectTimeStamp = (selectedTime: Date) => {
+            const existingMarkers = chartOptions.markers || [];
+            const playbackMarkerIndex = existingMarkers.findIndex(marker =>
+                marker[1] && marker[1].startsWith('Playback:')
+            );
+
+            const playbackMarker = [selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`];
+            let updatedMarkers;
+
+            if (playbackMarkerIndex >= 0) {
+                // Update existing playback marker position
+                updatedMarkers = [...existingMarkers];
+                updatedMarkers[playbackMarkerIndex] = playbackMarker;
+            } else {
+                // Add new playback marker
+                updatedMarkers = [...existingMarkers, playbackMarker];
+            }
 
             const updatedChartOptions = {
                 ...chartOptions,
-                markers: [[selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`]],
+                markers: updatedMarkers,
                 brushStartTime: new Date(selectedTime.getTime() - 30 * 60 * 1000),
                 brushEndTime: new Date(selectedTime.getTime() + 30 * 60 * 1000)
             };
@@ -288,7 +304,24 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
                 options.onSelectTimeStamp(selectedTime);
             }
 
-            return {};
+            // Update chartOptions to maintain state for next iteration
+            chartOptions.markers = updatedMarkers;
+
+            // const updatedChartOptions = {
+            //     ...chartOptions,
+            //     markers: [[selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`]],
+            //     brushStartTime: new Date(selectedTime.getTime() - 30 * 60 * 1000),
+            //     brushEndTime: new Date(selectedTime.getTime() + 30 * 60 * 1000)
+            // };
+
+            // lineChart.render(chartData, updatedChartOptions, {});
+
+            // updateStatus(`Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
+            // if (options.onSelectTimeStamp) {
+            //     options.onSelectTimeStamp(selectedTime);
+            // }
+
+            // return {};
         };
 
         playbackControls.render(

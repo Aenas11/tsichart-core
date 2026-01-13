@@ -87,8 +87,6 @@ const expressions = [
 ];
 
 processGraphic.render(
-    'your-environment-fqdn.timeseries.azure.com',
-    () => getTokenPromise(),
     graphicImageUrl,
     expressions,
     {
@@ -327,11 +325,6 @@ function getSampleDiagramUrl(): string {
     return '/images/Process.jpg';
 }
 
-function mockGetToken() {
-    return Promise.resolve('mock-token-' + Date.now());
-}
-
-
 function renderProcessGraphic(container: HTMLElement, options: any = {}) {
     container.innerHTML = '';
 
@@ -358,8 +351,6 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
         };
 
         processGraphic.render(
-            'demo-environment.timeseries.azure.com',
-            mockGetToken,
             diagramUrl,
             expressions,
             graphicOptions
