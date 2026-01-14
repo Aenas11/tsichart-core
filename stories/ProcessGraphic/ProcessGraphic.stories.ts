@@ -332,11 +332,12 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
         const processGraphic = new ProcessGraphic(container);
         const expressions = createProcessExpressions();
         const diagramUrl = getSampleDiagramUrl();
-        (processGraphic as any).getMockDataForTimestamp = (timeStamp: Date) => {
+        function getMockDataForTimestamp(timeStamp: Date) {
             return expressions.map((expr, index) => {
                 const baseValues = [45, 80, 65];
                 const variance = [10, 15, 8];
-                const value = baseValues[index] + (Math.random() - 0.5) * variance[index];
+                const timeFactor = (timeStamp.getTime() / 1000 / 60) % variance[index];
+                const value = baseValues[index] + timeFactor;
                 return {
                     properties: [{ values: [Math.max(0, value)] }]
                 };
@@ -347,7 +348,17 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
             theme: options.theme || 'light',
             updateInterval: options.updateInterval || 3000,
             bucketSizeMillis: options.bucketSizeMillis || undefined,
-            ...options
+            ...options,
+            onSelectTimeStamp: (timeStamp: Date) => {
+                const mockData = getMockDataForTimestamp(timeStamp);
+                processGraphic.setDataForTimestamp(mockData);
+            }
+        };
+
+        processGraphic.onReady = () => {
+            const initialTime = new Date();
+            const initialMockData = getMockDataForTimestamp(initialTime);
+            processGraphic.setDataForTimestamp(initialMockData);
         };
 
         processGraphic.render(
