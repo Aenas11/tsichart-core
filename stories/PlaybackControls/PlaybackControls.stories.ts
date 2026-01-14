@@ -6,7 +6,6 @@ import PlaybackControls from '../../packages/core/src/components/PlaybackControl
 import PieChart from '../../packages/core/src/components/PieChart';
 import Heatmap from '../../packages/core/src/components/Heatmap';
 
-
 interface IPlaybackControlsOptions {
     theme?: 'light' | 'dark';
     offset?: string;
@@ -241,7 +240,6 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
             yAxisState: 'stacked',
             brushMoveAction: (startTime, endTime) => {
                 console.log('Brush selection:', { startTime, endTime });
-                updateStatus(`Brush: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`);
             },
             onMouseover: (aggKey, splitBy) => {
                 console.log('Chart hover:', { aggKey, splitBy });
@@ -253,6 +251,24 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
         };
 
         lineChart.render(chartData, chartOptions, {});
+
+        const updateStatus = (message: string) => {
+            statusContainer.textContent = message;
+        };
+
+        const onSelectTimeStamp = (selectedTime: Date) => {
+            lineChart.updatePlaybackMarker(
+                selectedTime.getTime(),
+                `Playback: ${selectedTime.toLocaleTimeString()}`
+            );
+
+            updateStatus(`Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
+            if (options.onSelectTimeStamp) {
+                options.onSelectTimeStamp(selectedTime);
+            }
+        };
+
+
         const playbackControls = new PlaybackControls(controlsContainer, timeRange.start);
 
         const controlOptions = {
@@ -266,62 +282,6 @@ function renderPlaybackControlsWithLineChart(container: HTMLElement, options: IP
         const playbackSettings = {
             intervalMillis: Math.max(options.intervalMillis || 1500, 1000),
             stepSizeMillis: options.stepSizeMillis || 60000
-        };
-
-        const updateStatus = (message: string) => {
-            statusContainer.textContent = message;
-        };
-
-        const onSelectTimeStamp = (selectedTime: Date) => {
-            const existingMarkers = chartOptions.markers || [];
-            const playbackMarkerIndex = existingMarkers.findIndex(marker =>
-                marker[1] && marker[1].startsWith('Playback:')
-            );
-
-            const playbackMarker = [selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`];
-            let updatedMarkers;
-
-            if (playbackMarkerIndex >= 0) {
-                // Update existing playback marker position
-                updatedMarkers = [...existingMarkers];
-                updatedMarkers[playbackMarkerIndex] = playbackMarker;
-            } else {
-                // Add new playback marker
-                updatedMarkers = [...existingMarkers, playbackMarker];
-            }
-
-            const updatedChartOptions = {
-                ...chartOptions,
-                markers: updatedMarkers,
-                brushStartTime: new Date(selectedTime.getTime() - 30 * 60 * 1000),
-                brushEndTime: new Date(selectedTime.getTime() + 30 * 60 * 1000)
-            };
-
-            lineChart.render(chartData, updatedChartOptions, {});
-
-            updateStatus(`Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
-            if (options.onSelectTimeStamp) {
-                options.onSelectTimeStamp(selectedTime);
-            }
-
-            // Update chartOptions to maintain state for next iteration
-            chartOptions.markers = updatedMarkers;
-
-            // const updatedChartOptions = {
-            //     ...chartOptions,
-            //     markers: [[selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`]],
-            //     brushStartTime: new Date(selectedTime.getTime() - 30 * 60 * 1000),
-            //     brushEndTime: new Date(selectedTime.getTime() + 30 * 60 * 1000)
-            // };
-
-            // lineChart.render(chartData, updatedChartOptions, {});
-
-            // updateStatus(`Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
-            // if (options.onSelectTimeStamp) {
-            //     options.onSelectTimeStamp(selectedTime);
-            // }
-
-            // return {};
         };
 
         playbackControls.render(
@@ -534,35 +494,43 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
         };
 
         const onSelectTimeStamp = (selectedTime: Date) => {
-            const selectedTimestamp = selectedTime.toISOString();
-            const closestTimestamp = allTimestamps.reduce((closest, current) => {
-                const currentDiff = Math.abs(new Date(current).getTime() - selectedTime.getTime());
-                const closestDiff = Math.abs(new Date(closest).getTime() - selectedTime.getTime());
-                return currentDiff < closestDiff ? current : closest;
-            });
+            const existingMarkers = chartOptions.markers || [];
+            const playbackMarkerIndex = existingMarkers.findIndex(marker =>
+                marker[1] && marker[1].startsWith('Playback:')
+            );
+            const playbackMarker = [selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`];
+            let updatedMarkers;
 
-            const timestampData = getDataForTimestamp(closestTimestamp);
-
-            if (timestampData.length > 0) {
-                const updatedChartOptions = {
-                    ...chartOptions,
-                    timestamp: closestTimestamp
-                };
-                barChart.render(timestampData, updatedChartOptions, []);
-
-                updateStatus(
-                    `Showing data for: ${new Date(closestTimestamp).toLocaleString(options.dateLocale || 'en-US')} | ` +
-                    `Factories: ${timestampData.length} | Selected: ${selectedTime.toLocaleTimeString()}`,
-                    true
-                );
+            if (playbackMarkerIndex >= 0) {
+                updatedMarkers = [...existingMarkers];
+                updatedMarkers[playbackMarkerIndex] = playbackMarker;
             } else {
-                updateStatus(`No data available for: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
+                updatedMarkers = [...existingMarkers, playbackMarker];
             }
+            chartOptions.markers = updatedMarkers;
+            const brushStartTime = new Date(selectedTime.getTime() - 30 * 60 * 1000);
+            const brushEndTime = new Date(selectedTime.getTime() + 30 * 60 * 1000);
+            const updateOptions = {
+                ...chartOptions,
+                brushStartTime: brushStartTime,
+                brushEndTime: brushEndTime,
+                markers: updatedMarkers
+            };
+            updateOptions._isMarkerUpdate = true;
+
+            if (playbackMarkerIndex < 0) {
+                barChart.render(chartData, updateOptions, {});
+            } else {
+                barChart.render(chartData, updateOptions, {});
+            }
+
+            updateStatus(`Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
+
             if (options.onSelectTimeStamp) {
                 options.onSelectTimeStamp(selectedTime);
             }
-            return {};
         };
+
         playbackControls.render(
             timeRange.start,
             timeRange.end,
@@ -868,7 +836,6 @@ function renderPlaybackControlsWithHeatmap(container: HTMLElement, options: IPla
             playbackSettings
         );
 
-        const initialTime = new Date(allTimestamps[Math.floor(allTimestamps.length * 0.75)]);
         updateStatus(
             `Ready - Data Center CPU Monitoring | ` +
             `Range: ${timeRange.start.toLocaleTimeString()} to ${timeRange.end.toLocaleTimeString()} | ` +

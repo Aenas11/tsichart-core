@@ -87,6 +87,8 @@ class LineChart extends TemporalXAxisComponent {
     private originalSwimLanes: Array<number>;
     private originalSwimLaneOptions: any;
 
+    private _playbackMarker: Marker | null = null;
+
     constructor(renderTarget: Element) {
         super(renderTarget);
         this.MINHEIGHT = 26;
@@ -620,6 +622,36 @@ class LineChart extends TemporalXAxisComponent {
             labelText: labelText,
             isSeriesLabels: isSeriesLabels
         });
+    }
+
+    /**
+     * Moves or creates a persistent playback marker at the given time.
+     * Call this on each playback tick for smooth marker movement.
+     * @param millis The timestamp (in ms) to move the marker to.
+     * @param label Optional label for the marker.
+     */
+    public updatePlaybackMarker(millis: number, label: string = '') {
+        // Use a dedicated property for the playback marker
+        if (!this._playbackMarker) {
+            // Import Marker at the top of this file if not already
+            // import Marker from '../Marker/Marker';
+            this._playbackMarker = new Marker(this.renderTarget);
+        }
+        this._playbackMarker.setMillis(millis);
+        this.renderMarker(
+            this._playbackMarker,
+            millis,
+            null,
+            label || `Playback: ${new Date(millis).toLocaleTimeString()}`
+        );
+    }
+
+
+    public removePlaybackMarker() {
+        if (this._playbackMarker) {
+            this._playbackMarker.destroyMarker();
+            this._playbackMarker = null;
+        }
     }
 
     private sortMarkers() {
