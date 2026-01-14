@@ -245,7 +245,6 @@ class PlaybackControls extends Component {
     if (this.playbackInterval === null) {
       // Default to an interval if one is not provided. Also, the interval should
       // not be lower than the minimum playback interval.
-      // let playbackIntervalMs = Math.max(this.playbackSettings.intervalMillis || this.minimumPlaybackInterval, this.minimumPlaybackInterval);
       let playbackIntervalMs = this.playbackSettings.intervalMillis;
 
       this.next();
