@@ -33,8 +33,6 @@ class ModelSearch extends Component {
   ModelSearch() { }
 
   public render(
-    environmentFqdn: string,
-    getToken: any,
     hierarchyData: any,
     chartOptions: any
   ) {
@@ -73,7 +71,7 @@ class ModelSearch extends Component {
     };
 
     let modelAutocomplete = new ModelAutocomplete(inputWrapper.node());
-    modelAutocomplete.render(environmentFqdn, getToken, {
+    modelAutocomplete.render({
       onInput: autocompleteOnInput,
       onKeydown: (event, ap) => {
         this.handleKeydown(event, ap);
@@ -131,14 +129,6 @@ class ModelSearch extends Component {
       }
     };
 
-    getToken().then((token) => {
-
-    });
-
-    // get types
-    getToken().then((token) => {
-
-    });
   }
 
   public handleKeydown(event, ap) {

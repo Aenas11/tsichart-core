@@ -16,8 +16,6 @@ class ProcessGraphic extends HistoryPlayback {
   }
 
   render(
-    environmentFqdn: string,
-    getToken: () => Promise<string>,
     graphicSrc: string,
     data: Array<TsqExpression>,
     chartOptions
@@ -33,6 +31,8 @@ class ProcessGraphic extends HistoryPlayback {
     this.chartOptions.setOptions(chartOptions);
     this.playbackRate = this.chartOptions.updateInterval || this.defaultPlaybackRate;
 
+    this.externalOnSelectTimeStamp = chartOptions.onSelectTimeStamp;
+
     // Initialize availability for playback controls
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -45,12 +45,17 @@ class ProcessGraphic extends HistoryPlayback {
 
     // Load the image and render
     this.loadResources()
-      .then(() => this.draw())
+      .then(() => {
+        this.draw();
+        if (this.onReady) this.onReady();
+      })
       .catch((error) => {
         console.error('Failed to load process graphic:', error);
         this.showErrorMessage('Failed to load process diagram image');
       });
   }
+  private externalOnSelectTimeStamp: ((timeStamp: Date) => void) | null = null;
+  public onReady: (() => void) | null = null;
 
   private cleanup(): void {
     if (this.targetElement) {
@@ -89,26 +94,12 @@ class ProcessGraphic extends HistoryPlayback {
     }
   }
 
-  protected handleSelectTimestamp(timeStamp: Date) {
-    const mockResults = this.getMockDataForTimestamp(timeStamp);
-    this.getDataPoints(mockResults);
+  private onSelectTimestamp(timeStamp: Array<any>) {
+    this.getDataPoints(timeStamp);
   }
 
-  protected getMockDataForTimestamp(timeStamp: Date): Array<any> {
-    // Return mock data matching your expressions
-    return this.tsqExpressions.map((expr, index) => {
-      const baseValues = [50, 80, 65]; // Compressor, Pump, Valve base values
-      const variance = [5, 15, 8];
-      const value = baseValues[index] + (Math.random() - 0.5) * variance[index];
-
-      return {
-        properties: [
-          {
-            values: [Math.max(0, value)]
-          }
-        ]
-      };
-    });
+  public setDataForTimestamp(data: Array<any>) {
+    this.onSelectTimestamp(data);
   }
 
   protected loadResources(): Promise<GraphicInfo> {
@@ -161,7 +152,13 @@ class ProcessGraphic extends HistoryPlayback {
     this.playbackControls.render(
       this.availability.from,
       this.availability.to,
-      this.handleSelectTimestamp.bind(this),  // Pass the callback here
+      (timeStamp: Date) => {
+        if (this.externalOnSelectTimeStamp) {
+          this.externalOnSelectTimeStamp(timeStamp);
+        } else {
+          this.onSelectTimestamp(timeStamp);
+        }
+      },
       this.chartOptions,
       {
         intervalMillis: this.playbackRate,
