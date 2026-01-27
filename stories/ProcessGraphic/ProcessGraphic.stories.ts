@@ -292,7 +292,9 @@ function createProcessExpressions() {
                 alias: 'Compressor Pressure (psi)',
                 positionX: 15,
                 positionY: 30,
-                color: '#1f77b4',
+                color:
+                    // demo function that returns color based on value (green if <=50, red if >50)
+                    (value: number) => value > 50 ? '#d62728' : '#2ca02c',
                 onElementClick: () => console.log('Compressor clicked')
             }
         ),
@@ -341,8 +343,8 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
         const diagramUrl = getSampleDiagramUrl();
         (processGraphic as any).getMockDataForTimestamp = (timeStamp: Date) => {
             return expressions.map((expr, index) => {
-                const baseValues = [45, 80, 65];
-                const variance = [10, 15, 8];
+                const baseValues = [50, 80, 65];
+                const variance = [2, 15, 8];
                 const value = baseValues[index] + (Math.random() - 0.5) * variance[index];
                 return {
                     properties: [{ values: [Math.max(0, value)] }]

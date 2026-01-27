@@ -89,16 +89,16 @@ class ProcessGraphic extends HistoryPlayback {
     }
   }
 
-  private onSelecTimestamp(timeStamp: Date) {
+  protected handleSelectTimestamp(timeStamp: Date) {
     const mockResults = this.getMockDataForTimestamp(timeStamp);
     this.getDataPoints(mockResults);
   }
 
-  private getMockDataForTimestamp(timeStamp: Date): Array<any> {
+  protected getMockDataForTimestamp(timeStamp: Date): Array<any> {
     // Return mock data matching your expressions
     return this.tsqExpressions.map((expr, index) => {
-      const baseValues = [45, 80, 65]; // Compressor, Pump, Valve base values
-      const variance = [10, 15, 8];
+      const baseValues = [50, 80, 65]; // Compressor, Pump, Valve base values
+      const variance = [5, 15, 8];
       const value = baseValues[index] + (Math.random() - 0.5) * variance[index];
 
       return {
@@ -161,7 +161,7 @@ class ProcessGraphic extends HistoryPlayback {
     this.playbackControls.render(
       this.availability.from,
       this.availability.to,
-      this.onSelecTimestamp,  // Pass the callback here
+      this.handleSelectTimestamp.bind(this),  // Pass the callback here
       this.chartOptions,
       {
         intervalMillis: this.playbackRate,
