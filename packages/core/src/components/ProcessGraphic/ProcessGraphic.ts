@@ -153,10 +153,16 @@ class ProcessGraphic extends HistoryPlayback {
       this.availability.from,
       this.availability.to,
       (timeStamp: Date) => {
+        /**
+         * If this.externalOnSelectTimeStamp exists: Calls the external callback function with the timestamp
+         */
         if (this.externalOnSelectTimeStamp) {
           this.externalOnSelectTimeStamp(timeStamp);
+          /**
+           * Calls the internal this.onSelectTimestamp([timeStamp]) method with the timestamp wrapped in an array
+           */
         } else {
-          this.onSelectTimestamp(timeStamp);
+          this.onSelectTimestamp([timeStamp]);
         }
       },
       this.chartOptions,
