@@ -130,7 +130,7 @@ class GroupedBarChart extends ChartVisualizationComponent {
                 let aggLabelGroup = text.append("tspan").attr('class', "tsi-labelGroupLine");
                 Utils.appendFormattedElementsFromString(aggLabelGroup, self.chartComponentData.displayState[aggKey].name, { inSvg: true, additionalClassName: "tsi-aggregateLabelGroupText" });
                 let splitByLabelGroup = text.append("tspan").attr('class', "tsi-labelGroupLine");
-                Utils.appendFormattedElementsFromString(splitByLabelGroup, splitBy, { inSvg: true, additionalClassName: "tsi-splitByLabelGroupText" });
+                Utils.appendFormattedElementsFromString(splitByLabelGroup, splitBy || '', { inSvg: true, additionalClassName: "tsi-splitByLabelGroupText" });
 
                 splitByLabelGroup.selectAll('.tsi-splitByLabelGroupText').each(function (d, i) {
                     if (i == 0) {
@@ -385,7 +385,11 @@ class GroupedBarChart extends ChartVisualizationComponent {
                                 return yScale(d.val);
                             return yScale(0);
                         }
-                        if (aggsSeries[d.aggKey] != undefined && aggsSeries[d.aggKey].length != 0) {
+                        if (aggsSeries[d.aggKey] != undefined &&
+                            aggsSeries[d.aggKey].length != 0 &&
+                            i < aggsSeries[d.aggKey].length &&
+                            aggsSeries[d.aggKey][i] != undefined &&
+                            aggsSeries[d.aggKey][i][0] != undefined) {
                             return yScale(aggsSeries[d.aggKey][i][0][1]);
                         }
                         return 0;
