@@ -429,24 +429,12 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
         container.appendChild(statusContainer);
         const barChart = new GroupedBarChart(chartContainer);
 
-        const chartOptions = {
-            theme: options.theme || 'light',
-            legend: 'shown',
-            tooltip: true,
-            stacked: false,
-            zeroYAxis: true,
-            grid: true,
-            hideChartControlPanel: false,
-            scaledToCurrentTime: false,
-            keepSplitByColor: true,
-            timestamp: allTimestamps[0],
-        };
-
         const getDataForTimestamp = (targetTimestamp: string) => {
             return chartData.map(aggregate => {
                 const aggKey = Object.keys(aggregate)[0];
                 const filteredAggregate = {};
                 filteredAggregate[aggKey] = {};
+
                 Object.keys(aggregate[aggKey]).forEach(splitBy => {
                     if (aggregate[aggKey][splitBy][targetTimestamp]) {
                         filteredAggregate[aggKey][splitBy] = {
@@ -462,8 +450,48 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
             });
         };
 
-        const initialData = getDataForTimestamp(allTimestamps[0]);
-        barChart.render(initialData, chartOptions, []);
+        const findClosestTimestamp = (targetDate: Date): string => {
+            const targetTime = targetDate.getTime();
+            let closestTimestamp = allTimestamps[0];
+            let minDiff = Math.abs(new Date(allTimestamps[0]).getTime() - targetTime);
+
+            for (const timestamp of allTimestamps) {
+                const diff = Math.abs(new Date(timestamp).getTime() - targetTime);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestTimestamp = timestamp;
+                }
+            }
+            return closestTimestamp;
+        };
+
+        const chartOptions = {
+            theme: options.theme || 'light',
+            legend: 'shown',
+            tooltip: true,
+            stacked: false,
+            zeroYAxis: true,
+            grid: true,
+            hideChartControlPanel: false,
+            scaledToCurrentTime: false,
+            keepSplitByColor: true,
+            timestamp: allTimestamps[0],
+        };
+
+        const updateStatus = (message: string, isHighlight: boolean = false) => {
+            statusContainer.textContent = message;
+            statusContainer.style.background = isHighlight
+                ? (options.theme === 'dark' ? '#0d5aa7' : '#cce5ff')
+                : (options.theme === 'dark' ? '#2d2d2d' : '#f8f9fa');
+
+            if (isHighlight) {
+                setTimeout(() => {
+                    statusContainer.style.background = options.theme === 'dark' ? '#2d2d2d' : '#f8f9fa';
+                }, 1000);
+            }
+        };
+
+        barChart.render(chartData, chartOptions, []);
 
         const playbackControls = new PlaybackControls(controlsContainer, timeRange.start);
 
@@ -480,56 +508,27 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
             stepSizeMillis: options.stepSizeMillis || 4 * 60 * 60 * 1000 // 4 hours
         };
 
-        const updateStatus = (message: string, isHighlight: boolean = false) => {
-            statusContainer.textContent = message;
-            statusContainer.style.background = isHighlight
-                ? (options.theme === 'dark' ? '#0d5aa7' : '#cce5ff')
-                : (options.theme === 'dark' ? '#2d2d2d' : '#f8f9fa');
-
-            if (isHighlight) {
-                setTimeout(() => {
-                    statusContainer.style.background = options.theme === 'dark' ? '#2d2d2d' : '#f8f9fa';
-                }, 1000);
-            }
-        };
-
         const onSelectTimeStamp = (selectedTime: Date) => {
-            const existingMarkers = chartOptions.markers || [];
-            const playbackMarkerIndex = existingMarkers.findIndex(marker =>
-                marker[1] && marker[1].startsWith('Playback:')
-            );
-            const playbackMarker = [selectedTime.getTime(), `Playback: ${selectedTime.toLocaleTimeString()}`];
-            let updatedMarkers;
-
-            if (playbackMarkerIndex >= 0) {
-                updatedMarkers = [...existingMarkers];
-                updatedMarkers[playbackMarkerIndex] = playbackMarker;
-            } else {
-                updatedMarkers = [...existingMarkers, playbackMarker];
-            }
-            chartOptions.markers = updatedMarkers;
-            const brushStartTime = new Date(selectedTime.getTime() - 30 * 60 * 1000);
-            const brushEndTime = new Date(selectedTime.getTime() + 30 * 60 * 1000);
-            const updateOptions = {
+            const closestTimestamp = findClosestTimestamp(selectedTime);
+            // const filteredData = getDataForTimestamp(closestTimestamp);
+            const updatedOptions = {
                 ...chartOptions,
-                brushStartTime: brushStartTime,
-                brushEndTime: brushEndTime,
-                markers: updatedMarkers
+                timestamp: closestTimestamp
             };
-            updateOptions._isMarkerUpdate = true;
 
-            if (playbackMarkerIndex < 0) {
-                barChart.render(chartData, updateOptions, {});
-            } else {
-                barChart.render(chartData, updateOptions, {});
-            }
+            barChart.render(chartData, updatedOptions, []);
 
-            updateStatus(`Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')}`);
+            updateStatus(
+                `Playback Time: ${selectedTime.toLocaleString(options.dateLocale || 'en-US')} | ` +
+                `Chart Timestamp: ${new Date(closestTimestamp).toLocaleString(options.dateLocale || 'en-US')}`,
+                true
+            );
 
             if (options.onSelectTimeStamp) {
                 options.onSelectTimeStamp(selectedTime);
             }
         };
+
 
         playbackControls.render(
             timeRange.start,
@@ -544,7 +543,7 @@ function renderPlaybackControlsWithBarChart(container: HTMLElement, options: IPl
             `Available timestamps: ${allTimestamps.length}`
         );
 
-        return { barChart, playbackControls };
+        return { barChart, playbackControls, allTimestamps };
 
     } catch (error) {
         console.error('Error rendering PlaybackControls with BarChart:', error);

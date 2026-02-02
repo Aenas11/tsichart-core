@@ -290,9 +290,7 @@ function createProcessExpressions() {
                 alias: 'Compressor Pressure (psi)',
                 positionX: 15,
                 positionY: 30,
-                color:
-                    // demo function that returns color based on value (green if <=50, red if >50)
-                    (value: number) => value > 50 ? '#d62728' : '#2ca02c',
+                color: '#1f77b4',
                 onElementClick: () => console.log('Compressor clicked')
             }
         ),
@@ -327,6 +325,18 @@ function getSampleDiagramUrl(): string {
     return '/images/Process.jpg';
 }
 
+function getMockDataForTimestamp(timeStamp: Date, expressions: TsqExpression[]) {
+    return expressions.map((expr, index) => {
+        const baseValues = [45, 80, 65];
+        const variance = [10, 15, 8];
+        const timeFactor = (timeStamp.getTime() / 1000 / 60) % variance[index];
+        const value = baseValues[index] + timeFactor;
+        return {
+            properties: [{ values: [Math.max(0, value)] }]
+        };
+    });
+}
+
 function renderProcessGraphic(container: HTMLElement, options: any = {}) {
     container.innerHTML = '';
 
@@ -334,17 +344,6 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
         const processGraphic = new ProcessGraphic(container);
         const expressions = createProcessExpressions();
         const diagramUrl = getSampleDiagramUrl();
-        function getMockDataForTimestamp(timeStamp: Date) {
-            return expressions.map((expr, index) => {
-                const baseValues = [45, 80, 65];
-                const variance = [10, 15, 8];
-                const timeFactor = (timeStamp.getTime() / 1000 / 60) % variance[index];
-                const value = baseValues[index] + timeFactor;
-                return {
-                    properties: [{ values: [Math.max(0, value)] }]
-                };
-            });
-        };
 
         const graphicOptions = {
             theme: options.theme || 'light',
@@ -352,14 +351,14 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
             bucketSizeMillis: options.bucketSizeMillis || undefined,
             ...options,
             onSelectTimeStamp: (timeStamp: Date) => {
-                const mockData = getMockDataForTimestamp(timeStamp);
+                const mockData = getMockDataForTimestamp(timeStamp, expressions);
                 processGraphic.setDataForTimestamp(mockData);
             }
         };
 
         processGraphic.onReady = () => {
             const initialTime = new Date();
-            const initialMockData = getMockDataForTimestamp(initialTime);
+            const initialMockData = getMockDataForTimestamp(initialTime, expressions);
             processGraphic.setDataForTimestamp(initialMockData);
         };
 
@@ -378,7 +377,15 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
 }
 
 function createProcessGraphicStory() {
-    return (args: any) => {
+    return (args: IProcessGraphicOptions) => {
+        const containerId = 'process-graphic-' + Math.random().toString(36).substring(7);
+
+        setTimeout(() => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                renderProcessGraphic(container, args);
+            }
+        }, 100);
         return html`
             <style>
                 .process-graphic-container {
@@ -463,11 +470,7 @@ function createProcessGraphicStory() {
                 }
             </style>
             <div class="process-graphic-container ${args.theme === 'dark' ? 'dark' : ''}">
-                ${(() => {
-                const container = document.createElement('div');
-                renderProcessGraphic(container, args);
-                return html`${container}`;
-            })()}
+                <div id="${containerId}" style="height: 100%; width: 100%;"></div>
             </div>
         `;
     };
@@ -513,6 +516,76 @@ export const FastPlayback: Story = {
     render: createProcessGraphicStory()
 };
 
+export const WithManualTrigger: Story = {
+    name: 'With Manual Data Trigger',
+    args: {
+        theme: 'light',
+        updateInterval: 3000,
+    },
+    render: (args: IProcessGraphicOptions) => {
+        const containerId = 'process-graphic-manual-' + Math.random().toString(36).substring(7);
+
+        setTimeout(() => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                const processGraphic = renderProcessGraphic(container, args);
+
+                // Add manual trigger button
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.cssText = 'padding: 10px; background: #f5f5f5; border-bottom: 1px solid #ddd;';
+
+                const triggerButton = document.createElement('button');
+                triggerButton.textContent = 'Trigger Random Timestamp';
+                triggerButton.style.cssText = 'padding: 8px 16px; background: #007acc; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;';
+
+                const statusSpan = document.createElement('span');
+                statusSpan.textContent = 'Ready';
+                statusSpan.style.cssText = 'font-size: 12px; color: #666; margin-left: 10px;';
+
+                triggerButton.onclick = () => {
+                    if (processGraphic) {
+                        const randomTime = new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000);
+                        const expressions = createProcessExpressions();
+                        const mockData = getMockDataForTimestamp(randomTime, expressions);
+                        processGraphic.setDataForTimestamp(mockData);
+                        statusSpan.textContent = `Updated: ${randomTime.toLocaleTimeString()}`;
+                        console.log('Manual trigger at:', randomTime);
+                    }
+                };
+
+                buttonContainer.appendChild(triggerButton);
+                buttonContainer.appendChild(statusSpan);
+                container.insertBefore(buttonContainer, container.firstChild);
+            }
+        }, 100);
+
+        return html`
+            <style>
+                .process-graphic-container {
+                    height: 650px;
+                    width: 100%;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    display: flex;
+                    flex-direction: column;
+                    background: white;
+                    overflow: hidden;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                }
+                
+                .process-graphic-container.dark {
+                    background: #1a1a1a;
+                    border-color: #444;
+                    color: #fff;
+                }
+            </style>
+            <div class="process-graphic-container ${args.theme === 'dark' ? 'dark' : ''}">
+                <div id="${containerId}" style="height: 100%; width: 100%; display: flex; flex-direction: column;"></div>
+            </div>
+        `;
+    }
+};
+
 
 export const Interaction: Story = {
     name: 'Interaction Tests',
@@ -536,28 +609,39 @@ export const Interaction: Story = {
             }
         }, { timeout: 5000 });
 
-        const labels = canvasElement.querySelectorAll('.tsi-processGraphicLabel');
+        const labels = canvasElement.querySelectorAll('.tsi-process-graphic-label');
         if (labels.length > 0) {
             const firstLabel = labels[0] as HTMLElement;
+            console.log('Testing label hover...');
             fireEvent.mouseOver(firstLabel);
-            await new Promise((r) => setTimeout(r, 300));
+            await new Promise((r) => setTimeout(r, 500));
+            fireEvent.mouseOut(firstLabel);
         }
-
         if (labels.length > 0) {
             const firstLabel = labels[0] as HTMLElement;
             if (firstLabel.classList.contains('clickable')) {
+                console.log('Testing label click...');
                 fireEvent.click(firstLabel);
-                console.log('Clicked on first label');
             }
         }
-        const playButton = canvasElement.querySelector('[aria-label*="play"], button:has-text("Play")');
+        await new Promise((r) => setTimeout(r, 1000));
+        const playButton = canvasElement.querySelector('button[aria-label*="play"], .tsi-play-button, [class*="play"]');
         if (playButton) {
+            console.log('Testing play button...');
             fireEvent.click(playButton as HTMLElement);
-            await new Promise((r) => setTimeout(r, 1000));
-            const pauseButton = canvasElement.querySelector('[aria-label*="pause"], button:has-text("Pause")');
+            await new Promise((r) => setTimeout(r, 2000));
+
+            const pauseButton = canvasElement.querySelector('button[aria-label*="pause"], .tsi-pause-button, [class*="pause"]');
             if (pauseButton) {
+                console.log('Testing pause button...');
                 fireEvent.click(pauseButton as HTMLElement);
-                console.log('Paused playback');
+            }
+        } else {
+            console.log('Play button not found, checking for timeline slider...');
+            const timeline = canvasElement.querySelector('.tsi-timeline, .tsi-slider, input[type="range"]');
+            if (timeline) {
+                console.log('Found timeline, testing interaction...');
+                fireEvent.change(timeline as HTMLElement, { target: { value: '0.5' } });
             }
         }
     }

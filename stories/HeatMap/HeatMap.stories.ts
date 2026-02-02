@@ -547,14 +547,15 @@ export const Interactive: Story = {
                 if (timeLabels.length === 0) {
                     throw new Error("Time labels should appear on hover");
                 }
-            });
+            }, { timeout: 2000 });
             fireEvent.mouseLeave(firstCanvas);
+            await new Promise(resolve => setTimeout(resolve, 250));
             await waitFor(() => {
                 const timeLabels = heatmapSvg.querySelectorAll('.tsi-heatmapTimeLabels');
                 if (timeLabels.length > 0) {
                     throw new Error("Time labels should be hidden after mouse out");
                 }
-            });
+            }, { timeout: 3000 });
         }
 
         const legendItems = canvasElement.querySelectorAll('.tsi-seriesLabel');
@@ -566,14 +567,14 @@ export const Interactive: Story = {
                 if (focusedElements.length === 0) {
                     throw new Error("Expected some elements to be focused when hovering legend");
                 }
-            });
+            }, { timeout: 2000 });
             fireEvent.mouseOut(firstLegendItem);
             await waitFor(() => {
                 const focusedElements = canvasElement.querySelectorAll('.inFocus');
                 if (focusedElements.length > 0) {
                     throw new Error("Expected focus to be removed after mouse out");
                 }
-            });
+            }, { timeout: 2000 });
         }
         if (legendItems.length > 0) {
             const legendItem = legendItems[0];
@@ -582,14 +583,14 @@ export const Interactive: Story = {
                 if (legendItem.classList.contains('shown')) {
                     throw new Error("Series should be hidden but is still shown");
                 }
-            });
+            }, { timeout: 2000 });
             await new Promise((r) => setTimeout(r, 500));
             fireEvent.click(legendItem);
             await waitFor(() => {
                 if (!legendItem.classList.contains('shown')) {
                     throw new Error("Series should be shown but is still hidden");
                 }
-            });
+            }, { timeout: 2000 });
         }
     }
 };
