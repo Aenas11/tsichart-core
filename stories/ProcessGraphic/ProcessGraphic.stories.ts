@@ -376,20 +376,52 @@ function renderProcessGraphic(container: HTMLElement, options: any = {}) {
     }
 }
 
-function createProcessGraphicStory() {
+function createProcessGraphicStory(includeManualTrigger = false) {
     return (args: IProcessGraphicOptions) => {
         const containerId = 'process-graphic-' + Math.random().toString(36).substring(7);
-
         setTimeout(() => {
             const container = document.getElementById(containerId);
             if (container) {
-                renderProcessGraphic(container, args);
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+                container.style.height = '100%';
+                container.style.width = '100%';
+
+                const processGraphic = renderProcessGraphic(container, args);
+
+                // Add manual trigger button if requested
+                if (includeManualTrigger && processGraphic) {
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.className = 'manual-trigger-controls';
+
+                    const triggerButton = document.createElement('button');
+                    triggerButton.textContent = 'Trigger Random Timestamp';
+                    triggerButton.className = 'trigger-button';
+
+                    const statusSpan = document.createElement('span');
+                    statusSpan.textContent = 'Ready';
+                    statusSpan.className = 'trigger-status';
+
+                    triggerButton.onclick = () => {
+                        const randomTime = new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000);
+                        const expressions = createProcessExpressions();
+                        const mockData = getMockDataForTimestamp(randomTime, expressions);
+                        processGraphic.setDataForTimestamp(mockData);
+                        statusSpan.textContent = `Updated: ${randomTime.toLocaleTimeString()}`;
+                        console.log('Manual trigger at:', randomTime);
+                    };
+
+                    buttonContainer.appendChild(triggerButton);
+                    buttonContainer.appendChild(statusSpan);
+                    container.insertBefore(buttonContainer, container.firstChild);
+                }
             }
         }, 100);
+
         return html`
             <style>
                 .process-graphic-container {
-                    height: 600px;
+                    height: ${includeManualTrigger ? '650px' : '600px'};
                     width: 100%;
                     border: 1px solid #ddd;
                     border-radius: 4px;
@@ -398,6 +430,7 @@ function createProcessGraphicStory() {
                     background: white;
                     overflow: hidden;
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    position: relative;
                 }
                 
                 .process-graphic-container.dark {
@@ -414,10 +447,7 @@ function createProcessGraphicStory() {
                 }
                 
                 .tsi-processGraphicContainer {
-                    flex: 1;
-                    overflow: hidden;
                     display: flex !important;
-                    flex-direction: column !important;
                 }
                 
                 .tsi-processGraphic {
@@ -426,12 +456,19 @@ function createProcessGraphicStory() {
                     align-items: center;
                     justify-content: center;
                     overflow: hidden;
+                    min-height: 0;
+                    width: 100% !important;
                 }
                 
                 .tsi-processGraphic img {
-                    max-width: 100%;
-                    max-height: 100%;
+                    max-width: calc(100% - 40px) !important;
+                    max-height: calc(100% - 40px) !important;
+                    width: auto !important;
+                    height: auto !important;
                     object-fit: contain;
+                    display: block;
+                    border: 1px solid rgba(0,0,0,0.1);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 }
                 
                 .tsi-processGraphicLabel {
@@ -443,34 +480,89 @@ function createProcessGraphicStory() {
                     white-space: nowrap;
                     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
                     transition: all 0.3s ease;
+                    background: rgba(255, 255, 255, 0.95);
+                    border: 1px solid rgba(0, 0, 0, 0.1);
+                    color: #333;
+                    z-index: 10;
                 }
                 
                 .tsi-processGraphicLabel.clickable {
                     cursor: pointer;
                 }
                 
-                .tsi-processGraphicLabel:hover.clickable {
+                .tsi-processGraphicLabel.clickable:hover {
                     transform: scale(1.05);
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+                    background: rgba(255, 255, 255, 1);
                 }
                 
                 .tsi-processGraphicLabel.dark {
-                    background: rgba(0, 0, 0, 0.7);
+                    background: rgba(0, 0, 0, 0.8);
                     color: #fff;
                     border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+                
+                .tsi-processGraphicLabel.dark:hover.clickable {
+                    background: rgba(0, 0, 0, 0.9);
                 }
                 
                 .tsi-playbackControlsContainer {
                     flex-shrink: 0;
                     border-top: 1px solid #ddd;
+                    background: inherit;
                 }
                 
                 .process-graphic-container.dark .tsi-playbackControlsContainer {
                     border-top-color: #444;
                 }
+                
+                .manual-trigger-controls {
+                    padding: 12px;
+                    background: #f8f9fa;
+                    border-bottom: 1px solid #ddd;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    flex-shrink: 0;
+                }
+                
+                .process-graphic-container.dark .manual-trigger-controls {
+                    background: #2d2d2d;
+                    border-bottom-color: #444;
+                }
+                
+                .trigger-button {
+                    padding: 8px 16px;
+                    background: #007acc;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    font-weight: 500;
+                    transition: background-color 0.2s ease;
+                }
+                
+                .trigger-button:hover {
+                    background: #005999;
+                }
+                
+                .trigger-button:active {
+                    transform: translateY(1px);
+                }
+                
+                .trigger-status {
+                    font-size: 13px;
+                    color: #666;
+                    font-family: Monaco, 'Courier New', monospace;
+                }
+                
+                .process-graphic-container.dark .trigger-status {
+                    color: #ccc;
+                }
             </style>
             <div class="process-graphic-container ${args.theme === 'dark' ? 'dark' : ''}">
-                <div id="${containerId}" style="height: 100%; width: 100%;"></div>
+                <div id="${containerId}" style="height: 100%; width: 100%; display: flex; flex-direction: column;"></div>
             </div>
         `;
     };
@@ -522,68 +614,8 @@ export const WithManualTrigger: Story = {
         theme: 'light',
         updateInterval: 3000,
     },
-    render: (args: IProcessGraphicOptions) => {
-        const containerId = 'process-graphic-manual-' + Math.random().toString(36).substring(7);
+    render: createProcessGraphicStory(true)
 
-        setTimeout(() => {
-            const container = document.getElementById(containerId);
-            if (container) {
-                const processGraphic = renderProcessGraphic(container, args);
-
-                // Add manual trigger button
-                const buttonContainer = document.createElement('div');
-                buttonContainer.style.cssText = 'padding: 10px; background: #f5f5f5; border-bottom: 1px solid #ddd;';
-
-                const triggerButton = document.createElement('button');
-                triggerButton.textContent = 'Trigger Random Timestamp';
-                triggerButton.style.cssText = 'padding: 8px 16px; background: #007acc; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;';
-
-                const statusSpan = document.createElement('span');
-                statusSpan.textContent = 'Ready';
-                statusSpan.style.cssText = 'font-size: 12px; color: #666; margin-left: 10px;';
-
-                triggerButton.onclick = () => {
-                    if (processGraphic) {
-                        const randomTime = new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000);
-                        const expressions = createProcessExpressions();
-                        const mockData = getMockDataForTimestamp(randomTime, expressions);
-                        processGraphic.setDataForTimestamp(mockData);
-                        statusSpan.textContent = `Updated: ${randomTime.toLocaleTimeString()}`;
-                        console.log('Manual trigger at:', randomTime);
-                    }
-                };
-
-                buttonContainer.appendChild(triggerButton);
-                buttonContainer.appendChild(statusSpan);
-                container.insertBefore(buttonContainer, container.firstChild);
-            }
-        }, 100);
-
-        return html`
-            <style>
-                .process-graphic-container {
-                    height: 650px;
-                    width: 100%;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                    display: flex;
-                    flex-direction: column;
-                    background: white;
-                    overflow: hidden;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                }
-                
-                .process-graphic-container.dark {
-                    background: #1a1a1a;
-                    border-color: #444;
-                    color: #fff;
-                }
-            </style>
-            <div class="process-graphic-container ${args.theme === 'dark' ? 'dark' : ''}">
-                <div id="${containerId}" style="height: 100%; width: 100%; display: flex; flex-direction: column;"></div>
-            </div>
-        `;
-    }
 };
 
 
