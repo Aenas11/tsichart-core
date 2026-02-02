@@ -158,10 +158,10 @@ class ProcessGraphic extends HistoryPlayback {
          */
         if (this.externalOnSelectTimeStamp) {
           this.externalOnSelectTimeStamp(timeStamp);
+        } else {
           /**
            * Calls the internal this.onSelectTimestamp([timeStamp]) method with the timestamp wrapped in an array
            */
-        } else {
           this.onSelectTimestamp([timeStamp]);
         }
       },
