@@ -26,6 +26,7 @@ const config: StorybookConfig = {
   "framework": {
     "name": getAbsolutePath('@storybook/web-components-vite'),
     "options": {}
-  }
+  },
+  "staticDirs": ["../public"]
 };
 export default config;

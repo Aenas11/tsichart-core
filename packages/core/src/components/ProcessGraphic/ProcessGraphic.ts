@@ -179,7 +179,8 @@ class ProcessGraphic extends HistoryPlayback {
     imageWidth: number,
     imageHeight: number
   ) {
-    if (containerWidth >= imageWidth && containerHeight >= imageHeight) {
+    const availableHeight = containerHeight - this.playbackSliderHeight;
+    if (containerWidth >= imageWidth && availableHeight >= imageHeight) {
       return {
         width: imageWidth,
         height: imageHeight,
@@ -187,7 +188,7 @@ class ProcessGraphic extends HistoryPlayback {
     }
 
     let widthFactor = containerWidth / imageWidth;
-    let heightFactor = containerHeight / imageHeight;
+    let heightFactor = availableHeight / imageHeight;
     let resizeFactor = Math.min(widthFactor, heightFactor);
 
     return {
@@ -216,6 +217,7 @@ class ProcessGraphic extends HistoryPlayback {
       this.updateDataMarkers(dataPoints);
     }
   }
+
   protected updateDataMarkers(graphicValues: Array<IProcessGraphicLabelInfo>) {
     let textElements = this.component
       .selectAll<HTMLDivElement, unknown>("div")
