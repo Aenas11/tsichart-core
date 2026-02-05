@@ -290,9 +290,7 @@ function createProcessExpressions() {
                 alias: 'Compressor Pressure (psi)',
                 positionX: 15,
                 positionY: 30,
-                color:
-                    // demo function that returns color based on value (green if <=50, red if >50)
-                    (value: number) => value > 50 ? '#d62728' : '#2ca02c',
+                color: '#1f77b4',
                 onElementClick: () => console.log('Compressor clicked')
             }
         ),
