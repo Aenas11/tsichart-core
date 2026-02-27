@@ -84,8 +84,12 @@ function renderAdvancedLineChart(container: HTMLElement, options: any = {}) {
 
         return chart;
     } catch (error) {
+        let message = 'Unknown error';
+        if (error instanceof Error) {
+            message = error.message;
+        }
         container.innerHTML = `<div style="color: red; padding: 20px;">
-            Error rendering Advanced LineChart: ${error.message}
+            Error rendering Advanced LineChart: ${message}
             <br><small>Check console for details</small>
         </div>`;
         console.error('Advanced LineChart rendering error:', error);
@@ -645,6 +649,35 @@ export const WithDots: Story = {
         ...baseArgs,
         interpolationFunction: 'curveLinear',
         includeDots: true
+    },
+    render: createStoryRender()
+};
+
+// Example: Per-swim-lane background bands
+export const WithBackgroundBands: Story = {
+    name: 'With Background Bands',
+    args: {
+        ...baseArgs,
+        yAxisState: 'stacked',
+        legend: 'compact',
+        swimLaneOptions: {
+            0: {
+                showBackgroundBands: true,
+                horizontalMarkers: [
+                    { value: 60, color: '#0078d4', condition: 'Greater Than', label: 'Low' },
+                    { value: 80, color: '#387458', condition: 'Greater Than', label: 'Normal' },
+                    { value: 90, color: '#88ff00', condition: 'Greater Than', label: 'Warning' },
+                    { value: 110, color: '#ff8c00', condition: 'Greater Than', label: 'Critical' }
+                ]
+            },
+            1: {
+                showBackgroundBands: true,
+                horizontalMarkers: [
+                    { value: 70, color: '#c80096', condition: 'Greater Than', label: 'Acceptable' },
+                    { value: 90, color: '#e7382b', condition: 'Greater Than', label: 'Target' }
+                ]
+            }
+        }
     },
     render: createStoryRender()
 };

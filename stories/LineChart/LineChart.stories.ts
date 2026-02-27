@@ -437,6 +437,29 @@ export const DarkTheme: Story = {
     render: createLineChartStory('height: 500px; width: 100%; background: #1a1a1a; border: 1px solid #444; border-radius: 4px;')
 };
 
+export const ColoredBands: Story = {
+    name: 'Colored Background Bands',
+    args: {
+        theme: 'light',
+        yAxisState: 'shared',
+        legend: 'shown',
+        tooltip: true,
+        grid: true,
+        includeDots: true,
+        brushHandlesVisible: true,
+        horizontalMarkers: [
+            { value: 70, color: '#f44336', condition: 'Greater Than', opacity: 0.15 },
+            { value: 100, color: '#2196f3', condition: 'Greater Than', opacity: 0.15 }
+        ],
+        // Uncomment below to test explicit bands
+        backgroundBands: [
+            { y0: 0, y1: 10, color: '#e0f7fa', opacity: 0.2 },
+            { y0: 10, y1: 20, color: '#ffe0b2', opacity: 0.2 }
+        ],
+    },
+    render: createLineChartStory('height: 500px; width: 100%; border: 1px solid #ddd; border-radius: 4px;'),
+};
+
 export const Interactive: Story = {
     name: 'Interaction Tests',
     args: {

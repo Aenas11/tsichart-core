@@ -18,9 +18,34 @@ import Marker from '../Marker';
 import { swimlaneLabelConstants } from '../../constants/Constants'
 import { HorizontalMarker } from '../../utils/Interfaces';
 import { ILineChartOptions } from "./ILineChartOptions";
-import { ChartData } from '../../types';
 
 class LineChart extends TemporalXAxisComponent {
+    /**
+     * Render colored horizontal background bands behind chart data.
+     * @param bands Array of BackgroundBand objects
+     */
+    private renderBackgroundBands(bands: import("./ILineChartOptions").BackgroundBand[], yScale: any, chartWidth: number): void {
+        // Ensure a dedicated SVG group for background bands
+        let bgGroup = this.svgSelection.select('.tsi-backgroundBands');
+        if (bgGroup.empty()) {
+            bgGroup = this.svgSelection.insert('g', ':first-child')
+                .attr('class', 'tsi-backgroundBands');
+        }
+        bgGroup.selectAll('rect').remove();
+        bands.forEach(band => {
+            const y0 = yScale(band.y0);
+            const y1 = yScale(band.y1);
+            const bandHeight = Math.abs(y1 - y0);
+            const yTop = Math.min(y0, y1);
+            bgGroup.append('rect')
+                .attr('x', 0)
+                .attr('y', yTop)
+                .attr('width', chartWidth)
+                .attr('height', bandHeight)
+                .attr('fill', band.color)
+                .attr('opacity', band.opacity !== undefined ? band.opacity : 0.2);
+        });
+    }
     private targetElement: any;
     private focus: any;
     private horizontalValueBox: any;
@@ -1912,6 +1937,85 @@ class LineChart extends TemporalXAxisComponent {
                 var yRange = (yExtent[1] - yExtent[0]) > 0 ? yExtent[1] - yExtent[0] : 1;
                 var yOffsetPercentage = this.chartOptions.isArea ? (1.5 / this.chartHeight) : (10 / this.chartHeight);
                 this.y.domain([yExtent[0] - (yRange * yOffsetPercentage), yExtent[1] + (yRange * (10 / this.chartHeight))]);
+
+                // Ensure chart background is drawn first
+                // ...existing code for chart background...
+
+                // Render colored background bands per swim lane (after chart background, before lines)
+                if (this.y && this.chartWidth && this.chartOptions.swimLaneOptions) {
+                    Object.entries(this.chartOptions.swimLaneOptions).forEach(([laneKey, laneOpt]) => {
+                        if (!laneOpt.showBackgroundBands) return;
+                        let bands: import("./ILineChartOptions").BackgroundBand[] = [];
+                        if (laneOpt.backgroundBands && laneOpt.backgroundBands.length > 0) {
+                            bands = laneOpt.backgroundBands;
+                            } else if (laneOpt.backgroundBandCondition) {
+                                // Support new BackgroundBandCondition shape
+                                const cond = laneOpt.backgroundBandCondition;
+                                const yMin = this.y.domain()[0];
+                                const yMax = this.y.domain()[1];
+                                if (cond.condition === 'Greater Than') {
+                                    bands.push({
+                                        y0: cond.thresholdValue,
+                                        y1: yMax,
+                                        color: cond.color,
+                                        opacity: cond.opacity,
+                                        label: cond.label
+                                    });
+                                } else if (cond.condition === 'Less Than') {
+                                    bands.push({
+                                        y0: yMin,
+                                        y1: cond.thresholdValue,
+                                        color: cond.color,
+                                        opacity: cond.opacity,
+                                        label: cond.label
+                                    });
+                                }
+                        } else if (laneOpt.horizontalMarkers && laneOpt.horizontalMarkers.length > 0) {
+                            // Auto-calculate bands from horizontal markers and y-min/y-max
+                            const yMin = this.y.domain()[0];
+                            const yMax = this.y.domain()[1];
+                            const markerObjs = laneOpt.horizontalMarkers.slice().sort((a, b) => a.value - b.value);
+                            const stops = [yMin, ...markerObjs.map(m => m.value), yMax];
+                            for (let i = 0; i < stops.length - 1; i++) {
+                                // For each band, use color/opacity from the marker below (or default for first band)
+                                let color = (i === 0) ? (markerObjs[0]?.color || '#e0e0e0') : (markerObjs[i]?.color || markerObjs[markerObjs.length-1]?.color || '#e0e0e0');
+                                let opacity = (i === 0) ? (markerObjs[0]?.opacity ?? 0.2) : (markerObjs[i]?.opacity ?? markerObjs[markerObjs.length-1]?.opacity ?? 0.2);
+                                bands.push({
+                                    y0: stops[i],
+                                    y1: stops[i + 1],
+                                    color,
+                                    opacity
+                                });
+                            }
+                        }
+                        if (bands.length > 0) {
+                            // Remove existing background band group
+                            let bgGroup = this.svgSelection.select('.tsi-backgroundBands');
+                            if (!bgGroup.empty()) bgGroup.remove();
+                            // Try to insert after chart background, else append
+                            let referenceNode = this.svgSelection.node().childNodes[1];
+                            if (referenceNode) {
+                                bgGroup = d3.select(this.svgSelection.node().insertBefore(document.createElementNS('http://www.w3.org/2000/svg', 'g'), referenceNode));
+                                bgGroup.attr('class', 'tsi-backgroundBands');
+                            } else {
+                                bgGroup = this.svgSelection.append('g').attr('class', 'tsi-backgroundBands');
+                            }
+                            bands.forEach(band => {
+                                const y0 = this.y(band.y0);
+                                const y1 = this.y(band.y1);
+                                const bandHeight = Math.abs(y1 - y0);
+                                const yTop = Math.min(y0, y1);
+                                bgGroup.append('rect')
+                                    .attr('x', this.chartMargins.left)
+                                    .attr('y', yTop)
+                                    .attr('width', this.chartWidth)
+                                    .attr('height', bandHeight)
+                                    .attr('fill', band.color)
+                                    .attr('opacity', band.opacity ?? 0.2);
+                            });
+                        }
+                    });
+                }
 
                 if (this.chartOptions.isArea) {
                     this.areaPath = d3.area()

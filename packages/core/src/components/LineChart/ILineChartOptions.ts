@@ -1,5 +1,13 @@
 import { ChartOptions } from "../../models/ChartOptions";
 
+export interface HorizontalMarker {
+    value: number;
+    color: string;
+    condition: 'Greater Than' | 'Less Than';
+    opacity?: number;
+    label?: string;
+}
+
 /**
  * Configuration options for the LineChart component.
  * 
@@ -32,6 +40,33 @@ import { ChartOptions } from "../../models/ChartOptions";
  * };
  * ```
  */
+export interface BackgroundBand {
+    y0: number;
+    y1: number;
+    color: string;
+    opacity?: number;
+    label?: string;
+}
+
+export interface BackgroundBandCondition {
+    condition: 'Greater Than' | 'Less Than';
+    thresholdValue: number;
+    color: string;
+    opacity?: number;
+    label?: string;
+}
+
 export type ILineChartOptions = Partial<Omit<ChartOptions,
     'onSelect' | 'onInput' | 'onKeydown' | 'onInstanceClick' | 'hierarchyOptions' | 'withContextMenu' |
-    'timeSeriesIdProperties' | 'isTemporal' | 'spMeasures' | 'scatterPlotRadius' | 'spAxisLabels'>>;
+    'timeSeriesIdProperties' | 'isTemporal' | 'spMeasures' | 'scatterPlotRadius' | 'spAxisLabels'>> & {
+        backgroundBands?: BackgroundBand[];
+        horizontalMarkers?: HorizontalMarker[];
+        swimLaneOptions?: {
+            [laneIdx: number]: {
+                showBackgroundBands?: boolean;
+                backgroundBands?: BackgroundBand[];
+                horizontalMarkers?: HorizontalMarker[];
+                backgroundBandCondition?: BackgroundBandCondition;
+            }
+        };
+    };

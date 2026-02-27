@@ -6,6 +6,15 @@ class ChartComponentData {
     public displayState: any = {};
     public timeArrays: any = [];
 
+    // For type completeness
+    public backgroundBandCondition?: {
+        condition: 'Greater Than' | 'Less Than';
+        thresholdValue: number;
+        color: string;
+        opacity?: number;
+        label?: string;
+    };
+
     public visibleTSCount: number = 0;
     public visibleTAs: any = [];
     public allValues: any = [];

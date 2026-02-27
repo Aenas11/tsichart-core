@@ -6,12 +6,29 @@ import { InterpolationFunctions, YAxisStates } from '../constants/Enums';
 import { HorizontalMarker } from '../utils/Interfaces';
 
 // Interfaces
+interface BackgroundBand {
+    y0: number;
+    y1: number;
+    color: string;
+    opacity?: number;
+    label?: string;
+}
+
 interface swimLaneOption {
     yAxisType: YAxisStates,
     label?: string,
     onClick?: (lane: number) => any,
     collapseEvents?: string,
-    horizontalMarkers?: Array<HorizontalMarker>
+    horizontalMarkers?: Array<HorizontalMarker>,
+    showBackgroundBands?: boolean, // default false
+    backgroundBands?: BackgroundBand[] // optional, overrides auto bands
+    backgroundBandCondition?: {
+        condition: 'Greater Than' | 'Less Than';
+        thresholdValue: number;
+        color: string;
+        opacity?: number;
+        label?: string;
+    }
 }
 
 class ChartOptions {

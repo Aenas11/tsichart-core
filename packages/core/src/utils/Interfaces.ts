@@ -1,4 +1,7 @@
-export interface HorizontalMarker { 
-    color: string,
-    value: number
+export interface HorizontalMarker {
+    value: number;
+    color: string;
+    condition: 'Greater Than' | 'Less Than';
+    opacity?: number;
+    label?: string;
 }

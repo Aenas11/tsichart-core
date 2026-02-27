@@ -3,6 +3,14 @@ import { ChartComponentData } from "./ChartComponentData";
 
 class LineChartData extends ChartComponentData {
     public timeMap: any = {};
+    // For type completeness
+    public backgroundBandCondition?: {
+        condition: 'Greater Than' | 'Less Than';
+        thresholdValue: number;
+        color: string;
+        opacity?: number;
+        label?: string;
+    };
     get yExtents(): Array<any> {
         return this._yExtents;
     };
