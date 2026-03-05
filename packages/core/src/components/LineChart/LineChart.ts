@@ -147,6 +147,9 @@ class LineChart extends TemporalXAxisComponent {
             const start = sorted[i];
             const end = sorted[i + 1];
             if (start.value === undefined || end.value === undefined) continue;
+            if (start.condition === 'Less Than' && end.condition === 'Greater Than') {
+                continue;
+            }
             const y0 = start.value;
             const y1 = end.value;
             if (y1 <= y0) continue;
@@ -156,6 +159,34 @@ class LineChart extends TemporalXAxisComponent {
                 color: start.color ?? end.color ?? defaultColor,
                 opacity: start.opacity ?? end.opacity ?? defaultOpacity
             });
+        }
+
+        const lessThans = sorted.filter((marker) => marker.condition === 'Less Than' && typeof marker.value === 'number');
+        if (lessThans.length > 0) {
+            const minLessThan = Math.min(...lessThans.map((m) => m.value));
+            if (minLessThan > domain[0]) {
+                const base = lessThans.find((m) => m.value === minLessThan);
+                bands.unshift({
+                    y0: domain[0],
+                    y1: minLessThan,
+                    color: base?.color ?? defaultColor,
+                    opacity: base?.opacity ?? defaultOpacity
+                });
+            }
+        }
+
+        const greaterThans = sorted.filter((marker) => marker.condition === 'Greater Than' && typeof marker.value === 'number');
+        if (greaterThans.length > 0) {
+            const maxGreaterThan = Math.max(...greaterThans.map((m) => m.value));
+            if (maxGreaterThan < domain[1]) {
+                const base = greaterThans.find((m) => m.value === maxGreaterThan);
+                bands.push({
+                    y0: maxGreaterThan,
+                    y1: domain[1],
+                    color: base?.color ?? defaultColor,
+                    opacity: base?.opacity ?? defaultOpacity
+                });
+            }
         }
         return bands;
     }
