@@ -7,6 +7,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+.github
+docs
+AGENTS.md
+CHANGELOG.md
+CICD_STATUS.md
+CONTRIBUTING.md
+PHASE1_COMPLETE.md
+PHASE2_COMPLETE.md
+QUICK_PUBLISH.md
+README.md
+RELEASE_GUIDE.md
+RESTRUCTURING_PLAN.md
+STORYBOOK_GUIDE.md
+config.toml
+
+
+
 node_modules
 node_modules/.vite/
 .DS_Store
