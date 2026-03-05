@@ -38,7 +38,24 @@ When a work requirement is given:
 - **Empty Files:** Never use "patch" on an empty file. Always use `write_to_file`.
 - **Top-of-File Insertion:** If you need to add content to the very top and "patch" fails, use `read_file` to get the full content, prepend your new code, and `write_to_file` the complete result.
 
+---
 
-## Automation Triggers
-- If the agent encounters an error in the terminal, it must immediately switch to **Debugger Mode**, analyze the logs, and fix the code without asking for permission.
-- If a requirement is ambiguous, the agent must check `PROJECT_SPEC.md` before prompting the user.
+# D3.js Reference Policy
+
+All chart rendering, alignment, and interactivity in this codebase is dependent on [D3.js](https://d3js.org/).
+
+**Agent Guidance:**
+- The Architect, Developer, and Auditor must use D3.js documentation as the primary reference for:
+  - SVG rendering and transforms
+  - Scales, axes, and pixel alignment
+  - Data binding and selection
+  - Chart interactivity and performance
+- All architectural plans, implementation, and test audits must follow D3.js conventions and best practices.
+- Any deviation from D3.js patterns must be justified and documented in the relevant spec or audit report.
+
+**Reference:**
+- Official D3.js documentation: https://d3js.org/
+
+---
+
+This policy ensures robust, maintainable, and visually accurate chart components throughout the project.

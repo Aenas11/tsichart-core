@@ -8,8 +8,8 @@
 `backgroundBandCondition` now only supports:
 - `condition: 'Greater Than' | 'Less Than'`
 - `thresholdValue: number`
-- For 'Greater Than', band covers y > thresholdValue.
-- For 'Less Than', band covers y < thresholdValue.
+- For 'Greater Than', band covers y >= thresholdValue.
+- For 'Less Than', band covers y <= thresholdValue.
 - No 'Between' condition; to cover a range, use multiple bands or markers.
 
 **Note:**
@@ -21,22 +21,19 @@ swimLaneOptions: {
   0: {
     yAxisType: 'shared',
     showBackgroundBands: true,
-    backgroundBandCondition: {
-      condition: 'Greater Than',
-      thresholdValue: 15,
-      color: '#e0f7fa',
-      opacity: 0.3
-    }
+    horizontalMarkers: [
+      { value: 10, color: '#f44336', condition: 'Greater Than', label: 'Low' },
+      { value: 20, color: '#2196f3', condition: 'Greater Than', label: 'Normal' },
+      { value: 30, color: '#4caf50', condition: 'Greater Than', label: 'High' }
+    ]
   },
   1: {
     yAxisType: 'shared',
     showBackgroundBands: true,
-    backgroundBandCondition: {
-      condition: 'Less Than',
-      thresholdValue: 5,
-      color: '#ffe0b2',
-      opacity: 0.3
-    }
+    horizontalMarkers: [
+      { value: 5, color: '#ffe0b2', condition: 'Less Than', label: 'Acceptable' },
+      { value: 15, color: '#e0f7fa', condition: 'Less Than', label: 'Target' }
+    ]
   }
 }
 ```

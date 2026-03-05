@@ -664,19 +664,20 @@ export const WithBackgroundBands: Story = {
             0: {
                 showBackgroundBands: true,
                 horizontalMarkers: [
-                    { value: 60, color: '#0078d4', condition: 'Greater Than', label: 'Low' },
-                    { value: 80, color: '#387458', condition: 'Greater Than', label: 'Normal' },
-                    { value: 90, color: '#88ff00', condition: 'Greater Than', label: 'Warning' },
-                    { value: 110, color: '#ff8c00', condition: 'Greater Than', label: 'Critical' }
-                ]
-            },
-            1: {
-                showBackgroundBands: true,
-                horizontalMarkers: [
-                    { value: 70, color: '#c80096', condition: 'Greater Than', label: 'Acceptable' },
-                    { value: 90, color: '#e7382b', condition: 'Greater Than', label: 'Target' }
+                    { value: 50, color: '#e91414', condition: 'Less Than', label: 'Low' },
+                    { value: 63, color: '#0078d4', condition: 'Less Than', label: 'Low' },
+                    { value: 97, color: '#387458', condition: 'Greater Than', label: 'Normal' },
+                    { value: 113, color: '#88ff00', condition: 'Greater Than', label: 'Warning' },
+                    { value: 132, color: '#ff8c00', condition: 'Greater Than', label: 'Critical' }
                 ]
             }
+            // 1: {
+            //     showBackgroundBands: true,
+            //     horizontalMarkers: [
+            //         { value: 70, color: '#c80096', condition: 'Greater Than', label: 'Acceptable' },
+            //         { value: 90, color: '#e7382b', condition: 'Greater Than', label: 'Target' }
+            //     ]
+            // }
         }
     },
     render: createStoryRender()
