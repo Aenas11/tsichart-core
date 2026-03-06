@@ -1,7 +1,7 @@
 // Import missing types
-import { BackgroundBand } from '../components/LineChart/ILineChartOptions';
-import { HorizontalMarker } from '../utils/Interfaces';
-import { YAxisStates } from '../constants/Enums';
+import type { BackgroundBand } from '../components/LineChart/ILineChartOptions';
+import type { HorizontalMarker } from '../utils/Interfaces';
+import type { YAxisStates } from '../constants/Enums';
 
 /**
  * Chart Data Type Definitions
@@ -187,10 +187,15 @@ export interface BackgroundBandCondition {
     label?: string;
 }
 
-export interface swimLaneOption {
+export interface SwimLaneOption {
     yAxisType: YAxisStates;
     horizontalMarkers?: Array<HorizontalMarker>;
     showBackgroundBands?: boolean;
     backgroundBands?: BackgroundBand[];
     backgroundBandCondition?: BackgroundBandCondition;
 }
+
+/**
+ * @deprecated Use `SwimLaneOption` instead.
+ */
+export type swimLaneOption = SwimLaneOption;
