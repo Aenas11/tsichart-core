@@ -7,6 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+docs/specs/linechart-colored-background-bands.spec.md
+
 node_modules
 node_modules/.vite/
 .DS_Store

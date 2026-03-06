@@ -17,8 +17,8 @@ import { AxisState } from '../../models/AxisState';
 import Marker from '../Marker';
 import { swimlaneLabelConstants } from '../../constants/Constants'
 import { HorizontalMarker } from '../../utils/Interfaces';
-import { ILineChartOptions } from "./ILineChartOptions";
-import { ChartData } from '../../types';
+import { BackgroundBand, ILineChartOptions } from "./ILineChartOptions";
+import { BackgroundBandCondition } from "../../types/ChartData";
 
 class LineChart extends TemporalXAxisComponent {
     private targetElement: any;
@@ -97,7 +97,223 @@ class LineChart extends TemporalXAxisComponent {
 
     LineChart() {
     }
+    /**
+     * Render colored horizontal background bands behind chart data, strictly between horizontal marker values.
+     * @param bands Array of BackgroundBand objects
+     * @param markers Array of horizontal marker objects (must be sorted by value ascending)
+     */
+    private ensureBackgroundBandsGroup() {
+        const mainGroup = this.svgSelection.select('.svgGroup');
+        if (mainGroup.empty()) return null;
+        let bgGroup = mainGroup.select('.tsi-backgroundBands');
+        if (bgGroup.empty()) {
+            bgGroup = mainGroup.insert('g', ':first-child')
+                .attr('class', 'tsi-backgroundBands');
+        }
+        return bgGroup;
+    }
 
+    private createAutoBandsFromMarkers(markers: HorizontalMarker[], domain: number[]): BackgroundBand[] {
+        if (!markers || markers.length === 0 || !domain || domain.length < 2) return [];
+        const sorted = markers.slice().sort((a, b) => a.value - b.value);
+        const defaultColor = 'rgba(0,0,0,0.18)';
+        const defaultOpacity = 0.18;
+
+        if (sorted.length === 1) {
+            const marker = sorted[0];
+            const color = marker.color ?? defaultColor;
+            const opacity = marker.opacity ?? defaultOpacity;
+            const condition = marker.condition ?? 'Greater Than';
+            if (condition === 'Less Than') {
+                return [{
+                    y0: domain[0],
+                    y1: marker.value,
+                    color,
+                    opacity
+                }];
+            }
+            return [{
+                y0: marker.value,
+                y1: domain[1],
+                color,
+                opacity
+            }];
+        }
+
+        const bands: BackgroundBand[] = [];
+        // inner bands between every adjacent marker pair
+        for (let i = 0; i < sorted.length - 1; i++) {
+            const start = sorted[i];
+            const end = sorted[i + 1];
+            if (start.value === undefined || end.value === undefined) continue;
+            const y0 = start.value;
+            const y1 = end.value;
+            if (y1 <= y0) continue;
+            bands.push({
+                y0,
+                y1,
+                color: start.color ?? end.color ?? defaultColor,
+                opacity: start.opacity ?? end.opacity ?? defaultOpacity
+            });
+        }
+
+        const lessThans = sorted.filter((marker) => marker.condition === 'Less Than' && typeof marker.value === 'number');
+        if (lessThans.length > 0) {
+            const minLessThan = Math.min(...lessThans.map((m) => m.value));
+            if (minLessThan > domain[0]) {
+                const base = lessThans.find((m) => m.value === minLessThan);
+                bands.unshift({
+                    y0: domain[0],
+                    y1: minLessThan,
+                    color: base?.color ?? defaultColor,
+                    opacity: base?.opacity ?? defaultOpacity
+                });
+            }
+        }
+
+        const greaterThans = sorted.filter((marker) => marker.condition === 'Greater Than' && typeof marker.value === 'number');
+        if (greaterThans.length > 0) {
+            const maxGreaterThan = Math.max(...greaterThans.map((m) => m.value));
+            if (maxGreaterThan < domain[1]) {
+                const base = greaterThans.find((m) => m.value === maxGreaterThan);
+                bands.push({
+                    y0: maxGreaterThan,
+                    y1: domain[1],
+                    color: base?.color ?? defaultColor,
+                    opacity: base?.opacity ?? defaultOpacity
+                });
+            }
+        }
+        return bands;
+    }
+
+    private createBandFromCondition(condition: BackgroundBandCondition, domain: number[]): BackgroundBand[] {
+        if (!condition || !domain || domain.length < 2) return [];
+        const defaultColor = 'rgba(0,0,0,0.18)';
+        const color = condition.color ?? defaultColor;
+        const opacity = condition.opacity ?? 0.18;
+        const threshold = condition.thresholdValue;
+        if (typeof threshold !== 'number') return [];
+        if (condition.condition === 'Less Than') {
+            if (threshold <= domain[0]) return [];
+            return [{
+                y0: domain[0],
+                y1: threshold,
+                color,
+                opacity
+            }];
+        }
+        if (condition.condition === 'Greater Than') {
+            if (threshold >= domain[1]) return [];
+            return [{
+                y0: threshold,
+                y1: domain[1],
+                color,
+                opacity
+            }];
+        }
+        return [];
+    }
+
+    private drawBackgroundBands(
+        bands: BackgroundBand[],
+        yScale: any,
+        chartWidth: number,
+        laneKey: string | number
+    ) {
+        if (!bands || bands.length === 0 || !yScale || chartWidth <= 0) {
+            return;
+        }
+        const laneGroupClass = `tsi-backgroundBandLane-${laneKey ?? 'default'}`;
+        const bgGroup = this.ensureBackgroundBandsGroup();
+        if (!bgGroup) {
+            return;
+        }
+        let laneGroup = bgGroup.select(`.${laneGroupClass}`);
+        if (laneGroup.empty()) {
+            laneGroup = bgGroup.append('g').attr('class', laneGroupClass);
+        } else {
+            laneGroup.selectAll('rect').remove();
+        }
+
+        const chartYMin = yScale.range()[1];
+        const chartYMax = yScale.range()[0];
+        bands.forEach((band) => {
+            let y0 = yScale(band.y0);
+            let y1 = yScale(band.y1);
+            if (!isFinite(y0) || !isFinite(y1)) return;
+            y0 = Math.max(Math.min(y0, chartYMax), chartYMin);
+            y1 = Math.max(Math.min(y1, chartYMax), chartYMin);
+            const yTop = Math.min(y0, y1);
+            const bandHeight = Math.abs(y1 - y0);
+            if (bandHeight <= 0) return;
+            laneGroup.append('rect')
+                .attr('x', 0)
+                .attr('y', yTop)
+                .attr('width', chartWidth)
+                .attr('height', bandHeight)
+                .attr('fill', band.color ?? 'rgba(0,0,0,0.18)')
+                .attr('opacity', band.opacity ?? 0.18);
+        });
+    }
+
+    private renderSwimLaneBackgroundBands(visibleCDOs: Array<any>) {
+        if (!this.svgSelection || !this.chartWidth || !this.chartOptions?.swimLaneOptions) {
+            return;
+        }
+        const laneScaleMap: { [lane: number]: any } = {};
+        visibleCDOs.forEach((cDO) => {
+            if (this.yMap[cDO.aggKey] && laneScaleMap[cDO.swimLane] === undefined) {
+                laneScaleMap[cDO.swimLane] = this.yMap[cDO.aggKey];
+            }
+        });
+        const bgGroup = this.ensureBackgroundBandsGroup();
+        if (!bgGroup) {
+            return;
+        }
+        bgGroup.selectAll('g').remove();
+        Object.entries(this.chartOptions.swimLaneOptions).forEach(([laneKey, laneOpt]) => {
+            if (!laneOpt?.showBackgroundBands) {
+                return;
+            }
+            const laneNumber = Number(laneKey);
+            const laneScale = laneScaleMap[laneNumber] ?? this.y;
+            if (!laneScale) {
+                return;
+            }
+            let domain: number[] = [];
+            if (typeof laneScale.domain === 'function') {
+                const rawDomain: number[] = laneScale.domain();
+                if (Array.isArray(rawDomain) && rawDomain.length >= 2) {
+                    domain = rawDomain.slice(0, 2);
+                    if (domain[0] > domain[1]) {
+                        domain = [domain[1], domain[0]];
+                    }
+                } else if (Array.isArray(rawDomain)) {
+                    domain = rawDomain.slice();
+                }
+            }
+            const explicitBands = Array.isArray(laneOpt.backgroundBands) ? laneOpt.backgroundBands : [];
+            let bands: BackgroundBand[] = [];
+            if (explicitBands.length > 0) {
+                bands = explicitBands.map((band) => ({
+                    y0: band.y0,
+                    y1: band.y1,
+                    color: band.color,
+                    opacity: band.opacity
+                }));
+            } else {
+                const markerBands = this.createAutoBandsFromMarkers(laneOpt.horizontalMarkers, domain);
+                bands = markerBands;
+                if (laneOpt.backgroundBandCondition) {
+                    bands = bands.concat(this.createBandFromCondition(laneOpt.backgroundBandCondition, domain));
+                }
+            }
+            if (bands.length > 0) {
+                this.drawBackgroundBands(bands, laneScale, this.chartWidth, laneKey);
+            }
+        });
+    }
 
     //get the left and right positions of the brush
     public getBrushPositions() {
@@ -405,13 +621,28 @@ class LineChart extends TemporalXAxisComponent {
     //get the extent of an array of timeValues
     private getYExtent(aggValues, isEnvelope, aggKey = null) {
         let extent;
+        // Gather all horizontal marker values
+        let markerValues = [];
+        if (this.chartOptions.swimLaneOptions) {
+            Object.values(this.chartOptions.swimLaneOptions).forEach((lane: any) => {
+                if (lane.horizontalMarkers) {
+                    markerValues.push(...lane.horizontalMarkers.map((m: any) => m.value));
+                }
+            });
+        }
+        if (this.aggregateExpressionOptions) {
+            this.aggregateExpressionOptions.forEach((cDO: any) => {
+                if (cDO.horizontalMarkers) {
+                    markerValues.push(...cDO.horizontalMarkers.map((m: any) => m.value));
+                }
+            });
+        }
+        // Compute normal extent
         if (aggKey !== null && (this.chartComponentData.displayState[aggKey].yExtent !== null)) {
-            return this.chartComponentData.displayState[aggKey].yExtent;
-        }
-        if (this.chartOptions.yExtent !== null) {
-            return this.chartOptions.yExtent;
-        }
-        if (isEnvelope) {
+            extent = this.chartComponentData.displayState[aggKey].yExtent;
+        } else if (this.chartOptions.yExtent !== null) {
+            extent = this.chartOptions.yExtent;
+        } else if (isEnvelope) {
             var filteredValues = this.getFilteredValues(aggValues);
             var flatValuesList = [];
             filteredValues.forEach((d: any) => {
@@ -442,9 +673,24 @@ class LineChart extends TemporalXAxisComponent {
                 return null;
             });
         }
-        if (extent[0] == undefined || extent[1] == undefined)
-            return [0, 1]
-        return extent;
+        // Guard against invalid extent (empty or non-numeric), fallback to default domain
+        if (!extent || !isFinite(extent[0]) || !isFinite(extent[1])) {
+            extent = [0, 1];
+        }
+        // Expand extent to include marker values with buffer
+        let min = extent[0];
+        let max = extent[1];
+        if (markerValues.length > 0) {
+            min = Math.min(min, ...markerValues);
+            max = Math.max(max, ...markerValues);
+        }
+        // Add buffer (5% of range or at least 5 units)
+        const buffer = Math.max(5, (max - min) * 0.05);
+        min -= buffer;
+        max += buffer;
+        if (!isFinite(min) || !isFinite(max))
+            return [0, 1];
+        return [min, max];
     }
 
     private getFilteredValues(aggValues) {
@@ -1320,13 +1566,40 @@ class LineChart extends TemporalXAxisComponent {
             this.aggregateExpressionOptions.forEach((aEO) => {
                 aEO.swimLane = 0;
             });
-            // consolidate horizontal markers
+            // consolidate swim lane options for shared/overlap axis state
             if (this.chartOptions.swimLaneOptions) {
-                const horizontalMarkers = [];
-                Object.values(this.chartOptions.swimLaneOptions).forEach((lane) => {
-                    horizontalMarkers.push(...lane.horizontalMarkers);
+                const horizontalMarkers: HorizontalMarker[] = [];
+                const backgroundBands = [];
+                let backgroundBandCondition = null;
+                let showBackgroundBands = false;
+                Object.values(this.chartOptions.swimLaneOptions).forEach((lane: any) => {
+                    if (Array.isArray(lane.horizontalMarkers)) {
+                        horizontalMarkers.push(...lane.horizontalMarkers);
+                    }
+                    if (Array.isArray(lane.backgroundBands)) {
+                        backgroundBands.push(...lane.backgroundBands);
+                    }
+                    if (!backgroundBandCondition && lane.backgroundBandCondition) {
+                        backgroundBandCondition = lane.backgroundBandCondition;
+                    }
+                    if (lane.showBackgroundBands) {
+                        showBackgroundBands = true;
+                    }
                 });
-                this.chartOptions.swimLaneOptions = { 0: { yAxisType: this.chartOptions.yAxisState, horizontalMarkers: horizontalMarkers } };
+                const mergedLaneOpts: any = { yAxisType: this.chartOptions.yAxisState };
+                if (horizontalMarkers.length > 0) {
+                    mergedLaneOpts.horizontalMarkers = horizontalMarkers;
+                }
+                if (backgroundBands.length > 0) {
+                    mergedLaneOpts.backgroundBands = backgroundBands;
+                }
+                if (backgroundBandCondition) {
+                    mergedLaneOpts.backgroundBandCondition = backgroundBandCondition;
+                }
+                if (showBackgroundBands) {
+                    mergedLaneOpts.showBackgroundBands = true;
+                }
+                this.chartOptions.swimLaneOptions = { 0: mergedLaneOpts };
             }
         } else {
             let minimumPresentSwimLane = this.aggregateExpressionOptions.reduce((currMin, aEO) => {
@@ -1909,9 +2182,9 @@ class LineChart extends TemporalXAxisComponent {
                 }
 
                 var yExtent: any = this.getYExtent(this.chartComponentData.allValues, false, null);
-                var yRange = (yExtent[1] - yExtent[0]) > 0 ? yExtent[1] - yExtent[0] : 1;
-                var yOffsetPercentage = this.chartOptions.isArea ? (1.5 / this.chartHeight) : (10 / this.chartHeight);
-                this.y.domain([yExtent[0] - (yRange * yOffsetPercentage), yExtent[1] + (yRange * (10 / this.chartHeight))]);
+                // Remove y-axis padding so lines and bands stay strictly within the axis
+                this.y.domain([yExtent[0], yExtent[1]]);
+
 
                 if (this.chartOptions.isArea) {
                     this.areaPath = d3.area()
@@ -1977,75 +2250,75 @@ class LineChart extends TemporalXAxisComponent {
                 var self = this;
 
                 let visibleNumericI = 0;
-                aggregateGroups.enter()
+                const mergedAggregateGroups = aggregateGroups.enter()
                     .append('g')
                     .classed('tsi-aggGroup', true)
-                    .merge(aggregateGroups)
-                    .transition()
+                    .merge(aggregateGroups);
+
+                mergedAggregateGroups.each(function (agg, i) {
+                    let yExtent;
+                    let aggVisible = true;
+                    var aggValues: Array<any> = [];
+                    let aggKey = agg.aggKey;
+                    Object.keys(self.chartComponentData.visibleTAs[aggKey]).forEach((splitBy) => {
+                        aggValues = aggValues.concat(self.chartComponentData.visibleTAs[aggKey][splitBy]);
+                    });
+
+                    yExtent = self.getGroupYExtent(aggKey, aggVisible, aggValues, yExtent);
+
+                    const g = d3.select(this);
+                    if (self.plotComponents[aggKey] === undefined || self.mismatchingChartType(aggKey)) {
+                        delete self.plotComponents[aggKey];
+                        g.selectAll('*').remove();
+                        self.plotComponents[aggKey] = self.createPlot(g, i, visibleCDOs);
+                    }
+
+                    let mouseoverFunction = self.getMouseoverFunction(visibleCDOs[i].dataType);
+                    let mouseoutFunction = self.getMouseoutFunction(visibleCDOs[i].dataType);
+                    let positionInGroup = visibleNumericI;
+                    if (self.getAggAxisType(agg) === YAxisStates.Shared) {
+                        yExtent = self.swimlaneYExtents[agg.swimLane];
+                    }
+
+                    if (agg.dataType === 'numeric') {
+                        let idx = self.aggregateExpressionOptions.findIndex(el => el.aggKey === aggKey)
+                        self.chartComponentData.setYExtents(idx, yExtent);
+                    }
+
+                    let swimLane = agg.swimLane;
+                    let offsetImpact = (agg.dataType === DataTypes.Numeric) ? 1 : 0;
+                    if (swimLaneCounts[swimLane]) {
+                        positionInGroup = swimLaneCounts[swimLane];
+                        swimLaneCounts[swimLane] += offsetImpact;
+                    } else {
+                        positionInGroup = 0;
+                        swimLaneCounts[swimLane] = offsetImpact;
+                    }
+
+                    let axisState = new AxisState(self.getAggAxisType(agg), yExtent, positionInGroup);
+
+                    let yAxisOnClick = null;
+                    if (typeof self.chartOptions?.swimLaneOptions?.[swimLane]?.onClick === 'function') {
+                        yAxisOnClick = () => self.chartOptions.swimLaneOptions[swimLane].onClick?.(swimLane);
+                    }
+
+                    self.plotComponents[aggKey].render(self.chartOptions, visibleNumericI, agg, true, d3.select(this), self.chartComponentData, axisState,
+                        self.chartHeight, self.visibleAggCount, self.colorMap, self.previousAggregateData,
+                        self.x, self.areaPath, self.strokeOpacity, self.y, self.yMap, defs, visibleCDOs[i], self.previousIncludeDots, offsetsAndHeights[i],
+                        g, mouseoverFunction, mouseoutFunction, yAxisOnClick);
+
+                    visibleNumericI += (visibleCDOs[i].dataType === DataTypes.Numeric ? 1 : 0);
+                });
+
+                mergedAggregateGroups.transition()
                     .duration((this.chartOptions.noAnimate) ? 0 : self.TRANSDURATION)
                     .ease(d3.easeExp)
                     .attr('transform', (agg, i) => {
                         return self.chartOptions.isArea ? null : 'translate(0,' + offsetsAndHeights[i][0] + ')';
-                    })
-                    .each(function (agg, i) {
-                        let yExtent;
-                        let aggVisible = true;
-                        var aggValues: Array<any> = [];
-                        let aggKey = agg.aggKey;
-                        Object.keys(self.chartComponentData.visibleTAs[aggKey]).forEach((splitBy) => {
-                            aggValues = aggValues.concat(self.chartComponentData.visibleTAs[aggKey][splitBy]);
-                        });
-
-                        yExtent = self.getGroupYExtent(aggKey, aggVisible, aggValues, yExtent);
-
-                        if (self.plotComponents[aggKey] === undefined || self.mismatchingChartType(aggKey)) {
-                            let g = d3.select(this);
-                            delete self.plotComponents[aggKey];
-                            g.selectAll('*').remove();
-                            self.plotComponents[aggKey] = self.createPlot(g, i, visibleCDOs);
-                        }
-
-                        let mouseoverFunction = self.getMouseoverFunction(visibleCDOs[i].dataType);
-                        let mouseoutFunction = self.getMouseoutFunction(visibleCDOs[i].dataType);
-                        let positionInGroup = visibleNumericI;
-                        if (self.getAggAxisType(agg) === YAxisStates.Shared) {
-                            yExtent = self.swimlaneYExtents[agg.swimLane];
-                        }
-
-                        // Update yExtent index in LineChartData after all local yExtent updates (this is public facing yExtent)
-                        // Only update if dataType is numeric
-                        if (agg.dataType === 'numeric') {
-                            let idx = self.aggregateExpressionOptions.findIndex(el => el.aggKey === aggKey)
-                            self.chartComponentData.setYExtents(idx, yExtent);
-                        }
-
-                        //should count all as same swim lane when not in stacked.
-                        let swimLane = agg.swimLane;
-                        let offsetImpact = (agg.dataType === DataTypes.Numeric) ? 1 : 0;
-                        if (swimLaneCounts[swimLane]) {
-                            positionInGroup = swimLaneCounts[swimLane];
-                            swimLaneCounts[swimLane] += offsetImpact;
-                        } else {
-                            positionInGroup = 0;
-                            swimLaneCounts[swimLane] = offsetImpact;
-                        }
-
-                        let axisState = new AxisState(self.getAggAxisType(agg), yExtent, positionInGroup);
-
-                        let yAxisOnClick = null;
-                        if (typeof self.chartOptions?.swimLaneOptions?.[swimLane]?.onClick === 'function') {
-                            yAxisOnClick = () => self.chartOptions.swimLaneOptions[swimLane].onClick?.(swimLane);
-                        }
-
-                        self.plotComponents[aggKey].render(self.chartOptions, visibleNumericI, agg, true, d3.select(this), self.chartComponentData, axisState,
-                            self.chartHeight, self.visibleAggCount, self.colorMap, self.previousAggregateData,
-                            self.x, self.areaPath, self.strokeOpacity, self.y, self.yMap, defs, visibleCDOs[i], self.previousIncludeDots, offsetsAndHeights[i],
-                            g, mouseoverFunction, mouseoutFunction, yAxisOnClick);
-
-                        //increment index of visible numerics if appropriate
-                        visibleNumericI += (visibleCDOs[i].dataType === DataTypes.Numeric ? 1 : 0);
                     });
+
                 aggregateGroups.exit().remove();
+                this.renderSwimLaneBackgroundBands(visibleCDOs);
                 /******************** Voronoi diagram for hover action ************************/
 
                 this.voronoi = d3Voronoi.voronoi()

@@ -3,6 +3,7 @@ import { ChartComponentData } from "./ChartComponentData";
 
 class LineChartData extends ChartComponentData {
     public timeMap: any = {};
+
     get yExtents(): Array<any> {
         return this._yExtents;
     };

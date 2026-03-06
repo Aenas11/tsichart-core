@@ -1,3 +1,8 @@
+// Import missing types
+import type { BackgroundBand } from '../components/LineChart/ILineChartOptions';
+import type { HorizontalMarker } from '../utils/Interfaces';
+import type { YAxisStates } from '../constants/Enums';
+
 /**
  * Chart Data Type Definitions
  * 
@@ -171,3 +176,26 @@ export type SplitByValue<T extends Series> = T extends Record<string, infer S>
     : never
     : never
     : never;
+
+
+
+export interface BackgroundBandCondition {
+    condition: 'Greater Than' | 'Less Than';
+    thresholdValue: number;
+    color: string;
+    opacity?: number;
+    label?: string;
+}
+
+export interface SwimLaneOption {
+    yAxisType: YAxisStates;
+    horizontalMarkers?: Array<HorizontalMarker>;
+    showBackgroundBands?: boolean;
+    backgroundBands?: BackgroundBand[];
+    backgroundBandCondition?: BackgroundBandCondition;
+}
+
+/**
+ * @deprecated Use `SwimLaneOption` instead.
+ */
+export type swimLaneOption = SwimLaneOption;

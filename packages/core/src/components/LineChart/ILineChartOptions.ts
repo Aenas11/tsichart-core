@@ -1,4 +1,7 @@
 import { ChartOptions } from "../../models/ChartOptions";
+import type { HorizontalMarker } from "../../utils/Interfaces";
+import type { BackgroundBandCondition } from "../../types/ChartData";
+
 
 /**
  * Configuration options for the LineChart component.
@@ -32,6 +35,25 @@ import { ChartOptions } from "../../models/ChartOptions";
  * };
  * ```
  */
+export interface BackgroundBand {
+    y0: number;
+    y1: number;
+    color: string;
+    opacity?: number;
+    label?: string;
+}
+
 export type ILineChartOptions = Partial<Omit<ChartOptions,
     'onSelect' | 'onInput' | 'onKeydown' | 'onInstanceClick' | 'hierarchyOptions' | 'withContextMenu' |
-    'timeSeriesIdProperties' | 'isTemporal' | 'spMeasures' | 'scatterPlotRadius' | 'spAxisLabels'>>;
+    'timeSeriesIdProperties' | 'isTemporal' | 'spMeasures' | 'scatterPlotRadius' | 'spAxisLabels'>> & {
+        backgroundBands?: BackgroundBand[];
+        horizontalMarkers?: HorizontalMarker[];
+        swimLaneOptions?: {
+            [laneIdx: number]: {
+                showBackgroundBands?: boolean;
+                backgroundBands?: BackgroundBand[];
+                horizontalMarkers?: HorizontalMarker[];
+                backgroundBandCondition?: BackgroundBandCondition;
+            }
+        };
+    };

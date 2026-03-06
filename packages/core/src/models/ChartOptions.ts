@@ -4,14 +4,20 @@ import { Strings } from './Strings';
 import { DefaultHierarchyNavigationOptions } from '../constants/Constants';
 import { InterpolationFunctions, YAxisStates } from '../constants/Enums';
 import { HorizontalMarker } from '../utils/Interfaces';
+import type { BackgroundBandCondition } from '../types/ChartData';
+import { BackgroundBand } from '../components/LineChart/ILineChartOptions';
 
 // Interfaces
+
 interface swimLaneOption {
     yAxisType: YAxisStates,
     label?: string,
     onClick?: (lane: number) => any,
     collapseEvents?: string,
-    horizontalMarkers?: Array<HorizontalMarker>
+    horizontalMarkers?: Array<HorizontalMarker>,
+    showBackgroundBands?: boolean, // default false
+    backgroundBands?: BackgroundBand[] // optional, overrides auto bands
+    backgroundBandCondition?: BackgroundBandCondition;
 }
 
 class ChartOptions {
