@@ -96,14 +96,7 @@ class LineChart extends TemporalXAxisComponent {
 
     LineChart() {
     }
-    /**
-     * Render colored horizontal background bands behind chart data.
-     * @param bands Array of BackgroundBand objects
-     */
-    /**
-     * Render colored horizontal background bands strictly between horizontal marker values.
-     * @param markers Array of horizontal marker objects (must be sorted by value ascending)
-     */
+    /** Ensures the SVG group used to render horizontal background bands exists, creating it if needed. */
     private ensureBackgroundBandsGroup() {
         const mainGroup = this.svgSelection.select('.svgGroup');
         if (mainGroup.empty()) return null;
