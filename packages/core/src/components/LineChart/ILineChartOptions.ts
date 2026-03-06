@@ -1,12 +1,7 @@
 import { ChartOptions } from "../../models/ChartOptions";
+import type { HorizontalMarker } from "../../utils/Interfaces";
+import type { BackgroundBandCondition } from "../../types/ChartData";
 
-export interface HorizontalMarker {
-    value: number;
-    color: string;
-    condition: 'Greater Than' | 'Less Than';
-    opacity?: number;
-    label?: string;
-}
 
 /**
  * Configuration options for the LineChart component.
@@ -43,14 +38,6 @@ export interface HorizontalMarker {
 export interface BackgroundBand {
     y0: number;
     y1: number;
-    color: string;
-    opacity?: number;
-    label?: string;
-}
-
-export interface BackgroundBandCondition {
-    condition: 'Greater Than' | 'Less Than';
-    thresholdValue: number;
     color: string;
     opacity?: number;
     label?: string;

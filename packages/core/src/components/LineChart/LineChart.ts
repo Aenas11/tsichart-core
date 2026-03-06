@@ -17,7 +17,8 @@ import { AxisState } from '../../models/AxisState';
 import Marker from '../Marker';
 import { swimlaneLabelConstants } from '../../constants/Constants'
 import { HorizontalMarker } from '../../utils/Interfaces';
-import { BackgroundBand, BackgroundBandCondition, ILineChartOptions } from "./ILineChartOptions";
+import { BackgroundBand, ILineChartOptions } from "./ILineChartOptions";
+import { BackgroundBandCondition } from "../../types/ChartData";
 
 class LineChart extends TemporalXAxisComponent {
     private targetElement: any;
@@ -96,7 +97,11 @@ class LineChart extends TemporalXAxisComponent {
 
     LineChart() {
     }
-    /** Ensures the SVG group used to render horizontal background bands exists, creating it if needed. */
+    /**
+     * Render colored horizontal background bands behind chart data, strictly between horizontal marker values.
+     * @param bands Array of BackgroundBand objects
+     * @param markers Array of horizontal marker objects (must be sorted by value ascending)
+     */
     private ensureBackgroundBandsGroup() {
         const mainGroup = this.svgSelection.select('.svgGroup');
         if (mainGroup.empty()) return null;
@@ -136,13 +141,11 @@ class LineChart extends TemporalXAxisComponent {
         }
 
         const bands: BackgroundBand[] = [];
+        // inner bands between every adjacent marker pair
         for (let i = 0; i < sorted.length - 1; i++) {
             const start = sorted[i];
             const end = sorted[i + 1];
             if (start.value === undefined || end.value === undefined) continue;
-            if (start.condition === 'Less Than' && end.condition === 'Greater Than') {
-                continue;
-            }
             const y0 = start.value;
             const y1 = end.value;
             if (y1 <= y0) continue;
@@ -670,6 +673,10 @@ class LineChart extends TemporalXAxisComponent {
                 return null;
             });
         }
+        // Guard against invalid extent (empty or non-numeric), fallback to default domain
+        if (!extent || !isFinite(extent[0]) || !isFinite(extent[1])) {
+            extent = [0, 1];
+        }
         // Expand extent to include marker values with buffer
         let min = extent[0];
         let max = extent[1];
@@ -681,7 +688,7 @@ class LineChart extends TemporalXAxisComponent {
         const buffer = Math.max(5, (max - min) * 0.05);
         min -= buffer;
         max += buffer;
-        if (min === undefined || max === undefined)
+        if (!isFinite(min) || !isFinite(max))
             return [0, 1];
         return [min, max];
     }
