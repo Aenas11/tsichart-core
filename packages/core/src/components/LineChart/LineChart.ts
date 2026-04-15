@@ -1025,25 +1025,33 @@ class LineChart extends TemporalXAxisComponent {
         return (this.getVisibleNumerics() !== 0);
     }
 
-    private voronoiMousemove(mouseEvent) {
-        if (!this.filteredValueExist() || !this.voronoiExists()) return;
-        this.mx = mouseEvent[0];
-        this.my = mouseEvent[1];
-        const [mx, my] = mouseEvent;
-        var site: any = this.voronoiDiagram.find(this.mx, this.my);
-        if (!this.isDroppingMarker) {
-            this.voronoiMouseover(site.data);
-        } else {
-            let rawTime = this.x.invert(mx);
-            let closestTime = Utils.findClosestTime(rawTime.valueOf(), this.chartComponentData.timeMap);
-            this.renderMarker(this.activeMarker, closestTime);
-            return;
-        }
+    private focusVoronoiSite(site: any) {
+        if (!site || !site.data) return;
+
+        this.voronoiMouseover(site.data);
 
         if (site.data.aggregateKey !== this.focusedAggKey || site.data.splitBy !== this.focusedSplitby) {
             let selectedFilter = Utils.createValueFilter(site.data.aggregateKey, site.data.splitBy);
             this.focusMarkerLabel(selectedFilter, site.data.aggregateKey, site.data.splitBy);
             this.focusOnlyHoveredSeries(site.data.aggregateKey, site.data.splitBy, true);
+        }
+    }
+
+    private voronoiMousemove(mouseEvent) {
+        if (!this.filteredValueExist() || !this.voronoiExists()) return;
+        if (!Array.isArray(mouseEvent) || mouseEvent.length < 2) return;
+        this.mx = mouseEvent[0];
+        this.my = mouseEvent[1];
+        const [mx, my] = mouseEvent;
+        var site: any = this.voronoiDiagram.find(this.mx, this.my);
+        if (!site || !site.data) return;
+        if (!this.isDroppingMarker) {
+            this.focusVoronoiSite(site);
+        } else {
+            let rawTime = this.x.invert(mx);
+            let closestTime = Utils.findClosestTime(rawTime.valueOf(), this.chartComponentData.timeMap);
+            this.renderMarker(this.activeMarker, closestTime);
+            return;
         }
     }
 
@@ -1091,7 +1099,7 @@ class LineChart extends TemporalXAxisComponent {
             } else {
                 if (this.chartComponentData.stickiedKey !== null) {
                     site = this.voronoiDiagram.find(mx, my);
-                    this.voronoiMousemove(site.data);
+                    this.focusVoronoiSite(site);
                     this.unstickySeries(site.data.aggregateKey, site.data.splitBy);
                     return;
                 }
@@ -1181,7 +1189,7 @@ class LineChart extends TemporalXAxisComponent {
                 // recompute voronoi with no sticky
                 this.voronoiDiagram = this.voronoi(this.getFilteredAndSticky(this.chartComponentData.allValues));
                 site = this.voronoiDiagram.find(mx, my);
-                this.voronoiMousemove(site.data);
+                this.focusVoronoiSite(site);
                 this.chartOptions.onUnsticky(site.data.aggregateKey, site.data.splitBy);
                 return;
             }
