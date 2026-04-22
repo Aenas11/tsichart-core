@@ -63,33 +63,6 @@ class TemporalXAxisComponent extends ChartVisualizationComponent {
         this.updateAxisText(forceFirst, forceLast);
     }
 
-    private keepLastTickLabelInView() {
-        if (!this.xAxisEntered) {
-            return;
-        }
-
-        const lastTickText = this.xAxisEntered.select('.tick:last-child text');
-        if (lastTickText.empty()) {
-            return;
-        }
-
-        lastTickText.attr('transform', null);
-
-        const svgNode = this.xAxisEntered.node()?.ownerSVGElement as SVGSVGElement | null;
-        const textNode = lastTickText.node() as SVGGraphicsElement | null;
-        if (!svgNode || !textNode) {
-            return;
-        }
-
-        const svgRect = svgNode.getBoundingClientRect();
-        const textRect = textNode.getBoundingClientRect();
-        const rightOverflow = Math.ceil(textRect.right - svgRect.right);
-
-        if (rightOverflow > 0) {
-            lastTickText.attr('transform', `translate(${-rightOverflow},0)`);
-        }
-    }
-
     private updateAxisText(forceFirst = false, forceLast = false) {
         //update text by applying function
         if (this.chartOptions.xAxisTimeFormat) {
@@ -118,8 +91,6 @@ class TemporalXAxisComponent extends ChartVisualizationComponent {
 
         if (!this.chartOptions.singleLineXAxisLabel)
             this.xAxisEntered.selectAll('text').call(Utils.splitTimeLabel);
-
-        this.keepLastTickLabelInView();
 
         this.xAxisEntered.select(".domain").style("display", "none");
     }
