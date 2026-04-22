@@ -80,6 +80,7 @@ class LineChart extends TemporalXAxisComponent {
 
     private isFirstMarkerDrop = true;
     private xOffset = 8;
+    private xAxisRightPadding = 48;
 
     private swimlaneYExtents = {}; // mapping of swimlanes to the y extents of that swimlane
     private swimLaneContents = {};
@@ -1911,7 +1912,8 @@ class LineChart extends TemporalXAxisComponent {
 
         this.hasBrush = !!(options && (options.brushMoveAction || options.brushMoveEndAction || options.brushContextMenuActions));
         this.chartOptions.setOptions(options);
-        this.chartMargins.right = this.chartOptions.labelSeriesWithMarker ? (SERIESLABELWIDTH + 8) : LINECHARTCHARTMARGINS.right;
+        const baseRightMargin = this.chartOptions.labelSeriesWithMarker ? (SERIESLABELWIDTH + 8) : LINECHARTCHARTMARGINS.right;
+        this.chartMargins.right = baseRightMargin + (this.chartOptions.xAxisHidden ? 0 : this.xAxisRightPadding);
         this.width = this.getWidth();
         this.height = Math.max((<any>d3.select(this.renderTarget).node()).clientHeight, this.MINHEIGHT);
         if (this.chartOptions.legend == "compact")
