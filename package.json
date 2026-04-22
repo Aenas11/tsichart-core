@@ -1,6 +1,6 @@
 {
   "name": "tsichart-workspace",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "private": true,
   "description": "Monorepo for TSIChart - Time Series Interactive Charts library and framework wrappers",
   "workspaces": [
