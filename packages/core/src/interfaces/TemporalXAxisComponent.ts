@@ -68,12 +68,20 @@ class TemporalXAxisComponent extends ChartVisualizationComponent {
             return;
         }
 
-        const lastTickText = this.xAxisEntered.select('.tick:last-child text');
+        const lastTick = this.xAxisEntered.select('.tick:last-child');
+        if (lastTick.empty()) {
+            return;
+        }
+
+        const lastTickText = lastTick.select('text');
         if (lastTickText.empty()) {
             return;
         }
 
-        lastTickText.attr('transform', null);
+        lastTick.style('display', null);
+        lastTickText
+            .attr('transform', null)
+            .attr('text-anchor', 'middle');
 
         const svgNode = this.xAxisEntered.node()?.ownerSVGElement as SVGSVGElement | null;
         const textNode = lastTickText.node() as SVGGraphicsElement | null;
@@ -86,7 +94,7 @@ class TemporalXAxisComponent extends ChartVisualizationComponent {
         const rightOverflow = Math.ceil(textRect.right - svgRect.right);
 
         if (rightOverflow > 0) {
-            lastTickText.attr('transform', `translate(${-rightOverflow},0)`);
+            lastTick.style('display', 'none');
         }
     }
 
